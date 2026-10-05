@@ -231,7 +231,7 @@ export function NewProjectScreen() {
                   </li>
                 ))}
               </ul>
-              <div className={row}>
+              <div className={`${row} mt-6`}>
                 <Button variant="heroGhost" size="page" type="button" onClick={cancel}>
                   Cancel
                 </Button>
