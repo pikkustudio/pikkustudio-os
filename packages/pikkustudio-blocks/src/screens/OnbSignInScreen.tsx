@@ -1,7 +1,8 @@
 import { Link } from '@tanstack/react-router'
 import { useContext } from 'react'
 import { Button } from '../ui/button'
-import { ArrowRight, Cloud } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
+import { useSlots } from '../lib/slots'
 import { OnbCtx } from './OnboardingLayout'
 import { useAccount, useRecentProjects, useUseLocally } from '../lib/onboarding'
 
@@ -14,6 +15,7 @@ const keep: any = { search: true }
 
 export function OnbSignInScreen() {
   const { st, go, retry, open } = useContext(OnbCtx)
+  const { SignInOffer: Offer } = useSlots()
   const account = useAccount().data
   const recent = useRecentProjects().data ?? []
   const user = account?.name
@@ -103,36 +105,8 @@ export function OnbSignInScreen() {
         </div>
       </section>
 
-      <section aria-label="The other way in">
-        <div className="mb-4 flex items-baseline justify-between gap-4">
-          <h2 className="text-[26px] leading-[1.2] font-bold tracking-[-0.012em] text-balance">Want more than the basics?</h2>
-          {st !== 'error' ? (
-            <p className="text-[15px] text-muted-foreground text-pretty">Fabric is optional.</p>
-          ) : null}
-        </div>
-        {st !== 'error' ? (
-          <div className="grid grid-cols-[56px_minmax(0,1fr)_auto] items-center gap-5 rounded-[22px] border border-border bg-card px-7 py-6.5 shadow-card transition-all duration-240 ease-[cubic-bezier(.16,1,.3,1)] hover:-translate-y-0.5 hover:border-input hover:shadow-[0_6px_20px_-4px_rgba(8,40,52,0.16),0_2px_4px_rgba(8,40,52,0.06)]">
-            <span className="grid size-14 place-items-center rounded-xl bg-indigo text-white">
-              <Cloud className="size-7" />
-            </span>
-            <div>
-              <h3 className="mb-1 text-[22px] leading-[1.2] font-bold tracking-[-0.012em] text-balance">Put what you build online with Fabric</h3>
-              <p className="max-w-ch56 text-[16px] text-ink-2 text-pretty">
-                Fabric hosts your app, with AI to choose from, a payments sandbox and a helper that watches it for you.
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button variant="ghost" size="pageTight" type="button" disabled={loading} onClick={() => open('diff')}>
-                What is the difference?
-              </Button>
-              <Button variant="bordered" size="page" type="button" disabled={loading} onClick={() => open('fabric')}>
-                Read more
-              </Button>
-            </div>
-          </div>
-        ) : null}
-      </section>
-      <p className="text-[13px] text-muted-foreground text-pretty">By continuing you agree to Fabric’s terms. We never read what you build on this computer.</p>
+      {st !== 'error' && Offer ? <Offer loading={loading} open={open} /> : null}
+      <p className="text-[13px] text-muted-foreground text-pretty">We never read what you build on this computer.</p>
     </div>
   )
 }

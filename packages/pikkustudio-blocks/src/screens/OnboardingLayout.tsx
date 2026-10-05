@@ -5,7 +5,7 @@ import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { ProjectRpcCtx } from '../lib/projectRpc'
 import { Button } from '../ui/button'
 import { AiLitellmPanel } from '../blocks/AiConnectPanels'
-import { FabricPitchList, FabricPitchTiles } from '../blocks/FabricPitch'
+import { useSlots } from '../lib/slots'
 import { useAccount, useProjectRun, useRecentProjects, useStartProjectRun, projectNameFrom, useNameTaken, type ProjectRun } from '../lib/onboarding'
 import { ArrowRight, Bell, Check, CircleAlert, FolderOpen, Laptop, MessageCircle, Pin, ShieldCheck, User, X } from 'lucide-react'
 
@@ -13,7 +13,7 @@ import { ArrowRight, Bell, Check, CircleAlert, FolderOpen, Laptop, MessageCircle
 // Sign in, Choose AI and New project are children of this layout. Page content lives in the route files.
 
 export type OnbState = 'empty' | 'normal' | 'loading' | 'error'
-type PanelId = 'chat' | 'updates' | 'workspace' | 'diff' | 'why' | 'local' | 'accounts' | 'keys' | 'litellm' | 'fabric'
+export type PanelId = 'chat' | 'updates' | 'workspace' | 'diff' | 'why' | 'local' | 'accounts' | 'keys' | 'litellm' | 'fabric'
 
 export const OnbCtx = createContext<{
   st: OnbState
@@ -79,6 +79,7 @@ export function OnboardingLayout() {
   const navigate = useNavigate()
   const q = useSearch({ strict: false }) as { look?: 'light' | 'dark'; panel?: PanelId; show?: string; pitch?: 'a' | 'b'; via?: string; run?: string }
   const panel: PanelId | '' = q.panel ?? ''
+  const { Pitch } = useSlots()
   const path = useLocation({ select: (l) => l.pathname })
   const choose = path === '/choose-ai'
   const proj = path === '/new-project'
@@ -427,12 +428,8 @@ export function OnboardingLayout() {
               </div>
             ) : null}
 
-            {panel === 'fabric' ? (
-              q.pitch === 'b' ? (
-                <FabricPitchTiles href={account.data?.consoleUrl ?? 'https://pikkufabric.com'} onClose={() => open('')} />
-              ) : (
-                <FabricPitchList avatar={<Avatar mood="calm" size="md" />} href={account.data?.consoleUrl ?? 'https://pikkufabric.com'} onClose={() => open('')} />
-              )
+            {panel === 'fabric' && Pitch ? (
+              <Pitch href={account.data?.consoleUrl ?? 'https://pikkufabric.com'} variant={q.pitch} avatar={<Avatar mood="calm" size="md" />} onClose={() => open('')} />
             ) : null}
 
             {panel === 'litellm' ? <AiLitellmPanel intro={<Avatar mood="calm" size="md" />} via={q.via} onDone={() => { open(''); go() }} onBack={() => open('')} /> : null}

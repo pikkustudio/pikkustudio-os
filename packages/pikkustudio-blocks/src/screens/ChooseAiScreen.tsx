@@ -3,6 +3,7 @@ import { Button } from '../ui/button'
 import { ArrowRight, Cloud, Server } from 'lucide-react'
 
 import { OnbCtx } from './OnboardingLayout'
+import { useSlots } from '../lib/slots'
 import { useNavigate } from '@tanstack/react-router'
 
 const h1 = 'max-w-[15ch] text-[56px] leading-[1.04] tracking-[-0.02em] group-data-open/shell:text-[46px] @min-[1700px]/app:text-[66px] group-data-open/shell:@min-[1700px]/app:text-[54px] font-bold text-balance'
@@ -21,6 +22,7 @@ const providers = [
 
 export function ChooseAiScreen() {
   const { st, go, retry, open } = useContext(OnbCtx)
+  const { AiOffer: Offer } = useSlots()
   const navigate = useNavigate()
   const loading = st === 'loading'
   const via = (id: string) => navigate({ to: '.', search: ((prev: object) => ({ ...prev, panel: 'litellm', via: id })) as never, replace: true })
@@ -89,18 +91,7 @@ export function ChooseAiScreen() {
         <div className="grid grid-cols-1 gap-4">
           {st === 'normal' || st === 'error' ? (
             <>
-              <div className={card}>
-                  <span className="grid size-14 place-items-center rounded-2xl bg-indigo text-white">
-                    <Cloud className="size-7" />
-                  </span>
-                  <div>
-                    <h3 className="mb-1 text-[22px] leading-[1.2] font-bold tracking-[-0.012em] text-balance">Fabric’s AI</h3>
-                    <p className="max-w-ch56 text-[16px] text-ink-2 text-pretty">The best models with nothing to set up. You need a Fabric account, which also hosts your app.</p>
-                  </div>
-                  <Button variant="bordered" size="page" type="button" onClick={() => open('fabric')}>
-                    Read more
-                  </Button>
-                </div>
+              {Offer ? <Offer open={open} /> : null}
               <div className="flex flex-col gap-4 rounded-[22px] border border-border bg-card px-7 py-6.5 shadow-card">
                 <div className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-5">
                   <span className="grid size-14 place-items-center rounded-2xl bg-accent text-accent-foreground">
