@@ -4,9 +4,11 @@ import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promis
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { createInterface } from 'node:readline'
-import { pikkuNext, routeMessage, writePikkuShim, type CommandRunner } from './changes.js'
+import { offerMessage, pikkuNext, routeMessage, writePikkuShim, type CommandRunner } from './changes.js'
 import { piArgs, piEnv, resolvePi, type BuilderAi, type BuilderMode } from './pi.js'
 import { builderHome, writeSkills } from './skills.js'
+
+const routerEnv = (launch: { env?: Record<string, string>; queueHome?: string }) => (launch.queueHome ? { ...launch.env, HOME: launch.queueHome } : launch.env)
 
 export type BuilderItem =
   | { kind: 'user'; text: string; at: number }
@@ -37,6 +39,7 @@ export interface BuilderLaunch {
   env?: Record<string, string>
   apiUrl?: string
   healDir?: string
+  queueHome?: string
   apps?: { slug: string; url: string }[]
   loop?: boolean
   launch?: Launcher
@@ -109,7 +112,7 @@ export class BuilderSession {
     return drive
   }
 
-  async prompt(key: string, message: string, context?: string, mode: BuilderMode = 'build'): Promise<BuilderState> {
+  async prompt(key: string, message: string, context?: string, mode: BuilderMode = 'build', offer = false): Promise<BuilderState> {
     const text = message.trim()
     if (!text) throw new Error('Say what you want built first')
     const state = await this.state(key)
@@ -128,8 +131,8 @@ export class BuilderSession {
     this.drives.set(key, { gen: this.drive(key).gen + 1, turns: 0, quiet: 0, report: '', repeats: 0 })
     state.busy = true
     try {
-      if (mode !== 'build') {
-        await this.send(key, request)
+      if (mode !== 'build' || offer) {
+        await this.send(key, mode === 'build' ? offerMessage(request) : request)
         return state
       }
       const { cwd, env, run } = await this.resolve(key, mode)
@@ -154,9 +157,9 @@ export class BuilderSession {
     }
     const gen = this.drive(key).gen
     const mode = explore ? 'build' : (this.modes.get(key) ?? 'build')
-    const { cwd, ai, env = {}, launch = spawnPi } = await this.resolve(key, mode)
+    const { cwd, ai, env = {}, launch = spawnPi, queueHome } = await this.resolve(key, mode)
     const skills = await writeSkills(this.home)
-    const shims = await writePikkuShim(this.home)
+    const shims = await writePikkuShim(this.home, queueHome)
     const child = launch(process.execPath, [resolvePi(), ...piArgs({ ai, skills, mode: 'rpc', session: session ?? state.session, explore, scope: mode })], {
       cwd,
       env: { ...process.env, ...env, ...piEnv(ai), PATH: `${shims}:${env.PATH ?? process.env.PATH ?? ''}` },
@@ -235,7 +238,7 @@ export class BuilderSession {
     const state = await this.state(key)
     if (state.busy || this.turns.has(key)) return { started: false, reason: 'The builder is already working' }
     const launch = await this.resolve(key)
-    const route = await pikkuNext(launch.cwd, undefined, launch.run, launch.env)
+    const route = await pikkuNext(launch.cwd, undefined, launch.run, routerEnv(launch))
     if (!route.agent) return { started: false, reason: route.reason }
     const drive = this.drive(key)
     const same = route.context === drive.report
@@ -257,7 +260,7 @@ export class BuilderSession {
     }
     state.busy = true
     try {
-      const route = await pikkuNext(launch.cwd, undefined, launch.run, launch.env)
+      const route = await pikkuNext(launch.cwd, undefined, launch.run, routerEnv(launch))
       if (this.drive(key).gen !== gen) return
       for (const line of route.merged) this.note(key, `Merged ${line}`)
       if (!route.agent) {

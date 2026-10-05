@@ -3,6 +3,7 @@ import { mkdir, rename, rm, writeFile } from 'node:fs/promises'
 import { homedir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { packageDir } from './pi.js'
+import { STUDIO_SKILLS } from './studio-skills.js'
 import { createHash } from 'node:crypto'
 import { listSkillFiles, listSkillNames, readSkillFile, SKILL_FILES } from '@pikku/skills'
 
@@ -10,11 +11,13 @@ const CLOUD_ONLY = /fabric/
 
 export const builderHome = () => process.env.PIKKU_BUILDER_HOME ?? join(homedir(), '.pikku', 'builder')
 
+const ownHash = () => createHash('sha256').update(JSON.stringify(STUDIO_SKILLS)).digest('hex').slice(0, 8)
+
 const skillsVersion = (): string => {
   try {
-    return JSON.parse(readFileSync(join(packageDir('@pikku/skills'), 'package.json'), 'utf8')).version
+    return `${JSON.parse(readFileSync(join(packageDir('@pikku/skills'), 'package.json'), 'utf8')).version}-${ownHash()}`
   } catch {
-    return createHash('sha256').update(JSON.stringify(SKILL_FILES)).digest('hex').slice(0, 16)
+    return createHash('sha256').update(JSON.stringify(SKILL_FILES)).update(ownHash()).digest('hex').slice(0, 16)
   }
 }
 
@@ -32,6 +35,11 @@ export async function writeSkills(home = builderHome()): Promise<string> {
       await mkdir(dirname(target), { recursive: true })
       await writeFile(target, text)
     }
+  }
+  for (const [path, text] of Object.entries(STUDIO_SKILLS)) {
+    const target = join(staging, path)
+    await mkdir(dirname(target), { recursive: true })
+    await writeFile(target, text)
   }
   await mkdir(dirname(dir), { recursive: true })
   await rename(staging, dir).catch(async (error) => {

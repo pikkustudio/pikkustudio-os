@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation, useNavigate, useSearch } from '@tanstack/react-router'
-import { useEffect, useState, type ComponentType, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, type ComponentType, type ReactNode } from 'react'
 import { m } from '@/i18n/messages'
 import { useProjectKey, useProjectName, useProjectSlug } from '../lib/project'
 import { useAddonNav } from '../lib/addon-nav'
@@ -8,6 +8,7 @@ import { modeForPath, useBuilderChat } from '../lib/builder-chat'
 import { useProjectQuery } from '../lib/projectRpc'
 import { ShellCtx, type PanelId, type PublishNote, type View } from '../lib/shell'
 import { keep } from '../lib/links'
+import { NEW_QUESTIONS, answerPrompt, openQuestions, type KnowledgeBundle } from '../lib/knowledge'
 import { Button } from '../ui/button'
 import { QuickFind } from '../blocks/QuickFind'
 import { Toaster } from '../blocks/Toaster'
@@ -150,6 +151,8 @@ export function ShellLayout() {
   const fill = useLocation({ select: (l) => /\/(build|prototype|artifacts\/[^/]+|routines\/[^/]+)$/.test(l.pathname) || (l.pathname.endsWith('/emails') && !!(l.search as { email?: string }).email) })
   const onArtifacts = useLocation({ select: (l) => l.pathname.endsWith('/artifacts') })
   const onKnowledge = useLocation({ select: (l) => l.pathname.endsWith('/knowledge') })
+  const knowledge = useProjectQuery<KnowledgeBundle | null>(projectKey, 'console:getKnowledge', {}, { enabled: onKnowledge, refetchInterval: 5000 })
+  const questions = useMemo(() => openQuestions(knowledge.data ?? null).slice(0, 4), [knowledge.data])
   const onPublish = useLocation({ select: (l) => l.pathname.endsWith('/publish') })
   const onEmails = useLocation({ select: (l) => l.pathname.endsWith('/emails') })
   const [pub, setPublish] = useState<PublishNote | null>(null)
@@ -450,10 +453,10 @@ export function ShellLayout() {
                         {m.state === 'ask' ? (
                           <>
                             <Button variant="default" size="compact" type="button" onClick={() => void chat.decide(m.id, true)}>
-                              Approve
+                              {m.yes ?? 'Approve'}
                             </Button>
                             <Button variant="ghost" size="compactTight" type="button" onClick={() => void chat.decide(m.id, false)}>
-                              Not now
+                              {m.no ?? 'Not now'}
                             </Button>
                           </>
                         ) : null}
@@ -478,6 +481,20 @@ export function ShellLayout() {
                         <MousePointer2 className="size-4" />
                         {a}
                         <X className="size-4" />
+                      </Button>
+                    ))}
+                  </div>
+                ) : null}
+                {onKnowledge ? (
+                  <div className="flex flex-wrap gap-2 border-t border-border bg-card px-5 pt-3" data-testid="knowledge-chips">
+                    {questions.map((q) => (
+                      <Button key={q.path} variant="bordered" size="chipSm" type="button" disabled={chat.busy} title="An open question in your knowledge" onClick={() => say(answerPrompt(q))}>
+                        {q.title}
+                      </Button>
+                    ))}
+                    {NEW_QUESTIONS.slice(0, questions.length >= 3 ? 1 : 3).map((q) => (
+                      <Button key={q.label} variant="selected" size="chipSm" type="button" disabled={chat.busy} onClick={() => say(q.ask)}>
+                        {q.label}
                       </Button>
                     ))}
                   </div>

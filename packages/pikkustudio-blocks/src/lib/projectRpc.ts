@@ -7,10 +7,10 @@ export const ProjectRpcCtx = createContext<ProjectInvoke>(async (_key, name) => 
   throw new Error(`No project transport for ${name}`)
 })
 
-export function useProjectQuery<T>(key: string, name: string, data?: unknown, options?: { refetchInterval?: number }) {
+export function useProjectQuery<T>(key: string, name: string, data?: unknown, options?: { refetchInterval?: number; enabled?: boolean }) {
   const invoke = useContext(ProjectRpcCtx)
   return useQuery<T>({
-    enabled: !!key,
+    enabled: !!key && options?.enabled !== false,
     queryKey: ['project', key, name, data ?? null],
     queryFn: () => invoke(key, name, data),
     refetchInterval: options?.refetchInterval,

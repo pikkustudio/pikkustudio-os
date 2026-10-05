@@ -33,7 +33,7 @@ export type BuilderMode = 'build' | 'prototype' | 'artifacts' | 'knowledge'
 
 export const MODE_PROMPTS: Record<Exclude<BuilderMode, 'build'>, string> = {
   prototype: [
-    'You are working on the prototype of an app, not the real app.',
+    'You are working on the prototype of an app, not the real app. Read the pikku-prototype skill first.',
     'Each app in apps/ has its own prototype beside it, in apps/<app>-prototype. Write only there, and nowhere else: the rest of the project is read-only for you.',
     'The prototype has no real backend. Make up believable mock data inside the prototype so every screen looks lived in.',
     'You may read the real app to match what it does, but never change it, and never file or suggest changes to it.',
@@ -48,6 +48,7 @@ export const MODE_PROMPTS: Record<Exclude<BuilderMode, 'build'>, string> = {
     'Read the pikku-knowledge skill first. You have three jobs.',
     'Interview: ask the owner one plain product question at a time, the way a product manager draws out a feature list, and write each answer into the knowledge as it grows what the app does.',
     'Answer open questions: work through the questions recorded in the knowledge. Answer what the rest of the knowledge already settles, and ask the owner only what needs their call.',
+    'Whenever a question comes up that the owner has not answered yet, record it as a note in knowledge/questions/ with `status: open` in its frontmatter, and set `status: answered` when it is settled. The owner sees the open ones as buttons.',
     'Maintain: keep notes consistent, merge duplicates, retire what the app no longer does, and run `pikku knowledge validate`.',
     'Say in plain words what you added or tidied.',
   ].join(' '),

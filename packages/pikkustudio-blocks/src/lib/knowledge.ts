@@ -51,3 +51,19 @@ export function notesFromBundle(bundle: KnowledgeBundle) {
   const order = [START, ...bundle.sections.map((s) => s.name).filter((s) => s && s !== START)]
   return { notes, missing, order }
 }
+
+const CLOSED = /^(answered|closed|done|resolved)$/i
+
+export const openQuestions = (bundle: KnowledgeBundle | null) =>
+  (bundle?.notes ?? [])
+    .filter((n) => !n.reserved && n.section === 'questions' && !CLOSED.test(n.status ?? ''))
+    .map((n) => ({ path: n.path, title: n.title }))
+
+export const NEW_QUESTIONS = [
+  { label: 'Ask me what visitors can do', ask: 'Interview me about what a visitor can do in this app. Ask one question at a time, and write each answer into knowledge.' },
+  { label: 'What is still missing?', ask: 'Look at the knowledge base and ask me the one question whose answer would add the most to what this app can do. Then write my answer into knowledge.' },
+  { label: 'Who is this for?', ask: 'Ask me who this app is for and what they need from it, one question at a time, and write the answers into knowledge.' },
+]
+
+export const answerPrompt = (q: { path: string; title: string }) =>
+  `Let us answer this open question from the knowledge base: "${q.title}" (${q.path}). Ask me what you need to know, one question at a time. When I have answered, write the answer into that note, mark it answered, and add any new features it implies.`

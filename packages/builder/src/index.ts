@@ -3,5 +3,6 @@ export type { BuilderConversation, BuilderItem, BuilderState, BuilderLaunch, Lau
 export { piArgs, piEnv, resolvePi, piPackageRoot, packageRoot, extensionPaths, SYSTEM_PROMPT } from './pi.js'
 export type { BuilderAi, BuilderMode } from './pi.js'
 export { MODE_PROMPTS } from './pi.js'
+export { OFFER_MARKER } from './changes.js'
 export { writeSkills, builderHome } from './skills.js'
 export { pikkuNext, changesReport, routeMessage, runPikku, type NextRoute, type ChangesReport, type CommandRunner } from './changes.js'

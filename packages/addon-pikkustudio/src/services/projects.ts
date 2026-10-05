@@ -931,14 +931,20 @@ export class StudioProjectsService {
     return (await ensureWorktree(entry.path, this.home, entry.id, splitSessionKey(key).worktree)).projectDir
   }
 
-  async builderLaunch(key: string, mode: BuilderMode = 'build'): Promise<{ cwd: string; healDir: string; apiUrl?: string; apps: { slug: string; url: string }[]; env: Record<string, string>; launch?: Launcher }> {
+  async builderLaunch(key: string, mode: BuilderMode = 'build'): Promise<{ cwd: string; healDir: string; queueHome?: string; apiUrl?: string; apps: { slug: string; url: string }[]; env: Record<string, string>; launch?: Launcher }> {
     const entry = await this.entry(key)
     const worktree = await ensureWorktree(entry.path, this.home, entry.id, splitSessionKey(key).worktree)
     const port = this.running.get(key)?.port
     const healDir = join(this.home, 'heal')
+    const linked = await new Promise<boolean>((done) =>
+      execFile('git', ['remote'], { cwd: worktree.projectDir }, (error, out) => done(!error && out.trim().length > 0)),
+    )
+    const queueHome = linked ? undefined : join(this.home, 'queue-home')
+    if (queueHome) await mkdir(queueHome, { recursive: true })
     const base = {
       cwd: worktree.projectDir,
       healDir,
+      queueHome,
       apiUrl: port ? `http://localhost:${port}` : undefined,
       apps: this.projectApps(key).flatMap(({ slug, url, state }) => (state === 'ready' && url ? [{ slug, url }] : [])),
       env: await this.projectEnv(key, entry.path),

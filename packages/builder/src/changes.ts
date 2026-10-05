@@ -64,12 +64,25 @@ export const routeMessage = (route: NextRoute) =>
     route.context ?? '',
   ].join('\n')
 
-export async function writePikkuShim(home: string): Promise<string> {
-  const dir = join(home, 'bin')
+export async function writePikkuShim(home: string, queueHome?: string): Promise<string> {
+  const dir = join(home, queueHome ? 'bin-local' : 'bin')
   const [command, ...prefix] = pikkuBin(dir)
   await mkdir(dir, { recursive: true })
   const file = join(dir, 'pikku')
-  await writeFile(file, `#!/bin/sh\nexec ${[command, ...prefix].map((part) => JSON.stringify(part)).join(' ')} "$@"\n`)
+  await writeFile(file, `#!/bin/sh\n${queueHome ? `export HOME=${JSON.stringify(queueHome)}\n` : ''}exec ${[command, ...prefix].map((part) => JSON.stringify(part)).join(' ')} "$@"\n`)
   await chmod(file, 0o755)
   return dir
 }
+
+export const OFFER_MARKER = '[[offer:changeset]]'
+
+export const offerMessage = (request: string) =>
+  [
+    'The owner sent this from the Build screen:',
+    '',
+    request,
+    '',
+    'First decide how big it is. A small job (a word, a colour, one or two files, a few minutes): just do it now.',
+    `A big job (new screens, new data, several features, or more than about ten minutes): do not start. Say in plain words what you would do in a sentence or two, say it is a bigger job, and end that reply with exactly this line on its own: ${OFFER_MARKER}`,
+    'Then wait. If the owner is answering an offer you made earlier: when they want it queued, file it with `pikku changes file --title "<the requirement in one line>" --body "<the detail>"` and say it is queued; when they want it now, build it in this session.',
+  ].join('\n')
