@@ -71,7 +71,7 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
   const studioModels = new Map<string, string>()
   const studioBuilder =
     options.builder ??
-    new BuilderSession(async (key) => {
+    new BuilderSession(async (key, mode) => {
       const env = await studioAi.env()
       const proxyUrl = process.env.PIKKU_BUILDER_PROXY_URL
       const proxyKey = process.env.PIKKU_BUILDER_PROXY_KEY
@@ -86,7 +86,7 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
           ? { proxyUrl: `${env.PIKKU_STUDIO_AI_BASE_URL.replace(/\/+$/, '')}/v1`, apiKey: env.PIKKU_STUDIO_AI_KEY ?? 'none' }
           : null
       if (!fabric && !env.PIKKU_STUDIO_AI) throw new Error('Choose your AI before building')
-      const launch = await studioProjects.builderLaunch(key)
+      const launch = await studioProjects.builderLaunch(key, mode)
       return {
         ...launch,
         ai: litellm

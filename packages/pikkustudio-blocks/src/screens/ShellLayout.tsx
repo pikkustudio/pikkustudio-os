@@ -4,6 +4,7 @@ import { m } from '@/i18n/messages'
 import { useProjectKey, useProjectName, useProjectSlug } from '../lib/project'
 import { useAddonNav } from '../lib/addon-nav'
 import { usePikkuChat } from '../lib/chat'
+import { modeForPath, useBuilderChat } from '../lib/builder-chat'
 import { useProjectQuery } from '../lib/projectRpc'
 import { ShellCtx, type PanelId, type PublishNote, type View } from '../lib/shell'
 import { keep } from '../lib/links'
@@ -131,7 +132,10 @@ export function ShellLayout() {
   const [draft, setDraft] = useState('')
   const [bubbleDraft, setBubbleDraft] = useState('')
   const projectKey = useProjectKey()
-  const chat = usePikkuChat(projectKey)
+  const workMode = useLocation({ select: (l) => modeForPath(l.pathname) })
+  const guide = usePikkuChat(projectKey)
+  const builder = useBuilderChat(projectKey, workMode)
+  const chat = workMode ? builder : guide
   const changesQ = useProjectQuery<{ changes: { changeId: string; title: string; body: string | null; status: string; createdAt: string }[] }>(projectKey, 'console:listStudioChanges', { status: ['open', 'claimed', 'needs_answer', 'in_progress'] }, { refetchInterval: 6000 })
   const pending = changesQ.data?.changes ?? []
   const view: View = pending.length ? 'problem' : 'healthy'

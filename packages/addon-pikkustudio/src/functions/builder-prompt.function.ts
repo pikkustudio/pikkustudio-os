@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import type { BuilderMode } from '@pikku/builder'
 import { pikkuSessionlessFunc } from '#pikku/addon/function'
 import { listArtifacts } from '../services/artifacts.js'
 
@@ -6,20 +7,20 @@ const DIRECTIONS = 4
 const DRAFT_TIMEOUT_MS = 15 * 60_000
 const pause = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-export const BuilderPromptInput = z.object({ key: z.string(), message: z.string(), context: z.string().optional(), failOnError: z.boolean().optional(), explore: z.boolean().optional() })
+export const BuilderPromptInput = z.object({ key: z.string(), message: z.string(), context: z.string().optional(), failOnError: z.boolean().optional(), explore: z.boolean().optional(), mode: z.enum(['build', 'prototype', 'artifacts', 'knowledge']).optional() })
 
 export const builderPrompt = pikkuSessionlessFunc({
   expose: true,
   description: 'Ask the builder to do something in a project.',
   input: BuilderPromptInput,
-  func: async ({ studioBuilder, studioSettings, studioProjects }, { key, message, context, failOnError, explore }) => {
+  func: async ({ studioBuilder, studioSettings, studioProjects }, { key, message, context, failOnError, explore, mode }) => {
     const { name, about } = await studioSettings.read()
     const profile = name
       ? `The person you are working with is called ${name}. Address them by that name.${about ? ` About them: ${about}. Tailor your answers to that.` : ''}`
       : undefined
     const state = explore
       ? await studioBuilder.explore(key, [message, context].filter(Boolean).join('\n\n'))
-      : await studioBuilder.prompt(key, message, [profile, context].filter(Boolean).join('\n\n') || undefined)
+      : await studioBuilder.prompt(key, message, [profile, context].filter(Boolean).join('\n\n') || undefined, mode)
     if (!failOnError) return state
     const { cwd } = await studioProjects.builderLaunch(key)
     const started = Date.now()

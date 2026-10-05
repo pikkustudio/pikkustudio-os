@@ -29,6 +29,30 @@ export const SYSTEM_PROMPT = [
   'Build one changeset, commit each change on its own, mark it done and stop; the builder merges it and starts the next.',
 ].join(' ')
 
+export type BuilderMode = 'build' | 'prototype' | 'artifacts' | 'knowledge'
+
+export const MODE_PROMPTS: Record<Exclude<BuilderMode, 'build'>, string> = {
+  prototype: [
+    'You are working on the prototype of an app, not the real app.',
+    'Each app in apps/ has its own prototype beside it, in apps/<app>-prototype. Write only there, and nowhere else: the rest of the project is read-only for you.',
+    'The prototype has no real backend. Make up believable mock data inside the prototype so every screen looks lived in.',
+    'You may read the real app to match what it does, but never change it, and never file or suggest changes to it.',
+  ].join(' '),
+  artifacts: [
+    'You are making artifacts for the owner: designs, pages and documents, in artifacts/. Write only there; the rest of the project is read-only for you.',
+    'Read the pikku-artifacts skill first and follow it for the kind of artifact you are making.',
+    'You never change the app itself, and you never file or suggest changes to it.',
+  ].join(' '),
+  knowledge: [
+    'You look after the knowledge base in knowledge/, which says what the product is and does. Write only there; the rest of the project is read-only for you.',
+    'Read the pikku-knowledge skill first. You have three jobs.',
+    'Interview: ask the owner one plain product question at a time, the way a product manager draws out a feature list, and write each answer into the knowledge as it grows what the app does.',
+    'Answer open questions: work through the questions recorded in the knowledge. Answer what the rest of the knowledge already settles, and ask the owner only what needs their call.',
+    'Maintain: keep notes consistent, merge duplicates, retire what the app no longer does, and run `pikku knowledge validate`.',
+    'Say in plain words what you added or tidied.',
+  ].join(' '),
+}
+
 const PROVIDERS: Record<string, string> = { gemini: 'google' }
 
 export const EXPLORE_PROMPT = [
@@ -43,11 +67,11 @@ export const impeccableSkill = () => {
   return found
 }
 
-export function piArgs(options: { ai?: BuilderAi; skills: string; mode?: 'rpc'; session?: string; explore?: boolean }): string[] {
+export function piArgs(options: { ai?: BuilderAi; skills: string; mode?: 'rpc'; session?: string; explore?: boolean; scope?: BuilderMode }): string[] {
   const args: string[] = []
   if (options.mode) args.push('--mode', options.mode)
   if (options.explore) args.push('--approve', '--no-skills', '--no-context-files', '--skill', impeccableSkill(), '--append-system-prompt', EXPLORE_PROMPT)
-  else args.push('--approve', '--skill', options.skills, '--append-system-prompt', SYSTEM_PROMPT)
+  else args.push('--approve', '--skill', options.skills, '--append-system-prompt', options.scope && options.scope !== 'build' ? `${SYSTEM_PROMPT} ${MODE_PROMPTS[options.scope]}` : SYSTEM_PROMPT)
   for (const path of extensionPaths()) args.push('-e', path)
   if (options.session) args.push('--session-id', options.session)
   if (options.ai?.proxy) args.push('--provider', 'pikku-proxy')

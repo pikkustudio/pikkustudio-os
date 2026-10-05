@@ -88,3 +88,24 @@ describe('a confined worktree', { skip: !supported }, () => {
     assert.equal(await readFile(join(repo, 'README.md'), 'utf8'), 'app')
   })
 })
+
+describe('confinedSpawn with only', { skip: !supported }, () => {
+  test('writes only inside the allowed folders of the worktree', async () => {
+    const base = await mkdtemp(join(tmpdir(), 'pikku-confine-'))
+    const home = join(base, 'home')
+    const root = join(home, 'worktree')
+    await mkdir(join(root, 'apps', 'app-prototype'), { recursive: true })
+    await mkdir(join(root, 'apps', 'app'), { recursive: true })
+    const only = ['apps/app-prototype']
+    const go = (script: string) =>
+      new Promise<number | null>((resolve) => {
+        const child = confinedSpawn('/bin/sh', ['-c', script], { root, home, only }, { stdio: 'ignore' })
+        child.on('close', resolve)
+      })
+    assert.equal(await go(`echo hi > ${root}/apps/app-prototype/screen`), 0)
+    assert.notEqual(await go(`echo hi > ${root}/apps/app/screen`), 0)
+    assert.notEqual(await go(`echo hi > ${root}/package.json`), 0)
+    assert.equal(existsSync(join(root, 'apps', 'app', 'screen')), false)
+    assert.equal(existsSync(join(root, 'apps', 'app-prototype', 'screen')), true)
+  })
+})

@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { createInterface } from 'node:readline'
 import { pikkuNext, routeMessage, writePikkuShim, type CommandRunner } from './changes.js'
-import { piArgs, piEnv, resolvePi, type BuilderAi } from './pi.js'
+import { piArgs, piEnv, resolvePi, type BuilderAi, type BuilderMode } from './pi.js'
 import { builderHome, writeSkills } from './skills.js'
 
 export type BuilderItem =
@@ -76,9 +76,10 @@ export class BuilderSession {
   private states = new Map<string, BuilderState>()
   private turns = new Map<string, Turn>()
   private drives = new Map<string, Drive>()
+  private modes = new Map<string, BuilderMode>()
 
   constructor(
-    private resolve: (key: string) => Promise<BuilderLaunch>,
+    private resolve: (key: string, mode?: BuilderMode) => Promise<BuilderLaunch>,
     private home = builderHome()
   ) {}
 
@@ -108,20 +109,30 @@ export class BuilderSession {
     return drive
   }
 
-  async prompt(key: string, message: string, context?: string): Promise<BuilderState> {
+  async prompt(key: string, message: string, context?: string, mode: BuilderMode = 'build'): Promise<BuilderState> {
     const text = message.trim()
     if (!text) throw new Error('Say what you want built first')
     const state = await this.state(key)
     state.items.push({ kind: 'user', text, at: Date.now() })
     const request = context ? `${text}\n\n<context>${context}</context>` : text
     if (this.turns.has(key)) {
+      const running = this.modes.get(key) ?? 'build'
+      if (running !== mode) {
+        state.items.pop()
+        throw new Error(`The builder is busy with ${running} work. Wait for it to finish first.`)
+      }
       await this.send(key, request)
       return state
     }
+    this.modes.set(key, mode)
     this.drives.set(key, { gen: this.drive(key).gen + 1, turns: 0, quiet: 0, report: '', repeats: 0 })
     state.busy = true
     try {
-      const { cwd, env, run } = await this.resolve(key)
+      if (mode !== 'build') {
+        await this.send(key, request)
+        return state
+      }
+      const { cwd, env, run } = await this.resolve(key, mode)
       const route = await pikkuNext(cwd, request, run, env)
       await this.send(key, routeMessage(route))
     } catch (error) {
@@ -142,10 +153,11 @@ export class BuilderSession {
       return
     }
     const gen = this.drive(key).gen
-    const { cwd, ai, env = {}, launch = spawnPi } = await this.resolve(key)
+    const mode = explore ? 'build' : (this.modes.get(key) ?? 'build')
+    const { cwd, ai, env = {}, launch = spawnPi } = await this.resolve(key, mode)
     const skills = await writeSkills(this.home)
     const shims = await writePikkuShim(this.home)
-    const child = launch(process.execPath, [resolvePi(), ...piArgs({ ai, skills, mode: 'rpc', session: session ?? state.session, explore })], {
+    const child = launch(process.execPath, [resolvePi(), ...piArgs({ ai, skills, mode: 'rpc', session: session ?? state.session, explore, scope: mode })], {
       cwd,
       env: { ...process.env, ...env, ...piEnv(ai), PATH: `${shims}:${env.PATH ?? process.env.PATH ?? ''}` },
     })
@@ -167,7 +179,7 @@ export class BuilderSession {
       const drive = this.drive(key)
       drive.quiet = turn.tools === 0 ? drive.quiet + 1 : 0
       void this.save(key)
-      if (!code && !explore && drive.gen === gen) void this.advance(key, gen)
+      if (!code && !explore && mode === 'build' && drive.gen === gen) void this.advance(key, gen)
     })
     child.stdin?.write(`${JSON.stringify({ type: 'prompt', id: 'r1', message: sent })}\n`)
     await this.save(key)

@@ -9,6 +9,7 @@ export interface Confinement {
   readable?: string[]
   listable?: string[]
   protected?: string[]
+  only?: string[]
   home?: string
 }
 
@@ -32,8 +33,9 @@ const TOOLCHAIN = [
   'Library/pnpm',
 ]
 
-export function seatbeltProfile({ root, writable = [], readable = [], listable = [], protected: locked = [], home = homedir() }: Confinement) {
-  const writes = [root, tmpdir(), '/private/tmp', '/private/var/folders', '/dev', ...writable]
+export function seatbeltProfile({ root, writable = [], readable = [], listable = [], protected: locked = [], only, home = homedir() }: Confinement) {
+  const within = only ? only.map((p) => join(root, p)) : [root]
+  const writes = [...within, tmpdir(), '/private/tmp', '/private/var/folders', '/dev', ...writable]
   const reads = [root, ...writable, ...readable, ...TOOLCHAIN.map((p) => join(home, p))]
   const caches = [join(home, '.bun', 'install', 'cache'), join(home, '.npm')]
   return [
@@ -42,7 +44,7 @@ export function seatbeltProfile({ root, writable = [], readable = [], listable =
     '(deny file-write* (subpath "/"))',
     `(allow file-write* ${writes.map((p) => `(subpath ${quote(p)})`).join(' ')})`,
     `(deny file-write* (subpath ${quote(home)}))`,
-    `(allow file-write* ${[root, ...writable, ...caches].map((p) => `(subpath ${quote(p)})`).join(' ')})`,
+    `(allow file-write* ${[...within, ...writable, ...caches].map((p) => `(subpath ${quote(p)})`).join(' ')})`,
     `(deny file-read* (subpath ${quote(home)}))`,
     `(allow file-read* (literal ${quote(home)}) ${listable.map((p) => `(literal ${quote(p)})`).join(' ')} ${reads.map((p) => `(subpath ${quote(p)})`).join(' ')})`,
     '(allow file-read-metadata)',
@@ -50,13 +52,15 @@ export function seatbeltProfile({ root, writable = [], readable = [], listable =
   ].join('\n')
 }
 
-export function bwrapArgs({ root, writable = [], readable = [], protected: locked = [], home = homedir() }: Confinement) {
+export function bwrapArgs({ root, writable = [], readable = [], protected: locked = [], only, home = homedir() }: Confinement) {
+  const within = only ? only.map((p) => join(root, p)) : [root]
   const args = ['--ro-bind', '/', '/', '--dev', '/dev', '--proc', '/proc', '--tmpfs', '/tmp']
   args.push('--tmpfs', home)
   for (const path of TOOLCHAIN.map((p) => join(home, p)).concat(readable)) {
     if (existsSync(path)) args.push('--ro-bind', path, path)
   }
-  for (const path of [root, ...writable]) args.push('--bind', path, path)
+  if (only) args.push('--ro-bind', root, root)
+  for (const path of [...within, ...writable]) if (existsSync(path)) args.push('--bind', path, path)
   for (const path of locked) if (existsSync(path)) args.push('--ro-bind', path, path)
   args.push('--chdir', root, '--die-with-parent')
   return args

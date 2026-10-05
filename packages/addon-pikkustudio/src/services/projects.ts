@@ -4,7 +4,8 @@ import { closeSync, existsSync, lstatSync, mkdirSync, openSync, readFileSync, re
 import { cp, mkdir, readFile, rm, symlink, writeFile } from 'node:fs/promises'
 import { connect, createServer } from 'node:net'
 import { homedir, userInfo } from 'node:os'
-import { builderHome, packageRoot, piPackageRoot, type Launcher } from '@pikku/builder'
+import { builderHome, packageRoot, piPackageRoot, type BuilderMode, type Launcher } from '@pikku/builder'
+import { modeScope } from './builder-scope.js'
 import { basename, dirname, join, resolve, sep } from 'node:path'
 import { randomBytes, randomUUID } from 'node:crypto'
 import { ConflictError } from '@pikku/core/errors'
@@ -930,7 +931,7 @@ export class StudioProjectsService {
     return (await ensureWorktree(entry.path, this.home, entry.id, splitSessionKey(key).worktree)).projectDir
   }
 
-  async builderLaunch(key: string): Promise<{ cwd: string; healDir: string; apiUrl?: string; apps: { slug: string; url: string }[]; env: Record<string, string>; launch?: Launcher }> {
+  async builderLaunch(key: string, mode: BuilderMode = 'build'): Promise<{ cwd: string; healDir: string; apiUrl?: string; apps: { slug: string; url: string }[]; env: Record<string, string>; launch?: Launcher }> {
     const entry = await this.entry(key)
     const worktree = await ensureWorktree(entry.path, this.home, entry.id, splitSessionKey(key).worktree)
     const port = this.running.get(key)?.port
@@ -944,8 +945,11 @@ export class StudioProjectsService {
     }
     const confinement = this.confinement(worktree)
     if (!confinement) return base
+    const scope = modeScope(mode, worktree.projectDir)
     const sandbox: Confinement = {
       ...confinement,
+      only: scope.only,
+      protected: [...(confinement.protected ?? []), ...(scope.protected ?? [])],
       listable: [...(confinement.listable ?? []), dirname(outermostNodeModules(piPackageRoot()))],
       writable: [...(confinement.writable ?? []), process.env.PI_CODING_AGENT_DIR ?? join(homedir(), '.pi', 'agent'), healDir],
       readable: [
