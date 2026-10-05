@@ -5,7 +5,7 @@ import { Textarea } from '../ui/textarea'
 import { Input } from '../ui/input'
 import { ArrowRight, Check, CircleAlert } from 'lucide-react'
 import { OnbCtx } from './OnboardingLayout'
-import { NewProjectWizard } from './NewProjectWizard'
+import { NewProjectForm } from './NewProjectForm'
 import { useImportProject, type ProjectRun } from '../lib/onboarding'
 
 
@@ -89,8 +89,6 @@ function progress(run?: ProjectRun) {
   return rows
 }
 
-const forMe = /\b(tell me|for me|remind me|notify me|every (day|morning|week)|daily|weekly|my inbox|my emails?)\b/i
-
 const h1 = 'max-w-[15ch] text-[56px] leading-[1.04] tracking-[-0.02em] group-data-open/shell:text-[46px] @min-[1700px]/app:text-[66px] group-data-open/shell:@min-[1700px]/app:text-[54px] font-bold text-balance'
 const lead = 'mt-4 max-w-[52ch] text-[19px] leading-[1.55] text-hero-ink-2 @min-[1700px]/app:text-[21px] text-pretty'
 const row = 'mt-1 flex flex-wrap items-center gap-x-4 gap-y-3'
@@ -160,15 +158,8 @@ export function NewProjectScreen() {
   const navigate = useNavigate()
   const needsAi = /Choose your AI/.test(run?.error ?? '')
   const empty = st === 'empty'
-  const [touched, setTouched] = useState(false)
-  const usable = uses.audience === 'others' && uses.surfaces.includes('screens') && uses.devices.length > 0
+  const usable = uses.devices.length > 0
   const ready = idea.trim().length >= 8 && !taken && usable
-
-  useEffect(() => {
-    if (touched) return
-    const guess = forMe.test(idea) ? 'me' : 'others'
-    if (guess !== uses.audience) setUses({ ...uses, audience: guess })
-  }, [idea, touched])
 
   useEffect(() => {
     if (st === 'error' && !idea.trim()) setIdea(example)
@@ -253,7 +244,7 @@ export function NewProjectScreen() {
               </div>
             </div>
           ) : (
-            <NewProjectWizard idea={idea} setIdea={setIdea} uses={uses} setUses={setUses} touch={() => setTouched(true)} taken={taken} ready={ready} go={go} />
+            <NewProjectForm idea={idea} setIdea={setIdea} uses={uses} setUses={setUses} taken={taken} ready={ready} go={go} />
           )}
         </div>
         <div className="relative min-h-55 group-data-open/shell:min-h-0" aria-hidden="true">
