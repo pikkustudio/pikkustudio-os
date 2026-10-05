@@ -22,7 +22,7 @@ export const resetStudio = pikkuSessionlessFunc({
     await studioProjects.settle()
     const home = studioHome()
     const entries = await readdir(home).catch(() => [] as string[])
-    await Promise.all(entries.filter((name) => !name.startsWith('vault')).map((name) => rm(join(home, name), { recursive: true, force: true })))
+    await Promise.all(entries.filter((name) => !name.startsWith('vault') && !name.startsWith('studio.db')).map((name) => rm(join(home, name), { recursive: true, force: true })))
     studioHooks.changed()
     return studioSettings.read()
   },
