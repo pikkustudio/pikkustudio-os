@@ -92,7 +92,7 @@ export const usePikkuChat = (projectKey: string) => {
           else if (e.type === 'CUSTOM' && e.name === 'pikku:approval-request') {
             const v = e.value as { toolCallId: string; toolName: string; runId: string; args: Record<string, unknown> }
             setItems((x) => [...x, { id: `c${v.toolCallId}`, kind: 'card', toolCallId: v.toolCallId, runId: v.runId, state: 'ask', ...cardFor(v) }])
-          } else if (e.type === 'RUN_ERROR') push({ kind: 'pikku', text: 'Something got in the way. Please try again.' })
+          } else if (e.type === 'RUN_ERROR') push({ kind: 'pikku', text: /Choose an AI/.test(String(e.message)) ? 'I cannot chat yet. Your subscription works for building, but chatting needs an AI with its own key. Open Choose an AI, add one, then ask me again.' : 'Something got in the way. Please try again.' })
         }
       } catch {
         push({ kind: 'pikku', text: 'I could not reach Pikku just now. Please try again.' })

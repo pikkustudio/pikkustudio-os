@@ -78,6 +78,11 @@ export class StudioAi {
     return JSON.parse(await readFile(this.keysPath, 'utf8'))
   }
 
+  usesFabric(): boolean {
+    if (!existsSync(this.choicePath)) return false
+    return (JSON.parse(readFileSync(this.choicePath, 'utf8')).choice as AiChoice | null)?.kind === 'fabric'
+  }
+
   chatConfig(): { baseUrl: string; apiKey: string; model: string; provider: string } | null {
     if (!existsSync(this.choicePath)) return null
     const choice = JSON.parse(readFileSync(this.choicePath, 'utf8')).choice as AiChoice | null
