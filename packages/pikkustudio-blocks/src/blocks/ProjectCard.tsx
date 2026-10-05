@@ -32,7 +32,7 @@ export function ProjectCard({ item, onRestore }: { item: Project; onRestore: () 
   const chip = chips()[item.state]
   const Icon = chip.icon
   return (
-    <article className="flex flex-col overflow-hidden rounded-card border border-border bg-card shadow-card" aria-label={item.name}>
+    <article data-testid={`project_card__${item.id}`} className="flex flex-col overflow-hidden rounded-card border border-border bg-card shadow-card" aria-label={item.name}>
       <div className="aspect-[2/1] overflow-hidden border-b border-border bg-secondary">
         <ProjectThumb look={item.look} label={item.name} />
       </div>
