@@ -1,7 +1,7 @@
 import { Link, Outlet, useLocation, useNavigate, useSearch } from '@tanstack/react-router'
 import { useEffect, useState, type ComponentType, type ReactNode } from 'react'
 import { m } from '@/i18n/messages'
-import { useProjectKey, useProjectName } from '../lib/project'
+import { useProjectKey, useProjectName, useProjectSlug } from '../lib/project'
 import { useAddonNav } from '../lib/addon-nav'
 import { usePikkuChat } from '../lib/chat'
 import { useProjectQuery } from '../lib/projectRpc'
@@ -102,12 +102,13 @@ function Note({
 
 export function ShellLayout() {
   const projectName = useProjectName()
+  const projectSlug = useProjectSlug()
   const addonNav = useAddonNav()
   const navigate = useNavigate()
   const q = useSearch({ strict: false }) as { view?: View; look?: 'light' | 'dark'; panel?: PanelId; show?: 'done'; project?: string }
   const path = useLocation({ select: (l) => l.pathname })
   const project = useLocation({ select: (l) => (l.search as { project?: string }).project })
-  const needsProject = !project && !/\/(projects|secrets|studio-metrics)$/.test(path)
+  const needsProject = !project && !/\/(projects|secrets|studio-metrics|new-project|sign-in|your-name|choose-ai)$/.test(path)
   useEffect(() => {
     if (needsProject) navigate({ to: '/projects', search: ((prev: object) => prev) as never, replace: true })
   }, [needsProject])
@@ -250,7 +251,7 @@ export function ShellLayout() {
                   </Link>
                 ))}
               </div>
-            ) : /\/studio-metrics$/.test(path) ? null : (
+            ) : /\/studio-metrics$/.test(path) || !projectSlug ? null : (
             <div className="flex flex-col gap-0.5 px-1">
               <div className="mb-1.5 px-3 text-[13px] font-semibold text-muted-foreground">{projectName}</div>
               <Link {...keep} to={'/explore' as never} className={navItem}>
