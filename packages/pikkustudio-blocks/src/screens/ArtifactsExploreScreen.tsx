@@ -1,18 +1,18 @@
 import { useContext, useEffect, useState } from 'react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
-import { Check, ChevronLeft, ChevronRight, SlidersHorizontal } from 'lucide-react'
+import { Check, ChevronLeft, ChevronRight, Shuffle, SlidersHorizontal, Sparkles } from 'lucide-react'
 import { Button } from '../ui/button'
 import { PreviewBar } from '../blocks/PreviewBar'
 import { EmptyState } from '../blocks/EmptyState'
 import { CardsSkeleton, QueryState } from '../blocks/QueryState'
-import { ExploreDirection, ExploreDirections, chooseMessage } from '../blocks/ExploreDirections'
+import { ExploreDirection, ExploreDirections, chooseMessage, moreIdeasMessage } from '../blocks/ExploreDirections'
 import { useProjectKey } from '../lib/project'
 import { useProjectQuery } from '../lib/projectRpc'
 import { ShellCtx } from '../lib/shell'
 import type { Artifact } from '../types/artifacts'
 import type { Device } from '../types/designTypes'
 
-function Directions({ directions }: { directions: Artifact[] }) {
+function Directions({ directions, exploration }: { directions: Artifact[]; exploration: string }) {
   const q = useSearch({ strict: false }) as { screen?: 'tablet' | 'phone' }
   const navigate = useNavigate()
   const { say } = useContext(ShellCtx)
@@ -51,7 +51,16 @@ function Directions({ directions }: { directions: Artifact[] }) {
         onTool={() => {}}
         onReload={() => setReloadKey((k) => k + 1)}
         actions={
-          all ? null : (
+          all ? (
+            <>
+              <Button variant="bordered" size="compact" type="button" onClick={() => say(moreIdeasMessage('controlled', exploration))}>
+                <Sparkles /> More like these
+              </Button>
+              <Button variant="bordered" size="compact" type="button" onClick={() => say(moreIdeasMessage('extreme', exploration))}>
+                <Shuffle /> Something different
+              </Button>
+            </>
+          ) : (
             <>
               <Button variant="bordered" size="compact" type="button" aria-label="Previous idea" onClick={() => step(-1)}>
                 <ChevronLeft />
@@ -74,6 +83,34 @@ function Directions({ directions }: { directions: Artifact[] }) {
   )
 }
 
+const latest = (list: Artifact[]) => {
+  const groups = new Map<string, Artifact[]>()
+  for (const a of list) groups.set(a.exploration ?? 'first', [...(groups.get(a.exploration ?? 'first') ?? []), a])
+  return [...groups.entries()].sort((a, b) => Math.max(...b[1].map((x) => x.at)) - Math.max(...a[1].map((x) => x.at)))
+}
+
+function Explorations({ designs }: { designs: Artifact[] }) {
+  const rounds = latest(designs)
+  const [picked, setPicked] = useState<string>()
+  const [id, items] = rounds.find(([k]) => k === picked) ?? rounds[0]!
+  return (
+    <div className="flex h-full flex-col gap-3">
+      {rounds.length > 1 ? (
+        <div className="flex flex-wrap gap-2">
+          {rounds.map(([k, list], i) => (
+            <Button key={k} variant={k === id ? 'default' : 'bordered'} size="compact" type="button" onClick={() => setPicked(k)}>
+              {i === 0 ? 'Latest' : `Round ${rounds.length - i}`} · {list[0]?.mode === 'controlled' ? 'similar' : 'different'}
+            </Button>
+          ))}
+        </div>
+      ) : null}
+      <div className="min-h-0 flex-1">
+        <Directions key={id} exploration={id} directions={items.sort((a, b) => a.id.localeCompare(b.id))} />
+      </div>
+    </div>
+  )
+}
+
 export function ArtifactsExploreScreen() {
   const key = useProjectKey()
   const artifacts = useProjectQuery<{ artifacts: Artifact[] }>(key, 'console:listArtifacts', null, { refetchInterval: 4000 })
@@ -87,7 +124,7 @@ export function ArtifactsExploreScreen() {
         )
       }
     >
-      {(data) => <Directions directions={data.artifacts.filter((a) => a.kind === 'Design').sort((a, b) => a.id.localeCompare(b.id))} />}
+      {(data) => <Explorations designs={data.artifacts.filter((a) => a.kind === 'Design')} />}
     </QueryState>
   )
 }

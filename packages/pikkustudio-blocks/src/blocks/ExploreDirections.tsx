@@ -26,6 +26,11 @@ function Shot({ d, onOpen }: { d: Artifact; onOpen: (id: string) => void }) {
   )
 }
 
+export const moreIdeasMessage = (mode: 'controlled' | 'extreme', exploration: string) =>
+  mode === 'controlled'
+    ? `Explore a few more options as a new exploration, staying close to the current direction. Use Tailwind, and the project's design guide if it has one, and vary the details. Write each to artifacts/<id> with artifact.json including "exploration":"<a new short id>","mode":"controlled", and add them one at a time. Earlier exploration: ${exploration}.`
+    : `Explore a few completely different directions as a new exploration, ignoring the design system. Self-contained HTML with inline CSS and no scripts. Write each to artifacts/<id> with artifact.json including "exploration":"<a new short id>","mode":"extreme", and add them one at a time. Earlier exploration: ${exploration}.`
+
 export const chooseMessage = (title: string) => `Use the direction "${title}" and build the prototype app from it, as its own app next to the real app.`
 
 export function ExploreDirections({ directions, onOpen }: { directions: Artifact[]; onOpen: (id: string) => void }) {

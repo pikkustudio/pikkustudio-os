@@ -4,6 +4,8 @@ export type Artifact = {
   title: string
   summary: string
   device?: 'computer' | 'phone'
+  exploration?: string
+  mode?: 'extreme' | 'controlled'
   at: number
   html?: string
   text?: string
