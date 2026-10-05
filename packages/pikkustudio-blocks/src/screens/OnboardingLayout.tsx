@@ -15,7 +15,7 @@ import { ArrowRight, Bell, Check, CircleAlert, FolderOpen, Laptop, MessageCircle
 export type OnbState = 'empty' | 'normal' | 'loading' | 'error'
 export type PanelId = 'chat' | 'updates' | 'workspace' | 'diff' | 'why' | 'local' | 'accounts' | 'keys' | 'provider' | 'litellm' | 'fabric'
 
-export type Uses = { surfaces: string[]; devices: string[] }
+export type Uses = { audience: 'me' | 'others'; surfaces: string[]; devices: string[] }
 
 export const OnbCtx = createContext<{
   st: OnbState
@@ -165,7 +165,7 @@ export function OnboardingLayout() {
     setSt('normal')
   }
   const [idea, setIdea] = useState('')
-  const [uses, setUses] = useState<Uses>({ surfaces: ['screens'], devices: ['browser'] })
+  const [uses, setUses] = useState<Uses>({ audience: 'others', surfaces: ['screens'], devices: ['browser'] })
   const { taken, name: checked } = useNameTaken(idea)
   const fillExample = () => {
     setIdea(EXAMPLE)

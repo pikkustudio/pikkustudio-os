@@ -102,11 +102,11 @@ const DEVICES = [
 
 const toggle = (list: string[], id: string) => (list.includes(id) ? list.filter((x) => x !== id) : [...list, id])
 
-function Choice({ on, onClick, name, text, soon }: { on: boolean; onClick: () => void; name: string; text: string; soon?: boolean }) {
+function Choice({ on, onClick, name, text, soon, role = 'checkbox' }: { on: boolean; onClick: () => void; name: string; text: string; soon?: boolean; role?: 'checkbox' | 'radio' }) {
   return (
     <button
       type="button"
-      role="checkbox"
+      role={role}
       aria-checked={on}
       onClick={onClick}
       className={`flex items-start gap-3 rounded-card border-[1.5px] px-4 py-3 text-left transition-colors ${on ? 'border-hero-ink bg-hero-ink/10' : 'border-hero-ink/30'}`}
@@ -120,6 +120,18 @@ function Choice({ on, onClick, name, text, soon }: { on: boolean; onClick: () =>
         <span className="block text-[14px] text-hero-ink-2">{text}</span>
       </span>
     </button>
+  )
+}
+
+const forMe = /\b(tell me|for me|remind me|notify me|every (day|morning|week)|daily|weekly|my inbox|my emails?)\b/i
+
+function Audience({ uses, setUses }: { uses: Uses; setUses: (v: Uses) => void }) {
+  return (
+    <fieldset className="flex flex-col gap-2.5" role="radiogroup">
+      <legend className="mb-1 text-[17px] font-bold">Is this for you, or for other people?</legend>
+      <Choice role="radio" on={uses.audience === 'others'} onClick={() => setUses({ ...uses, audience: 'others' })} name="For other people" text="For example: a booking page for my baking classes." />
+      <Choice role="radio" on={uses.audience === 'me'} onClick={() => setUses({ ...uses, audience: 'me' })} name="For me, in my Studio" text="For example: a list of the 5 most critical emails to answer, every day." soon />
+    </fieldset>
   )
 }
 
@@ -212,8 +224,15 @@ export function NewProjectScreen() {
   const navigate = useNavigate()
   const needsAi = /Choose your AI/.test(run?.error ?? '')
   const empty = st === 'empty'
-  const usable = uses.surfaces.includes('screens') && uses.devices.length > 0
+  const [touched, setTouched] = useState(false)
+  const usable = uses.audience === 'others' && uses.surfaces.includes('screens') && uses.devices.length > 0
   const ready = idea.trim().length >= 8 && !taken && usable
+
+  useEffect(() => {
+    if (touched) return
+    const guess = forMe.test(idea) ? 'me' : 'others'
+    if (guess !== uses.audience) setUses({ ...uses, audience: guess })
+  }, [idea, touched])
 
   useEffect(() => {
     if (st === 'error' && !idea.trim()) setIdea(example)
@@ -316,13 +335,14 @@ export function NewProjectScreen() {
                 onChange={(e) => setIdea(e.target.value)}
                 placeholder="For example: a booking page for my baking classes, where people can pick a day and pay."
               />
-              <HowUsed uses={uses} setUses={setUses} />
+              <Audience uses={uses} setUses={(v) => { setTouched(true); setUses(v) }} />
+              {uses.audience === 'others' ? <HowUsed uses={uses} setUses={setUses} /> : null}
               <div className={row}>
                 <Button variant="hero" size="pageLg" type="button" disabled={!ready} onClick={go}>
                   <span>Start building</span>
                   <ArrowRight className="size-5.5" />
                 </Button>
-                <span className="text-[15px] text-hero-ink-2">{taken ? `You already have a project called ${taken}. Change the first few words.` : !usable ? 'For now I can only start with a website or app. Tick that, and choose where it will be used.' : ready ? 'Ready when you are. Nothing goes online yet.' : 'Type a sentence to begin.'}</span>
+                <span className="text-[15px] text-hero-ink-2">{taken ? `You already have a project called ${taken}. Change the first few words.` : uses.audience === 'me' ? 'Things just for you are coming soon. For now I can build something for other people.' : !usable ? 'For now I can only start with a website or app. Tick that, and choose where it will be used.' : ready ? 'Ready when you are. Nothing goes online yet.' : 'Type a sentence to begin.'}</span>
               </div>
             </div>
           )}
