@@ -9,6 +9,7 @@ export const projectRewrite: LocationRewrite = {
   input: ({ url }) => {
     const [owner, second, ...more] = url.pathname.split('/').filter(Boolean)
     if (!owner || OUTSIDE.has(owner) || PAGES.has(owner)) return url
+    if (owner === 'app' && second === 'p') return url
     const owned = second !== undefined && !PAGES.has(second)
     const rest = owned ? more : second === undefined ? [] : [second, ...more]
     url.searchParams.set('project', JSON.stringify(owned ? `${owner}/${second}` : owner))
