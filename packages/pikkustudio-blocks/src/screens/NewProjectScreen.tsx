@@ -154,6 +154,8 @@ export function NewProjectScreen() {
   const hero = useRef<HTMLElement>(null)
   const loading = st === 'loading'
   const error = st === 'error'
+  const navigate = useNavigate()
+  const needsAi = /Choose your AI/.test(run?.error ?? '')
   const empty = st === 'empty'
   const ready = idea.trim().length >= 8 && !taken
 
@@ -197,8 +199,12 @@ export function NewProjectScreen() {
             >
               <CircleAlert className="size-7 text-destructive-foreground" />
               <div>
-                <b className="mb-0.5 block text-[17px]">I could not finish setting that up.</b>
-                <p className="text-[15px] text-ink-2 text-pretty">I tried to fix it myself and could not. Your words are still here, and trying again picks up where I stopped.</p>
+                <b className="mb-0.5 block text-[17px]">{needsAi ? 'I need an AI to explore directions.' : 'I could not finish setting that up.'}</b>
+                <p className="text-[15px] text-ink-2 text-pretty">
+                  {needsAi
+                    ? 'Your project is made, but no AI is chosen yet. Choose one, then try again. Your words are still here.'
+                    : 'I tried to fix it myself and could not. Your words are still here, and trying again picks up where I stopped.'}
+                </p>
                 {run?.error ? (
                   <details className="mt-2 text-[14px] text-ink-2">
                     <summary className="cursor-pointer font-semibold">What went wrong</summary>
@@ -207,6 +213,11 @@ export function NewProjectScreen() {
                 ) : null}
               </div>
               <div className="col-span-full flex flex-wrap gap-2">
+                {needsAi ? (
+                  <Button variant="default" size="compact" type="button" onClick={() => navigate({ to: '/choose-ai', search: ((prev: object) => ({ ...prev, run: undefined })) as never })}>
+                    Choose your AI
+                  </Button>
+                ) : null}
                 <Button variant="bordered" size="compact" type="button" onClick={retry}>
                   Try again
                 </Button>
