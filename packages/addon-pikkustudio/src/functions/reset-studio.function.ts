@@ -17,11 +17,12 @@ export const resetStudio = pikkuSessionlessFunc({
   output: ResetStudioOutput,
   func: async ({ studioProjects, studioSettings, studioHooks, auth }, _input, { http }) => {
     await endSession(auth, http)
+    for (const { key } of await studioProjects.list()) await studioProjects.remove(key)
     studioProjects.closeAll()
     await studioProjects.settle()
     const home = studioHome()
     const entries = await readdir(home).catch(() => [] as string[])
-    await Promise.all(entries.filter((name) => name !== 'vault.sock').map((name) => rm(join(home, name), { recursive: true, force: true })))
+    await Promise.all(entries.filter((name) => !name.startsWith('vault')).map((name) => rm(join(home, name), { recursive: true, force: true })))
     studioHooks.changed()
     return studioSettings.read()
   },
