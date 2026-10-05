@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { pikkuSessionlessFunc } from '#pikku/addon/function'
 import { listArtifacts } from '../services/artifacts.js'
 
+const DIRECTIONS = 4
 const DRAFT_TIMEOUT_MS = 15 * 60_000
 const pause = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -22,12 +23,16 @@ export const builderPrompt = pikkuSessionlessFunc({
     const started = Date.now()
     let idle = 0
     while (Date.now() - started < DRAFT_TIMEOUT_MS) {
-      if ((await listArtifacts(cwd)).length) return state
+      const made = (await listArtifacts(cwd)).length
+      if (made >= DIRECTIONS) return state
       const now = await studioBuilder.state(key)
       const failed = now.items.slice(-3).find((item) => item.kind === 'error')
       if (failed) throw new Error(failed.text.replace(/^Pikku could not take the request: /, ''))
       idle = now.busy ? 0 : idle + 1
-      if (idle >= 6) throw new Error('The builder stopped without making a first draft.')
+      if (idle >= 6) {
+        if (made) return state
+        throw new Error('The builder stopped without making a first draft.')
+      }
       await pause(5000)
     }
     throw new Error('The builder took too long to make a first draft.')

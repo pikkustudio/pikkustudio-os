@@ -143,7 +143,7 @@ export function OnboardingLayout() {
           await new Promise((r) => setTimeout(r, 2000))
         }
       }
-      first().then((id) => (id ? land('/artifacts/$id', { id }) : land('/artifacts')))
+      first().then(() => land('/artifacts'))
     })
   }, [done])
   const go = () => {

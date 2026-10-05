@@ -38,6 +38,7 @@
     "@pikku/builder": "workspace:*",
     "@pikku/cli": "^0.12.179",
     "@pikku/kysely": "^0.13.34",
+    "@tailwindcss/node": "^4.1.0",
     "vite": "^7.0.0"
   },
   "devDependencies": {

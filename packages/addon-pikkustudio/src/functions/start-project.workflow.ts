@@ -34,7 +34,7 @@ export const startProject = pikkuWorkflowFunc({
       message: data.idea,
       failOnError: true,
       context:
-        'Before building anything, make a first design of this for the owner to look at. Do not read knowledge files or explore the project first; the project is new and has nothing about this yet. Create the files straight away. Write it to artifacts/first-draft/index.html as one self-contained page (inline CSS, no scripts, no external files), and describe it in artifacts/first-draft/artifact.json as {"kind":"Design","title":"...","summary":"..."} with plain words an owner would use. Do not change the app yet.',
+        'Before building anything, explore four different design directions for this for the owner to compare. Do not read knowledge files or explore the project first; the project is new and has nothing about this yet. Create the files straight away. Make each direction look clearly different from the others in layout, colour and tone, not four variations of one idea. For each, write artifacts/direction-1 to artifacts/direction-4, each with index.html as one self-contained page. Tailwind is installed: style it only with Tailwind utility classes (no style, script or link tags, no external files; the CSS is generated for you) and artifact.json as {"kind":"Design","title":"a short name for the direction","summary":"one plain sentence an owner would use about what makes it different"}. Write them one after another so the first appears early. Do not change the app yet.',
     }, { retries: 0 })
     return { key }
   },
