@@ -1,6 +1,5 @@
 import { readdir, readFile, stat } from 'node:fs/promises'
 import { join } from 'node:path'
-import { compile } from '@tailwindcss/node'
 
 export type ProjectArtifact = {
   id: string
@@ -14,19 +13,6 @@ export type ProjectArtifact = {
 }
 
 const kinds = ['Design', 'Page', 'Document'] as const
-
-const compiled = new Map<string, string>()
-
-const withTailwind = async (html: string): Promise<string> => {
-  if (/<style[\s>]/i.test(html) && !/class=/.test(html)) return html
-  const cached = compiled.get(html)
-  if (cached) return cached
-  const candidates = [...new Set(html.match(/[^\s"'`<>=]+/g) ?? [])]
-  const css = await compile('@import "tailwindcss";', { base: process.cwd(), onDependency: () => {} }).then((c) => c.build(candidates)).catch(() => '')
-  const out = css ? (/<\/head>/i.test(html) ? html.replace(/<\/head>/i, `<style>${css}</style></head>`) : `<style>${css}</style>${html}`) : html
-  compiled.set(html, out)
-  return out
-}
 
 const read = (path: string) => readFile(path, 'utf8').catch(() => undefined)
 
@@ -54,7 +40,7 @@ const load = async (root: string, id: string): Promise<ProjectArtifact | undefin
     summary: parsed.summary ?? '',
     ...(parsed.device ? { device: parsed.device } : {}),
     at: info.mtimeMs,
-    ...(html !== undefined ? { html: await withTailwind(html) } : {}),
+    ...(html !== undefined ? { html } : {}),
     ...(text !== undefined ? { text } : {}),
   }
 }
