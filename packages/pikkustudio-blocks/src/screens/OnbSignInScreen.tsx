@@ -105,7 +105,7 @@ export function OnbSignInScreen() {
         </div>
       </section>
 
-      {st !== 'error' && Offer ? <Offer loading={loading} open={open} /> : null}
+      {st !== 'error' && Offer ? <Offer loading={loading} open={open} done={go} /> : null}
       <p className="text-[13px] text-muted-foreground text-pretty">We never read what you build on this computer.</p>
     </div>
   )
