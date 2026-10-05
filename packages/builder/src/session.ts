@@ -132,7 +132,7 @@ export class BuilderSession {
     return state
   }
 
-  private async send(key: string, sent: string, session?: string) {
+  private async send(key: string, sent: string, session?: string, explore = false) {
     const state = await this.state(key)
     const running = this.turns.get(key)
     if (running) {
@@ -145,7 +145,7 @@ export class BuilderSession {
     const { cwd, ai, env = {}, launch = spawnPi } = await this.resolve(key)
     const skills = await writeSkills(this.home)
     const shims = await writePikkuShim(this.home)
-    const child = launch(process.execPath, [resolvePi(), ...piArgs({ ai, skills, mode: 'rpc', session: session ?? state.session })], {
+    const child = launch(process.execPath, [resolvePi(), ...piArgs({ ai, skills, mode: 'rpc', session: session ?? state.session, explore })], {
       cwd,
       env: { ...process.env, ...env, ...piEnv(ai), PATH: `${shims}:${env.PATH ?? process.env.PATH ?? ''}` },
     })
@@ -167,10 +167,27 @@ export class BuilderSession {
       const drive = this.drive(key)
       drive.quiet = turn.tools === 0 ? drive.quiet + 1 : 0
       void this.save(key)
-      if (!code && drive.gen === gen) void this.advance(key, gen)
+      if (!code && !explore && drive.gen === gen) void this.advance(key, gen)
     })
     child.stdin?.write(`${JSON.stringify({ type: 'prompt', id: 'r1', message: sent })}\n`)
     await this.save(key)
+  }
+
+  async explore(key: string, message: string): Promise<BuilderState> {
+    const text = message.trim()
+    if (!text) throw new Error('Say what you want explored first')
+    const state = await this.state(key)
+    if (state.busy || this.turns.has(key)) throw new Error('The builder is already working')
+    state.items.push({ kind: 'user', text, at: Date.now() })
+    state.busy = true
+    try {
+      await this.send(key, text, `pikku-explore-${key}-${Date.now()}`, true)
+    } catch (error) {
+      state.busy = false
+      this.push(key, `Pikku could not take the request: ${error instanceof Error ? error.message : String(error)}`)
+      await this.save(key)
+    }
+    return state
   }
 
   async heal(key: string, problem: string, timeoutMs = 5 * 60_000): Promise<{ ok: boolean; summary: string }> {

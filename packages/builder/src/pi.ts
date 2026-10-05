@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from 'node:fs'
+import { homedir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -30,10 +31,23 @@ export const SYSTEM_PROMPT = [
 
 const PROVIDERS: Record<string, string> = { gemini: 'google' }
 
-export function piArgs(options: { ai?: BuilderAi; skills: string; mode?: 'rpc'; session?: string }): string[] {
+export const EXPLORE_PROMPT = [
+  'You are exploring design directions for an app the owner has described.',
+  'Use the impeccable skill for every design decision. Do not read the project or any other files first.',
+  'Write only the files you are asked to write, and do not change the app.',
+].join(' ')
+
+export const impeccableSkill = () => {
+  const found = [process.env.PIKKU_IMPECCABLE_SKILL, join(homedir(), '.claude', 'skills', 'impeccable')].find((path) => path && existsSync(join(path, 'SKILL.md')))
+  if (!found) throw new Error('The design skill is not installed on this computer')
+  return found
+}
+
+export function piArgs(options: { ai?: BuilderAi; skills: string; mode?: 'rpc'; session?: string; explore?: boolean }): string[] {
   const args: string[] = []
   if (options.mode) args.push('--mode', options.mode)
-  args.push('--approve', '--skill', options.skills, '--append-system-prompt', SYSTEM_PROMPT)
+  if (options.explore) args.push('--approve', '--no-skills', '--no-context-files', '--skill', impeccableSkill(), '--append-system-prompt', EXPLORE_PROMPT)
+  else args.push('--approve', '--skill', options.skills, '--append-system-prompt', SYSTEM_PROMPT)
   for (const path of extensionPaths()) args.push('-e', path)
   if (options.session) args.push('--session-id', options.session)
   if (options.ai?.proxy) args.push('--provider', 'pikku-proxy')
