@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { pikkuSessionlessFunc } from '#pikku/addon/function'
 import { toWebRequest } from '@pikku/core/http'
+import { getArtifact, listArtifacts } from '../services/artifacts.js'
 
 const STUDIO_HEADER = 'x-pikku-studio'
 
@@ -17,6 +18,15 @@ export const projectProxy = pikkuSessionlessFunc({
     const incoming = toWebRequest(http!.request!, `http://127.0.0.1:${running.port}`)
     const url = new URL(incoming.url)
     url.pathname = url.pathname.slice(`/p/${key}`.length) || '/'
+    const own = incoming.method === 'POST' ? url.pathname.match(/^\/rpc\/console:(listArtifacts|getArtifact|listStudioChanges)$/)?.[1] : undefined
+    if (own) {
+      const { cwd } = await studioProjects.builderLaunch(key)
+      if (own === 'listStudioChanges') return Response.json({ changes: [] })
+      if (own === 'listArtifacts') return Response.json({ artifacts: await listArtifacts(cwd) })
+      const { data } = (await incoming.json().catch(() => ({}))) as { data?: { id?: string } }
+      const id = data?.id
+      return Response.json({ artifact: (id ? await getArtifact(cwd, id) : undefined) ?? null })
+    }
     const headers = new Headers(incoming.headers)
     headers.set('host', `127.0.0.1:${running.port}`)
     headers.set(STUDIO_HEADER, running.token)
