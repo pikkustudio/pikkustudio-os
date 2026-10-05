@@ -10,7 +10,7 @@ export const LFS_TEXT_LIMIT = 500 * 1024
 const SNIFF = 8000
 const BATCH = 200
 
-const BINARY_EXTENSIONS = new Set([
+export const BINARY_EXTENSIONS = new Set([
   '.png', '.jpg', '.jpeg', '.gif', '.webp', '.avif', '.bmp', '.ico', '.tiff', '.psd', '.heic',
   '.mp4', '.mov', '.webm', '.avi', '.mkv', '.mp3', '.wav', '.flac', '.ogg', '.m4a',
   '.pdf', '.zip', '.gz', '.tgz', '.tar', '.7z', '.rar', '.dmg', '.iso',

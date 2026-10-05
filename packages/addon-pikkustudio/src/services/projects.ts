@@ -10,6 +10,7 @@ import { randomBytes, randomUUID } from 'node:crypto'
 import { ConflictError } from '@pikku/core/errors'
 import { DEVELOP, MAIN, addWorktree, listWorktrees, layoutRoot, sessionKey, splitSessionKey, cloneLayout, commitPaths, createLayout, ensureWorktree, keepChanges, mainEnv, keepStatus, listVersions, listThemes, type ProjectTheme, type VersionCommit, worktreeConfinement, type KeepResult, type KeepStatus, type StudioWorktree } from './worktree.js'
 import { canConfine, confinedSpawn, type Confinement } from './confine.js'
+import { diskUsage } from './disk.js'
 import { previewViteConfig } from './vite-preview.js'
 
 const execFileAsync = promisify(execFile)
@@ -724,6 +725,10 @@ export class StudioProjectsService {
     })
     const newest = files.sort((a, b) => b.at - a.at)[0]?.run
     return { dir, files: files.filter((f) => f.run === newest) }
+  }
+
+  async disk(key: string) {
+    return diskUsage((await this.entry(key)).path)
   }
 
   async runDirs(): Promise<{ key: string; dir: string }[]> {

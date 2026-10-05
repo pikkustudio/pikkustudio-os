@@ -7,7 +7,6 @@ import { NextCard } from '../blocks/NextCard'
 import { Section } from '../blocks/Section'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { useProjectKey } from '../lib/project'
-import { sampleDisk } from './performance-sample'
 import { Art, Bars, Figure, busyWord, kept, memory, ranges, readMetrics, useRange } from './metrics-shared'
 
 
@@ -59,6 +58,8 @@ export function PerformanceScreen() {
   const process = usePikkuQuery('studio:projectMetrics', { key, kind: 'process', since: from, limit: 1000 }, { enabled: !!key, placeholderData: kept } as never)
   const samples = useMemo(() => [...readMetrics(process)].sort((a, b) => a.at - b.at), [process.data])
 
+  const disk = usePikkuQuery('studio:projectDisk', { key }, { enabled: !!key, staleTime: 60_000, refetchOnWindowFocus: false } as never)
+  const space = (disk.data as { packagesMb: number; codeMb: number; mediaMb: number; otherMb: number; freeMb: number } | undefined) ?? null
   const latest = samples[samples.length - 1]
   const busy = samples.filter((s) => s.cpuPct !== null).map((s) => [s.at, s.cpuPct!] as [number, number])
   const mem = samples.filter((s) => s.memMb !== null).map((s) => [s.at, s.memMb!] as [number, number])
@@ -67,10 +68,10 @@ export function PerformanceScreen() {
   const hot = latest?.cpuPct != null && latest.cpuPct >= 60
   const heavy = latest?.memMb != null && latest.memMb >= 1536
   const diskParts = [
-    { label: 'Installed packages', note: 'Tools your app borrows from other people. Safe to reinstall.', mb: sampleDisk.packagesMb, fill: 'fill-w3', dot: 'bg-w3' },
-    { label: 'Your code', note: 'What you and the assistant have written.', mb: sampleDisk.codeMb, fill: 'fill-coral', dot: 'bg-coral' },
-    { label: 'Pictures and files', note: 'Images, videos, fonts and other things that are not code.', mb: sampleDisk.mediaMb, fill: 'fill-w2', dot: 'bg-w2' },
-    { label: 'History and build files', note: 'Saved versions and things made while building.', mb: sampleDisk.otherMb, fill: 'fill-w5', dot: 'bg-w5' },
+    { label: 'Installed packages', note: 'Tools your app borrows from other people. Safe to reinstall.', mb: space?.packagesMb ?? 0, fill: 'fill-w3', dot: 'bg-w3' },
+    { label: 'Your code', note: 'What you and the assistant have written.', mb: space?.codeMb ?? 0, fill: 'fill-coral', dot: 'bg-coral' },
+    { label: 'Pictures and files', note: 'Images, videos, fonts and other things that are not code.', mb: space?.mediaMb ?? 0, fill: 'fill-w2', dot: 'bg-w2' },
+    { label: 'History and build files', note: 'Saved versions and things made while building.', mb: space?.otherMb ?? 0, fill: 'fill-w5', dot: 'bg-w5' },
   ]
   const diskUsed = diskParts.reduce((n, p) => n + p.mb, 0)
   const verdict = hot ? 'Working hard' : heavy ? 'Using a lot of memory' : 'Running comfortably'
@@ -98,7 +99,7 @@ export function PerformanceScreen() {
             <div className="mt-2 grid grid-cols-3 gap-6 border-t border-hero-ink/20 pt-5" data-testid="performance-cards">
               <Figure label="How busy it is" value={latest?.cpuPct != null ? busyWord(latest.cpuPct) : 'No reading yet'} note={latest?.cpuPct != null ? `About ${Math.round(latest.cpuPct)}% of what it can. Busiest: ${Math.round(peakBusy)}%` : 'Waiting for a reading'} />
               <Figure label="Memory in use" value={latest?.memMb != null ? memory(latest.memMb) : 'No reading yet'} note={latest?.memMb != null ? `Most it has used: ${memory(peakMem)}` : 'Waiting for a reading'} />
-              <Figure label="Space used" value={memory(diskUsed)} note={`${memory(sampleDisk.freeMb)} still free on this computer`} />
+              <Figure label="Space used" value={space ? memory(diskUsed) : 'Measuring…'} note={space ? `${memory(space.freeMb)} still free on this computer` : 'This takes a moment'} />
             </div>
           </NextCard>
 
@@ -109,9 +110,9 @@ export function PerformanceScreen() {
             </div>
           </Section>
 
-          <Section title="Where the space goes" sub="What this project takes up on your computer. Sample numbers for now.">
+          <Section title="Where the space goes" sub="What this project takes up on your computer.">
             <div className="rounded-empty border border-border bg-card p-6" data-testid="performance-disk">
-              <DiskPie parts={diskParts} />
+              {space && diskUsed > 0 ? <DiskPie parts={diskParts} /> : <p className="text-px15 text-muted-foreground">{disk.isError ? 'Could not measure this project just now. Try again in a moment.' : 'Measuring your project…'}</p>}
             </div>
           </Section>
         </>
