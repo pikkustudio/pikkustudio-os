@@ -70,7 +70,7 @@ const LABELS: Record<string, string> = {
   'Start it': 'Starting it up',
   'Fix what stopped it starting': 'Fixing what stopped it starting',
   'Start it again': 'Trying to start it again',
-  'Ask for a first draft': 'Sketching your first draft',
+  'Ask for a first draft': 'Exploring some directions',
 }
 const PLAN = ['Make the project', 'Set up its workspace', 'Set up its database', 'Start it', 'Ask for a first draft']
 
@@ -179,7 +179,7 @@ export function NewProjectScreen() {
         <div className="relative z-1 flex flex-col justify-center gap-5 px-13 pt-13 pb-12 @min-[1700px]/app:p-16 group-data-open/shell:@min-[1700px]/app:p-13">
           {loading ? (
             <div>
-              <h1 className={h1}>Sketching your first draft.</h1>
+              <h1 className={h1}>Exploring some directions.</h1>
               <p className={lead}>This usually takes about two minutes. You can look around while you wait, and I will tell you the moment it is ready.</p>
             </div>
           ) : (

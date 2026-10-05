@@ -32,9 +32,10 @@ export const startProject = pikkuWorkflowFunc({
     await workflow.do('Ask for a first draft', 'builderPrompt', {
       key,
       message: data.idea,
+      failOnError: true,
       context:
         'Before building anything, make a first design of this for the owner to look at. Do not read knowledge files or explore the project first; the project is new and has nothing about this yet. Create the files straight away. Write it to artifacts/first-draft/index.html as one self-contained page (inline CSS, no scripts, no external files), and describe it in artifacts/first-draft/artifact.json as {"kind":"Design","title":"...","summary":"..."} with plain words an owner would use. Do not change the app yet.',
-    })
+    }, { retries: 0 })
     return { key }
   },
 })
