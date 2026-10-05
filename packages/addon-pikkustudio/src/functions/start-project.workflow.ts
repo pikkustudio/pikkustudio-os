@@ -1,7 +1,9 @@
 import { z } from 'zod'
 import { pikkuWorkflowFunc } from '#pikku/addon/workflow'
 
-export const StartProjectInput = z.object({ name: z.string(), idea: z.string(), key: z.string().optional() })
+export const Surfaces = z.array(z.enum(['screens', 'automations', 'assistant', 'commands', 'connection']))
+export const Devices = z.array(z.enum(['browser', 'phones']))
+export const StartProjectInput = z.object({ name: z.string(), idea: z.string(), key: z.string().optional(), surfaces: Surfaces.optional(), devices: Devices.optional() })
 export const StartProjectOutput = z.object({ key: z.string() })
 
 export const startProject = pikkuWorkflowFunc({
@@ -11,7 +13,7 @@ export const startProject = pikkuWorkflowFunc({
   func: async (_services, data, { workflow }) => {
     let made: { key: string } | undefined
     if (!data.key) {
-      made = await workflow.do('Make the project', 'createProject', { name: data.name, idea: data.idea })
+      made = await workflow.do('Make the project', 'createProject', { name: data.name, idea: data.idea, surfaces: data.surfaces, devices: data.devices })
     }
     const key = data.key ?? made!.key
     await workflow.do('Set up its workspace', 'prepareProject', { key })
@@ -29,13 +31,19 @@ export const startProject = pikkuWorkflowFunc({
       again = await workflow.do('Start it again', 'startAndWait', { key }, { retries: 0 })
       if (!again.ok) await workflow.do('Give up starting', 'failProject', { problem: again.problem ?? 'It would not start.' }, { retries: 0 })
     }
+    const phones = data.devices?.includes('phones')
+    const where = phones
+      ? data.devices?.includes('browser')
+        ? 'It will be used in a web browser and as an app on iPhone and Android, so judge each direction on both a computer and a phone screen.'
+        : 'It will be used as an app on iPhone and Android, so design each direction for a phone screen first.'
+      : 'It will be used in a web browser.'
     await workflow.do('Ask for a first draft', 'builderPrompt', {
       key,
       message: data.idea,
       failOnError: true,
       explore: true,
       context:
-        'Before building anything, explore four different design directions for this for the owner to compare. Do not read knowledge files or explore the project first; the project is new and has nothing about this yet. Create the files straight away. Make each direction look clearly different from the others in layout, colour and tone, not four variations of one idea. For each, write artifacts/direction-1 to artifacts/direction-4, each with index.html as one self-contained page (inline CSS, no scripts, no external files), with whatever CSS and layout suit the direction. Do not limit yourself to any framework or component library and artifact.json as {"kind":"Design","title":"a short name for the direction","summary":"one plain sentence an owner would use about what makes it different","exploration":"first","mode":"extreme"}. Write them one after another so the first appears early. Do not change the app yet.',
+        `${where} Before building anything, explore four different design directions for this for the owner to compare. Do not read knowledge files or explore the project first; the project is new and has nothing about this yet. Create the files straight away. Make each direction look clearly different from the others in layout, colour and tone, not four variations of one idea. For each, write artifacts/direction-1 to artifacts/direction-4, each with index.html as one self-contained page (inline CSS, no scripts, no external files), with whatever CSS and layout suit the direction. Do not limit yourself to any framework or component library and artifact.json as {"kind":"Design","title":"a short name for the direction","summary":"one plain sentence an owner would use about what makes it different","exploration":"first","mode":"extreme"}. Write them one after another so the first appears early. Do not change the app yet.`,
     }, { retries: 0 })
     return { key }
   },

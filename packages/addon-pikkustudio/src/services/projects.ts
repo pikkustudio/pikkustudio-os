@@ -606,7 +606,7 @@ export class StudioProjectsService {
     return (await this.list()).find((p) => p.key === id)!
   }
 
-  async create({ name, idea }: { name: string; idea?: string }): Promise<StudioProject> {
+  async create({ name, idea, surfaces, devices }: { name: string; idea?: string; surfaces?: string[]; devices?: string[] }): Promise<StudioProject> {
     if (await this.nameTaken(name)) throw new ConflictError(`You already have a project called ${name}`)
     const id = randomUUID().slice(0, 8)
     const root = join(this.projectsDir, id)
@@ -623,7 +623,7 @@ export class StudioProjectsService {
       await mkdir(join(scaffold, '.studio'), { recursive: true })
       await writeFile(
         join(scaffold, '.studio', 'project.json'),
-        JSON.stringify({ name, idea: idea ?? null }, null, 2) + '\n'
+        JSON.stringify({ name, idea: idea ?? null, ...(surfaces ? { surfaces } : {}), ...(devices ? { devices } : {}) }, null, 2) + '\n'
       )
       if (!existsSync(join(scaffold, '.git'))) await run('git', ['init', '-q', '-b', 'main'], scaffold)
       await commitPaths(scaffold, ['.'], 'Start with Pikku Studio')

@@ -15,6 +15,8 @@ import { ArrowRight, Bell, Check, CircleAlert, FolderOpen, Laptop, MessageCircle
 export type OnbState = 'empty' | 'normal' | 'loading' | 'error'
 export type PanelId = 'chat' | 'updates' | 'workspace' | 'diff' | 'why' | 'local' | 'accounts' | 'keys' | 'provider' | 'litellm' | 'fabric'
 
+export type Uses = { surfaces: string[]; devices: string[] }
+
 export const OnbCtx = createContext<{
   st: OnbState
   go: () => void
@@ -23,6 +25,8 @@ export const OnbCtx = createContext<{
   cancel: () => void
   idea: string
   setIdea: (v: string) => void
+  uses: Uses
+  setUses: (v: Uses) => void
   taken?: string
   example: string
   run?: ProjectRun
@@ -121,7 +125,7 @@ export function OnboardingLayout() {
     setSt('loading')
     const name = projectNameFrom(idea)
     start.mutate(
-      { name, idea: idea.trim(), ...(key ? { key } : {}) },
+      { name, idea: idea.trim(), ...(key ? { key } : {}), surfaces: uses.surfaces, ...(uses.surfaces.includes('screens') ? { devices: uses.devices } : {}) },
       { onSuccess: (r: { runId: string }) => set({ run: r.runId }), onError: () => setSt('error') },
     )
   }
@@ -161,6 +165,7 @@ export function OnboardingLayout() {
     setSt('normal')
   }
   const [idea, setIdea] = useState('')
+  const [uses, setUses] = useState<Uses>({ surfaces: ['screens'], devices: ['browser'] })
   const { taken, name: checked } = useNameTaken(idea)
   const fillExample = () => {
     setIdea(EXAMPLE)
@@ -237,7 +242,7 @@ export function OnboardingLayout() {
         : []
 
   return (
-    <OnbCtx.Provider value={{ st: signIn || choose || proj || yourName ? st : 'empty', go, retry, open, cancel, idea, setIdea, taken: taken ? checked : undefined, example: EXAMPLE, run: run.data }}>
+    <OnbCtx.Provider value={{ st: signIn || choose || proj || yourName ? st : 'empty', go, retry, open, cancel, idea, setIdea, uses, setUses, taken: taken ? checked : undefined, example: EXAMPLE, run: run.data }}>
       <div
         className="@container/app fixed inset-0 z-0 overflow-hidden bg-background font-sans text-[16px] leading-[1.5] text-foreground antialiased"
       >

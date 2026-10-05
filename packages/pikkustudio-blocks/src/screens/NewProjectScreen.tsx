@@ -4,7 +4,7 @@ import { Button } from '../ui/button'
 import { Textarea } from '../ui/textarea'
 import { Input } from '../ui/input'
 import { ArrowRight, Check, CircleAlert } from 'lucide-react'
-import { OnbCtx } from './OnboardingLayout'
+import { OnbCtx, type Uses } from './OnboardingLayout'
 import { useImportProject, type ProjectRun } from '../lib/onboarding'
 
 
@@ -88,6 +88,61 @@ function progress(run?: ProjectRun) {
   return rows
 }
 
+const SURFACES = [
+  { id: 'screens', name: 'A website or app people open', text: 'For example: customers book a table.', ready: true },
+  { id: 'automations', name: 'Things that happen on their own', text: 'For example: when an order comes in, email the kitchen.', ready: false },
+  { id: 'assistant', name: 'An assistant people talk to', text: 'For example: ask it about stock levels.', ready: false },
+  { id: 'commands', name: 'Commands in a terminal', text: 'For example: a tool my team runs to export the report.', ready: false },
+  { id: 'connection', name: 'A connection other software can use', text: 'For example: let our accounting tool read our orders.', ready: false },
+]
+const DEVICES = [
+  { id: 'browser', name: 'In a web browser', text: 'On a computer, and it works in a phone’s browser too.' },
+  { id: 'phones', name: 'As an app on iPhone and Android', text: 'Installed from the app stores. This takes noticeably longer to build and publish.' },
+]
+
+const toggle = (list: string[], id: string) => (list.includes(id) ? list.filter((x) => x !== id) : [...list, id])
+
+function Choice({ on, onClick, name, text, soon }: { on: boolean; onClick: () => void; name: string; text: string; soon?: boolean }) {
+  return (
+    <button
+      type="button"
+      role="checkbox"
+      aria-checked={on}
+      onClick={onClick}
+      className={`flex items-start gap-3 rounded-card border-[1.5px] px-4 py-3 text-left transition-colors ${on ? 'border-hero-ink bg-hero-ink/10' : 'border-hero-ink/30'}`}
+    >
+      <span className={`mt-0.5 grid size-5 shrink-0 place-items-center rounded-md border-2 border-hero-ink ${on ? 'bg-hero-ink text-hero' : ''}`}>{on ? <Check className="size-3.5" strokeWidth={3} /> : null}</span>
+      <span>
+        <b className="block text-[16px]">
+          {name}
+          {soon ? <span className="ml-2 rounded-full border border-hero-ink/40 px-2 py-0.5 text-[12px] font-semibold">Coming soon</span> : null}
+        </b>
+        <span className="block text-[14px] text-hero-ink-2">{text}</span>
+      </span>
+    </button>
+  )
+}
+
+function HowUsed({ uses, setUses }: { uses: Uses; setUses: (v: Uses) => void }) {
+  return (
+    <fieldset className="flex flex-col gap-2.5">
+      <legend className="mb-1 text-[17px] font-bold">How will people use it?</legend>
+      {SURFACES.map((s) => (
+        <Choice key={s.id} on={uses.surfaces.includes(s.id)} onClick={() => setUses({ ...uses, surfaces: toggle(uses.surfaces, s.id) })} name={s.name} text={s.text} soon={!s.ready} />
+      ))}
+      {uses.surfaces.includes('screens') ? (
+        <div className="mt-2 flex flex-col gap-2.5">
+          <b className="text-[17px]">Where will people use it?</b>
+          {DEVICES.map((d) => (
+            <Choice key={d.id} on={uses.devices.includes(d.id)} onClick={() => setUses({ ...uses, devices: toggle(uses.devices, d.id) })} name={d.name} text={d.text} />
+          ))}
+          <p className="text-[14px] text-hero-ink-2">Most projects start in the browser and add the phone apps later.</p>
+        </div>
+      ) : null}
+    </fieldset>
+  )
+}
+
 const h1 = 'max-w-[15ch] text-[56px] leading-[1.04] tracking-[-0.02em] group-data-open/shell:text-[46px] @min-[1700px]/app:text-[66px] group-data-open/shell:@min-[1700px]/app:text-[54px] font-bold text-balance'
 const lead = 'mt-4 max-w-[52ch] text-[19px] leading-[1.55] text-hero-ink-2 @min-[1700px]/app:text-[21px] text-pretty'
 const row = 'mt-1 flex flex-wrap items-center gap-x-4 gap-y-3'
@@ -149,7 +204,7 @@ function ImportProject() {
 }
 
 export function NewProjectScreen() {
-  const { st, go, retry, cancel, idea, setIdea, example, run, taken } = useContext(OnbCtx)
+  const { st, go, retry, cancel, idea, setIdea, example, run, taken, uses, setUses } = useContext(OnbCtx)
   const [picked, setPicked] = useState(-1)
   const hero = useRef<HTMLElement>(null)
   const loading = st === 'loading'
@@ -157,7 +212,8 @@ export function NewProjectScreen() {
   const navigate = useNavigate()
   const needsAi = /Choose your AI/.test(run?.error ?? '')
   const empty = st === 'empty'
-  const ready = idea.trim().length >= 8 && !taken
+  const usable = uses.surfaces.includes('screens') && uses.devices.length > 0
+  const ready = idea.trim().length >= 8 && !taken && usable
 
   useEffect(() => {
     if (st === 'error' && !idea.trim()) setIdea(example)
@@ -260,12 +316,13 @@ export function NewProjectScreen() {
                 onChange={(e) => setIdea(e.target.value)}
                 placeholder="For example: a booking page for my baking classes, where people can pick a day and pay."
               />
+              <HowUsed uses={uses} setUses={setUses} />
               <div className={row}>
                 <Button variant="hero" size="pageLg" type="button" disabled={!ready} onClick={go}>
                   <span>Start building</span>
                   <ArrowRight className="size-5.5" />
                 </Button>
-                <span className="text-[15px] text-hero-ink-2">{taken ? `You already have a project called ${taken}. Change the first few words.` : ready ? 'Ready when you are. Nothing goes online yet.' : 'Type a sentence to begin.'}</span>
+                <span className="text-[15px] text-hero-ink-2">{taken ? `You already have a project called ${taken}. Change the first few words.` : !usable ? 'For now I can only start with a website or app. Tick that, and choose where it will be used.' : ready ? 'Ready when you are. Nothing goes online yet.' : 'Type a sentence to begin.'}</span>
               </div>
             </div>
           )}
