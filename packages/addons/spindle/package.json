@@ -1,5 +1,5 @@
 {
-  "name": "@pikku/extension-spindle",
+  "name": "@pikku/addon-spindle",
   "version": "0.0.1",
   "type": "module",
   "imports": {

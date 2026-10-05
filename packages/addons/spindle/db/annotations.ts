@@ -1,4 +1,4 @@
-import type { DbClassificationMap } from '/Users/yasser/git/pikku/studio/packages/extension-spindle/.pikku/db/classification-map.gen.d.ts'
+import type { DbClassificationMap } from '../.pikku/db/classification-map.gen.d.ts'
 
 export const classifications = {
   "spindle_asset": {

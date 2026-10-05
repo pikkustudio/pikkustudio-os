@@ -1,5 +1,5 @@
 {
-  "name": "@pikku/extension-diffui",
+  "name": "@pikku/addon-diffui",
   "version": "0.0.1",
   "type": "module",
   "imports": {
