@@ -110,7 +110,7 @@ interface RegistryEntry {
 }
 
 export const studioHome = () =>
-  process.env.PIKKU_STUDIO_HOME ?? join(homedir(), '.pikku', 'studio')
+  process.env.PIKKU_STUDIO_HOME ?? join(homedir(), '.pikkustudio')
 
 export const fabricAccount: FabricAccount = {
   async account() {

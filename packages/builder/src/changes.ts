@@ -1,5 +1,7 @@
 import { spawn } from 'node:child_process'
 import { existsSync } from 'node:fs'
+import { chmod, mkdir, writeFile } from 'node:fs/promises'
+import { createRequire } from 'node:module'
 import { dirname, join } from 'node:path'
 
 export type CommandRunner = (cwd: string, args: string[], env?: Record<string, string>) => Promise<{ code: number; output: string }>
@@ -18,11 +20,15 @@ export interface ChangesReport {
   groups: Record<string, unknown>[]
 }
 
-const pikkuBin = (cwd: string): string[] => {
-  for (let dir = cwd; ; dir = dirname(dir)) {
-    const bin = join(dir, 'node_modules', '.bin', 'pikku')
-    if (existsSync(bin)) return [bin]
-    if (dirname(dir) === dir) return ['npx', '--no', 'pikku']
+export const pikkuBin = (cwd: string): string[] => {
+  try {
+    return [process.execPath, createRequire(import.meta.url).resolve('@pikku/cli')]
+  } catch {
+    for (let dir = cwd; ; dir = dirname(dir)) {
+      const bin = join(dir, 'node_modules', '.bin', 'pikku')
+      if (existsSync(bin)) return [bin]
+      if (dirname(dir) === dir) return ['npx', '--no', 'pikku']
+    }
   }
 }
 
@@ -56,3 +62,13 @@ export const routeMessage = (route: NextRoute) =>
     '',
     route.context ?? '',
   ].join('\n')
+
+export async function writePikkuShim(home: string): Promise<string> {
+  const dir = join(home, 'bin')
+  const [command, ...prefix] = pikkuBin(dir)
+  await mkdir(dir, { recursive: true })
+  const file = join(dir, 'pikku')
+  await writeFile(file, `#!/bin/sh\nexec ${[command, ...prefix].map((part) => JSON.stringify(part)).join(' ')} "$@"\n`)
+  await chmod(file, 0o755)
+  return dir
+}

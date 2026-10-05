@@ -3,7 +3,7 @@ import { existsSync } from 'node:fs'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { createInterface } from 'node:readline'
-import { pikkuNext, routeMessage, type CommandRunner } from './changes.js'
+import { pikkuNext, routeMessage, writePikkuShim, type CommandRunner } from './changes.js'
 import { piArgs, piEnv, resolvePi, type BuilderAi } from './pi.js'
 import { builderHome, writeSkills } from './skills.js'
 
@@ -133,9 +133,10 @@ export class BuilderSession {
     const gen = this.drive(key).gen
     const { cwd, ai, env = {}, launch = spawnPi } = await this.resolve(key)
     const skills = await writeSkills(this.home)
+    const shims = await writePikkuShim(this.home)
     const child = launch(process.execPath, [resolvePi(), ...piArgs({ ai, skills, mode: 'rpc', session: session ?? state.session })], {
       cwd,
-      env: { ...process.env, ...env, ...piEnv(ai) },
+      env: { ...process.env, ...env, ...piEnv(ai), PATH: `${shims}:${env.PATH ?? process.env.PATH ?? ''}` },
     })
     const turn: Turn = { child, promptId: 1, tools: 0 }
     this.turns.set(key, turn)
