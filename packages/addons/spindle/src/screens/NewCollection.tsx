@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { Page } from '@pikku/studio-console/blocks/Page'
-import { PageHead } from '@pikku/studio-console/blocks/PageHead'
-import { InlineAlert } from '@pikku/studio-console/blocks/InlineAlert'
-import { Button } from '@pikku/studio-console/ui/button'
-import { Input } from '@pikku/studio-console/ui/input'
+import { Page } from '@pikku/pikkustudio-blocks/blocks/Page'
+import { PageHead } from '@pikku/pikkustudio-blocks/blocks/PageHead'
+import { InlineAlert } from '@pikku/pikkustudio-blocks/blocks/InlineAlert'
+import { Button } from '@pikku/pikkustudio-blocks/ui/button'
+import { Input } from '@pikku/pikkustudio-blocks/ui/input'
 import { useRpc, useBusy, type ScreenProps } from './shared.js'
 
 export default function NewCollection({ navigate }: ScreenProps) {

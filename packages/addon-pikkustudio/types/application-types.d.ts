@@ -1,0 +1,33 @@
+import type {
+  CoreConfig,
+  CoreServices,
+  CoreSingletonServices,
+  CoreUserSession,
+} from '@pikku/core/types'
+import type { StudioAi } from '../src/services/ai.js'
+import type { StudioHooks } from '../src/services/hooks.js'
+import type { StudioProjectsService } from '../src/services/projects.js'
+import type { LogStore } from '../src/services/log-store.js'
+import type { StudioPublisher } from '../src/services/publish.js'
+import type { StudioSettingsFile } from '../src/services/settings.js'
+import type { BuilderSession } from '@pikku/builder'
+import type { BetterAuthInstance } from '@pikku/better-auth'
+import type { Kysely } from 'kysely'
+
+export interface Config extends CoreConfig {}
+
+export interface UserSession extends CoreUserSession {}
+
+export interface SingletonServices extends CoreSingletonServices<Config> {
+  studioAi: StudioAi
+  studioProjects: StudioProjectsService
+  studioPublisher: StudioPublisher
+  studioBuilder: BuilderSession
+  studioSettings: StudioSettingsFile
+  studioHooks: StudioHooks
+  studioLogs: LogStore
+  auth?: () => Promise<BetterAuthInstance>
+  kysely?: Kysely<any>
+}
+
+export interface Services extends CoreServices<SingletonServices> {}
