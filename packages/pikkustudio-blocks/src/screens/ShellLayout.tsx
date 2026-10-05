@@ -1,5 +1,6 @@
 import { Link, Outlet, useLocation, useNavigate, useSearch } from '@tanstack/react-router'
 import { useEffect, useState, type ComponentType, type ReactNode } from 'react'
+import { m } from '@/i18n/messages'
 import { useProjectKey, useProjectName } from '../lib/project'
 import { useAddonNav } from '../lib/addon-nav'
 import { usePikkuChat } from '../lib/chat'
@@ -279,6 +280,10 @@ export function ShellLayout() {
               <Link {...keep} to="/knowledge" className={navItem}>
                 <BookOpen className="size-5" />
                 Knowledge
+              </Link>
+              <Link {...keep} to={'/content' as never} className={navItem}>
+                <FolderOpen className="size-5" />
+                {m.content__title()}
               </Link>
               <Link {...keep} to={'/apps' as never} className={navItem}>
                 <Smartphone className="size-5" />
