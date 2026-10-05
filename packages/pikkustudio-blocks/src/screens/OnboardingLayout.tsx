@@ -259,7 +259,7 @@ export function OnboardingLayout() {
               </svg>
               Fabric
             </Link>
-            <div>
+            {projects.data?.length ? null : <div>
               <div className="mb-1.5 px-3 text-[13px] font-semibold text-muted-foreground">Getting set up</div>
               <ol className="flex list-none flex-col px-2">
                 {STEPS.map(([to, title, hint], i) => {
@@ -302,8 +302,8 @@ export function OnboardingLayout() {
                   )
                 })}
               </ol>
-            </div>
-            <p className="px-3 text-[14px] leading-[1.45] text-ink-2 text-pretty">Build it like a website. Fabric keeps it running, and fixes it when something breaks.</p>
+            </div>}
+            {projects.data?.length ? null : <p className="px-3 text-[14px] leading-[1.45] text-ink-2 text-pretty">Build it like a website. Fabric keeps it running, and fixes it when something breaks.</p>}
             <div className="mt-auto flex flex-col gap-2.5">
               <button
                 type="button"
