@@ -149,7 +149,8 @@ export class BuilderSession {
       if (this.turns.get(key) === turn) this.turns.delete(key)
       state.busy = false
       if (code && state.items.at(-1)?.kind !== 'error') {
-        this.push(key, stderr.trim().split('\n').slice(-8).join('\n') || `The builder stopped (${code})`)
+        const lines = stderr.trim().split('\n')
+        this.push(key, (lines.length > 8 ? [...lines.slice(0, 3), '...', ...lines.slice(-4)] : lines).join('\n') || `The builder stopped (${code})`)
       }
       for (const item of state.items) if (item.kind === 'tool' && item.status === 'running') item.status = 'error'
       const drive = this.drive(key)

@@ -46,6 +46,7 @@ export const runPikku: CommandRunner = (cwd, args, env = {}) =>
 async function json<T>(cwd: string, args: string[], run: CommandRunner, env?: Record<string, string>): Promise<T> {
   const { code, output } = await run(cwd, [...args, '--json'], env)
   const line = output.trim().split('\n').findLast((l) => l.startsWith('{'))
+  if (!line && /^Usage: pikku <command>/m.test(output)) throw new Error(`The pikku installed here has no \`pikku ${args.slice(0, 2).join(' ')}\` command (it printed its help). The project resolved an older @pikku/cli.`)
   if (code !== 0 || !line) throw new Error(output.trim().split('\n').slice(-8).join('\n') || `pikku ${args[0]} failed (${code})`)
   return JSON.parse(line) as T
 }
