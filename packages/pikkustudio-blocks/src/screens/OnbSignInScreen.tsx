@@ -1,7 +1,8 @@
 import { Link } from '@tanstack/react-router'
 import { useContext } from 'react'
 import { Button } from '../ui/button'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Laptop } from 'lucide-react'
+import { Hero as HeroShell, heroH1, heroLead } from '../blocks/OnbHero'
 import { useSlots } from '../lib/slots'
 import { OnbCtx } from './OnboardingLayout'
 import { useAccount, useRecentProjects, useUseLocally } from '../lib/onboarding'
@@ -15,7 +16,7 @@ const keep: any = { search: true }
 
 export function OnbSignInScreen() {
   const { st, go, retry, open } = useContext(OnbCtx)
-  const { SignInOffer: Offer } = useSlots()
+  const { SignInOffer: Offer, SignInHero: Hero } = useSlots()
   const account = useAccount().data
   const recent = useRecentProjects().data ?? []
   const user = account?.name
@@ -32,25 +33,23 @@ export function OnbSignInScreen() {
 
   return (
     <div className="mx-auto flex max-w-[1160px] flex-col gap-10 @min-[1700px]/app:max-w-[1380px]">
-      <section
-        data-hue="teal"
-        className="relative grid min-h-95 grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] overflow-hidden rounded-[30px] bg-hero text-hero-ink group-data-open/shell:grid-cols-[minmax(0,1.4fr)_minmax(0,0.6fr)] @min-[1700px]/app:min-h-110"
-        aria-label="Our recommendation"
-      >
-        <div className="relative z-1 flex flex-col justify-center gap-5 px-13 pt-13 pb-12 @min-[1700px]/app:p-16 group-data-open/shell:@min-[1700px]/app:p-13">
+      {Hero ? (
+        <Hero st={st} loading={loading} open={open} done={go} />
+      ) : (
+        <HeroShell hue="teal" art="door">
           <div>
             {st === 'empty' ? (
               <>
-                <h1 className="max-w-[15ch] text-[56px] leading-[1.04] tracking-[-0.02em] group-data-open/shell:text-[46px] @min-[1700px]/app:text-[66px] group-data-open/shell:@min-[1700px]/app:text-[54px] font-bold text-balance">Start on this computer.</h1>
-                <p className="mt-4 max-w-[52ch] text-[19px] leading-[1.55] text-hero-ink-2 @min-[1700px]/app:text-[21px] text-pretty">
+                <h1 className={heroH1}>Start on this computer.</h1>
+                <p className={heroLead}>
                   That is our pick for a first visit. Your work stays right here, there is nothing to sign up for, and you can bring in a Fabric account whenever you want to put something online.
                 </p>
               </>
             ) : null}
             {st === 'normal' ? (
               <>
-                <h1 className="max-w-[15ch] text-[56px] leading-[1.04] tracking-[-0.02em] group-data-open/shell:text-[46px] @min-[1700px]/app:text-[66px] group-data-open/shell:@min-[1700px]/app:text-[54px] font-bold text-balance">Pick up where you left off.</h1>
-                <p className="mt-4 max-w-[52ch] text-[19px] leading-[1.55] text-hero-ink-2 @min-[1700px]/app:text-[21px] text-pretty">{waiting} waiting on this computer, exactly as you left {recent.length === 1 ? 'it' : 'them'}.</p>
+                <h1 className={heroH1}>Pick up where you left off.</h1>
+                <p className={heroLead}>{waiting} waiting on this computer, exactly as you left {recent.length === 1 ? 'it' : 'them'}.</p>
                 <div className="mt-5 flex flex-wrap gap-2.5">
                   {recent.map((r) => (
                     <span key={r.key} className="flex items-center gap-2.5 rounded-full bg-hero-ink/14 py-1.5 pr-4 pl-1.5 text-[15px] font-bold">
@@ -68,14 +67,14 @@ export function OnbSignInScreen() {
             ) : null}
             {loading ? (
               <>
-                <h1 className="max-w-[15ch] text-[56px] leading-[1.04] tracking-[-0.02em] group-data-open/shell:text-[46px] @min-[1700px]/app:text-[66px] group-data-open/shell:@min-[1700px]/app:text-[54px] font-bold text-balance">Opening your workspace.</h1>
-                <p className="mt-4 max-w-[52ch] text-[19px] leading-[1.55] text-hero-ink-2 @min-[1700px]/app:text-[21px] text-pretty">Just a moment. I am getting everything ready.</p>
+                <h1 className={heroH1}>Opening your workspace.</h1>
+                <p className={heroLead}>Just a moment. I am getting everything ready.</p>
               </>
             ) : null}
             {st === 'error' ? (
               <>
-                <h1 className="max-w-[15ch] text-[56px] leading-[1.04] tracking-[-0.02em] group-data-open/shell:text-[46px] @min-[1700px]/app:text-[66px] group-data-open/shell:@min-[1700px]/app:text-[54px] font-bold text-balance">Start on this computer, for now.</h1>
-                <p className="mt-4 max-w-[52ch] text-[19px] leading-[1.55] text-hero-ink-2 @min-[1700px]/app:text-[21px] text-pretty">
+                <h1 className={heroH1}>Start on this computer, for now.</h1>
+                <p className={heroLead}>
                   Something did not load, so this is the way in that works right now. Everything you make stays safe here.
                 </p>
               </>
@@ -90,20 +89,31 @@ export function OnbSignInScreen() {
             {st === 'empty' ? <span className="text-[15px] text-hero-ink-2">Takes about five seconds.</span> : null}
             {st === 'normal' ? <span className="text-[15px] text-hero-ink-2">Your projects open straight away.</span> : null}
           </div>
-        </div>
-        <div className="relative min-h-55 group-data-open/shell:min-h-0" aria-hidden="true">
-          <svg className="absolute inset-0 size-full" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice">
-            <circle cx="368" cy="48" r="248" className="fill-w1" />
-            <circle cx="16" cy="408" r="231" className="fill-w2" />
-            <circle cx="248" cy="440" r="160" className="fill-w3" opacity=".55" />
-            <circle cx="270" cy="150" r="98" className="fill-w5" />
-            <circle cx="270" cy="150" r="116" fill="none" className="stroke-white" strokeWidth="3" strokeDasharray="2 10" strokeLinecap="round" />
-            <path d="M130 400V300a110 110 0 0 1 220 0v100z" className="fill-w2" />
-            <path d="M168 400V306a72 72 0 0 1 144 0v94z" className="fill-w1" />
-            <circle cx="240" cy="330" r="9" className="fill-coral" />
-          </svg>
-        </div>
-      </section>
+        </HeroShell>
+      )}
+
+      {Hero ? (
+        <section aria-label="The other way in">
+          <div className="mb-4 flex items-baseline justify-between gap-4">
+            <h2 className="text-[26px] leading-[1.2] font-bold tracking-[-0.012em] text-balance">Want to use pure OSS?</h2>
+            <p className="text-[15px] text-muted-foreground text-pretty">Everything stays on this computer.</p>
+          </div>
+          <div className="grid grid-cols-[56px_minmax(0,1fr)_auto] items-center gap-5 rounded-[22px] border border-border bg-card px-7 py-6.5 shadow-card">
+            <span className="grid size-14 place-items-center rounded-xl bg-accent text-accent-foreground">
+              <Laptop className="size-7" />
+            </span>
+            <div>
+              <h3 className="mb-1 text-[22px] leading-[1.2] font-bold tracking-[-0.012em] text-balance">Use it on this computer</h3>
+              <p className="max-w-ch56 text-[16px] text-ink-2 text-pretty">No account, nothing to sign up for. Bring in a Fabric account whenever you want to put something online.</p>
+            </div>
+            <Button asChild variant="bordered" size="page">
+              <Link {...keep} to={account?.name ? '/choose-ai' : '/your-name'} onClick={next} aria-busy={loading}>
+                {loading ? 'Opening' : 'Use on this computer'}
+              </Link>
+            </Button>
+          </div>
+        </section>
+      ) : null}
 
       {st !== 'error' && Offer ? <Offer loading={loading} open={open} done={go} /> : null}
       <p className="text-[13px] text-muted-foreground text-pretty">We never read what you build on this computer.</p>

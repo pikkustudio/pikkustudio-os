@@ -4,7 +4,7 @@ import type { UseQueryResult } from '@tanstack/react-query'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { ProjectRpcCtx } from '../lib/projectRpc'
 import { Button } from '../ui/button'
-import { AiLitellmPanel } from '../blocks/AiConnectPanels'
+import { AiLitellmPanel, AiProviderPanel, providers } from '../blocks/AiConnectPanels'
 import { useSlots } from '../lib/slots'
 import { useAccount, useProjectRun, useRecentProjects, useStartProjectRun, projectNameFrom, useNameTaken, type ProjectRun } from '../lib/onboarding'
 import { ArrowRight, Bell, Check, CircleAlert, FolderOpen, Laptop, MessageCircle, Pin, ShieldCheck, User, X } from 'lucide-react'
@@ -13,7 +13,7 @@ import { ArrowRight, Bell, Check, CircleAlert, FolderOpen, Laptop, MessageCircle
 // Sign in, Choose AI and New project are children of this layout. Page content lives in the route files.
 
 export type OnbState = 'empty' | 'normal' | 'loading' | 'error'
-export type PanelId = 'chat' | 'updates' | 'workspace' | 'diff' | 'why' | 'local' | 'accounts' | 'keys' | 'litellm' | 'fabric'
+export type PanelId = 'chat' | 'updates' | 'workspace' | 'diff' | 'why' | 'local' | 'accounts' | 'keys' | 'provider' | 'litellm' | 'fabric'
 
 export const OnbCtx = createContext<{
   st: OnbState
@@ -201,7 +201,7 @@ export function OnboardingLayout() {
     )
   }
 
-  const panelTitle = { chat: 'Talk to Pikku', updates: 'Updates', workspace: 'This workspace', diff: 'The difference', why: 'Why this one', local: 'Set up on this computer', accounts: 'Connect an account', keys: 'Use your own key', litellm: 'Connect your LiteLLM', fabric: 'What Fabric adds' }
+  const panelTitle = { chat: 'Talk to Pikku', updates: 'Updates', workspace: 'This workspace', diff: 'The difference', why: 'Why this one', local: 'Set up on this computer', accounts: 'Connect an account', keys: 'Use your own key', litellm: 'Connect your LiteLLM', provider: `Connect ${providers.find(([, id]) => id === q.via)?.[0] ?? 'a provider'}`, fabric: 'What Fabric adds' }
   const tabs = panel === 'chat' || panel === 'updates'
   const tab =
     '-mb-px inline-flex h-11.5 items-center gap-2 rounded-t-[10px] border-b-3 px-3.5 text-[15px] font-bold transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'
@@ -431,6 +431,8 @@ export function OnboardingLayout() {
             {panel === 'fabric' && Pitch ? (
               <Pitch href={account.data?.consoleUrl ?? 'https://pikkufabric.com'} variant={q.pitch} avatar={<Avatar mood="calm" size="md" />} onClose={() => open('')} />
             ) : null}
+
+            {panel === 'provider' ? <AiProviderPanel provider={q.via ?? ''} onDone={() => { open(''); go() }} onBack={() => open('')} /> : null}
 
             {panel === 'litellm' ? <AiLitellmPanel intro={<Avatar mood="calm" size="md" />} via={q.via} onDone={() => { open(''); go() }} onBack={() => open('')} /> : null}
 
