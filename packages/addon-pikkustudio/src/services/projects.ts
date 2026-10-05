@@ -104,6 +104,7 @@ export interface AccountProvider {
   link(projectId: string): Promise<AccountLink | null>
   locate(path: string, cloud: CloudProject[]): Promise<{ projectId: string; project: CloudProject | null } | null>
   adopt(projectId: string, path: string): Promise<void>
+  gitCredential?(projectId: string): Promise<{ username: string; password: string }>
 }
 
 export interface AccountLink {
@@ -627,10 +628,11 @@ export class StudioProjectsService {
     const id = randomUUID().slice(0, 8)
     const root = join(this.projectsDir, id)
     try {
+      const credential = await this.account.gitCredential?.(project.projectId)
       await cloneLayout(root, project.gitRepoUrl, this.home, async (path) => {
         await this.account.adopt(project.projectId, path)
         await commitPaths(path, ['pikku.config.json'], 'Link to the account')
-      })
+      }, credential)
     } catch (error) {
       await rm(root, { recursive: true, force: true })
       throw error

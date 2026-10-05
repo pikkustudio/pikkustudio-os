@@ -63,11 +63,31 @@ export async function createLayout(root: string, scaffold: string, studioHome: s
   await rm(scaffold, { recursive: true, force: true })
 }
 
-export async function cloneLayout(root: string, url: string, studioHome: string, onMain?: (main: string) => Promise<void>): Promise<void> {
+export interface GitCredential {
+  username: string
+  password: string
+}
+
+const credentialEnv = (credential?: GitCredential): Record<string, string> =>
+  credential
+    ? {
+        GIT_CONFIG_COUNT: '1',
+        GIT_CONFIG_KEY_0: 'http.extraHeader',
+        GIT_CONFIG_VALUE_0: `Authorization: Basic ${Buffer.from(`${credential.username}:${credential.password}`).toString('base64')}`
+      }
+    : {}
+
+export async function cloneLayout(
+  root: string,
+  url: string,
+  studioHome: string,
+  onMain?: (main: string) => Promise<void>,
+  credential?: GitCredential
+): Promise<void> {
   await mkdir(root, { recursive: true })
   await exec('git', ['clone', '-q', '--bare', '--', url, join(root, 'repo.git')], {
     cwd: root,
-    env: { ...process.env, GIT_TERMINAL_PROMPT: '0', GIT_SSH_COMMAND: process.env.GIT_SSH_COMMAND ?? 'ssh -o BatchMode=yes -o ConnectTimeout=15' },
+    env: { ...process.env, ...credentialEnv(credential), GIT_TERMINAL_PROMPT: '0', GIT_SSH_COMMAND: process.env.GIT_SSH_COMMAND ?? 'ssh -o BatchMode=yes -o ConnectTimeout=15' },
   })
   const bare = join(root, 'repo.git')
   await git(bare, 'config', 'remote.origin.fetch', '+refs/heads/*:refs/remotes/origin/*')
