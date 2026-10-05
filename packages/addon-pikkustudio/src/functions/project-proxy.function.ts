@@ -12,21 +12,23 @@ export const projectProxy = pikkuSessionlessFunc({
   description: "Pass a request through to a running project's own server.",
   input: ProjectProxyInput,
   func: async ({ studioProjects, studioHooks }, { key }, { http }) => {
-    const running = studioProjects.runningProject(key) ?? (await studioProjects.open(key).catch(() => null))
-    if (!running) return Response.json({ error: 'That project is not open' }, { status: 404 })
-    studioProjects.touch(key)
-    const incoming = toWebRequest(http!.request!, `http://127.0.0.1:${running.port}`)
+    const live = studioProjects.runningProject(key)
+    const incoming = toWebRequest(http!.request!, `http://127.0.0.1:${live?.port ?? 0}`)
     const url = new URL(incoming.url)
     url.pathname = url.pathname.slice(`/p/${key}`.length) || '/'
     const own = incoming.method === 'POST' ? url.pathname.match(/^\/rpc\/console:(listArtifacts|getArtifact|listStudioChanges)$/)?.[1] : undefined
     if (own) {
-      const { cwd } = await studioProjects.builderLaunch(key)
       if (own === 'listStudioChanges') return Response.json({ changes: [] })
+      const { cwd } = await studioProjects.builderLaunch(key)
       if (own === 'listArtifacts') return Response.json({ artifacts: await listArtifacts(cwd) })
       const { data } = (await incoming.json().catch(() => ({}))) as { data?: { id?: string } }
       const id = data?.id
       return Response.json({ artifact: (id ? await getArtifact(cwd, id) : undefined) ?? null })
     }
+    const running = live ?? (await studioProjects.open(key).catch(() => null))
+    if (!running) return Response.json({ error: 'That project is not open' }, { status: 404 })
+    studioProjects.touch(key)
+    url.host = `127.0.0.1:${running.port}`
     const headers = new Headers(incoming.headers)
     headers.set('host', `127.0.0.1:${running.port}`)
     headers.set(STUDIO_HEADER, running.token)
