@@ -1,0 +1,15 @@
+import type { CoreConfig, CoreServices, CoreSingletonServices, CoreUserSession } from '@pikku/core/types'
+import type { ContentService } from '@pikku/core/services'
+import type { Kysely } from 'kysely'
+
+export interface Config extends CoreConfig {}
+
+export interface UserSession extends CoreUserSession {}
+
+export interface SingletonServices extends CoreSingletonServices<Config> {
+  kysely: Kysely<any>
+  content: ContentService
+  studio?: { tools: { resolve: (need: { tool: string; requestedBy: string }) => Promise<any> } }
+}
+
+export interface Services extends CoreServices<SingletonServices> {}

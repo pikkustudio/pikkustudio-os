@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "types": ["node"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "rootDir": ".",
+    "outDir": "./dist",
+    "declaration": true,
+    "sourceMap": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "#pikku/*.js": [
+        "./.pikku/*.ts"
+      ],
+      "#pikku/*": [
+        "./.pikku/*/index.ts",
+        "./.pikku/*"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*",
+    "types/**/*",
+    ".pikku/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".pikku/**/*.d.ts"
+  ]
+}
