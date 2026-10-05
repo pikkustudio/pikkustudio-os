@@ -1,6 +1,7 @@
 import { m } from '@/i18n/messages'
 import { useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
+import { keep } from '../lib/links'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '../ui/button'
 import { EmptyState } from './EmptyState'
@@ -23,7 +24,7 @@ export function ArtifactOpen({ item, all }: { item?: Artifact; all: Artifact[] }
     return (
       <EmptyState layout="row" title={m.artifact_open__we_could_not_find()} text={m.artifact_open__it_may_have_been()}>
         <Button asChild variant="bordered" size="page">
-          <Link to="/artifacts">{m.artifact_open__see_all_artifacts()}</Link>
+          <Link {...keep} to="/artifacts">{m.artifact_open__see_all_artifacts()}</Link>
         </Button>
       </EmptyState>
     )
@@ -38,13 +39,13 @@ export function ArtifactOpen({ item, all }: { item?: Artifact; all: Artifact[] }
         hideDevice={item.kind !== 'Page'}
         tool=""
         tools={[]}
-        onPick={(_, id) => go({ to: '/artifacts/$id', params: { id } })}
+        onPick={(_, id) => go({ ...keep, to: '/artifacts/$id', params: { id } })}
         onDevice={setDevice}
         onTool={() => {}}
         onReload={() => setReloadKey((k) => k + 1)}
         actions={
           <Button asChild variant="bordered" size="compact">
-            <Link to="/artifacts">
+            <Link {...keep} to="/artifacts">
               <ArrowLeft className="size-4.5" />
               
               {m.artifact_open__all_artifacts()}
