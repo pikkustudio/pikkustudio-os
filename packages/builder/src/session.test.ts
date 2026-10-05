@@ -36,6 +36,38 @@ const until = async (check: () => Promise<boolean>) => {
 }
 
 describe('BuilderSession', () => {
+  test('a new conversation keeps the old one to come back to', async () => {
+    const home = await mkdtemp(join(tmpdir(), 'pikku-builder-'))
+    const builder = new BuilderSession(
+      async () => ({ cwd: home, run, launch: () => spawn(process.execPath, ['-e', fakePi], { stdio: ['pipe', 'pipe', 'pipe'] }) }),
+      home
+    )
+    await builder.prompt('shop', 'Add a home page')
+    await until(async () => !(await builder.state('shop')).busy)
+    const first = (await builder.state('shop')).session
+    await builder.clear('shop')
+    await builder.prompt('shop', 'Make it blue')
+    await until(async () => !(await builder.state('shop')).busy)
+    assert.deepEqual(
+      (await builder.conversations('shop')).map((c) => [c.title, c.current]),
+      [
+        ['Make it blue', true],
+        ['Add a home page', false],
+      ]
+    )
+    const resumed = await builder.resume('shop', first)
+    assert.equal(resumed.session, first)
+    assert.equal((resumed.items[0] as { text: string }).text, 'Add a home page')
+    assert.deepEqual((await builder.conversations('shop')).map((c) => [c.title, c.current]), [
+      ['Add a home page', true],
+      ['Make it blue', false],
+    ])
+    const other = (await builder.conversations('shop'))[1]!.session
+    await builder.forget('shop', other)
+    assert.equal((await builder.conversations('shop')).length, 1)
+    await assert.rejects(builder.resume('shop', '../../etc'), /Unknown conversation/)
+  })
+
   test('runs a turn and keeps the transcript', async () => {
     const home = await mkdtemp(join(tmpdir(), 'pikku-builder-'))
     let seen: string[] = []

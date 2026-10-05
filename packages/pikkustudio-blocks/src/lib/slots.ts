@@ -4,7 +4,9 @@ import { createContext, useContext, type ComponentType, type ReactNode } from 'r
 export type Open = (panel: PanelId | '') => void
 
 export type Slots = {
+  SignInHero?: ComponentType<{ st: string; loading: boolean; open: Open; done: () => void }>
   SignInOffer?: ComponentType<{ loading: boolean; open: Open; done: () => void }>
+  AiHero?: ComponentType<{ st: string; loading: boolean; open: Open; retry: () => void; done: () => void }>
   AiOffer?: ComponentType<{ open: Open }>
   Pitch?: ComponentType<{ href: string; variant?: 'a' | 'b'; avatar: ReactNode; onClose: () => void }>
   PublishTarget?: ComponentType

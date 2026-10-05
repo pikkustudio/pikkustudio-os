@@ -61,6 +61,8 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
     new StudioProjectsService({
       home,
       account: options.account,
+      currentRoot: process.env.PIKKU_STUDIO_PROJECT || null,
+      pinned: Boolean(process.env.PIKKU_STUDIO_PROJECT),
       designEntry: options.designEntry ?? resolveDesignEntry(),
       store: options.projectStore,
       owner: async () => (await new StudioSettingsFile(join(home, 'settings.json')).read()).name ?? '',

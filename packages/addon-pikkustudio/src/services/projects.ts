@@ -105,7 +105,14 @@ export interface AccountProvider {
   link(projectId: string): Promise<AccountLink | null>
   locate(path: string, cloud: CloudProject[]): Promise<{ projectId: string; project: CloudProject | null } | null>
   adopt(projectId: string, path: string): Promise<void>
+  workspaceLink?(projectId: string): Promise<WorkspaceLink>
   gitCredential?(projectId: string): Promise<{ username: string; password: string }>
+}
+
+export interface WorkspaceLink {
+  url: string
+  state: 'starting' | 'ready'
+  token?: string
 }
 
 export interface AccountLink {
@@ -350,6 +357,8 @@ async function projectName(path: string): Promise<string> {
 
 export interface StudioProjectsOptions {
   currentRoot?: string | null
+  // A sandbox serves one project (PIKKU_STUDIO_PROJECT): only currentRoot is listed or openable.
+  pinned?: boolean
   account?: AccountProvider
   home?: string
   devCommand?: (port: number) => { command: string; args: string[] }
@@ -498,7 +507,11 @@ export class StudioProjectsService {
     if (current && !entries.some((e) => resolve(e.path) === current)) {
       entries.unshift({ id: 'current', path: current, addedAt: new Date().toISOString() })
     }
-    const cloud = await this.account.projects().catch(() => [] as CloudProject[])
+    if (this.options.pinned && current) {
+      const pinned = entries.filter((e) => resolve(e.path) === current)
+      entries.splice(0, entries.length, ...pinned)
+    }
+    const cloud = this.options.pinned ? [] : await this.account.projects().catch(() => [] as CloudProject[])
     const claimed = new Set<string>()
     const local = await Promise.all(
       entries.map(async (entry): Promise<StudioProject> => {
@@ -1029,7 +1042,17 @@ export class StudioProjectsService {
     return { entry, worktree }
   }
 
+  async workspaceLink(key: string): Promise<WorkspaceLink> {
+    if (!key.startsWith('cloud:')) throw new Error('Only a cloud project has a workspace link')
+    if (!this.account.workspaceLink) throw new Error('Cloud workspaces are not part of this edition')
+    return this.account.workspaceLink(key.slice('cloud:'.length))
+  }
+
   async open(key: string): Promise<RunningProject> {
+    if (this.options.pinned) {
+      const only = (await this.list())[0]
+      if (!only || only.key !== key) throw new Error('This workspace is for a single project')
+    }
     const existing = this.runningProject(key)
     if (existing) {
       this.touch(key)

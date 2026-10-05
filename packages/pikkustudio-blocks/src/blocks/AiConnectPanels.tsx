@@ -7,6 +7,17 @@ import { useSetAi } from '../lib/onboarding'
 
 const field = 'font-heading text-[16px] font-semibold'
 
+export const providers = [
+  ['OpenAI', 'openai'],
+  ['Claude', 'anthropic'],
+  ['Gemini', 'gemini'],
+  ['Grok', 'xai'],
+  ['Mistral', 'mistral'],
+  ['DeepSeek', 'deepseek'],
+  ['Groq', 'groq'],
+  ['OpenRouter', 'openrouter'],
+] as const
+
 const LITELLM_COMMAND = 'litellm --model'
 
 export function AiLitellmPanel({ intro, via, onDone, onBack }: { intro: React.ReactNode; via?: string; onDone: () => void; onBack: () => void }) {
@@ -52,6 +63,29 @@ export function AiLitellmPanel({ intro, via, onDone, onBack }: { intro: React.Re
         
         {m.ai_connect_panels__back()}
       </Button>
+    </form>
+  )
+}
+
+export function AiProviderPanel({ provider, onDone, onBack }: { provider: string; onDone: () => void; onBack: () => void }) {
+  const save = useSetAi()
+  const [apiKey, setApiKey] = useState('')
+  const ready = apiKey.trim().length > 0 && !save.isPending
+  return (
+    <form
+      className="flex min-h-0 flex-1 flex-col gap-4 overflow-auto px-6 pt-5 pb-7"
+      onSubmit={(e) => {
+        e.preventDefault()
+        if (ready) save.mutate({ kind: 'key', provider, apiKey: apiKey.trim() }, { onSuccess: onDone })
+      }}
+    >
+      <label htmlFor="pv-key" className={field}>Token or secret</label>
+      <Input id="pv-key" type="password" autoComplete="off" value={apiKey} onChange={(e) => setApiKey(e.target.value)} />
+      {save.isError ? <p role="alert" className="text-[15px] font-semibold">{m.ai_connect_panels__that_could_not_be()}</p> : null}
+      <Button variant="default" size="pageLg" type="submit" disabled={!ready}>
+        {save.isPending ? m.ai_connect_panels__saving() : 'Use this provider'}
+      </Button>
+      <Button variant="ghost" size="page" type="button" onClick={onBack}>{m.ai_connect_panels__back()}</Button>
     </form>
   )
 }
