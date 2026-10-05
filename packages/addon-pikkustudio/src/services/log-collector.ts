@@ -2,6 +2,7 @@ import { existsSync, readdirSync, rmSync, statSync } from 'node:fs'
 import { open } from 'node:fs/promises'
 import { join } from 'node:path'
 import type { LogLevel, LogStore, NewLogEntry } from './log-store.js'
+import { parseMetricLine, type NewMetricEntry } from './metric-store.js'
 
 const ANSI = /\x1b\[[0-9;]*m/g
 const REQUEST = /\b(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\s+(\S+)(?:\s+(\d{3}))?/
@@ -101,6 +102,8 @@ export interface Forward {
 }
 
 const RUN_FILE = /^([0-9a-z]+)\.(.+)\.log$/
+const METRIC_FILE = /^([0-9a-z]+)\.(dev|serve|all)\.jsonl$/
+const MAX_DIRS = 50
 const KEEP_RUNS = 5
 const KEEP_DAYS = 14
 const KEEP_ROWS = 50_000
@@ -115,8 +118,11 @@ export class LogCollector {
     private home: string,
     private store: LogStore,
     private projects: () => Promise<string[]> = async () => [],
-    private forward?: Forward
+    private forward?: Forward,
+    private runDirs: () => Promise<{ key: string; dir: string }[]> = async () => []
   ) {}
+
+  private seen = new Map<string, string>()
 
   start(every = 1000) {
     if (this.timer) return
@@ -134,22 +140,36 @@ export class LogCollector {
     this.busy = true
     try {
       const root = join(this.home, 'logs')
-      if (!existsSync(root)) return
-      for (const key of readdirSync(root)) {
-        const dir = join(root, key)
-        if (!statSync(dir).isDirectory()) continue
-        for (const file of readdirSync(dir)) {
-          const match = file.match(RUN_FILE)
-          if (match) await this.read(join(dir, file), key, match[2])
+      if (existsSync(root)) {
+        for (const key of readdirSync(root)) {
+          const dir = join(root, key)
+          if (!statSync(dir).isDirectory()) continue
+          for (const file of readdirSync(dir)) {
+            const match = file.match(RUN_FILE)
+            if (match) await this.read(join(dir, file), key, match[1], match[2])
+          }
         }
       }
-      if (this.sweeps++ % PRUNE_EVERY === 0) await this.prune(root).catch(() => {})
+      await this.sweepRuns()
+      if (existsSync(root) && this.sweeps++ % PRUNE_EVERY === 0) await this.prune(root).catch(() => {})
     } finally {
       this.busy = false
     }
   }
 
-  private async read(path: string, key: string, source: string) {
+  private async sweepRuns() {
+    for (const { key, dir } of await this.runDirs().catch(() => [])) this.seen.set(dir, key)
+    for (const dir of [...this.seen.keys()].slice(0, -MAX_DIRS)) this.seen.delete(dir)
+    for (const [dir, key] of this.seen) {
+      if (!existsSync(dir)) continue
+      for (const file of readdirSync(dir)) {
+        const match = file.match(METRIC_FILE)
+        if (match) await this.read(join(dir, file), key, match[1], match[2])
+      }
+    }
+  }
+
+  private async read(path: string, key: string, run: string, source: string) {
     const size = statSync(path).size
     const from = await this.store.position(path)
     if (size <= from) return
@@ -161,8 +181,16 @@ export class LogCollector {
       const complete = text.lastIndexOf('\n')
       if (complete === -1) return
       const position = from + Buffer.byteLength(text.slice(0, complete + 1))
-      const entries = entriesFrom(text.slice(0, complete), source, Date.now())
-      await this.store.append(key, entries, { file: path, position })
+      const now = Date.now()
+      const metrics: NewMetricEntry[] = []
+      const rest: string[] = []
+      for (const line of text.slice(0, complete).split('\n')) {
+        const metric = parseMetricLine(line, run, source, now)
+        if (metric) metrics.push(metric)
+        else rest.push(line)
+      }
+      const entries = entriesFrom(rest.join('\n'), source, now)
+      await this.store.append(key, entries, { file: path, position }, metrics)
       if (entries.length) void this.send(key, entries).catch(() => {})
     } finally {
       await handle.close()

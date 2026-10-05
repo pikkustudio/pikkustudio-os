@@ -102,7 +102,7 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
       }
     }, join(home, 'builder'))
   const studioLogs = options.logStore ?? memoryLogStore()
-  new LogCollector(home, studioLogs, async () => (await studioProjects.list()).map((p) => p.key), forwardFromEnv()).start()
+  new LogCollector(home, studioLogs, async () => (await studioProjects.list()).map((p) => p.key), forwardFromEnv(), () => studioProjects.runDirs()).start()
   const services: StudioServices = {
     home,
     studioAi,

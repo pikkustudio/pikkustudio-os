@@ -478,6 +478,8 @@
   "quick_find__routines": "Routines",
   "quick_find__versions": "Versions",
   "quick_find__building_logs": "Building logs",
+  "quick_find__how_its_running": "How it's running",
+  "quick_find__metrics": "Requests and speed",
   "quick_find__ask_pikku": "Ask Pikku",
   "quick_find__ask_in_your_own_words": "Ask in your own words",
   "quick_find__nothing_matches": "Nothing matches “{q}”.",

@@ -1,3 +1,4 @@
+import { trackLargeFiles } from './lfs.js'
 import { spawn } from 'node:child_process'
 import type { StudioAccount, StudioProject, StudioProjectsService } from './projects.js'
 
@@ -140,6 +141,7 @@ export class StudioPublisher {
     ]
     void (async () => {
       try {
+        await trackLargeFiles(worktree).catch(() => [])
         for (const [command, args] of steps) await this.run(command, args, worktree, onLine)
         const main = await this.projects.prepareMain(key)
         const from = main?.dir ?? worktree

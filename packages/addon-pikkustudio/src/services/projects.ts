@@ -372,6 +372,8 @@ const outermostNodeModules = (path: string) => {
   return at === -1 ? path : path.slice(0, at + `${sep}node_modules`.length)
 }
 
+export const STUDIO_KEY = 'studio'
+
 export class StudioProjectsService {
   private running = new Map<string, RunningProject & { child: ChildProcess }>()
   private apps = new Map<string, RunningApp[]>()
@@ -722,6 +724,12 @@ export class StudioProjectsService {
     })
     const newest = files.sort((a, b) => b.at - a.at)[0]?.run
     return { dir, files: files.filter((f) => f.run === newest) }
+  }
+
+  async runDirs(): Promise<{ key: string; dir: string }[]> {
+    const registered = (await this.registry()).map((e) => ({ key: e.id, dir: join(e.path, '.pikku', 'runs') }))
+    const live = [...this.running].map(([key, running]) => ({ key, dir: join(running.worktree, '.pikku', 'runs') }))
+    return [...registered, ...live, { key: STUDIO_KEY, dir: join(process.cwd(), '.pikku', 'runs') }]
   }
 
   latestLog(key: string): string {

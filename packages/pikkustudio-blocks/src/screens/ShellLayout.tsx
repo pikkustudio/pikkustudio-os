@@ -10,7 +10,7 @@ import { keep } from '../lib/links'
 import { Button } from '../ui/button'
 import { QuickFind } from '../blocks/QuickFind'
 import { Toaster } from '../blocks/Toaster'
-import { ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FlaskConical, FolderOpen, Globe, Hammer, Home, Info, Compass, KeyRound, Search, Laptop, LayoutGrid, Mail, MessageCircle, MousePointer2, Palette, Pin, Plus, ShieldCheck, Smartphone, Upload, User, Wrench, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FlaskConical, FolderOpen, Gauge, Globe, Hammer, Home, Info, Compass, KeyRound, Search, Laptop, LayoutGrid, Mail, MessageCircle, MousePointer2, Palette, Pin, Plus, ShieldCheck, Smartphone, Upload, User, Wrench, X } from 'lucide-react'
 
 // The app shell: rail, preview drawer (right edge), Pikku button + bubble, side panels.
 // Every screen route is a child of this layout. Page content lives in the route files.
@@ -107,7 +107,7 @@ export function ShellLayout() {
   const q = useSearch({ strict: false }) as { view?: View; look?: 'light' | 'dark'; panel?: PanelId; show?: 'done'; project?: string }
   const path = useLocation({ select: (l) => l.pathname })
   const project = useLocation({ select: (l) => (l.search as { project?: string }).project })
-  const needsProject = !project && !/\/(projects|secrets)$/.test(path)
+  const needsProject = !project && !/\/(projects|secrets|studio-metrics)$/.test(path)
   useEffect(() => {
     if (needsProject) navigate({ to: '/projects', search: ((prev: object) => prev) as never, replace: true })
   }, [needsProject])
@@ -231,6 +231,10 @@ export function ShellLayout() {
                 <FolderOpen className="size-5.5" />
                 Projects
               </Link>
+              <Link {...keep} to={'/studio-metrics' as never} className={`${item} h-11.5 text-[15px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`}>
+                <Gauge className="size-5.5" />
+                Studio metrics
+              </Link>
             </nav>
             {addonNav ? (
               <div className="flex flex-col gap-0.5 px-1">
@@ -246,7 +250,7 @@ export function ShellLayout() {
                   </Link>
                 ))}
               </div>
-            ) : (
+            ) : /\/studio-metrics$/.test(path) ? null : (
             <div className="flex flex-col gap-0.5 px-1">
               <div className="mb-1.5 px-3 text-[13px] font-semibold text-muted-foreground">{projectName}</div>
               <Link {...keep} to={'/explore' as never} className={navItem}>

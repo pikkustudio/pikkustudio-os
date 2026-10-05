@@ -1,7 +1,7 @@
 import { m } from '@/i18n/messages'
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { BookOpen, Bot, Compass, FileText, FlaskConical, FolderOpen, Globe, Hammer, KeyRound, LayoutGrid, Mail, ScrollText, Search, Smartphone, Upload, Users, Workflow, History } from 'lucide-react'
+import { Activity, BookOpen, Bot, Gauge, Compass, FileText, FlaskConical, FolderOpen, Globe, Hammer, KeyRound, LayoutGrid, Mail, ScrollText, Search, Smartphone, Upload, Users, Workflow, History } from 'lucide-react'
 import { keep } from '../lib/links'
 
 type Hit = { key: string; label: string; hint: string; id: string; Icon: typeof Search }
@@ -24,6 +24,8 @@ const pages = (): Hit[] => (
     [m.quick_find__routines(), '/routines', Workflow],
     [m.quick_find__versions(), '/versions', History],
     [m.quick_find__building_logs(), '/logs', ScrollText],
+    [m.quick_find__how_its_running(), '/performance', Activity],
+    [m.quick_find__metrics(), '/metrics', Gauge],
     [m.quick_find__ask_pikku(), '', Bot],
   ] as const
 ).map(([label, to, Icon]) => ({ key: `page-${to || 'ask'}`, label, hint: to ? '' : m.quick_find__ask_in_your_own_words(), id: to, Icon }))
