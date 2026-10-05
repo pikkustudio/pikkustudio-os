@@ -143,7 +143,7 @@ export function OnboardingLayout() {
           await new Promise((r) => setTimeout(r, 2000))
         }
       }
-      first().then(() => land('/artifacts'))
+      first().then(() => land('/artifacts/explore' as never))
     })
   }, [done])
   const go = () => {
