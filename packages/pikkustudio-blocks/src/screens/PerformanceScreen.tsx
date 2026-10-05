@@ -59,7 +59,7 @@ export function PerformanceScreen() {
   const samples = useMemo(() => [...readMetrics(process)].sort((a, b) => a.at - b.at), [process.data])
 
   const disk = usePikkuQuery('studio:projectDisk', { key }, { enabled: !!key, staleTime: 60_000, refetchOnWindowFocus: false } as never)
-  const space = (disk.data as { packagesMb: number; codeMb: number; mediaMb: number; otherMb: number; freeMb: number } | undefined) ?? null
+  const space = (disk.data as { packagesMb: number; codeMb: number; mediaMb: number; otherMb: number; freeMb: number; skipped: number } | undefined) ?? null
   const latest = samples[samples.length - 1]
   const busy = samples.filter((s) => s.cpuPct !== null).map((s) => [s.at, s.cpuPct!] as [number, number])
   const mem = samples.filter((s) => s.memMb !== null).map((s) => [s.at, s.memMb!] as [number, number])
@@ -112,7 +112,7 @@ export function PerformanceScreen() {
 
           <Section title="Where the space goes" sub="What this project takes up on your computer.">
             <div className="rounded-empty border border-border bg-card p-6" data-testid="performance-disk">
-              {space && diskUsed > 0 ? <DiskPie parts={diskParts} /> : <p className="text-px15 text-muted-foreground">{disk.isError ? 'Could not measure this project just now. Try again in a moment.' : 'Measuring your project…'}</p>}
+              {space && diskUsed > 0 ? <><DiskPie parts={diskParts} />{space.skipped > 0 ? <p className="mt-5 text-px14 text-muted-foreground" data-testid="performance-skipped">{space.skipped === 1 ? 'One folder was too big to measure quickly, so it is not counted here.' : `${space.skipped} folders were too big to measure quickly, so they are not counted here.`} The real total is larger.</p> : null}</> : <p className="text-px15 text-muted-foreground">{disk.isError ? 'Could not measure this project just now. Try again in a moment.' : 'Measuring your project…'}</p>}
             </div>
           </Section>
         </>

@@ -9,6 +9,7 @@ export const ProjectDiskOutput = z.object({
   mediaMb: z.number(),
   otherMb: z.number(),
   freeMb: z.number(),
+  skipped: z.number(),
 })
 
 export const projectDisk = pikkuSessionlessFunc({

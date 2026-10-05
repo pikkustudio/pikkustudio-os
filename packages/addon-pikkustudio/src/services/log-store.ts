@@ -79,14 +79,17 @@ export const memoryLogStore = (): LogStore => {
   }
 }
 
+const INSERT_CHUNK = 200
+
 export const kyselyLogStore = (db: Kysely<any>): LogStore => ({
   async append(key, entries, cursor, metrics = []) {
     await db.transaction().execute(async (trx) => {
-      if (metrics.length) await trx.insertInto('metric_entry').values(metrics.map((m) => metricRow(key, m))).execute()
-      if (entries.length)
+      for (let i = 0; i < metrics.length; i += INSERT_CHUNK)
+        await trx.insertInto('metric_entry').values(metrics.slice(i, i + INSERT_CHUNK).map((m) => metricRow(key, m))).execute()
+      for (let i = 0; i < entries.length; i += INSERT_CHUNK)
         await trx
           .insertInto('log_entry')
-          .values(entries.map((e) => ({ project_id: key, source: e.source, level: e.level, wire: e.wire, fn: e.fn, ms: e.ms, trace: e.trace, text: e.text, at: e.at })))
+          .values(entries.slice(i, i + INSERT_CHUNK).map((e) => ({ project_id: key, source: e.source, level: e.level, wire: e.wire, fn: e.fn, ms: e.ms, trace: e.trace, text: e.text, at: e.at })))
           .execute()
       if (cursor)
         await trx

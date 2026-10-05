@@ -6,7 +6,7 @@ import { StudioAi } from './ai.js'
 import { StudioHooks } from './hooks.js'
 import { LogCollector, forwardFromEnv } from './log-collector.js'
 import { memoryLogStore, type LogStore } from './log-store.js'
-import { StudioProjectsService, studioHome, type AccountProvider, type ProjectStore } from './projects.js'
+import { STUDIO_KEY, StudioProjectsService, studioHome, type AccountProvider, type ProjectStore } from './projects.js'
 import { StudioPublisher, type PublishTarget } from './publish.js'
 import { StudioSettingsFile } from './settings.js'
 
@@ -102,7 +102,7 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
       }
     }, join(home, 'builder'))
   const studioLogs = options.logStore ?? memoryLogStore()
-  new LogCollector(home, studioLogs, async () => (await studioProjects.list()).map((p) => p.key), forwardFromEnv(), () => studioProjects.runDirs()).start()
+  new LogCollector(home, studioLogs, async () => [...(await studioProjects.list()).map((p) => p.key), STUDIO_KEY], forwardFromEnv(), () => studioProjects.runDirs()).start()
   const services: StudioServices = {
     home,
     studioAi,
