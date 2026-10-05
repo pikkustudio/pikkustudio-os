@@ -5,6 +5,7 @@ import { randomBytes } from 'node:crypto'
 import { basename, dirname, isAbsolute, join, resolve } from 'node:path'
 import { promisify } from 'node:util'
 import type { Confinement } from './confine.js'
+import { trackLargeFiles } from './lfs.js'
 
 const exec = promisify(execFile)
 
@@ -26,12 +27,14 @@ const inRepo = (path: string) =>
 export async function ensureRepo(path: string): Promise<void> {
   if (!(await inRepo(path))) await git(path, 'init', '-q', '-b', 'main')
   if (await git(path, 'rev-parse', '--verify', '-q', 'HEAD').then(() => true, () => false)) return
+  await trackLargeFiles(path).catch(() => [])
   await git(path, 'add', '-A')
   await git(path, ...IDENTITY, 'commit', '-q', '--allow-empty', '-m', 'Start')
 }
 
 export async function commitPaths(repo: string, paths: string[], message: string): Promise<void> {
   await ensureRepo(repo)
+  await trackLargeFiles(repo).catch(() => [])
   await git(repo, 'add', '--', ...paths)
   const staged = await git(repo, 'diff', '--cached', '--quiet', '--', ...paths).then(() => false, () => true)
   if (staged) await git(repo, ...IDENTITY, 'commit', '-q', '-m', message, '--', ...paths)
@@ -236,6 +239,7 @@ export async function keepStatus(repo: string, worktree: StudioWorktree): Promis
 
 export async function keepChanges(repo: string, worktree: StudioWorktree, env: Record<string, string> = {}): Promise<KeepResult> {
   const folder = await git(repo, 'rev-parse', '--show-toplevel')
+  await trackLargeFiles(worktree.path).catch(() => [])
   await git(worktree.path, 'add', '-A', ...SCRATCH)
   if (!(await tryGit(worktree.path, 'diff', '--cached', '--quiet')).ok) {
     await git(worktree.path, ...IDENTITY, 'commit', '-q', '--no-verify', '-m', 'Changes from the builder')
@@ -255,4 +259,24 @@ export async function keepChanges(repo: string, worktree: StudioWorktree, env: R
     return { ok: false, reason: 'edited', files }
   }
   return { ok: true, kept }
+}
+
+export type VersionCommit = { sha: string; title: string; summary: string; by: string; at: number }
+
+const commits = async (folder: string, range: string, limit: number): Promise<VersionCommit[]> => {
+  const out = await tryGit(folder, 'log', `-n${limit}`, '--format=%h%x1f%an%x1f%at%x1f%s%x1f%b%x1e', range)
+  if (!out.ok) return []
+  return out.output
+    .split('\x1e')
+    .map((record) => record.trim())
+    .filter(Boolean)
+    .map((record) => {
+      const [sha = '', by = '', at = '0', title = '', summary = ''] = record.split('\x1f')
+      return { sha, by, at: Number(at) * 1000, title, summary: summary.trim() }
+    })
+}
+
+export async function listVersions(repo: string): Promise<{ live: VersionCommit[]; ahead: VersionCommit[] }> {
+  const folder = await git(repo, 'rev-parse', '--show-toplevel')
+  return { live: await commits(folder, MAIN, 30), ahead: await commits(folder, `${MAIN}..${DEVELOP}`, 30) }
 }

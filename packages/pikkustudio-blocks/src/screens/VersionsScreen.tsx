@@ -1,4 +1,4 @@
-import { useContext, useMemo, useState, type ReactNode } from 'react'
+import { useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
 import { Check, Search, Pencil } from 'lucide-react'
 import { Button, buttonVariants } from '../ui/button'
@@ -13,7 +13,7 @@ import { Dot, RowCard, RowStack } from '../blocks/RowCard'
 import { SidePanel } from '../blocks/SidePanel'
 import { ShelfTile } from '../blocks/ShelfTile'
 import { canGoBack, failWords, shelfPart, shelfTone, shelfWords, when, who } from '../blocks/ShelfMeta'
-import { heads as allHeads, steps, versions, type Version } from '../mocks/versions'
+import { steps, useVersions, type Head, type Version } from '../lib/versions'
 import { keep } from '../lib/links'
 import { ShellCtx } from '../lib/shell'
 
@@ -24,7 +24,9 @@ const blurb = (v: Version) =>
 
 export function VersionsScreen() {
   const { say } = useContext(ShellCtx)
-  const [heads, setHeads] = useState(allHeads)
+  const { versions, heads: allHeads } = useVersions()
+  const [heads, setHeads] = useState<Head[]>(allHeads)
+  useEffect(() => setHeads(allHeads), [allHeads])
   const [more, setMore] = useState(false)
   const [view, setView] = useState('cards')
   const [filter, setFilter] = useState('all')
@@ -35,8 +37,8 @@ export function VersionsScreen() {
   const waiting = versions.find((v) => v.outcome === 'waiting')
 
   const match = (v: Version) => !q.trim() || v.title.toLowerCase().includes(q.trim().toLowerCase())
-  const shelf = useMemo(() => versions.filter((v) => (v.outcome === 'was-live' || v.outcome === 'rolled-back') && match(v)), [q])
-  const missed = useMemo(() => versions.filter((v) => (v.outcome === 'failed' || v.outcome === 'cancelled') && match(v)), [q])
+  const shelf = useMemo(() => versions.filter((v) => (v.outcome === 'was-live' || v.outcome === 'rolled-back') && match(v)), [q, versions])
+  const missed = useMemo(() => versions.filter((v) => (v.outcome === 'failed' || v.outcome === 'cancelled') && match(v)), [q, versions])
   const showWent = filter !== 'not'
   const showMissed = filter !== 'live'
   const open = (id: string, text: string) => (
@@ -218,7 +220,7 @@ export function VersionsScreen() {
   )
 }
 
-function PublishPanel({ heads, onClose, onGo }: { heads: typeof allHeads; onClose: () => void; onGo: (title: string) => void }) {
+function PublishPanel({ heads, onClose, onGo }: { heads: Head[]; onClose: () => void; onGo: (title: string) => void }) {
   return (
     <SidePanel title={`Publish ${heads.length} changes`} sub="They go out together. I check them first, then ask you before anything goes live." onClose={onClose}>
       <RowStack>

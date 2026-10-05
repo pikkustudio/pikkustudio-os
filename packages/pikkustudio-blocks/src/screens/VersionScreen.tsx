@@ -14,7 +14,8 @@ import { SidePanel } from '../blocks/SidePanel'
 import { ShelfTile } from '../blocks/ShelfTile'
 import { ShelfStrip } from '../blocks/ShelfStrip'
 import { failWords, ran, shelfPart, shelfTone, shelfWords, when, who } from '../blocks/ShelfMeta'
-import { versions, type Group, type Version } from '../mocks/versions'
+import { useVersions } from '../lib/versions'
+import type { Group, Version } from '../mocks/versions'
 import { keep } from '../lib/links'
 import { ShellCtx } from '../lib/shell'
 
@@ -29,7 +30,9 @@ const back = (
 )
 
 export function VersionScreen({ id }: { id: string }) {
+  const { versions, loading } = useVersions()
   const v = versions.find((x) => x.id === id)
+  if (!v && loading) return null
   if (!v)
     return (
       <Page gap="snug">
@@ -74,6 +77,7 @@ function GroupRows({ groups }: { groups: Group[] }) {
 }
 
 function Detail({ v }: { v: Version }) {
+  const { versions } = useVersions()
   const { say } = useContext(ShellCtx)
   const [panel, setPanel] = useState<'log' | 'back' | 'discard' | 'setting' | null>(null)
   const [saved, setSaved] = useState<Record<string, string>>({})
