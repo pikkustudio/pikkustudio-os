@@ -8,17 +8,6 @@ import { builderHome, packageRoot, piPackageRoot, type Launcher } from '@pikku/b
 import { basename, dirname, join, resolve, sep } from 'node:path'
 import { randomBytes, randomUUID } from 'node:crypto'
 import { ConflictError } from '@pikku/core/errors'
-import {
-  deriveConsoleUrl,
-  getFabricRPC,
-  matchRemoteProjects,
-  readAuthFile,
-  readConfigProjectId,
-  resolveApiContext,
-  writeAuthFile,
-  writeConfigProjectId,
-  type FabricProjectRow,
-} from '@pikku/cli/fabric'
 import { DEVELOP, MAIN, addWorktree, listWorktrees, layoutRoot, sessionKey, splitSessionKey, cloneLayout, commitPaths, createLayout, ensureWorktree, keepChanges, mainEnv, keepStatus, worktreeConfinement, type KeepResult, type KeepStatus, type StudioWorktree } from './worktree.js'
 import { canConfine, confinedSpawn, type Confinement } from './confine.js'
 import { previewViteConfig } from './vite-preview.js'
@@ -89,7 +78,12 @@ const excludeFromGit = async (cwd: string, name: string) => {
   await writeFile(path, `${current}${current && !current.endsWith('\n') ? '\n' : ''}${name}\n`)
 }
 
-export type CloudProject = FabricProjectRow
+export interface CloudProject {
+  projectId: string
+  name: string
+  gitRepoUrl: string | null
+  productionBranch?: string
+}
 
 export interface StudioAccount {
   signedIn: boolean
@@ -100,17 +94,19 @@ export interface StudioAccount {
 
 export type SignInStatus = 'pending' | 'confirmed' | 'expired' | 'rejected'
 
-export interface FabricAccount {
+export interface AccountProvider {
   account(): Promise<StudioAccount>
   projects(): Promise<CloudProject[]>
   startSignIn(): Promise<{ code: string; url: string; expiresAt: string }>
   pollSignIn(code: string): Promise<SignInStatus>
   signOut(): Promise<void>
   modelAccess(): Promise<{ proxyUrl: string; apiKey: string }>
-  link(projectId: string): Promise<FabricLink | null>
+  link(projectId: string): Promise<AccountLink | null>
+  locate(path: string, cloud: CloudProject[]): Promise<{ projectId: string; project: CloudProject | null } | null>
+  adopt(projectId: string, path: string): Promise<void>
 }
 
-export interface FabricLink {
+export interface AccountLink {
   apiUrl: string
   token: string
   baseBranch: string
@@ -168,77 +164,29 @@ export const fileProjectStore = (home: string): ProjectStore => {
 export const studioHome = () =>
   process.env.PIKKU_STUDIO_HOME ?? join(homedir(), '.pikkustudio')
 
-export const fabricAccount: FabricAccount = {
+export const localAccount: AccountProvider = {
   async account() {
-    const ctx = await resolveApiContext({ resolveProject: false })
-    return {
-      signedIn: !!ctx.token,
-      apiUrl: ctx.apiUrl,
-      consoleUrl: deriveConsoleUrl(ctx.apiUrl).replace(/\/$/, ''),
-    }
+    return { signedIn: false, apiUrl: '', consoleUrl: '' }
   },
   async projects() {
-    const ctx = await resolveApiContext({ resolveProject: false })
-    if (!ctx.token) return []
-    const rpc = getFabricRPC({ apiUrl: ctx.apiUrl, token: ctx.token })
-    const { projects } = await rpc.invoke('fabricCliProjects', {})
-    return projects
+    return []
   },
-  async link(projectId) {
-    const ctx = await resolveApiContext({ resolveProject: false })
-    if (!ctx.token) return null
-    const rpc = getFabricRPC({ apiUrl: ctx.apiUrl, token: ctx.token })
-    const [{ projects }, { stages }] = await Promise.all([
-      rpc.invoke('fabricCliProjects', {}),
-      rpc.invoke('listStages', { projectId }),
-    ])
-    const project = projects.find((p) => p.projectId === projectId)
-    if (!project) return null
-    return {
-      apiUrl: ctx.apiUrl,
-      token: ctx.token,
-      baseBranch: project.productionBranch,
-      deployed: stages.some((s) => s.hasActiveDeployment),
-    }
+  async locate() {
+    return null
   },
+  async adopt() {},
   async startSignIn() {
-    const ctx = await resolveApiContext({ resolveProject: false })
-    const rpc = getFabricRPC({ apiUrl: ctx.apiUrl, token: null })
-    const { code, expiresAt } = await rpc.invoke('requestCliAuth')
-    return {
-      code,
-      expiresAt: new Date(expiresAt).toISOString(),
-      url: `${deriveConsoleUrl(ctx.apiUrl).replace(/\/$/, '')}/cli-auth`,
-    }
+    throw new Error('Signing in to an account is not part of this edition')
   },
-  async pollSignIn(code) {
-    const ctx = await resolveApiContext({ resolveProject: false })
-    const rpc = getFabricRPC({ apiUrl: ctx.apiUrl, token: null })
-    const result = await rpc.invoke('pollCliAuth', { code })
-    if (result.status === 'confirmed' && result.token) {
-      const auth = await readAuthFile()
-      auth.tokens[ctx.apiUrl] = result.token
-      auth.defaultApiUrl = ctx.apiUrl
-      await writeAuthFile(auth)
-      return 'confirmed'
-    }
-    if (result.status === 'consumed') return 'expired'
-    return result.status === 'confirmed' ? 'pending' : result.status
+  async pollSignIn() {
+    throw new Error('Signing in to an account is not part of this edition')
   },
-  async signOut() {
-    const ctx = await resolveApiContext({ resolveProject: false })
-    const auth = await readAuthFile()
-    delete auth.tokens[ctx.apiUrl]
-    await writeAuthFile(auth)
-  },
+  async signOut() {},
   async modelAccess() {
-    const ctx = await resolveApiContext({ resolveProject: false })
-    if (!ctx.token) throw new Error('Sign in to Fabric to build with Fabric AI')
-    const { proxyUrl, apiKey } = await getFabricRPC({ apiUrl: ctx.apiUrl, token: ctx.token }).invoke(
-      'getDeveloperLiteLLMKey',
-      {}
-    )
-    return { proxyUrl, apiKey }
+    throw new Error('Account AI is not part of this edition')
+  },
+  async link() {
+    return null
   },
 }
 
@@ -400,7 +348,7 @@ async function projectName(path: string): Promise<string> {
 
 export interface StudioProjectsOptions {
   currentRoot?: string | null
-  account?: FabricAccount
+  account?: AccountProvider
   home?: string
   devCommand?: (port: number) => { command: string; args: string[] }
   installCommand?: (dir: string) => { command: string; args: string[] } | null
@@ -428,7 +376,7 @@ export class StudioProjectsService {
   private apps = new Map<string, RunningApp[]>()
   private keeping = new Set<Promise<unknown>>()
   private lastUsed = new Map<string, number>()
-  private account: FabricAccount
+  private account: AccountProvider
   private home: string
 
   private reaped: Promise<void> | undefined
@@ -436,7 +384,7 @@ export class StudioProjectsService {
   private served = new Map<string, { child: ChildProcess; port: number; worktree: string }>()
 
   constructor(private options: StudioProjectsOptions = {}) {
-    this.account = options.account ?? fabricAccount
+    this.account = options.account ?? localAccount
     this.home = options.home ?? studioHome()
     process.once('exit', () => this.killAll())
   }
@@ -524,7 +472,7 @@ export class StudioProjectsService {
     return this.account.modelAccess()
   }
 
-  fabricLink(projectId: string) {
+  accountLink(projectId: string) {
     return this.account.link(projectId)
   }
 
@@ -551,13 +499,9 @@ export class StudioProjectsService {
     const local = await Promise.all(
       entries.map(async (entry): Promise<StudioProject> => {
         const missing = !existsSync(entry.path)
-        const linkedId = missing ? null : (await readConfigProjectId(entry.path))?.projectId ?? null
-        const byRemote = missing
-          ? []
-          : await matchRemoteProjects(cloud, entry.path).catch(() => [])
-        const match =
-          cloud.find((p) => p.projectId === linkedId) ??
-          byRemote[0]?.matches[0]
+        const found = missing ? null : await this.account.locate(entry.path, cloud).catch(() => null)
+        const linkedId = found?.projectId ?? null
+        const match = found?.project ?? null
         if (match) claimed.add(match.projectId)
         return {
           key: entry.id,
@@ -677,20 +621,15 @@ export class StudioProjectsService {
 
   async clone(fabricProjectId: string): Promise<StudioProject> {
     const project = (await this.account.projects()).find((p) => p.projectId === fabricProjectId)
-    if (!project) throw new Error('That project is not in your Fabric account')
+    if (!project) throw new Error('That project is not in your account')
     if (!project.gitRepoUrl) throw new Error(`${project.name} has no repository to clone`)
     if (await this.nameTaken(project.name)) throw new Error(`You already have a project called ${project.name}`)
     const id = randomUUID().slice(0, 8)
     const root = join(this.projectsDir, id)
     try {
       await cloneLayout(root, project.gitRepoUrl, this.home, async (path) => {
-        if (!(await writeConfigProjectId(project.projectId, path))) {
-          await writeFile(
-            join(path, 'pikku.config.json'),
-            JSON.stringify({ fabric: { projectId: project.projectId } }, null, 2) + '\n'
-          )
-        }
-        await commitPaths(path, ['pikku.config.json'], 'Link to Fabric')
+        await this.account.adopt(project.projectId, path)
+        await commitPaths(path, ['pikku.config.json'], 'Link to the account')
       })
     } catch (error) {
       await rm(root, { recursive: true, force: true })

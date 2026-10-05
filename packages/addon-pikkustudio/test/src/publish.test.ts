@@ -1,19 +1,42 @@
 import assert from 'node:assert'
 import { execFileSync } from 'node:child_process'
-import { mkdir, mkdtemp, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, test } from 'node:test'
-import { StudioProjectsService, type CloudProject, type FabricAccount } from '../../src/services/projects.js'
-import { publishPrompt, StudioPublisher, type Runner } from '../../src/services/publish.js'
+import { StudioProjectsService, type AccountProvider, type CloudProject } from '../../src/services/projects.js'
+
+const target: PublishTarget = {
+  id: 'fabric',
+  readiness: (project, account) => (!account.signedIn ? 'sign-in' : !project.fabricProjectId ? 'not-in-fabric' : 'ready'),
+  deploy: (from, run, onLine) => run('npx', ['pikku', 'fabric', 'deploy', 'apply', '-y'], from, onLine),
+}
+import { publishPrompt, StudioPublisher, type PublishTarget, type Runner } from '../../src/services/publish.js'
 
 const shop: CloudProject = { projectId: 'p-shop', name: 'Shop', slug: 'shop', productionBranch: 'main', gitRepoUrl: 'https://github.com/acme/shop.git' }
 
-const account = (signedIn: boolean, cloud: CloudProject[]): FabricAccount => ({
+const account = (signedIn: boolean, cloud: CloudProject[]): AccountProvider => ({
   account: async () => ({ signedIn, apiUrl: 'http://fabric', consoleUrl: 'http://fabric/console' }),
   projects: async () => cloud,
   startSignIn: async () => ({ code: 'ABCD', url: 'http://fabric', expiresAt: new Date().toISOString() }),
   pollSignIn: async () => 'confirmed',
+  locate: async (path, cloud) => {
+    try {
+      const projectId = JSON.parse(await readFile(join(path, 'pikku.config.json'), 'utf8')).fabric?.projectId as string | undefined
+      if (projectId) return { projectId, project: cloud.find((p) => p.projectId === projectId) ?? null }
+    } catch {}
+    try {
+      const remote = execFileSync('git', ['remote', 'get-url', 'origin'], { cwd: path, stdio: 'pipe' }).toString().trim()
+      const norm = (url: string) => url.replace(/^git@([^:]+):/, 'https://$1/').replace(/\.git$/, '').toLowerCase()
+      const project = cloud.find((p) => p.gitRepoUrl && norm(p.gitRepoUrl) === norm(remote)) ?? null
+      return project ? { projectId: project.projectId, project } : null
+    } catch {
+      return null
+    }
+  },
+  adopt: async (projectId, path) => {
+    await writeFile(join(path, 'pikku.config.json'), JSON.stringify({ fabric: { projectId } }, null, 2) + '\n')
+  },
   signOut: async () => {},
 })
 
@@ -46,10 +69,10 @@ const until = async (check: () => boolean) => {
 describe('StudioPublisher', () => {
   test('says what Fabric needs before it can publish', async () => {
     const local = await setup(false, [])
-    assert.equal((await new StudioPublisher(local.projects).options(local.key)).fabric, 'sign-in')
+    assert.equal((await new StudioPublisher(local.projects, [target]).options(local.key)).targets.fabric, 'sign-in')
     const signedIn = await setup(true, [shop])
-    assert.equal((await new StudioPublisher(signedIn.projects).options(signedIn.key)).fabric, 'not-in-fabric')
-    await assert.rejects(new StudioPublisher(signedIn.projects).fabric(signedIn.key))
+    assert.equal((await new StudioPublisher(signedIn.projects, [target]).options(signedIn.key)).targets.fabric, 'not-in-fabric')
+    await assert.rejects(new StudioPublisher(signedIn.projects, [target]).deploy(signedIn.key, 'fabric'))
   })
 
   test('publishes a Fabric project by pushing its work and deploying it', async () => {
@@ -60,9 +83,9 @@ describe('StudioPublisher', () => {
       assert.match(cwd, /worktrees/)
       if (command === 'npx') onLine('Live at https://shop-main.pikku.app')
     }
-    const publisher = new StudioPublisher(projects, run)
-    assert.equal((await publisher.options(key)).fabric, 'ready')
-    assert.equal((await publisher.fabric(key)).state, 'running')
+    const publisher = new StudioPublisher(projects, [target], run)
+    assert.equal((await publisher.options(key)).targets.fabric, 'ready')
+    assert.equal((await publisher.deploy(key, 'fabric')).state, 'running')
     await until(() => publisher.status(key).state !== 'running')
     projects.closeAll()
     const job = publisher.status(key)
@@ -74,10 +97,10 @@ describe('StudioPublisher', () => {
 
   test('reports a failed step', async () => {
     const { projects, key } = await setup(true, [shop], 'https://github.com/acme/shop')
-    const publisher = new StudioPublisher(projects, async (command) => {
+    const publisher = new StudioPublisher(projects, [target], async (command) => {
       if (command === 'git') throw new Error('push rejected')
     })
-    await publisher.fabric(key)
+    await publisher.deploy(key, 'fabric')
     await until(() => publisher.status(key).state !== 'running')
     projects.closeAll()
     assert.deepEqual([publisher.status(key).state, publisher.status(key).error], ['failed', 'push rejected'])

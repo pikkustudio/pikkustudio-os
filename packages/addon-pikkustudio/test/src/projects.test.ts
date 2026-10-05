@@ -6,14 +6,31 @@ import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, test } from 'node:test'
-import { StudioProjectsService, cloneProblem, linkedRepos, repoName, type CloudProject, type FabricAccount } from '../../src/services/projects.js'
+import { StudioProjectsService, cloneProblem, linkedRepos, repoName, type CloudProject, type AccountProvider } from '../../src/services/projects.js'
 import { symlink } from 'node:fs/promises'
 
-const fakeAccount = (projects: CloudProject[]): FabricAccount => ({
+const fakeAccount = (projects: CloudProject[]): AccountProvider => ({
   account: async () => ({ signedIn: projects.length > 0, apiUrl: 'http://fabric', consoleUrl: 'http://fabric' }),
   projects: async () => projects,
   startSignIn: async () => ({ code: 'ABCD', url: 'http://fabric/cli-auth', expiresAt: new Date().toISOString() }),
   pollSignIn: async () => 'confirmed',
+  locate: async (path, cloud) => {
+    try {
+      const projectId = JSON.parse(await readFile(join(path, 'pikku.config.json'), 'utf8')).fabric?.projectId as string | undefined
+      if (projectId) return { projectId, project: cloud.find((p) => p.projectId === projectId) ?? null }
+    } catch {}
+    try {
+      const remote = execFileSync('git', ['remote', 'get-url', 'origin'], { cwd: path, stdio: 'pipe' }).toString().trim()
+      const norm = (url: string) => url.replace(/^git@([^:]+):/, 'https://$1/').replace(/\.git$/, '').toLowerCase()
+      const project = cloud.find((p) => p.gitRepoUrl && norm(p.gitRepoUrl) === norm(remote)) ?? null
+      return project ? { projectId: project.projectId, project } : null
+    } catch {
+      return null
+    }
+  },
+  adopt: async (projectId, path) => {
+    await writeFile(join(path, 'pikku.config.json'), JSON.stringify({ fabric: { projectId } }, null, 2) + '\n')
+  },
   signOut: async () => {},
 })
 

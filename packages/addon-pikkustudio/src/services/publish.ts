@@ -1,9 +1,13 @@
 import { spawn } from 'node:child_process'
-import type { StudioProjectsService } from './projects.js'
+import type { StudioAccount, StudioProject, StudioProjectsService } from './projects.js'
 
 export type PromptTarget = 'standalone' | 'cloudflare' | 'serverless' | 'azure'
 
-export type FabricReadiness = 'ready' | 'sign-in' | 'not-in-fabric'
+export interface PublishTarget {
+  id: string
+  readiness(project: StudioProject, account: StudioAccount): string
+  deploy(from: string, run: Runner, onLine: (line: string) => void): Promise<void>
+}
 
 export interface PublishJob {
   state: 'idle' | 'running' | 'done' | 'failed'
@@ -96,6 +100,7 @@ export class StudioPublisher {
 
   constructor(
     private projects: StudioProjectsService,
+    private targets: PublishTarget[] = [],
     private run: Runner = runner
   ) {}
 
@@ -103,25 +108,23 @@ export class StudioPublisher {
     const project = (await this.projects.list()).find((p) => p.key === key)
     if (!project) throw new Error('Studio does not know this project')
     const account = await this.projects.getAccount()
-    const fabric: FabricReadiness = !account.signedIn
-      ? 'sign-in'
-      : !project.fabricProjectId
-        ? 'not-in-fabric'
-        : 'ready'
+    const targets = Object.fromEntries(this.targets.map((t) => [t.id, t.readiness(project, account)]))
     const prompts = Object.fromEntries(
       (Object.keys(PROVIDER) as PromptTarget[]).map((t) => [t, publishPrompt(t, project.name)])
     ) as Record<PromptTarget, string>
-    return { fabric, consoleUrl: account.consoleUrl, prompts }
+    return { targets, consoleUrl: account.consoleUrl, prompts }
   }
 
   status(key: string): PublishJob {
     return this.jobs.get(key) ?? { state: 'idle', url: null, error: null, log: [] }
   }
 
-  async fabric(key: string): Promise<PublishJob> {
+  async deploy(key: string, targetId: string): Promise<PublishJob> {
     if (this.status(key).state === 'running') return this.status(key)
-    const { fabric } = await this.options(key)
-    if (fabric !== 'ready') throw new Error('Put this project in Fabric before publishing it there')
+    const target = this.targets.find((t) => t.id === targetId)
+    if (!target) throw new Error('Studio does not publish there')
+    const { targets } = await this.options(key)
+    if (targets[targetId] !== 'ready') throw new Error('This project is not ready to publish there yet')
     const { worktree } = await this.projects.open(key)
     const job: PublishJob = { state: 'running', url: null, error: null, log: [] }
     this.jobs.set(key, job)
@@ -141,7 +144,7 @@ export class StudioPublisher {
         const main = await this.projects.prepareMain(key)
         const from = main?.dir ?? worktree
         await this.run('git', ['push', '-u', 'origin', main ? 'main' : 'HEAD'], from, onLine)
-        await this.run('npx', ['pikku', 'fabric', 'deploy', 'apply', '-y'], from, onLine)
+        await target.deploy(from, this.run, onLine)
         job.state = 'done'
       } catch (error) {
         job.state = 'failed'

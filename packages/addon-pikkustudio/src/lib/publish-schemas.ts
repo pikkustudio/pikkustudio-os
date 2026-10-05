@@ -8,7 +8,7 @@ export const PublishJobOutput = z.object({
 })
 
 export const PublishOptionsOutput = z.object({
-  fabric: z.enum(['ready', 'sign-in', 'not-in-fabric']),
+  targets: z.record(z.string(), z.string()),
   consoleUrl: z.string(),
   prompts: z.object({
     standalone: z.string(),

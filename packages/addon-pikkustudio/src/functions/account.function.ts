@@ -16,7 +16,7 @@ export const AccountOutput = z.object({
 })
 
 export const account = pikkuSessionlessFunc({
-  description: 'The sign-in choice, the AI choice and the Fabric account.',
+  description: 'The sign-in choice, the AI choice and the signed-in account.',
   input: AccountInput,
   output: AccountOutput,
   func: async ({ studioSettings, studioProjects, studioAi, auth }, _input, { session, http }) => {

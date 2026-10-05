@@ -6,8 +6,8 @@ import { StudioAi } from './ai.js'
 import { StudioHooks } from './hooks.js'
 import { LogCollector, forwardFromEnv } from './log-collector.js'
 import { memoryLogStore, type LogStore } from './log-store.js'
-import { StudioProjectsService, studioHome, type ProjectStore } from './projects.js'
-import { StudioPublisher } from './publish.js'
+import { StudioProjectsService, studioHome, type AccountProvider, type ProjectStore } from './projects.js'
+import { StudioPublisher, type PublishTarget } from './publish.js'
 import { StudioSettingsFile } from './settings.js'
 
 export interface StudioServices {
@@ -27,6 +27,8 @@ export interface StudioServicesOptions {
   designEntry?: string
   projects?: StudioProjectsService
   publisher?: StudioPublisher
+  publishTargets?: PublishTarget[]
+  account?: AccountProvider
   builder?: BuilderSession
   projectEnv?: (key: string) => Promise<Record<string, string>>
   projectStore?: ProjectStore
@@ -58,6 +60,7 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
     options.projects ??
     new StudioProjectsService({
       home,
+      account: options.account,
       designEntry: options.designEntry ?? resolveDesignEntry(),
       store: options.projectStore,
       owner: async () => (await new StudioSettingsFile(join(home, 'settings.json')).read()).name ?? '',
@@ -104,7 +107,7 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
     home,
     studioAi,
     studioProjects,
-    studioPublisher: options.publisher ?? new StudioPublisher(studioProjects),
+    studioPublisher: options.publisher ?? new StudioPublisher(studioProjects, options.publishTargets),
     studioBuilder,
     studioSettings: new StudioSettingsFile(join(home, 'settings.json')),
     studioHooks: new StudioHooks(),
@@ -123,6 +126,8 @@ export { kyselyProjectStore } from './project-store.js'
 export { kyselyLogStore } from './log-store.js'
 export type { ProjectStore, RegistryEntry } from './projects.js'
 export { StudioPublisher } from './publish.js'
+export type { PublishTarget, Runner } from './publish.js'
+export type { AccountProvider, CloudProject, StudioAccount } from './projects.js'
 export { StudioHooks } from './hooks.js'
 export type { SignInChoice, StudioSettings } from './settings.js'
 export type { BuilderSession }
