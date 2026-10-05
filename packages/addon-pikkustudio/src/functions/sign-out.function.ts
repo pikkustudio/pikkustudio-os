@@ -8,6 +8,7 @@ export const SignOutInput = z.object({})
 export const SignOutOutput = Settings
 
 export const signOut = pikkuSessionlessFunc({
+  expose: true,
   description: 'Sign out of Fabric, or stop using Studio locally.',
   input: SignOutInput,
   output: SignOutOutput,

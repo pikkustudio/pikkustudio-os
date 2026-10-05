@@ -8,6 +8,7 @@ export const UseLocallyInput = z.object({})
 export const UseLocallyOutput = Settings
 
 export const useLocally = pikkuSessionlessFunc({
+  expose: true,
   description: 'Use Studio without a Fabric account.',
   input: UseLocallyInput,
   output: UseLocallyOutput,

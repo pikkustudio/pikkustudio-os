@@ -5,6 +5,7 @@ import { PublishOptionsOutput } from '../lib/publish-schemas.js'
 export const PublishOptionsInput = z.object({ key: z.string() })
 
 export const publishOptions = pikkuSessionlessFunc({
+  expose: true,
   description: 'Where a project can be published, and the prompts for each.',
   input: PublishOptionsInput,
   output: PublishOptionsOutput,

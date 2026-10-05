@@ -10,6 +10,7 @@ export const ChangesOutput = z.object({
 })
 
 export const changes = pikkuSessionlessFunc({
+  expose: true,
   description: "A project's changes, grouped into changesets, and how far each has got.",
   input: ChangesInput,
   output: ChangesOutput,

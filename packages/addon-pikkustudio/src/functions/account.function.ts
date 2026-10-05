@@ -16,6 +16,7 @@ export const AccountOutput = z.object({
 })
 
 export const account = pikkuSessionlessFunc({
+  expose: true,
   description: 'The sign-in choice, the AI choice and the signed-in account.',
   input: AccountInput,
   output: AccountOutput,

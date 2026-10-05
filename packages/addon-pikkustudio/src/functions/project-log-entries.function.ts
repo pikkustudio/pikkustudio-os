@@ -24,6 +24,7 @@ export const ProjectLogEntriesOutput = z.object({
 })
 
 export const projectLogEntries = pikkuSessionlessFunc({
+  expose: true,
   description: "A project's recent log lines, newest first, from every place it runs.",
   input: ProjectLogEntriesInput,
   output: ProjectLogEntriesOutput,

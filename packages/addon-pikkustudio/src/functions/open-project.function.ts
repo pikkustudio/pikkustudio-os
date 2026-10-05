@@ -4,6 +4,7 @@ import { pikkuSessionlessFunc } from '#pikku/addon/function'
 export const OpenProjectInput = z.object({ key: z.string() })
 
 export const openProject = pikkuSessionlessFunc({
+  expose: true,
   description: 'Start a project and return where it is served.',
   input: OpenProjectInput,
   func: async ({ studioProjects, studioHooks }, { key }) => {

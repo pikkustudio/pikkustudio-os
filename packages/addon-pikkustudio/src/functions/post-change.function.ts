@@ -9,6 +9,7 @@ export const PostChangeInput = z.object({
 })
 
 export const postChange = pikkuSessionlessFunc({
+  expose: true,
   description: 'Ask for a change to a project. It is filed and the builder starts on it straight away.',
   input: PostChangeInput,
   approvalRequired: true,

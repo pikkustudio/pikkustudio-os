@@ -7,6 +7,7 @@ export const SetProfileInput = z.object({ name: z.string().trim().min(1), about:
 export const SetProfileOutput = Settings
 
 export const setProfile = pikkuSessionlessFunc({
+  expose: true,
   description: 'Save what to call the person using Studio, and optionally what they do.',
   input: SetProfileInput,
   output: SetProfileOutput,

@@ -5,6 +5,7 @@ export const SetUpDatabaseInput = z.object({ key: z.string() })
 export const SetUpDatabaseOutput = z.object({ ok: z.boolean(), problem: z.string().optional() })
 
 export const setUpDatabase = pikkuSessionlessFunc({
+  expose: true,
   description: "Bring a project's database up to date, saying what went wrong if it cannot.",
   input: SetUpDatabaseInput,
   output: SetUpDatabaseOutput,

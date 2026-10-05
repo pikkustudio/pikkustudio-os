@@ -7,6 +7,7 @@ export const ImportProjectInput = z.object({
 })
 
 export const importProject = pikkuSessionlessFunc({
+  expose: true,
   description: 'Bring a project from a git remote onto this computer. The remote stays connected: everything is pushed back to it.',
   input: ImportProjectInput,
   func: async ({ studioProjects }, { url, name }) => studioProjects.importRepo(url, name),

@@ -4,6 +4,7 @@ import { pikkuSessionlessFunc } from '#pikku/addon/function'
 export const BuilderPromptInput = z.object({ key: z.string(), message: z.string(), context: z.string().optional() })
 
 export const builderPrompt = pikkuSessionlessFunc({
+  expose: true,
   description: 'Ask the builder to do something in a project.',
   input: BuilderPromptInput,
   func: async ({ studioBuilder, studioSettings }, { key, message, context }) => {

@@ -5,6 +5,7 @@ import { PublishJobOutput } from '../lib/publish-schemas.js'
 export const PublishStatusInput = z.object({ key: z.string() })
 
 export const publishStatus = pikkuSessionlessFunc({
+  expose: true,
   description: "How a project's publish is going.",
   input: PublishStatusInput,
   output: PublishJobOutput,

@@ -7,6 +7,7 @@ export const PollSignInInput = z.object({ code: z.string() })
 export const PollSignInOutput = z.object({ status: z.enum(['pending', 'confirmed', 'expired', 'rejected']) })
 
 export const pollSignIn = pikkuSessionlessFunc({
+  expose: true,
   description: 'Check whether a Fabric sign-in was confirmed.',
   input: PollSignInInput,
   output: PollSignInOutput,

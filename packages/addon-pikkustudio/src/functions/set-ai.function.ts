@@ -8,6 +8,7 @@ export const SetAiInput = z.union([
 ])
 
 export const setAi = pikkuSessionlessFunc({
+  expose: true,
   description: 'Choose the AI Studio builds with.',
   input: SetAiInput,
   func: async ({ studioAi }, input) => studioAi.set(input),

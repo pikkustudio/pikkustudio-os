@@ -5,6 +5,7 @@ export const HealProjectInput = z.object({ key: z.string(), problem: z.string() 
 export const HealProjectOutput = z.object({ ok: z.boolean(), summary: z.string() })
 
 export const healProject = pikkuSessionlessFunc({
+  expose: true,
   description: 'Ask the builder to get a project that will not start running again, as fast as it can.',
   input: HealProjectInput,
   output: HealProjectOutput,

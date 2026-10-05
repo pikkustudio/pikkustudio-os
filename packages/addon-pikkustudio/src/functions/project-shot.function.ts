@@ -7,6 +7,7 @@ import { pikkuSessionlessFunc } from '#pikku/addon/function'
 export const ProjectShotInput = z.object({ key: z.string(), path: z.array(z.string()) })
 
 export const projectShot = pikkuSessionlessFunc({
+  expose: true,
   description: 'A screenshot the builder took of a project page.',
   input: ProjectShotInput,
   func: async ({ studioProjects }, { key, path }) => {

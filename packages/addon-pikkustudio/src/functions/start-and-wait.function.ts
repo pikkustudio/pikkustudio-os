@@ -5,6 +5,7 @@ export const StartAndWaitInput = z.object({ key: z.string() })
 export const StartAndWaitOutput = z.object({ ok: z.boolean(), problem: z.string().optional() })
 
 export const startAndWait = pikkuSessionlessFunc({
+  expose: true,
   description: 'Start a project and wait until it is serving, saying what went wrong if it cannot.',
   input: StartAndWaitInput,
   output: StartAndWaitOutput,

@@ -7,6 +7,7 @@ const STUDIO_HEADER = 'x-pikku-studio'
 export const ProjectProxyInput = z.looseObject({ key: z.string() })
 
 export const projectProxy = pikkuSessionlessFunc({
+  expose: true,
   description: "Pass a request through to a running project's own server.",
   input: ProjectProxyInput,
   func: async ({ studioProjects, studioHooks }, { key }, { http }) => {

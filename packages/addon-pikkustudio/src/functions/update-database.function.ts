@@ -4,6 +4,7 @@ import { pikkuSessionlessFunc } from '#pikku/addon/function'
 export const UpdateDatabaseInput = z.object({ key: z.string() })
 
 export const updateDatabase = pikkuSessionlessFunc({
+  expose: true,
   description: "Bring a project's database up to date, then start it.",
   input: UpdateDatabaseInput,
   func: async ({ studioProjects, studioHooks }, { key }) => {

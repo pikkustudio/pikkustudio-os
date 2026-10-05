@@ -12,6 +12,7 @@ export const AiOptionsOutput = z.object({
 })
 
 export const aiOptions = pikkuSessionlessFunc({
+  expose: true,
   description: 'The AI providers Studio can build with.',
   input: AiOptionsInput,
   output: AiOptionsOutput,
