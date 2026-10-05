@@ -27,7 +27,6 @@ const ago = (at: number) => {
   return `${dayOf(at)}, ${timeOf(at)}`
 }
 
-/** A version is a commit on the live branch; what is ahead of it is "not live yet". */
 export function useVersions(): { versions: Version[]; heads: Head[]; loading: boolean } {
   const key = useProjectKey()
   const query = usePikkuQuery('studio:listVersions', { key }, { enabled: !!key } as never)

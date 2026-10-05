@@ -1,6 +1,6 @@
 import { execFile } from 'node:child_process'
 import { existsSync } from 'node:fs'
-import { chmod, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { chmod, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { randomBytes } from 'node:crypto'
 import { basename, dirname, isAbsolute, join, resolve } from 'node:path'
 import { promisify } from 'node:util'
@@ -279,4 +279,39 @@ const commits = async (folder: string, range: string, limit: number): Promise<Ve
 export async function listVersions(repo: string): Promise<{ live: VersionCommit[]; ahead: VersionCommit[] }> {
   const folder = await git(repo, 'rev-parse', '--show-toplevel')
   return { live: await commits(folder, MAIN, 30), ahead: await commits(folder, `${MAIN}..${DEVELOP}`, 30) }
+}
+
+export type ProjectTheme = { id: string; name: string; primary: string; secondary: string | null; background: string | null; foreground: string | null; heading: string; body: string; radius: string; scheme: string }
+
+const readJson = async (file: string): Promise<Record<string, any> | null> => {
+  try {
+    return JSON.parse(await readFile(file, 'utf8'))
+  } catch {
+    return null
+  }
+}
+
+export async function listThemes(repo: string): Promise<{ active: string; themes: ProjectTheme[] }> {
+  const dir = join(repo, 'packages', 'theme')
+  const active = (await readJson(join(dir, 'active.json')))?.id ?? ''
+  const files = (await readdir(join(dir, 'themes')).catch(() => [] as string[])).filter((f) => f.endsWith('.json')).sort()
+  const themes: ProjectTheme[] = []
+  for (const file of files) {
+    const theme = await readJson(join(dir, 'themes', file))
+    if (!theme) continue
+    const colors = theme.brand?.colors ?? {}
+    themes.push({
+      id: file.replace(/\.json$/, ''),
+      name: String(theme.name ?? file.replace(/\.json$/, '')),
+      primary: String(colors.primary ?? '#3b3f5c'),
+      secondary: colors.secondary ? String(colors.secondary) : null,
+      background: colors.background ? String(colors.background) : null,
+      foreground: colors.foreground ? String(colors.foreground) : null,
+      heading: String(theme.brand?.fonts?.heading ?? 'Inter'),
+      body: String(theme.brand?.fonts?.body ?? 'Inter'),
+      radius: String(theme.structure?.radius ?? 'md'),
+      scheme: String(theme.structure?.defaultColorScheme ?? 'light'),
+    })
+  }
+  return { active, themes }
 }

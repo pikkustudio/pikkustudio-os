@@ -8,7 +8,7 @@ import { builderHome, packageRoot, piPackageRoot, type Launcher } from '@pikku/b
 import { basename, dirname, join, resolve, sep } from 'node:path'
 import { randomBytes, randomUUID } from 'node:crypto'
 import { ConflictError } from '@pikku/core/errors'
-import { DEVELOP, MAIN, addWorktree, listWorktrees, layoutRoot, sessionKey, splitSessionKey, cloneLayout, commitPaths, createLayout, ensureWorktree, keepChanges, mainEnv, keepStatus, listVersions, type VersionCommit, worktreeConfinement, type KeepResult, type KeepStatus, type StudioWorktree } from './worktree.js'
+import { DEVELOP, MAIN, addWorktree, listWorktrees, layoutRoot, sessionKey, splitSessionKey, cloneLayout, commitPaths, createLayout, ensureWorktree, keepChanges, mainEnv, keepStatus, listVersions, listThemes, type ProjectTheme, type VersionCommit, worktreeConfinement, type KeepResult, type KeepStatus, type StudioWorktree } from './worktree.js'
 import { canConfine, confinedSpawn, type Confinement } from './confine.js'
 import { previewViteConfig } from './vite-preview.js'
 
@@ -748,6 +748,11 @@ export class StudioProjectsService {
     const worktree = await ensureWorktree(entry.path, this.home, entry.id, name)
     const root = layoutRoot(entry.path)
     return { entry, worktree, repo: root && name !== 'develop' ? join(root, 'develop') : entry.path }
+  }
+
+  async themes(key: string): Promise<{ active: string; themes: ProjectTheme[] }> {
+    const { repo } = await this.keepTarget(key)
+    return listThemes(repo)
   }
 
   async versions(key: string): Promise<{ live: VersionCommit[]; ahead: VersionCommit[] }> {
