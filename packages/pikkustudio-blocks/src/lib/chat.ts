@@ -5,7 +5,6 @@ export type ChatTransport = (path: string, body: unknown) => AsyncIterable<ChatE
 
 export type ChatItem =
   | { id: string; kind: 'me' | 'pikku'; text: string }
-  | { id: string; kind: 'screens'; options: string[]; text: string; answered: boolean }
   | { id: string; kind: 'card'; toolCallId: string; runId: string; title: string; detail: string; state: 'ask' | 'working' | 'done' | 'declined'; yes?: string; no?: string }
 
 export const fetchTransport = (base: string): ChatTransport =>

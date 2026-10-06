@@ -61,6 +61,7 @@ interface Turn {
   child: ChildProcess
   promptId: number
   tools: number
+  role?: 'explore'
 }
 
 interface Drive {
@@ -171,7 +172,7 @@ export class BuilderSession {
     return state
   }
 
-  private async send(key: string, sent: string, session?: string, role?: 'explore' | 'prototype') {
+  private async send(key: string, sent: string, session?: string, role?: 'explore') {
     const state = await this.state(key)
     const running = this.turns.get(key)
     if (running) {
@@ -184,14 +185,14 @@ export class BuilderSession {
     const mode = role ? 'build' : (this.modes.get(key) ?? 'build')
     const resolved = await this.resolve(key, mode)
     const { ai, env = {}, launch = spawnPi, queueHome } = resolved
-    const cwd = role === 'prototype' ? join(resolved.cwd, 'prototypes', 'app') : resolved.cwd
+    const cwd = resolved.cwd
     const skills = await writeSkills(this.home)
     const shims = await writePikkuShim(this.home, queueHome)
     const child = launch(process.execPath, [resolvePi(), ...piArgs({ ai, skills, mode: 'rpc', session: session ?? state.session, role, scope: mode })], {
       cwd,
       env: { ...process.env, ...env, ...piEnv(ai), PATH: `${shims}:${env.PATH ?? process.env.PATH ?? ''}` },
     })
-    const turn: Turn = { child, promptId: 1, tools: 0 }
+    const turn: Turn = { child, promptId: 1, tools: 0, role }
     this.turns.set(key, turn)
     state.busy = true
     let stderr = ''
@@ -215,10 +216,15 @@ export class BuilderSession {
     await this.save(key)
   }
 
-  private async roleTurn(key: string, message: string, role: 'explore' | 'prototype', empty: string): Promise<BuilderState> {
+  private async roleTurn(key: string, message: string, role: 'explore', empty: string): Promise<BuilderState> {
     const text = message.trim()
     if (!text) throw new Error(empty)
     const state = await this.state(key)
+    if (this.turns.get(key)?.role === role) {
+      state.items.push({ kind: 'user', text, at: Date.now() })
+      await this.send(key, text)
+      return state
+    }
     if (state.busy || this.turns.has(key)) throw new Error('The builder is already working')
     state.items.push({ kind: 'user', text, at: Date.now() })
     state.busy = true
@@ -290,10 +296,6 @@ export class BuilderSession {
       state.busy = false
       await this.save(key)
     }
-  }
-
-  prototype(key: string, message: string) {
-    return this.roleTurn(key, message, 'prototype', 'Say which screen to make first')
   }
 
   async heal(key: string, problem: string, timeoutMs = 5 * 60_000): Promise<{ ok: boolean; summary: string }> {

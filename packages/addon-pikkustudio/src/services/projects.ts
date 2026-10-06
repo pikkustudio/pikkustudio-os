@@ -945,7 +945,7 @@ export class StudioProjectsService {
     }
     const confinement = this.confinement(worktree)
     if (!confinement) return base
-    const scope = modeScope(mode, worktree.projectDir)
+    const scope = modeScope(mode)
     const sandbox: Confinement = {
       ...confinement,
       only: scope.only,
@@ -1191,19 +1191,17 @@ export class StudioProjectsService {
   }
 
   private startApps(key: string, projectDir: string, apiPort: number, confinement: Confinement | null, env: NodeJS.ProcessEnv) {
-    const found = ['apps', 'prototypes'].flatMap((group) =>
-      entries(join(projectDir, group))
-        .filter((dir) => {
-          const pkg = join(projectDir, group, dir, 'package.json')
-          if (!existsSync(pkg)) return false
-          try {
-            return /\bvite\b/.test(JSON.parse(readFileSync(pkg, 'utf8')).scripts?.dev ?? '')
-          } catch {
-            return false
-          }
-        })
-        .map((dir) => ({ slug: group === 'apps' ? dir : `prototype-${dir}`, cwd: join(projectDir, group, dir) }))
-    )
+    const found = entries(join(projectDir, 'apps'))
+      .filter((dir) => {
+        const pkg = join(projectDir, 'apps', dir, 'package.json')
+        if (!existsSync(pkg)) return false
+        try {
+          return /\bvite\b/.test(JSON.parse(readFileSync(pkg, 'utf8')).scripts?.dev ?? '')
+        } catch {
+          return false
+        }
+      })
+      .map((dir) => ({ slug: dir, cwd: join(projectDir, 'apps', dir) }))
     const apps: RunningApp[] = found.map(({ slug }) => ({ slug, url: null, state: 'starting', child: null }))
     this.apps.set(key, apps)
     for (const app of apps) {

@@ -29,15 +29,9 @@ export const SYSTEM_PROMPT = [
   'Build one changeset, commit each change on its own, mark it done and stop; the builder merges it and starts the next.',
 ].join(' ')
 
-export type BuilderMode = 'build' | 'prototype' | 'artifacts' | 'knowledge' | 'emails'
+export type BuilderMode = 'build' | 'artifacts' | 'knowledge' | 'emails'
 
 export const MODE_PROMPTS: Record<Exclude<BuilderMode, 'build'>, string> = {
-  prototype: [
-    'You are working on the prototype of an app, not the real app. Read the pikku-prototype skill first.',
-    'Each app in apps/ has its own prototype beside it, in apps/<app>-prototype. Write only there, and nowhere else: the rest of the project is read-only for you.',
-    'The prototype has no real backend. Make up believable mock data inside the prototype so every screen looks lived in.',
-    'You may read the real app to match what it does, but never change it, and never file or suggest changes to it.',
-  ].join(' '),
   artifacts: [
     'You are making artifacts for the owner: designs, pages and documents, in artifacts/. Write only there; the rest of the project is read-only for you.',
     'Read the pikku-artifacts skill first and follow it for the kind of artifact you are making.',
@@ -73,24 +67,17 @@ export const INSPECT_PROMPT = [
   'Read each file named in the request. Write only the notes you are asked to write, in knowledge/attachments/. Do not change anything else.',
 ].join(' ')
 
-export const PROTOTYPE_PROMPT = [
-  'You make screens for a design prototype. Your whole world is this folder.',
-  'Read PROTOTYPE.md first and follow it exactly. Use the impeccable skill for every design decision.',
-  'A reference design from the owner may be in reference/. Recreate it as a real screen with the blocks, keeping its look and content, then reply in one plain sentence saying which screen you made.',
-  'Never touch anything outside this folder, and never start or stop servers.',
-].join(' ')
-
 export const impeccableSkill = () => {
   const found = [process.env.PIKKU_IMPECCABLE_SKILL, join(homedir(), '.claude', 'skills', 'impeccable')].find((path) => path && existsSync(join(path, 'SKILL.md')))
   if (!found) throw new Error('The design skill is not installed on this computer')
   return found
 }
 
-export function piArgs(options: { ai?: BuilderAi; skills: string; mode?: 'rpc'; session?: string; role?: 'explore' | 'prototype' | 'inspect'; scope?: BuilderMode }): string[] {
+export function piArgs(options: { ai?: BuilderAi; skills: string; mode?: 'rpc'; session?: string; role?: 'explore' | 'inspect'; scope?: BuilderMode }): string[] {
   const args: string[] = []
   if (options.mode) args.push('--mode', options.mode)
   if (options.role === 'inspect') args.push('--approve', '--no-skills', '--no-context-files', '--append-system-prompt', INSPECT_PROMPT)
-  else if (options.role) args.push('--approve', '--no-skills', '--no-context-files', '--skill', impeccableSkill(), '--append-system-prompt', options.role === 'prototype' ? PROTOTYPE_PROMPT : EXPLORE_PROMPT)
+  else if (options.role) args.push('--approve', '--no-skills', '--no-context-files', '--skill', impeccableSkill(), '--append-system-prompt', EXPLORE_PROMPT)
   else args.push('--approve', '--skill', options.skills, '--append-system-prompt', options.scope && options.scope !== 'build' ? MODE_PROMPTS[options.scope] : SYSTEM_PROMPT)
   for (const path of extensionPaths()) args.push('-e', path)
   if (options.session) args.push('--session-id', options.session)

@@ -77,15 +77,8 @@ describe('builder modes', () => {
   })
 
   test('each mode carries its own prompt to pi', () => {
-    const args = piArgs({ skills: '/skills', scope: 'prototype' })
-    assert.ok(args.some((a) => a.includes(MODE_PROMPTS.prototype)))
-    assert.ok(!piArgs({ skills: '/skills', scope: 'build' }).some((a) => a.includes('apps/<app>-prototype')))
-  })
-
-  test('the prototype skill is handed to pi beside the pikku skills', async () => {
-    const { writeSkills } = await import('./index.js')
-    const { existsSync } = await import('node:fs')
-    const dir = await writeSkills(await mkdtemp(join(tmpdir(), 'pikku-skills-')))
-    assert.ok(existsSync(join(dir, 'pikku-prototype', 'SKILL.md')))
+    const args = piArgs({ skills: '/skills', scope: 'knowledge' })
+    assert.ok(args.some((a) => a.includes(MODE_PROMPTS.knowledge)))
+    assert.ok(!piArgs({ skills: '/skills', scope: 'build' }).some((a) => a.includes(MODE_PROMPTS.knowledge)))
   })
 })

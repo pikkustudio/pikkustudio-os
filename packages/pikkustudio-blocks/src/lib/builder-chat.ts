@@ -3,13 +3,11 @@ import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/ap
 import type { ChatItem } from './chat'
 
 export const OFFER_MARKER = '[[offer:changeset]]'
-const SCREENS_MARKER = /^\[\[screens:([^\]]*)\]\]/
 
-export type WorkMode = 'build' | 'prototype' | 'artifacts' | 'knowledge' | 'emails'
+export type WorkMode = 'build' | 'artifacts' | 'knowledge' | 'emails'
 
 export const modeForPath = (path: string): WorkMode | null => {
   if (/\/artifacts(\/|$)/.test(path)) return 'artifacts'
-  if (/\/prototype$/.test(path)) return 'prototype'
   if (/\/build$/.test(path)) return 'build'
   if (/\/knowledge$/.test(path)) return 'knowledge'
   if (/\/emails$/.test(path)) return 'emails'
@@ -30,11 +28,6 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
       if (!item.text) return []
       if (item.kind === 'user') return [{ id: `b${index}`, kind: 'me', text: item.text }]
       if (item.kind === 'assistant') {
-        const picker = SCREENS_MARKER.exec(item.text)
-        if (picker) {
-          const later = (data?.items ?? []).slice(index + 1).some((i) => i.kind === 'user')
-          return [{ id: `b${index}`, kind: 'screens', options: picker[1].split('|'), text: item.text.replace(SCREENS_MARKER, ''), answered: later }]
-        }
         return [{ id: `b${index}`, kind: 'pikku', text: item.text }]
       }
       if (item.kind === 'error') return [{ id: `b${index}`, kind: 'pikku', text: 'Something got in the way. Please try again.' }]

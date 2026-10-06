@@ -1,7 +1,7 @@
 import { m } from '@/i18n/messages'
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { Activity, BookOpen, Bot, Gauge, Compass, FileText, FlaskConical, FolderOpen, Globe, Hammer, KeyRound, LayoutGrid, Mail, ScrollText, Search, Smartphone, Upload, Users, UserRoundCheck, Workflow, History } from 'lucide-react'
+import { Activity, BookOpen, Bot, Gauge, Compass, FileText, FolderOpen, Globe, Hammer, KeyRound, LayoutGrid, Mail, ScrollText, Search, Smartphone, Upload, Users, UserRoundCheck, Workflow, History } from 'lucide-react'
 import { keep } from '../lib/links'
 
 type Hit = { key: string; label: string; hint: string; id: string; Icon: typeof Search }
@@ -12,7 +12,6 @@ const pages = (): Hit[] => (
     [m.quick_find__secrets(), '/secrets', KeyRound],
     [m.quick_find__explore(), '/explore', Compass],
     [m.quick_find__overview(), '/overview', LayoutGrid],
-    [m.quick_find__prototype(), '/prototype', FlaskConical],
     [m.quick_find__build(), '/build', Hammer],
     ['Emails', '/emails', Mail],
     [m.quick_find__translations(), '/translations', Globe],

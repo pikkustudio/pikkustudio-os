@@ -6,13 +6,11 @@ import { m } from '@/i18n/messages'
 import { useProjectKey, useProjectName, useProjectSlug } from '../lib/project'
 import { useAddonNav } from '../lib/addon-nav'
 import { usePikkuChat } from '../lib/chat'
-import { ScreensCard } from '../blocks/ScreensCard'
 import { LocalAccountName, LocalShellAccount, LocalWorkspaceAbout, SignOutSection } from '../blocks/ShellAccount'
 import { useSlots } from '../lib/slots'
 import { modeForPath, useBuilderChat } from '../lib/builder-chat'
 import { useProjectQuery } from '../lib/projectRpc'
 import { MOVABLE, usePins, type Movable } from '../lib/pins'
-import { PreviewOptionsCtx } from '../lib/previewOptions'
 import { ShellCtx, type PanelId, type PublishNote, type View } from '../lib/shell'
 import { keep } from '../lib/links'
 import { NEW_QUESTIONS, answerPrompt, openQuestions, type KnowledgeBundle } from '../lib/knowledge'
@@ -21,7 +19,7 @@ import { AiSpinner } from '../blocks/Spinner'
 import { Button } from '../ui/button'
 import { QuickFind } from '../blocks/QuickFind'
 import { Toaster } from '../blocks/Toaster'
-import { GitPullRequest, type LucideIcon, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FlaskConical, FolderOpen, Gauge, Globe, Hammer, Home, Info, Compass, KeyRound, Search, Laptop, LayoutGrid, Mail, MessageCircle, MousePointer2, Palette, Plus, ShieldCheck, SlidersHorizontal, Smartphone, Upload, User, UserRoundCheck, Wrench, X } from 'lucide-react'
+import { GitPullRequest, type LucideIcon, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, Hammer, Home, Info, Compass, KeyRound, Search, Laptop, LayoutGrid, Mail, MessageCircle, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, User, UserRoundCheck, Wrench, X } from 'lucide-react'
 
 // The app shell: rail, preview drawer (right edge), Pikku button + bubble, side panels.
 // Every screen route is a child of this layout. Page content lives in the route files.
@@ -36,8 +34,8 @@ const NOT_NOW = 'No problem. I will ask again tomorrow.'
 
 const item =
   'flex w-full items-center gap-3 rounded-lg px-3 text-left font-semibold no-underline transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'
-const PIN_ICON: Record<Movable, LucideIcon> = { prototype: FlaskConical, 'virtual-users': UserRoundCheck, translations: Globe, artifacts: FileText, content: FolderOpen, apps: Smartphone }
-const PIN_LABEL: Record<Movable, string> = { prototype: 'Prototype', 'virtual-users': 'Virtual users', translations: 'Translations', artifacts: 'Artifacts', content: m.content__title(), apps: 'Apps' }
+const PIN_ICON: Record<Movable, LucideIcon> = { 'virtual-users': UserRoundCheck, translations: Globe, artifacts: FileText, content: FolderOpen, apps: Smartphone }
+const PIN_LABEL: Record<Movable, string> = { 'virtual-users': 'Virtual users', translations: 'Translations', artifacts: 'Artifacts', content: m.content__title(), apps: 'Apps' }
 const navItem = `${item} h-9.25 text-[14px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`
 const iconBtn =
   'grid size-11 shrink-0 place-items-center rounded-full text-ink-2 transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'
@@ -164,14 +162,12 @@ export function ShellLayout() {
     setPanel('chat')
   }
   const detach = (label: string) => setAttached((a) => a.filter((x) => x !== label))
-  const fill = useLocation({ select: (l) => /\/(build|prototype|artifacts\/[^/]+|routines\/[^/]+)$/.test(l.pathname) || (l.pathname.endsWith('/emails') && !!(l.search as { email?: string }).email) })
+  const fill = useLocation({ select: (l) => /\/(build|artifacts\/[^/]+|routines\/[^/]+)$/.test(l.pathname) || (l.pathname.endsWith('/emails') && !!(l.search as { email?: string }).email) })
   const onArtifacts = useLocation({ select: (l) => l.pathname.endsWith('/artifacts') })
   const onKnowledge = useLocation({ select: (l) => l.pathname.endsWith('/knowledge') })
   const knowledge = useProjectQuery<KnowledgeBundle | null>(projectKey, 'console:getKnowledge', {}, { enabled: onKnowledge, refetchInterval: 5000 })
   const questions = useMemo(() => openQuestions(knowledge.data ?? null).slice(0, 4), [knowledge.data])
   const onPublish = useLocation({ select: (l) => l.pathname.endsWith('/publish') })
-  const onPrototype = useLocation({ select: (l) => l.pathname.endsWith('/prototype') })
-  const OptionsBody = useContext(PreviewOptionsCtx)
   const { pins } = usePins()
   const onEmails = useLocation({ select: (l) => l.pathname.endsWith('/emails') })
   const [pub, setPublish] = useState<PublishNote | null>(null)
@@ -204,9 +200,9 @@ export function ShellLayout() {
   const bubbleIsOpen = bubbleOpen ?? false
   const unread = needsPerson && isDismissed
 
-  const agentName = { artifacts: 'Pikku Designer', prototype: 'Pikku Prototype', build: 'Pikku Builder', knowledge: 'Pikku Librarian', emails: 'Pikku Mailer' }
-  const panelTitle = { chat: changeChat.change ? 'This change' : workMode ? agentName[workMode] : 'Talk to Pikku', updates: 'Updates', changes: 'Changes', workspace: 'Your workspace', account: 'Your account', options: 'Pikku Prototype' }
-  const tabs = panel === 'chat' || panel === 'updates' || panel === 'changes' || (panel === 'options' && onPrototype)
+  const agentName = { artifacts: 'Pikku Designer', build: 'Pikku Builder', knowledge: 'Pikku Librarian', emails: 'Pikku Mailer' }
+  const panelTitle = { chat: changeChat.change ? 'This change' : workMode ? agentName[workMode] : 'Talk to Pikku', updates: 'Updates', changes: 'Changes', workspace: 'Your workspace', account: 'Your account' }
+  const tabs = panel === 'chat' || panel === 'updates' || panel === 'changes'
   const tab =
     '-mb-px inline-flex h-11.5 items-center gap-2 rounded-t-[10px] border-b-3 px-3.5 text-[15px] font-bold transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'
 
@@ -381,23 +377,6 @@ export function ShellLayout() {
                   <GitPullRequest className="size-4.5" />
                   Changes
                 </button>
-                {onPrototype ? (
-                  <button
-                    type="button"
-                    role="tab"
-                    aria-selected={panel === 'options'}
-                    onClick={() => setPanel('options')}
-                    className={`${tab} ${panel === 'options' ? 'border-primary text-accent-foreground' : 'border-transparent text-ink-2'}`}
-                  >
-                    <SlidersHorizontal className="size-4.5" />
-                    Options
-                  </button>
-                ) : null}
-              </div>
-            ) : null}
-            {panel === 'options' && onPrototype ? (
-              <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-auto px-6 pt-5 pb-7 text-[14px] text-foreground">
-                {OptionsBody ? <OptionsBody /> : <p className="text-muted-foreground">Each call this prototype makes answers with one fixed sample, kept in its src/mocks folder. Ask Pikku to add a healthy, an empty and a broken answer for any of them and they will be listed here to switch between.</p>}
               </div>
             ) : null}
             {panel === 'changes' ? <ChangesPanel /> : null}
@@ -468,8 +447,6 @@ export function ShellLayout() {
                           {m.text}
                         </div>
                       </div>
-                    ) : m.kind === 'screens' ? (
-                      <ScreensCard key={m.id} options={m.options} text={m.text} answered={m.answered} onApprove={(screens) => void chat.send(`Add these screens to the prototype: ${screens.join(', ')}.`)} />
                     ) : m.kind === 'card' ? (
                       <Note key={m.id} kind={m.state === 'ask' ? 'needs' : 'fixed'} icon={m.state === 'ask' ? CircleAlert : Check} label={m.state === 'ask' ? 'Needs you' : m.state === 'declined' ? 'Left alone' : m.state === 'working' ? 'Working on it' : 'Done'} time="" title={m.title} text={m.detail}>
                         {m.state === 'ask' ? (
