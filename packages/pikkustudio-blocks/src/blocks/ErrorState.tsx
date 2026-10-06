@@ -51,7 +51,7 @@ export function ErrorState({ error, what, onRetry, retrying }: { error: unknown;
                 {m.query_state__try_again()}
               </Button>
             ) : null}
-            <Button variant="default" size="page" type="button" onClick={() => say(`Something did not load${what ? ` (${what})` : ''}. Please find out why and fix it, then tell me in plain words what you changed.\n\n${details}`)}>
+            <Button variant="default" size="page" type="button" onClick={() => say(`Something did not load${what ? ` (${what})` : ''}. Please find out why and file a change request to fix it. Say "change request" in your reply, then tell me in plain words what you changed.\n\n${details}`)}>
               <PikkuDot />
               Fix this for me
             </Button>

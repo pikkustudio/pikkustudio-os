@@ -90,7 +90,7 @@ export const ago = (iso: string) => {
 }
 
 export const useVirtualUsers = (key: string) => {
-  const meta = useProjectQuery<{ personas?: Record<string, Persona> }>(key, 'console:getAllMeta', {})
+  const meta = useProjectQuery<{ personas?: Record<string, Persona>; functions?: { name: string }[] }>(key, 'console:getAllMeta', {})
   const runs = useProjectQuery<Run[]>(key, 'console:getVirtualUserRuns', { limit: 100, offset: 0 }, { refetchInterval: 4000 })
   const schedules = useProjectQuery<Schedule[]>(key, 'console:getVirtualUserSchedules', {})
   const users: VirtualUser[] = Object.entries(meta.data?.personas ?? {})
@@ -111,5 +111,6 @@ export const useVirtualUsers = (key: string) => {
       }
     })
     .sort((a, b) => a.name.localeCompare(b.name))
-  return { users, meta, runs }
+  const ready = !meta.data?.functions || meta.data.functions.some((f) => /(^|[:.])runVirtualUser$/.test(f.name))
+  return { users, meta, runs, ready }
 }

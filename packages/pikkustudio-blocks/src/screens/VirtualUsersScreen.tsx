@@ -29,7 +29,7 @@ export function VirtualUsersScreen() {
   const { say } = useContext(ShellCtx)
   const key = useProjectKey()
   const app = useProjectName()
-  const { users, meta, runs } = useVirtualUsers(key)
+  const { users, meta, runs, ready } = useVirtualUsers(key)
   const [drawer, setDrawer] = useState<{ id: string; tab: 'visits' | 'about' | 'own' } | null>(null)
   const send = useProjectAction<{ persona: string }>(key, 'console:startVirtualUserRun', ['console:getVirtualUserRuns'])
   const sending = send.isPending ? (send.variables?.persona ?? '') : ''
@@ -45,7 +45,7 @@ export function VirtualUsersScreen() {
 
       <QueryState query={meta} skeleton={<CardsSkeleton count={3} />} empty={() => (users.length === 0 ? (
         <EmptyState title="Let AI stand-ins try your app before your users do" text="A virtual user pretends to be one kind of person who uses your app: a busy admin, a first-timer, a customer in a hurry. They try to get something done on your preview site and tell you in plain words where they got stuck. They cannot break anything real.">
-          <Button variant="default" size="page" onClick={() => say('Describe the kinds of people who use my app, so they can visit it as virtual users')}>
+          <Button variant="default" size="page" onClick={() => say('Describe the kinds of people who use my app, so they can visit it as virtual users. File it as a change request and say so.')}>
             Ask Pikku to add some
           </Button>
         </EmptyState>
@@ -65,20 +65,20 @@ export function VirtualUsersScreen() {
                     Read what {found[0].name} found
                   </Button>
                 ) : (
-                  <Button variant="hero" size="page" disabled={first.visiting || sending === first.id} onClick={() => send.mutate({ persona: first.id })}>
+                  <Button variant="hero" size="page" disabled={!ready || first.visiting || sending === first.id} onClick={() => send.mutate({ persona: first.id })}>
                     Send {first.name} on a visit
                   </Button>
                 )}
               </div>
             </NextCard>
 
-            {send.isError && /runVirtualUser/.test(String((send.error as Error)?.message)) ? (
+            {!ready || (send.isError && /runVirtualUser/.test(String((send.error as Error)?.message))) ? (
               <section role="alert" className="flex flex-col gap-3 rounded-[22px] border-[1.5px] border-border bg-card p-7">
                 <b className="font-heading text-[22px]">Virtual users are switched off in {app}</b>
-                <p className="max-w-ch56 text-[16px] text-ink-2">Turn them on and {users.find((u) => u.id === send.variables?.persona)?.name ?? 'they'} can visit {app}. Nothing changes for your visitors.</p>
+                <p className="max-w-ch56 text-[16px] text-ink-2">Turn them on and they can visit {app}. Pikku will file a change request for you to approve first. Nothing changes for your visitors until you do.</p>
                 <div className="flex flex-wrap gap-3">
-                  <Button variant="default" size="page" onClick={() => { send.reset(); say(`Turn on virtual users in ${app} so ${users.find((u) => u.id === send.variables?.persona)?.name ?? 'a virtual user'} can visit it. Just do it and tell me in one plain sentence when it is done. Do not ask me about files or settings.`) }}>
-                    Turn on virtual users
+                  <Button variant="default" size="page" onClick={() => { send.reset(); say(`File a change request titled "Change request: Turn on virtual users in ${app}" so my virtual users can visit it. Say "change request" in your reply. Just do it and tell me in one plain sentence when it is done. Do not ask me about files or settings.`) }}>
+                    Ask Pikku to turn them on
                   </Button>
                   <Button variant="bordered" size="page" onClick={() => send.reset()}>
                     Not now
@@ -109,7 +109,7 @@ export function VirtualUsersScreen() {
                         {u.schedule?.enabled ? ' · visits on their own' : ''}
                       </small>
                       <div className="flex flex-wrap gap-3">
-                        <Button variant="hero" size="compact" disabled={u.visiting || sending === u.id} onClick={() => send.mutate({ persona: u.id })}>
+                        <Button variant="hero" size="compact" disabled={!ready || u.visiting || sending === u.id} onClick={() => send.mutate({ persona: u.id })}>
                           {u.visiting ? 'Visiting…' : 'Send on a visit'}
                         </Button>
                         <Button variant="heroGhost" size="compact" onClick={() => setDrawer({ id: u.id, tab: 'about' })}>
