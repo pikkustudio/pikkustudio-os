@@ -4,6 +4,7 @@ import { m } from '@/i18n/messages'
 import { useProjectKey, useProjectName, useProjectSlug } from '../lib/project'
 import { useAddonNav } from '../lib/addon-nav'
 import { usePikkuChat } from '../lib/chat'
+import { ScreensCard } from '../blocks/ScreensCard'
 import { modeForPath, useBuilderChat } from '../lib/builder-chat'
 import { useProjectQuery } from '../lib/projectRpc'
 import { ShellCtx, type PanelId, type PublishNote, type View } from '../lib/shell'
@@ -449,6 +450,8 @@ export function ShellLayout() {
                           {m.text}
                         </div>
                       </div>
+                    ) : m.kind === 'screens' ? (
+                      <ScreensCard key={m.id} options={m.options} text={m.text} answered={m.answered} onApprove={(screens) => void chat.send(`Add these screens to the prototype: ${screens.join(', ')}.`)} />
                     ) : m.kind === 'card' ? (
                       <Note key={m.id} kind={m.state === 'ask' ? 'needs' : 'fixed'} icon={m.state === 'ask' ? CircleAlert : Check} label={m.state === 'ask' ? 'Needs you' : m.state === 'declined' ? 'Left alone' : m.state === 'working' ? 'Working on it' : 'Done'} time="" title={m.title} text={m.detail}>
                         {m.state === 'ask' ? (

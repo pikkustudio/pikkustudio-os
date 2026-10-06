@@ -207,6 +207,12 @@ export class BuilderSession {
     return state
   }
 
+  async say(key: string, text: string) {
+    const state = await this.state(key)
+    state.items.push({ kind: 'assistant', text, at: Date.now() })
+    await this.save(key)
+  }
+
   explore(key: string, message: string) {
     return this.roleTurn(key, message, 'explore', 'Say what you want explored first')
   }

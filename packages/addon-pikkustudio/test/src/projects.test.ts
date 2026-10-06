@@ -441,4 +441,26 @@ describe('projectEnv', () => {
     assert.equal((await service.list()).filter((p) => p.path === path).length, 1)
     await assert.rejects(service.add(await repo(base, 'other'), 'app'), /already taken/)
   })
+
+  test('scaffolds from the starter template, prototype included', async () => {
+    const base = await mkdtemp(join(tmpdir(), 'pikku-studio-starter-'))
+    const starter = join(base, 'starter')
+    await mkdir(join(starter, 'prototypes', 'app'), { recursive: true })
+    await writeFile(join(starter, 'package.json'), JSON.stringify({ name: 'starter' }))
+    await writeFile(join(starter, 'prototypes', 'app', 'PROTOTYPE.md'), '# rules\n')
+    process.env.PIKKU_STARTER_TEMPLATE = starter
+    try {
+      const service = new StudioProjectsService({
+        account: fakeAccount([]),
+        home: join(base, 'studio'),
+        projectsDir: join(base, 'studio', 'local'),
+        installCommand: () => null,
+        confine: false,
+      })
+      const project = await service.create({ name: 'Pen shop' })
+      assert.ok(existsSync(join(project.path, 'prototypes', 'app', 'PROTOTYPE.md')))
+    } finally {
+      delete process.env.PIKKU_STARTER_TEMPLATE
+    }
+  })
 })

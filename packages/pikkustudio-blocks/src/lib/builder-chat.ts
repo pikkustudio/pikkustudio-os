@@ -3,6 +3,7 @@ import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/ap
 import type { ChatItem } from './chat'
 
 export const OFFER_MARKER = '[[offer:changeset]]'
+const SCREENS_MARKER = /^\[\[screens:([^\]]*)\]\]/
 
 export type WorkMode = 'build' | 'prototype' | 'artifacts' | 'knowledge'
 
@@ -27,7 +28,14 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
     const said: ChatItem[] = (data?.items ?? []).flatMap((item, index): ChatItem[] => {
       if (!item.text) return []
       if (item.kind === 'user') return [{ id: `b${index}`, kind: 'me', text: item.text }]
-      if (item.kind === 'assistant') return [{ id: `b${index}`, kind: 'pikku', text: item.text }]
+      if (item.kind === 'assistant') {
+        const picker = SCREENS_MARKER.exec(item.text)
+        if (picker) {
+          const later = (data?.items ?? []).slice(index + 1).some((i) => i.kind === 'user')
+          return [{ id: `b${index}`, kind: 'screens', options: picker[1].split('|'), text: item.text.replace(SCREENS_MARKER, ''), answered: later }]
+        }
+        return [{ id: `b${index}`, kind: 'pikku', text: item.text }]
+      }
       if (item.kind === 'error') return [{ id: `b${index}`, kind: 'pikku', text: 'Something got in the way. Please try again.' }]
       return []
     })

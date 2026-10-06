@@ -5,6 +5,8 @@ import { z } from 'zod'
 import { pikkuSessionlessFunc } from '#pikku/addon/function'
 import { getArtifact } from '../services/artifacts.js'
 
+const SCREENS = ['A list of everything', 'One item in detail', 'Add or change an item', 'Settings', 'Sign in']
+
 export const StartPrototypeInput = z.object({ key: z.string(), artifactId: z.string() })
 
 export const startPrototype = pikkuSessionlessFunc({
@@ -26,6 +28,7 @@ export const startPrototype = pikkuSessionlessFunc({
       key,
       `Make the home screen at "/" from reference/${artifactId}.html ("${artifact.title}"). Use the blocks, give it realistic mock data through usePikkuQuery, and add it to the nav in src/routes/__root.tsx.`,
     )
+    await studioBuilder.say(key, `[[screens:${SCREENS.join('|')}]]Your first screen is on its way. Which other screens should I sketch?`)
     return { artifactId }
   },
 })
