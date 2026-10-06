@@ -1,7 +1,7 @@
 import { createContext } from 'react'
 
 export type View = 'healthy' | 'empty' | 'problem'
-export type PanelId = 'chat' | 'updates' | 'workspace'
+export type PanelId = 'chat' | 'updates' | 'workspace' | 'options'
 
 export type PublishNote = { state: 'signin' | 'error' | 'live'; url: string; act: (a: 'publish' | 'signin') => void; ask: string }
 

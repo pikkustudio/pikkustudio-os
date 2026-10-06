@@ -8,6 +8,7 @@ import { usePikkuChat } from '../lib/chat'
 import { ScreensCard } from '../blocks/ScreensCard'
 import { modeForPath, useBuilderChat } from '../lib/builder-chat'
 import { useProjectQuery } from '../lib/projectRpc'
+import { PreviewOptionsCtx } from '../lib/previewOptions'
 import { ShellCtx, type PanelId, type PublishNote, type View } from '../lib/shell'
 import { keep } from '../lib/links'
 import { NEW_QUESTIONS, answerPrompt, openQuestions, type KnowledgeBundle } from '../lib/knowledge'
@@ -16,7 +17,7 @@ import { AiSpinner } from '../blocks/Spinner'
 import { Button } from '../ui/button'
 import { QuickFind } from '../blocks/QuickFind'
 import { Toaster } from '../blocks/Toaster'
-import { ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FlaskConical, FolderOpen, Gauge, Globe, Hammer, Home, Info, Compass, KeyRound, Search, Laptop, LayoutGrid, Mail, MessageCircle, MousePointer2, Palette, Pin, Plus, ShieldCheck, SlidersHorizontal, Smartphone, Upload, User, UserRoundCheck, Wrench, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FlaskConical, FolderOpen, Gauge, Globe, Hammer, Home, Info, Compass, KeyRound, Search, Laptop, LayoutGrid, Mail, MessageCircle, MousePointer2, Palette, Plus, ShieldCheck, SlidersHorizontal, Smartphone, Upload, User, UserRoundCheck, Wrench, X } from 'lucide-react'
 
 // The app shell: rail, preview drawer (right edge), Pikku button + bubble, side panels.
 // Every screen route is a child of this layout. Page content lives in the route files.
@@ -122,7 +123,6 @@ export function ShellLayout() {
   const set = (patch: Record<string, unknown>) =>
     navigate({ to: '.', search: ((prev: object) => ({ ...prev, ...patch })) as never, replace: true })
   const setPanel = (id: PanelId | '') => set({ panel: id || undefined })
-  const [pinned, setPinned] = useState(false)
   const [find, setFind] = useState(false)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -158,6 +158,8 @@ export function ShellLayout() {
   const knowledge = useProjectQuery<KnowledgeBundle | null>(projectKey, 'console:getKnowledge', {}, { enabled: onKnowledge, refetchInterval: 5000 })
   const questions = useMemo(() => openQuestions(knowledge.data ?? null).slice(0, 4), [knowledge.data])
   const onPublish = useLocation({ select: (l) => l.pathname.endsWith('/publish') })
+  const onPrototype = useLocation({ select: (l) => l.pathname.endsWith('/prototype') })
+  const OptionsBody = useContext(PreviewOptionsCtx)
   const onEmails = useLocation({ select: (l) => l.pathname.endsWith('/emails') })
   const [pub, setPublish] = useState<PublishNote | null>(null)
   const [dismissed, setDismissed] = useState<string | null>(null)
@@ -165,11 +167,11 @@ export function ShellLayout() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !pinned) setPanel('')
+      if (e.key === 'Escape') setPanel('')
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [pinned])
+  }, [])
 
   const approve = () => setPanel('updates')
   const say = (text: string) => {
@@ -190,8 +192,8 @@ export function ShellLayout() {
   const unread = needsPerson && isDismissed
 
   const agentName = { artifacts: 'Pikku Designer', prototype: 'Pikku Prototype', build: 'Pikku Builder', knowledge: 'Pikku Librarian' }
-  const panelTitle = { chat: workMode ? agentName[workMode] : 'Talk to Pikku', updates: 'Updates', workspace: 'Your account' }
-  const tabs = panel === 'chat' || panel === 'updates'
+  const panelTitle = { chat: workMode ? agentName[workMode] : 'Talk to Pikku', updates: 'Updates', workspace: 'Your account', options: 'Pikku Prototype' }
+  const tabs = panel === 'chat' || panel === 'updates' || (panel === 'options' && onPrototype)
   const tab =
     '-mb-px inline-flex h-11.5 items-center gap-2 rounded-t-[10px] border-b-3 px-3.5 text-[15px] font-bold transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'
 
@@ -357,15 +359,6 @@ export function ShellLayout() {
           >
             <div className="flex items-center gap-0.5 pt-4 pr-3 pb-2.5 pl-6">
               <h2 className="flex-1 text-[24px] leading-[1.2] font-bold tracking-[-0.012em] text-balance">{panel ? panelTitle[panel] : ''}</h2>
-              <button
-                type="button"
-                aria-pressed={pinned}
-                aria-label={pinned ? 'Unpin, let this panel close' : 'Keep this panel open'}
-                onClick={() => setPinned((p) => !p)}
-                className={`${iconBtn} ${pinned ? 'bg-accent text-accent-foreground' : ''}`}
-              >
-                <Pin className={pinned ? 'size-5.5 fill-current' : 'size-5.5'} />
-              </button>
               <button type="button" aria-label="Close panel" onClick={() => setPanel('')} className={iconBtn}>
                 <X className="size-5.5" />
               </button>
@@ -398,9 +391,26 @@ export function ShellLayout() {
                     </span>
                   ) : null}
                 </button>
+                {onPrototype ? (
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={panel === 'options'}
+                    onClick={() => setPanel('options')}
+                    className={`${tab} ${panel === 'options' ? 'border-primary text-accent-foreground' : 'border-transparent text-ink-2'}`}
+                  >
+                    <SlidersHorizontal className="size-4.5" />
+                    Options
+                  </button>
+                ) : null}
               </div>
             ) : null}
-            {panel ? <ChangesDock /> : null}
+            {panel === 'options' && onPrototype ? (
+              <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-auto px-6 pt-5 pb-7 text-[14px] text-foreground">
+                {OptionsBody ? <OptionsBody /> : <p className="text-muted-foreground">Each call this prototype makes answers with one fixed sample, kept in its src/mocks folder. Ask Pikku to add a healthy, an empty and a broken answer for any of them and they will be listed here to switch between.</p>}
+              </div>
+            ) : null}
+            {panel && panel !== 'options' ? <ChangesDock /> : null}
             {panel === 'updates' ? (
               <div className="flex min-h-0 flex-1 flex-col overflow-auto px-6 pt-5 pb-7">
                 <div className="flex flex-col gap-3.5">

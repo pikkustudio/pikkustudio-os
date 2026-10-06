@@ -5,7 +5,7 @@ export const validateStudioSearch = (s: Record<string, unknown>): { size?: 'mobi
       embed: s.embed === '1' || s.embed === 1 ? ('1' as const) : undefined,
       view: pick(s.view, ['healthy', 'empty', 'problem', 'loading', 'error', 'restore-error'] as const),
       look: pick(s.look, ['light', 'dark'] as const),
-      panel: pick(s.panel, ['chat', 'updates', 'workspace', 'diff', 'why', 'local', 'accounts', 'keys', 'provider', 'litellm', 'fabric'] as const),
+      panel: pick(s.panel, ['chat', 'updates', 'workspace', 'options', 'diff', 'why', 'local', 'accounts', 'keys', 'provider', 'litellm', 'fabric'] as const),
       via: typeof s.via === 'string' ? s.via : undefined,
       pitch: pick(s.pitch, ['a', 'b'] as const),
       show: pick(s.show, ['done', 'returning', 'company', 'empty', 'loading', 'error', 'signin', 'notin', 'publishing', 'live'] as const),

@@ -1,6 +1,6 @@
 import { useContext, useState, type ReactNode } from 'react'
-import { SlidersHorizontal, X } from 'lucide-react'
-import { PreviewOptionsCtx } from '../lib/previewOptions'
+import { ShellCtx } from '../lib/shell'
+import { SlidersHorizontal } from 'lucide-react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { useProjectKey } from '../lib/project'
@@ -17,10 +17,9 @@ export function PrototypeScreen() {
   const key = useProjectKey()
   const { path } = useSearch({ strict: false }) as { path?: string }
   const navigate = useNavigate()
+  const shell = useContext(ShellCtx)
   const [device, setDevice] = useState<Device>('computer')
   const [reload, setReload] = useState(0)
-  const [options, setOptions] = useState(false)
-  const OptionsBody = useContext(PreviewOptionsCtx)
   const apps = usePikkuQuery('studio:projectApps', { key }, { enabled: !!key, refetchInterval: 2000 })
   const start = usePikkuMutation('studio:openProject', { onSuccess: () => apps.refetch() })
   if (!apps.data) return <CardsSkeleton count={1} />
@@ -50,23 +49,11 @@ export function PrototypeScreen() {
         onTool={() => {}}
         onReload={() => setReload((k) => k + 1)}
         actions={
-          <Button variant="bar" size="bar" type="button" aria-expanded={options} onClick={() => setOptions((o) => !o)}>
+          <Button variant="bar" size="bar" type="button" aria-label="Options" title="Options" onClick={() => shell.open('options')}>
             <SlidersHorizontal className="size-4.5" />
-            Options
           </Button>
         }
       />
-      {options ? (
-        <aside className="fixed top-0 right-0 z-50 flex h-full w-80 flex-col gap-4 overflow-y-auto border-l border-border bg-muted px-4 py-4 text-[14px] text-foreground">
-          <div className="flex items-center justify-between">
-            <h2 className="text-[20px] font-bold">Options</h2>
-            <button type="button" aria-label="Close options" onClick={() => setOptions(false)} className="grid size-9 place-items-center rounded-full hover:bg-secondary">
-              <X className="size-5" />
-            </button>
-          </div>
-          {OptionsBody ? <OptionsBody /> : <p className="text-muted-foreground">Each call this prototype makes answers with one fixed sample, kept in its src/mocks folder. Ask Pikku to add a healthy, an empty and a broken answer for any of them and they will be listed here to switch between.</p>}
-        </aside>
-      ) : null}
       <div className="flex min-h-0 flex-1 justify-center">
         <iframe key={reload} title="Prototype" src={`${prototype.url}${path ?? '/'}`} style={{ width: WIDTH[device] }} className="block h-full max-w-full rounded-2xl border border-border bg-white" />
       </div>
