@@ -1027,6 +1027,10 @@ export class StudioProjectsService {
     return Object.entries(effective).map(([name, e]) => ({ name, scope: e.scope, source: e.source }))
   }
 
+  async cascade(key: string, kind: 'dev' | 'ci' = 'dev') {
+    return this.projectCascade(key, (await this.entry(key)).path, kind)
+  }
+
   async setPersonal(key: string, projectPath: string, scope: string, name: string, value: string) {
     if (!isScope(scope)) throw new Error(`"${scope}" is not a scope`)
     await setIn(this.cascadeSources(key, projectPath)[0]!, scope, name, value)
