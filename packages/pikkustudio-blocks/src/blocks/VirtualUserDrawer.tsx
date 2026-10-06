@@ -115,8 +115,8 @@ export function VirtualUserDrawer({ u, projectKey, start, onClose }: { u: Virtua
       </header>
 
       <div className="flex gap-1 border-b border-border px-3" role="tablist">
-        {tabBtn('visits', `Visits (${u.visits.length})`)}
         {tabBtn('about', 'About')}
+        {tabBtn('visits', `Visits (${u.visits.length})`)}
         {tabBtn('own', 'On their own')}
       </div>
 

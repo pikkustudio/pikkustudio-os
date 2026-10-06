@@ -39,6 +39,7 @@ export function VirtualUsersScreen() {
   const problems = found.reduce((n, u) => n + problemsOf(u.visits[0]).length, 0)
 
   return (
+    <div className={`@container/vu transition-[padding] duration-200 ${drawer ? 'pr-[24rem] @min-[1700px]/app:pr-110' : ''}`}>
     <Page gap="snug">
       <PageHead crumb={app} title="Virtual users" text="AI stand-ins for the people who use your app. Send one on a visit and they tell you where they got stuck." size="lead" />
 
@@ -75,7 +76,7 @@ export function VirtualUsersScreen() {
             {runs.isError ? <ErrorState error={runs.error} what="Reading past visits" onRetry={() => runs.refetch()} retrying={runs.isFetching} /> : null}
 
             <Section title="Who can visit" sub="Each one pretends to be a different kind of person. Visits go to your preview site only.">
-              <div className="grid grid-cols-1 gap-4 @3xl/app:grid-cols-3">
+              <div className="grid grid-cols-1 gap-4 @min-[820px]/vu:grid-cols-3">
                 {users.map((u, i) => {
                   const [kind, kindText] = KIND[u.disposition]
                   return (
@@ -98,8 +99,8 @@ export function VirtualUsersScreen() {
                         <Button variant="hero" size="compact" disabled={u.visiting || sending === u.id} onClick={() => send.mutate({ persona: u.id })}>
                           {u.visiting ? 'Visiting…' : 'Send on a visit'}
                         </Button>
-                        <Button variant="heroGhost" size="compact" onClick={() => setDrawer({ id: u.id, tab: 'visits' })}>
-                          Visits
+                        <Button variant="heroGhost" size="compact" onClick={() => setDrawer({ id: u.id, tab: 'about' })}>
+                          About
                         </Button>
                       </div>
                     </article>
@@ -113,5 +114,6 @@ export function VirtualUsersScreen() {
 
       {open && drawer && <VirtualUserDrawer key={`${open.id}-${drawer.tab}`} u={open} projectKey={key} start={drawer.tab} onClose={() => setDrawer(null)} />}
     </Page>
+    </div>
   )
 }
