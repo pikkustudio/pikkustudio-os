@@ -563,6 +563,7 @@
   "content_upload__folder_example": "photos/2026",
   "content_upload__folder_help": "The first name is the folder. Anything after a slash is a folder inside it.",
   "content_upload__the_file": "The file",
+  "content__download_failed": "That file could not be downloaded. Try again in a moment.",
   "content_upload__that_could_not_be": "That could not be added. It may be too large or not an allowed kind of file.",
   "content_upload__adding": "Adding",
   "content_upload__add_file": "Add file",

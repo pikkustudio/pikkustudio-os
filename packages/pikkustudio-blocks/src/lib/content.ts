@@ -37,4 +37,28 @@ const KINDS: Record<string, ContentKind> = {
 
 export const contentKind = (name: string): ContentKind => KINDS[name.split('.').at(-1)?.toLowerCase() ?? ''] ?? 'file'
 
-export const absoluteLink = (url: string, origin: string): string => (url.startsWith('/') ? `${origin}${url}` : url)
+const LOCAL = new Set(['localhost', '127.0.0.1', '[::1]'])
+
+export const absoluteLink = (url: string, origin: string): string => {
+  if (url.startsWith('/')) return `${origin}${url}`
+  const parsed = new URL(url)
+  return LOCAL.has(parsed.hostname) && parsed.pathname.startsWith('/content/') ? `${origin}${parsed.pathname}${parsed.search}` : url
+}
+
+export const saveLink = async (href: string, name: string): Promise<boolean> => {
+  try {
+    const response = await fetch(href)
+    if (!response.ok) return false
+    const url = URL.createObjectURL(await response.blob())
+    const anchor = document.createElement('a')
+    anchor.href = url
+    anchor.download = name
+    document.body.append(anchor)
+    anchor.click()
+    anchor.remove()
+    setTimeout(() => URL.revokeObjectURL(url), 10000)
+    return true
+  } catch {
+    return false
+  }
+}

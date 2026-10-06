@@ -3,7 +3,7 @@ import { useState, type ReactNode } from 'react'
 import { ChevronLeft, Globe, Lock, Upload } from 'lucide-react'
 import { Button } from '../ui/button'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
-import { absoluteLink, contentLevel } from '../lib/content'
+import { absoluteLink, contentLevel, saveLink } from '../lib/content'
 import { Page } from '../blocks/Page'
 import { PageHead } from '../blocks/PageHead'
 import { EmptyState } from '../blocks/EmptyState'
@@ -33,6 +33,7 @@ export function ContentScreen() {
   const [uploading, setUploading] = useState(false)
   const [uploadFailed, setUploadFailed] = useState(false)
   const [copied, setCopied] = useState<string | null>(null)
+  const [downloadFailed, setDownloadFailed] = useState(false)
   const overview = usePikkuQuery('contentOverview', {})
   const listing = usePikkuQuery('listContentFiles', { visibility: side, prefix: '' })
   const refresh = () => listing.refetch()
@@ -54,8 +55,14 @@ export function ContentScreen() {
   const isPublic = side === 'public'
 
   const download = async (file: { bucket: string; key: string }) => {
-    const { url } = await link.mutateAsync({ visibility: side, bucket: file.bucket, key: file.key })
-    window.open(absoluteLink(url, window.location.origin), '_blank', 'noopener')
+    setDownloadFailed(false)
+    try {
+      const { url } = await link.mutateAsync({ visibility: side, bucket: file.bucket, key: file.key })
+      const href = absoluteLink(url, window.location.origin)
+      if (!(await saveLink(href, file.key.split('/').pop() ?? file.key))) window.open(href, '_blank', 'noopener')
+    } catch {
+      setDownloadFailed(true)
+    }
   }
   const copy = async (file: { bucket: string; key: string }) => {
     const { url } = await link.mutateAsync({ visibility: side, bucket: file.bucket, key: file.key })
@@ -109,6 +116,11 @@ export function ContentScreen() {
         />
         <span className="text-px14 text-ink-2">{isPublic ? m.content__public_explained() : m.content__private_explained()}</span>
       </div>
+      {downloadFailed ? (
+        <p role="alert" className="text-px15 text-destructive-foreground">
+          {m.content__download_failed()}
+        </p>
+      ) : null}
       <Group title={here}>
         {bucket !== null ? (
           <div>
