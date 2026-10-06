@@ -1,3 +1,4 @@
+import { AiSpinner } from './Spinner'
 import { m } from '@/i18n/messages'
 import { useContext, useEffect, useRef, useState } from 'react'
 import type { LucideIcon } from 'lucide-react'
@@ -125,7 +126,12 @@ export function AssistantDrawer({ a, projectKey, start, onClose, onPikku, onFix 
             {msgs.map((t, i) => (
               <Bubble key={i} turn={t} hue={a.hue} />
             ))}
-            {thinking && <div className="self-start text-[15px] text-muted-foreground">{m.assistant_drawer__is_thinking({ name: a.name })}</div>}
+            {thinking && (
+              <div className="flex items-center gap-2 self-start text-[15px] text-muted-foreground">
+                <AiSpinner />
+                {m.assistant_drawer__is_thinking({ name: a.name })}
+              </div>
+            )}
             <div ref={end} />
           </div>
           <form
