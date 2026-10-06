@@ -1,4 +1,5 @@
-import { ChangesDock } from '../directions-changes/ChangesDock'
+import { ChangesPanel } from '../directions-changes/ChangesPanel'
+import { useChangeChat } from '../directions-changes/useChangeChat'
 import { Link, Outlet, useLocation, useNavigate, useSearch } from '@tanstack/react-router'
 import { useContext, useEffect, useMemo, useState, type ComponentType, type ReactNode } from 'react'
 import { m } from '@/i18n/messages'
@@ -121,7 +122,7 @@ export function ShellLayout() {
   const About = slots.WorkspaceAbout ?? LocalWorkspaceAbout
   const AccountName = slots.AccountName ?? LocalAccountName
   const navigate = useNavigate()
-  const q = useSearch({ strict: false }) as { view?: View; look?: 'light' | 'dark'; panel?: PanelId; show?: 'done'; project?: string }
+  const q = useSearch({ strict: false }) as { view?: View; look?: 'light' | 'dark'; panel?: PanelId; show?: 'done'; project?: string; change?: string }
   const path = useLocation({ select: (l) => l.pathname })
   const project = useLocation({ select: (l) => (l.search as { project?: string }).project })
   const needsProject = !project && !/\/(projects|secrets|studio-metrics|new-project|sign-in|your-name|choose-ai)$/.test(path)
@@ -149,7 +150,9 @@ export function ShellLayout() {
   const workMode = useLocation({ select: (l) => modeForPath(l.pathname) })
   const guide = usePikkuChat(projectKey)
   const builder = useBuilderChat(projectKey, workMode)
-  const chat = workMode ? builder : guide
+  const onChanges = useLocation({ select: (l) => l.pathname.endsWith('/changes-directions') })
+  const changeChat = useChangeChat(onChanges ? q.change : undefined)
+  const chat = changeChat.change ? changeChat : workMode ? builder : guide
   const changesQ = useProjectQuery<{ changes: { changeId: string; title: string; body: string | null; status: string; createdAt: string }[] }>(projectKey, 'console:listStudioChanges', { status: ['open', 'claimed', 'needs_answer', 'in_progress'] }, { refetchInterval: 6000 })
   const pending = changesQ.data?.changes ?? []
   const view: View = pending.length ? 'problem' : 'healthy'
@@ -202,8 +205,8 @@ export function ShellLayout() {
   const unread = needsPerson && isDismissed
 
   const agentName = { artifacts: 'Pikku Designer', prototype: 'Pikku Prototype', build: 'Pikku Builder', knowledge: 'Pikku Librarian', emails: 'Pikku Mailer' }
-  const panelTitle = { chat: workMode ? agentName[workMode] : 'Talk to Pikku', updates: 'Updates', workspace: 'Your workspace', account: 'Your account', options: 'Pikku Prototype' }
-  const tabs = panel === 'chat' || panel === 'updates' || (panel === 'options' && onPrototype)
+  const panelTitle = { chat: changeChat.change ? 'This change' : workMode ? agentName[workMode] : 'Talk to Pikku', updates: 'Updates', changes: 'Changes', workspace: 'Your workspace', account: 'Your account', options: 'Pikku Prototype' }
+  const tabs = panel === 'chat' || panel === 'updates' || panel === 'changes' || (panel === 'options' && onPrototype)
   const tab =
     '-mb-px inline-flex h-11.5 items-center gap-2 rounded-t-[10px] border-b-3 px-3.5 text-[15px] font-bold transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'
 
@@ -368,6 +371,16 @@ export function ShellLayout() {
                     </span>
                   ) : null}
                 </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={panel === 'changes'}
+                  onClick={() => setPanel('changes')}
+                  className={`${tab} ${panel === 'changes' ? 'border-primary text-accent-foreground' : 'border-transparent text-ink-2'}`}
+                >
+                  <GitPullRequest className="size-4.5" />
+                  Changes
+                </button>
                 {onPrototype ? (
                   <button
                     type="button"
@@ -387,7 +400,7 @@ export function ShellLayout() {
                 {OptionsBody ? <OptionsBody /> : <p className="text-muted-foreground">Each call this prototype makes answers with one fixed sample, kept in its src/mocks folder. Ask Pikku to add a healthy, an empty and a broken answer for any of them and they will be listed here to switch between.</p>}
               </div>
             ) : null}
-            {panel && panel !== 'options' ? <ChangesDock /> : null}
+            {panel === 'changes' ? <ChangesPanel /> : null}
             {panel === 'updates' ? (
               <div className="flex min-h-0 flex-1 flex-col overflow-auto px-6 pt-5 pb-7">
                 <div className="flex flex-col gap-3.5">
@@ -432,11 +445,21 @@ export function ShellLayout() {
 
             {panel === 'chat' ? (
               <div className="flex min-h-0 flex-1 flex-col">
+                {changeChat.change ? (
+                  <div className="flex items-center gap-3 border-b border-border bg-secondary px-6 py-3 text-[14px] text-ink-2">
+                    <button type="button" onClick={() => set({ change: undefined, panel: 'changes' })} className="inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-2.5 py-1 font-bold text-accent-foreground hover:bg-surface-3">
+                      <ArrowLeft className="size-4.5" />
+                      Changes
+                    </button>
+                    <b className="min-w-0 flex-1 truncate text-foreground">{changeChat.change.title}</b>
+                  </div>
+                ) : (
                 <div className="flex items-center gap-2 border-b border-border bg-secondary px-6 py-3 text-[14px] text-ink-2">
                   <FolderOpen className="size-4.5 text-accent-foreground" />
                   <span className="font-semibold text-muted-foreground">About</span>
                   <b className="text-foreground">{projectName}{onEmails || fill ? '' : `, ${onArtifacts ? 'Artifacts' : onKnowledge ? 'Knowledge' : onPublish ? 'Publish' : 'Overview'}`}</b>
                 </div>
+                )}
                 <div className="flex min-h-0 flex-1 flex-col gap-4.5 overflow-auto px-6 py-5" tabIndex={0} aria-label="Chat" role="log">
                   {chat.items.map((m) =>
                     m.kind === 'me' ? (
