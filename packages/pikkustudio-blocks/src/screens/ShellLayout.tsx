@@ -1,6 +1,7 @@
+import { PreviewOptionsCtx } from '../lib/previewOptions'
 import { ChangesDock } from '../directions-changes/ChangesDock'
 import { Link, Outlet, useLocation, useNavigate, useSearch } from '@tanstack/react-router'
-import { useEffect, useMemo, useState, type ComponentType, type ReactNode } from 'react'
+import { useContext, useEffect, useMemo, useState, type ComponentType, type ReactNode } from 'react'
 import { m } from '@/i18n/messages'
 import { useProjectKey, useProjectName, useProjectSlug } from '../lib/project'
 import { useAddonNav } from '../lib/addon-nav'
@@ -16,7 +17,7 @@ import { AiSpinner } from '../blocks/Spinner'
 import { Button } from '../ui/button'
 import { QuickFind } from '../blocks/QuickFind'
 import { Toaster } from '../blocks/Toaster'
-import { ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FlaskConical, FolderOpen, Gauge, Globe, Hammer, Home, Info, Compass, KeyRound, Search, Laptop, LayoutGrid, Mail, MessageCircle, MousePointer2, Palette, Pin, Plus, ShieldCheck, Smartphone, Upload, User, UserRoundCheck, Wrench, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FlaskConical, FolderOpen, Gauge, Globe, Hammer, Home, Info, Compass, KeyRound, Search, Laptop, LayoutGrid, Mail, MessageCircle, MousePointer2, Palette, Pin, Plus, ShieldCheck, SlidersHorizontal, Smartphone, Upload, User, UserRoundCheck, Wrench, X } from 'lucide-react'
 
 // The app shell: rail, preview drawer (right edge), Pikku button + bubble, side panels.
 // Every screen route is a child of this layout. Page content lives in the route files.
@@ -123,6 +124,8 @@ export function ShellLayout() {
     navigate({ to: '.', search: ((prev: object) => ({ ...prev, ...patch })) as never, replace: true })
   const setPanel = (id: PanelId | '') => set({ panel: id || undefined })
   const [pinned, setPinned] = useState(false)
+  const OptionsBody = useContext(PreviewOptionsCtx)
+  const [options, setOptions] = useState(false)
   const [find, setFind] = useState(false)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -345,6 +348,22 @@ export function ShellLayout() {
               <Outlet />
             </div>
           </div>
+
+          {options ? (
+            <aside className="fixed top-0 right-0 z-50 flex h-full w-80 flex-col gap-4 overflow-y-auto border-l border-border bg-muted px-4 py-4 text-[14px] text-foreground">
+              <div className="flex items-center justify-between">
+                <h2 className="text-[20px] font-bold">Options</h2>
+                <button type="button" aria-label="Close options" onClick={() => setOptions(false)} className={iconBtn}>
+                  <X className="size-5.5" />
+                </button>
+              </div>
+              {OptionsBody ? (
+                <OptionsBody />
+              ) : (
+                <p className="text-[14px] text-muted-foreground">This is your real project, so there are no pretend answers to pick from. These options appear in the design preview, where each page can show healthy, empty or broken.</p>
+              )}
+            </aside>
+          ) : null}
 
           <Toaster />
 
@@ -712,16 +731,27 @@ export function ShellLayout() {
                 </button>
               </section>
             ) : null}
-            <button
-              type="button"
-              aria-label="Pikku, your helper"
-              aria-expanded={bubbleIsOpen}
-              onClick={() => (fill ? setPanel(panel === 'chat' ? '' : 'chat') : setBubbleOpen(!bubbleIsOpen))}
-              className="relative grid size-17 place-items-center rounded-full border border-border bg-card shadow-[0_6px_20px_-4px_rgba(8,40,52,0.16),0_2px_4px_rgba(8,40,52,0.06)] cursor-pointer transition-all duration-140 hover:-translate-y-0.5 hover:scale-105 hover:border-primary hover:shadow-[0_10px_26px_-4px_rgba(8,40,52,0.28),0_2px_4px_rgba(8,40,52,0.08)] focus-visible:ring-2 focus-visible:ring-primary active:scale-95"
-            >
-              <Avatar mood={mood} size="lg" />
-              {needsCount > 0 && !bubbleIsOpen ? <span className="absolute -top-1 -right-1 grid h-6 min-w-6 place-items-center rounded-full bg-warning px-1.5 text-[13px] font-bold text-on-warning ring-2 ring-card">{needsCount}</span> : null}
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                aria-expanded={options}
+                onClick={() => setOptions((o) => !o)}
+                className="inline-flex h-11 items-center gap-2 rounded-full border border-border bg-card px-4 text-[15px] font-semibold text-foreground shadow-card hover:bg-secondary"
+              >
+                <SlidersHorizontal className="size-4.5" />
+                Options
+              </button>
+              <button
+                type="button"
+                aria-label="Pikku, your helper"
+                aria-expanded={bubbleIsOpen}
+                onClick={() => (fill ? setPanel(panel === 'chat' ? '' : 'chat') : setBubbleOpen(!bubbleIsOpen))}
+                className="relative grid size-17 place-items-center rounded-full border border-border bg-card shadow-[0_6px_20px_-4px_rgba(8,40,52,0.16),0_2px_4px_rgba(8,40,52,0.06)] cursor-pointer transition-all duration-140 hover:-translate-y-0.5 hover:scale-105 hover:border-primary hover:shadow-[0_10px_26px_-4px_rgba(8,40,52,0.28),0_2px_4px_rgba(8,40,52,0.08)] focus-visible:ring-2 focus-visible:ring-primary active:scale-95"
+              >
+                <Avatar mood={mood} size="lg" />
+                {needsCount > 0 && !bubbleIsOpen ? <span className="absolute -top-1 -right-1 grid h-6 min-w-6 place-items-center rounded-full bg-warning px-1.5 text-[13px] font-bold text-on-warning ring-2 ring-card">{needsCount}</span> : null}
+              </button>
+            </div>
           </div>
         </div>
       </div>

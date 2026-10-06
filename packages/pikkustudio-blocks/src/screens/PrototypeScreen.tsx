@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { useSearch } from '@tanstack/react-router'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { useProjectKey } from '../lib/project'
+import { PageHead } from '../blocks/PageHead'
 import { CardsSkeleton } from '../blocks/QueryState'
 import { Button } from '../ui/button'
 
@@ -23,7 +24,12 @@ export function PrototypeScreen() {
     )
   if (prototype.state === 'failed') return <Note title="The prototype stopped" text="Its log has the reason. Ask Pikku to start it again." />
   if (prototype.state !== 'ready' || !prototype.url) return <Note title="Getting the prototype ready" text="This takes a few seconds." />
-  return <iframe title="Prototype" src={`${prototype.url}${path ?? '/'}`} className="block size-full border-0 bg-white" />
+  return (
+    <div className="flex size-full flex-col gap-3">
+      <PageHead crumb="Prototype" title="Prototype" text="Your app as it looks today, running on this computer." />
+      <iframe title="Prototype" src={`${prototype.url}${path ?? '/'}`} className="block min-h-0 w-full flex-1 rounded-2xl border border-border bg-white" />
+    </div>
+  )
 }
 
 const Note = ({ title, text, children }: { title: string; text: string; children?: ReactNode }) => (
