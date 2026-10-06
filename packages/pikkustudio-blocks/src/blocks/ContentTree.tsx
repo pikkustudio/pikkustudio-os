@@ -65,7 +65,7 @@ function Row({ item, props, picked, onPick, onMore }: RowProps) {
   const node = item.getItemData()
   const level = item.getItemMeta().level
   const pad = (extra: number) => `${level * STEP + extra}px`
-  const base = `group grid ${COLUMNS} items-center gap-x-3 border-t border-border px-3 py-2 outline-none focus-visible:bg-secondary`
+  const base = `group grid ${COLUMNS} min-h-12 items-center gap-x-3 border-t border-border px-3 py-2 outline-none focus-visible:bg-secondary`
   const tint = picked ? 'bg-primary/10' : node.kind === 'folder' ? 'bg-secondary/60' : 'bg-card'
   const row = `${base} ${tint}`
   const stop = { onKeyDown: (e: React.KeyboardEvent) => e.stopPropagation(), onClick: (e: React.MouseEvent) => e.stopPropagation() }
@@ -305,37 +305,34 @@ export function ContentTree(props: ContentTreeProps) {
 
   return (
     <div className="overflow-hidden rounded-card border border-border bg-card">
-      <div className={`flex h-12 items-center gap-3 px-3 ${top > 0 ? 'bg-primary/10' : ''}`}>
-        {top > 0 ? (
-          <>
-          <span className="text-px14 font-bold">{m.content_tree__selected({ count: top })}</span>
-          {asking ? (
-            <Confirm label={m.content_tree__remove_selected({ count: top })} keep={m.content_folder__keep_them()} busy={props.busy} onYes={removePicked} onNo={() => setAsking(false)} />
-          ) : (
-            <Button type="button" variant="bordered" size="compact" onClick={() => setAsking(true)}>
-              <Trash2 className="size-4" />
-              {m.content_tree__remove_selected_ask()}
-            </Button>
-          )}
-          <Button type="button" variant="ghost" size="compactTight" onClick={() => { setPicked(new Set()); setAsking(false) }}>{m.content_tree__clear()}</Button>
-          </>
-        ) : null}
-      </div>
-      <div className={`grid ${COLUMNS} gap-x-3 px-3 py-2 text-px13 font-bold text-muted-foreground`}>
+      <div className={`grid ${COLUMNS} h-12 items-center gap-x-3 px-3 text-px13 font-bold text-muted-foreground ${top > 0 ? 'bg-primary/10' : ''}`}>
         <div className="flex items-center justify-center">
           <input type="checkbox" className="size-4 accent-primary" checked={allPicked} aria-label={m.content_tree__select_all()} onChange={() => setPicked(allPicked ? new Set() : new Set(shown))} />
         </div>
-        <div>{m.content_tree__name()}</div>
-        <div className="max-md:hidden">{m.content_tree__size()}</div>
-        <div className="max-md:hidden">{m.content_tree__changed()}</div>
-        <div className="max-md:hidden">{m.content_tree__by()}</div>
-        <div className="flex justify-end">
-          {top > 1 ? (
-            <Button type="button" variant="ghost" size="compactTight" onClick={() => setAsking(true)} aria-label={m.content_tree__remove_selected_ask()} title={m.content_tree__remove_selected_ask()}>
-              <Trash2 className="size-4" />
-            </Button>
-          ) : null}
-        </div>
+        {top > 0 ? (
+          <>
+            <div className="truncate text-px14 text-foreground">{m.content_tree__selected({ count: top })}</div>
+            <div className="col-span-1 flex items-center justify-end gap-2 md:col-span-4">
+              {asking ? (
+                <Confirm label={m.content_tree__remove_selected({ count: top })} keep={m.content_folder__keep_them()} busy={props.busy} onYes={removePicked} onNo={() => setAsking(false)} />
+              ) : (
+                <Button type="button" variant="bordered" size="compact" onClick={() => setAsking(true)}>
+                  <Trash2 className="size-4" />
+                  {m.content_tree__remove_selected_ask()}
+                </Button>
+              )}
+              <Button type="button" variant="ghost" size="compactTight" onClick={() => { setPicked(new Set()); setAsking(false) }}>{m.content_tree__clear()}</Button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div>{m.content_tree__name()}</div>
+            <div className="max-md:hidden">{m.content_tree__size()}</div>
+            <div className="max-md:hidden">{m.content_tree__changed()}</div>
+            <div className="max-md:hidden">{m.content_tree__by()}</div>
+            <div />
+          </>
+        )}
       </div>
       <div {...tree.getContainerProps(m.content__all_folders())}>
         {items.map((item) => (
