@@ -1,0 +1,106 @@
+{
+  "name": "@pikku/addon-review",
+  "version": "0.0.1",
+  "files": [
+    ".pikku",
+    "src",
+    "db"
+  ],
+  "type": "module",
+  "imports": {
+    "#pikku/*.js": "./.pikku/addon/*.ts",
+    "#pikku/*": "./.pikku/addon/*/index.ts"
+  },
+  "exports": {
+    "./functions/*.js": {
+      "types": "./src/functions/*.ts",
+      "import": "./src/functions/*.ts"
+    },
+    "./types": {
+      "types": "./src/lib/types.ts",
+      "import": "./src/lib/types.ts"
+    },
+    "./schemas": {
+      "types": "./src/lib/schemas.ts",
+      "import": "./src/lib/schemas.ts"
+    },
+    "./score": {
+      "types": "./src/lib/score.ts",
+      "import": "./src/lib/score.ts"
+    },
+    "./ui-types": {
+      "types": "./src/lib/ui-types.ts",
+      "import": "./src/lib/ui-types.ts"
+    },
+    "./ui-score": {
+      "types": "./src/lib/ui-score.ts",
+      "import": "./src/lib/ui-score.ts"
+    },
+    "./ui-scan": {
+      "types": "./src/lib/ui-scan.ts",
+      "import": "./src/lib/ui-scan.ts"
+    },
+    "./.pikku/*.js": "./.pikku/addon/*.ts",
+    "./.pikku/*": "./.pikku/addon/*",
+    "./store": {
+      "types": "./src/services/kysely-verdict.store.ts",
+      "import": "./src/services/kysely-verdict.store.ts"
+    },
+    "./comment-store": {
+      "types": "./src/services/kysely-comment.store.ts",
+      "import": "./src/services/kysely-comment.store.ts"
+    },
+    "./reasons": {
+      "types": "./src/lib/reasons.ts",
+      "import": "./src/lib/reasons.ts"
+    },
+    "./fix-prompt": {
+      "types": "./src/lib/fix-prompt.ts",
+      "import": "./src/lib/fix-prompt.ts"
+    },
+    "./meta-source": {
+      "types": "./src/services/meta-source.interface.ts",
+      "import": "./src/services/meta-source.interface.ts"
+    },
+    "./ui-source": {
+      "types": "./src/services/ui-source.interface.ts",
+      "import": "./src/services/ui-source.interface.ts"
+    },
+    "./runtime-signals": {
+      "types": "./src/services/runtime-signals.interface.ts",
+      "import": "./src/services/runtime-signals.interface.ts"
+    },
+    "./db": {
+      "types": "./src/db.d.ts",
+      "import": "./src/db.d.ts"
+    },
+    "./.pikku/pikku-metadata.gen.json": "./.pikku/addon/pikku-metadata.gen.json",
+    "./.pikku/rpc/pikku-rpc-wirings-map.internal.gen.js": {
+      "types": "./.pikku/addon/rpc/pikku-rpc-wirings-map.internal.gen.d.ts"
+    }
+  },
+  "scripts": {
+    "prebuild": "pikku all && pikku db export",
+    "pikku": "pikku all && pikku db export",
+    "score": "bun bin/score.ts",
+    "test": "bun test",
+    "tsc": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@pikku/cli": "*",
+    "@pikku/core": "*",
+    "@types/node": "*",
+    "kysely": "*",
+    "@standard-schema/spec": "^1.1.0",
+    "@pikku/kysely-bun-sqlite": "*"
+  },
+  "peerDependencies": {
+    "@pikku/core": "*",
+    "kysely": "*"
+  },
+  "dependencies": {
+    "@pikku/kysely": "^0.13.34",
+    "typescript": "^5.9",
+    "zod": "^4.3.6"
+  }
+}
