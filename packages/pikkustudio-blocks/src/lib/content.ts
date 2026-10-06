@@ -62,3 +62,25 @@ export const saveLink = async (href: string, name: string): Promise<boolean> => 
     return false
   }
 }
+
+export const formatBytes = (bytes: number): string => {
+  if (bytes < 1000) return `${bytes} B`
+  const units = ['KB', 'MB', 'GB', 'TB']
+  let value = bytes
+  let unit = -1
+  while (value >= 1000 && unit < units.length - 1) {
+    value /= 1000
+    unit++
+  }
+  return `${value >= 100 ? Math.round(value) : Math.round(value * 10) / 10} ${units[unit]}`
+}
+
+const STEPS: [Intl.RelativeTimeFormatUnit, number][] = [['year', 31536000], ['month', 2592000], ['week', 604800], ['day', 86400], ['hour', 3600], ['minute', 60]]
+
+export const timeAgo = (iso: string, locale: string, justNow: string, now = Date.now()): string => {
+  const seconds = Math.round((new Date(iso).getTime() - now) / 1000)
+  const abs = Math.abs(seconds)
+  if (abs < 60) return justNow
+  const [unit, size] = STEPS.find(([, s]) => abs >= s)!
+  return new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(Math.round(seconds / size), unit)
+}
