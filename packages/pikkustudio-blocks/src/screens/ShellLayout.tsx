@@ -15,7 +15,7 @@ import { AiSpinner } from '../blocks/Spinner'
 import { Button } from '../ui/button'
 import { QuickFind } from '../blocks/QuickFind'
 import { Toaster } from '../blocks/Toaster'
-import { ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FlaskConical, FolderOpen, Gauge, Globe, Hammer, Home, Info, Compass, KeyRound, Search, Laptop, LayoutGrid, Mail, MessageCircle, MousePointer2, Palette, Pin, Plus, ShieldCheck, Smartphone, Upload, User, Wrench, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FlaskConical, FolderOpen, Gauge, Globe, Hammer, Home, Info, Compass, KeyRound, Search, Laptop, LayoutGrid, Mail, MessageCircle, MousePointer2, Palette, Pin, Plus, ShieldCheck, Smartphone, Upload, User, UserRoundCheck, Wrench, X } from 'lucide-react'
 
 // The app shell: rail, preview drawer (right edge), Pikku button + bubble, side panels.
 // Every screen route is a child of this layout. Page content lives in the route files.
@@ -280,6 +280,10 @@ export function ShellLayout() {
               <Link {...keep} to="/build" className={navItem}>
                 <Hammer className="size-5" />
                 Build
+              </Link>
+              <Link {...keep} to={'/virtual-users' as never} className={navItem}>
+                <UserRoundCheck className="size-5" />
+                Virtual users
               </Link>
               <Link {...keep} to="/emails" className={navItem}>
                 <Mail className="size-5" />
