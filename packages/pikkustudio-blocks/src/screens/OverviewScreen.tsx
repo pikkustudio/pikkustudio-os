@@ -277,20 +277,6 @@ export function OverviewScreen() {
               ) })}
             </div>
             <StatusLine status={areaMsg} />
-            <details className="group/dev rounded-[14px] border border-border bg-card">
-              <summary className="flex cursor-pointer list-none items-center gap-2 rounded-[14px] px-4 py-3 text-[14px] font-bold text-ink-2 hover:bg-secondary hover:text-foreground">
-                <ChevronRight className="size-4 transition-transform duration-140 group-open/dev:rotate-90" />
-                For developers
-              </summary>
-              <div className="flex flex-col gap-2 px-4 pt-0.5 pb-4 text-[14px] text-ink-2">
-                <p className="text-pretty">
-                  These counts are read from the app’s generated manifest: functions, workflows, AI agents, HTTP routes, channels, MCP tools, CLI commands, gateways, schedulers, queues and emails. Check again re-reads it.
-                </p>
-                <pre className="rounded-sm bg-secondary px-3.5 py-3 font-mono text-[13px] leading-[1.5] whitespace-pre-wrap text-foreground">
-                  functions 42  workflows 3  agents 2  http 18  channels 1  mcp 6  cli 4  gateways 1  schedulers 3  queues 2  emails 6
-                </pre>
-              </div>
-            </details>
           </>
         )}
       </section>

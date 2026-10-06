@@ -3,7 +3,7 @@ import { Button } from '../ui/button'
 import { useProjectName } from '../lib/project'
 import { EmptyState } from '../blocks/EmptyState'
 import { PageHead } from '../blocks/PageHead'
-import { PublishDeveloperNotes, PublishHosts } from '../blocks/PublishHosts'
+import { PublishHosts } from '../blocks/PublishHosts'
 import { useSlots } from '../lib/slots'
 import { ShellCtx } from '../lib/shell'
 
@@ -34,7 +34,6 @@ export function PublishScreen() {
         <Target />
       ) : null}
       <PublishHosts />
-      <PublishDeveloperNotes />
     </div>
   )
 }

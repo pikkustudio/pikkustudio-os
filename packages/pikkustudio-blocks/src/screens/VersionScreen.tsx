@@ -269,18 +269,6 @@ function Detail({ v }: { v: Version }) {
         </Section>
       )}
 
-      <details className="text-[14px] text-ink-2">
-        <summary className="cursor-pointer font-bold">For a developer</summary>
-        <dl className="mt-2 grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1 text-[14px]">
-          <dt>Version</dt>
-          <dd>{v.v}</dd>
-          <dt>Commit</dt>
-          <dd>{v.sha}</dd>
-          <dt>Id</dt>
-          <dd>{v.id}</dd>
-        </dl>
-      </details>
-
       {panel === 'log' && (
         <SidePanel title="What happened" sub="The record from building and publishing this version." onClose={() => setPanel(null)}>
           <pre className="overflow-auto rounded-card bg-secondary p-4 font-mono text-[13px] leading-[1.6] whitespace-pre-wrap">{v.log}</pre>

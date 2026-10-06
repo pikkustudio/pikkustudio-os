@@ -4,7 +4,6 @@ import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
 import { AskPikku } from './AskPikku'
-import { DevDetails } from './DevDetails'
 import type { Note } from '../types/knowledge'
 
 function NoteLinks({ title, empty, children }: { title: string; empty: string; children: React.ReactNode[] }) {
@@ -84,9 +83,6 @@ export function KnowledgeNote({ missing, note, byId, linkedFrom, onOpen, onAll }
           <NoteLink key={b.id} note={b} onOpen={onOpen} />
         ))}
       </NoteLinks>
-      <DevDetails title={m.knowledge_note__for_developers_the_note_s()}>
-        <pre className="rounded-sm bg-secondary px-3.5 py-3 font-mono text-[13px] leading-[1.5] whitespace-pre-wrap text-foreground">{`id: ${note.id}\nkind: ${note.det.kind}\nstatus: ${note.det.status}\nupdated: ${note.det.updated}\nlinks: [${note.links.join(', ')}]`}</pre>
-      </DevDetails>
       <div className="flex flex-wrap items-center gap-3.5 border-t border-border pt-3.5">
         <span className="text-[14px] text-muted-foreground">{m.knowledge_note__notes_are_read_only()}</span>
         <AskPikku label={m.knowledge_note__ask_pikku_to_change()} prompt={`I read the note “${note.t}”. I would like to change it. Here is what I would like to say: `} />

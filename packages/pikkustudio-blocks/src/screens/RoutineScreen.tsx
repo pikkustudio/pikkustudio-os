@@ -280,12 +280,6 @@ function Detail({ r }: { r: Routine }) {
                 <div className="flex flex-col gap-1">
                   <h3 className="text-[17px] font-bold">What went wrong</h3>
                   <p className="rounded-card bg-destructive-soft px-3 py-2 text-[15px] text-destructive">{note.error}</p>
-                  {note.code && (
-                    <details className="text-[14px] text-ink-2">
-                      <summary className="cursor-pointer font-semibold">For a developer</summary>
-                      <p className="mt-1 font-mono">{note.code}</p>
-                    </details>
-                  )}
                 </div>
               )}
             </>

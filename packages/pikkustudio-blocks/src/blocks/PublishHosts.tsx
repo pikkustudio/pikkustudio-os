@@ -3,7 +3,6 @@ import { useContext, useState } from 'react'
 import { Copy } from 'lucide-react'
 import { Button } from '../ui/button'
 import { ShellCtx } from '../lib/shell'
-import { DevDetails } from './DevDetails'
 import { PikkuDot } from './PikkuDot'
 import { Section } from './Section'
 import { StatusLine } from './StatusLine'
@@ -82,18 +81,5 @@ export function PublishHosts() {
         ))}
       </ul>
     </Section>
-  )
-}
-
-export function PublishDeveloperNotes() {
-  return (
-    <DevDetails>
-      <p>
-        <b>{m.publish_hosts__publish_to_fabric()}</b>  {m.publish_hosts__uploads_the_built_app()}
-      </p>
-      <p>
-        {m.publish_hosts__other_places_text()} <code className="rounded-sm bg-secondary px-1.5 py-px font-mono text-[13px]">{m.publish_hosts__standalone()}</code> {m.publish_hosts__node_server_text()}, <code className="rounded-sm bg-secondary px-1.5 py-px font-mono text-[13px]">{m.publish_hosts__cloudflare()}</code> {m.publish_hosts__workers_text()}, <code className="rounded-sm bg-secondary px-1.5 py-px font-mono text-[13px]">{m.publish_hosts__serverless()}</code> {m.publish_hosts__functions_text()} {m.publish_hosts__and_note()} <code className="rounded-sm bg-secondary px-1.5 py-px font-mono text-[13px]">{m.publish_hosts__azure()}</code> {m.publish_hosts__azure_functions_text()}. {m.publish_hosts__each_is_a_prompt_text()}
-      </p>
-    </DevDetails>
   )
 }
