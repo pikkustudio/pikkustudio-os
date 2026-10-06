@@ -4,7 +4,7 @@ import { useNavigate } from '@tanstack/react-router'
 import { Button } from '../ui/button'
 import { Textarea } from '../ui/textarea'
 import { Input } from '../ui/input'
-import { ArrowRight, Check, CircleAlert } from 'lucide-react'
+import { ArrowRight, Check, CircleAlert, Sparkles } from 'lucide-react'
 import { OnbCtx } from './OnboardingLayout'
 import { NewProjectForm } from './NewProjectForm'
 import { useImportProject, type ProjectRun } from '../lib/onboarding'
@@ -104,7 +104,7 @@ function ImportProject() {
       { url: url.trim() },
       {
         onSuccess: (p) =>
-          navigate({ to: '/overview', search: ((prev: object) => ({ ...prev, project: p.owner ? `${p.owner}/${p.slug}` : p.slug })) as never }),
+          navigate({ to: '/overview', search: ((prev: object) => ({ ...prev, project: p.slug })) as never }),
       },
     )
   return (
@@ -185,7 +185,7 @@ export function NewProjectScreen() {
           {loading ? (
             <div>
               <h1 className={h1}>
-                <AiSpinner className="mr-3 inline-grid size-9 align-middle" />
+                <Sparkles className="mr-3 inline-block size-9 align-middle" aria-hidden="true" />
                 Exploring some directions.
               </h1>
               <p className={lead}>This usually takes about two minutes. You can look around while you wait, and I will tell you the moment it is ready.</p>

@@ -7,39 +7,28 @@
     "url": "git+https://github.com/pikkujs/pikku.git",
     "directory": "packages/studio"
   },
-  "description": "Pikku Studio \u2014 the local app for building pikku projects: its backend (projects, sign-in, worktrees, one dev server per project) and the design server behind the console's Design page",
+  "description": "Pikku Studio — the local app for building pikku projects: its backend (projects, sign-in, worktrees, one dev server per project)",
   "author": "yasser.fadl@gmail.com",
   "license": "MIT",
   "type": "module",
   "bin": {
-    "pikku-studio": "./dist/bin.js",
-    "pikku-design-server": "./design/start.mjs"
+    "pikku-studio": "./dist/bin.js"
   },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
-    },
-    "./design": "./design/start.mjs"
+    }
   },
   "files": [
-    "dist",
-    "design/start.mjs",
-    "design/src",
-    "design/messages",
-    "design/seed-scratchpads",
-    "design/project.inlang/settings.json",
-    "design/index.html",
-    "design/vite.config.ts",
-    "design/tsconfig.json"
+    "dist"
   ],
   "scripts": {
-    "i18n:compile": "cd design && paraglide-js compile --project ./project.inlang --outdir ./src/paraglide --strategy globalVariable baseLocale --emit-ts-declarations --no-emit-readme --silent",
     "build": "tsc -p server",
-    "tsc": "bun run i18n:compile && tsc -p server --noEmit && tsc -p design --noEmit",
+    "tsc": "tsc -p server --noEmit",
     "test": "node --import tsx --test 'server/**/*.test.ts'",
-    "dev": "bun run i18n:compile && node design/start.mjs",
-    "prepublishOnly": "bun run i18n:compile && bun run build",
+    "dev": "node --import tsx server/src/bin.ts",
+    "prepublishOnly": "bun run build",
     "e2e": "node --import tsx e2e/studio.e2e.ts"
   },
   "dependencies": {
@@ -69,7 +58,8 @@
     "react-dom": "^19.2.5",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.0",
-    "vite": "^7.0.0"
+    "vite": "^7.0.0",
+    "@pikku/design-server": "workspace:*"
   },
   "devDependencies": {
     "@inlang/paraglide-js": "^2.24.1",

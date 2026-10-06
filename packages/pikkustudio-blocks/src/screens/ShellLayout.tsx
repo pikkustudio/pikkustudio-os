@@ -6,6 +6,8 @@ import { useProjectKey, useProjectName, useProjectSlug } from '../lib/project'
 import { useAddonNav } from '../lib/addon-nav'
 import { usePikkuChat } from '../lib/chat'
 import { ScreensCard } from '../blocks/ScreensCard'
+import { LocalAccountName, LocalShellAccount, LocalWorkspaceAbout, SignOutSection } from '../blocks/ShellAccount'
+import { useSlots } from '../lib/slots'
 import { modeForPath, useBuilderChat } from '../lib/builder-chat'
 import { useProjectQuery } from '../lib/projectRpc'
 import { MOVABLE, usePins, type Movable } from '../lib/pins'
@@ -114,6 +116,10 @@ export function ShellLayout() {
   const projectName = useProjectName()
   const projectSlug = useProjectSlug()
   const addonNav = useAddonNav()
+  const slots = useSlots()
+  const Account = slots.ShellAccount ?? LocalShellAccount
+  const About = slots.WorkspaceAbout ?? LocalWorkspaceAbout
+  const AccountName = slots.AccountName ?? LocalAccountName
   const navigate = useNavigate()
   const q = useSearch({ strict: false }) as { view?: View; look?: 'light' | 'dark'; panel?: PanelId; show?: 'done'; project?: string }
   const path = useLocation({ select: (l) => l.pathname })
@@ -196,7 +202,7 @@ export function ShellLayout() {
   const unread = needsPerson && isDismissed
 
   const agentName = { artifacts: 'Pikku Designer', prototype: 'Pikku Prototype', build: 'Pikku Builder', knowledge: 'Pikku Librarian' }
-  const panelTitle = { chat: workMode ? agentName[workMode] : 'Talk to Pikku', updates: 'Updates', workspace: 'Your account', options: 'Pikku Prototype' }
+  const panelTitle = { chat: workMode ? agentName[workMode] : 'Talk to Pikku', updates: 'Updates', workspace: 'Your workspace', account: 'Your account', options: 'Pikku Prototype' }
   const tabs = panel === 'chat' || panel === 'updates' || (panel === 'options' && onPrototype)
   const tab =
     '-mb-px inline-flex h-11.5 items-center gap-2 rounded-t-[10px] border-b-3 px-3.5 text-[15px] font-bold transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'
@@ -242,13 +248,9 @@ export function ShellLayout() {
               <kbd className="rounded-md border border-border px-1.5 text-[12px]">⌘K</kbd>
             </button>
             <nav className="flex flex-col gap-0.5" aria-label="Main">
-              <Link {...keep} to="/overview" className={`${item} h-11.5 text-[15px] text-ink-2`}>
+              <Link {...keep} to="/projects" className={`${item} h-11.5 text-[15px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`}>
                 <Home className="size-5.5" />
                 Home
-              </Link>
-              <Link {...keep} to="/projects" className={`${item} h-11.5 text-[15px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`}>
-                <FolderOpen className="size-5.5" />
-                Projects
               </Link>
               <Link {...keep} to={'/studio-metrics' as never} className={`${item} h-11.5 text-[15px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`}>
                 <Gauge className="size-5.5" />
@@ -312,25 +314,7 @@ export function ShellLayout() {
             </div>
             )}
             <div className="mt-auto flex flex-col gap-2.5">
-              <button
-                type="button"
-                aria-expanded={panel === 'workspace'}
-                onClick={() => setPanel('workspace')}
-                className={`flex items-center gap-2.5 rounded-[14px] border border-border px-3 py-2.5 text-left transition-colors duration-140 hover:border-input hover:bg-secondary ${panel === 'workspace' ? 'border-input bg-secondary' : ''}`}
-              >
-                <Laptop className="size-5 text-muted-foreground" />
-                <span className="min-w-0 flex-1">
-                  <b className="block text-[14px] leading-[1.3] font-bold">On this computer</b>
-                  <small className="block text-[13px] leading-[1.3] text-muted-foreground">Only you can see your work</small>
-                </span>
-              </button>
-              <div className="flex items-center gap-2.5 rounded-[14px] bg-secondary p-2.5">
-                <span className="grid size-9 shrink-0 place-items-center rounded-full bg-indigo text-[14px] font-bold text-white">MO</span>
-                <div>
-                  <b className="text-[14px] leading-[1.3]">Maya Okafor</b>
-                  <small className="block text-[13px] leading-[1.3] text-muted-foreground">Your workspace</small>
-                </div>
-              </div>
+              <Account expanded={panel === 'workspace'} onOpen={() => setPanel('workspace')} onAccount={() => setPanel('account')} />
             </div>
           </aside>
 
@@ -547,58 +531,12 @@ export function ShellLayout() {
               </div>
             ) : null}
 
-            {panel === 'workspace' ? (
+            {panel === 'account' ? (
               <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-auto px-6 pt-5 pb-7">
-                <div className="grid grid-cols-[auto_1fr] items-start gap-3 rounded-[18px] bg-secondary p-4">
-                  <Avatar mood="calm" size="md" />
-                  <p className="font-heading text-[17px] leading-[1.4] text-pretty">Here is where your work lives, who can see it, and what has happened. Nothing is hidden.</p>
-                </div>
-                <section className="flex flex-col gap-3.5">
-                  <h3 className="text-[18px] font-bold tracking-[-0.012em] text-balance">Where it runs</h3>
-                  <div className="flex items-start gap-3.5">
-                    <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-secondary text-ink-2">
-                      <Laptop className="size-5" />
-                    </span>
-                    <div>
-                      <b className="block text-[16px]">This computer</b>
-                      <p className="text-[15px] text-ink-2 text-pretty">Your work is stored here and works without the internet. It is not backed up anywhere else.</p>
-                    </div>
-                  </div>
-                </section>
-                <section className="flex flex-col gap-3.5">
-                  <h3 className="text-[18px] font-bold tracking-[-0.012em] text-balance">Who can see what</h3>
-                  <div className="flex items-start gap-3.5">
-                    <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-secondary text-ink-2">
-                      <User className="size-5" />
-                    </span>
-                    <div>
-                      <b className="block text-[16px]">You</b>
-                      <p className="text-[15px] text-ink-2 text-pretty">Everything, and you can change any of it.</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3.5">
-                    <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-secondary text-ink-2">
-                      <ShieldCheck className="size-5" />
-                    </span>
-                    <div>
-                      <b className="block text-[16px]">Nobody else</b>
-                      <p className="text-[15px] text-ink-2 text-pretty">Not your team and not Fabric, unless you choose to share something.</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3.5">
-                    <span className="grid size-10 shrink-0 place-items-center">
-                      <Avatar mood="calm" size="xs" ring={false} />
-                    </span>
-                    <div>
-                      <b className="block text-[16px]">Pikku</b>
-                      <p className="text-[15px] text-ink-2 text-pretty">Only what you ask it to work on. It asks before it changes anything that matters.</p>
-                    </div>
-                  </div>
-                </section>
                 <section className="flex flex-col gap-3.5">
                   <h3 className="text-[18px] font-bold tracking-[-0.012em] text-balance">Settings</h3>
                   {[
-                    [User, 'Your name and photo', 'Maya Okafor'],
+                    [User, 'Your name and photo', <AccountName key="name" />],
                     [Globe, 'Language', 'English'],
                     [Bell, 'Tell me when', 'Pikku needs you, or something goes wrong'],
                     [Palette, 'Looks', 'Match this computer'],
@@ -609,11 +547,34 @@ export function ShellLayout() {
                       </span>
                       <div>
                         <b className="block text-[16px]">{title as string}</b>
-                        <p className="text-[15px] text-ink-2 text-pretty">{text as string}</p>
+                        <p className="text-[15px] text-ink-2 text-pretty">{text as ReactNode}</p>
                       </div>
                     </button>
                   ))}
                 </section>
+                <SignOutSection />
+              </div>
+            ) : null}
+
+            {panel === 'workspace' ? (
+              <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-auto px-6 pt-5 pb-7">
+                <div className="grid grid-cols-[auto_1fr] items-start gap-3 rounded-[18px] bg-secondary p-4">
+                  <Avatar mood="calm" size="md" />
+                  <p className="font-heading text-[17px] leading-[1.4] text-pretty">Here is where your work lives, who can see it, and what has happened. Nothing is hidden.</p>
+                </div>
+                <About
+                  pikku={
+                    <div className="flex items-start gap-3.5">
+                      <span className="grid size-10 shrink-0 place-items-center">
+                        <Avatar mood="calm" size="xs" ring={false} />
+                      </span>
+                      <div>
+                        <b className="block text-[16px]">Pikku</b>
+                        <p className="text-[15px] text-ink-2 text-pretty">Only what you ask it to work on. It asks before it changes anything that matters.</p>
+                      </div>
+                    </div>
+                  }
+                />
                 <section className="flex flex-col gap-3.5">
                   <h3 className="text-[18px] font-bold tracking-[-0.012em] text-balance">What has happened</h3>
                   <ol className="ml-1.5 flex flex-col border-l-2 border-border">

@@ -1,7 +1,7 @@
 import { execFile, spawn, type ChildProcess } from 'node:child_process'
 import { promisify } from 'node:util'
 import { closeSync, existsSync, lstatSync, openSync, readFileSync, readdirSync, realpathSync } from 'node:fs'
-import { cp, mkdir, readFile, rm, symlink, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { connect, createServer } from 'node:net'
 import { homedir } from 'node:os'
 import { builderHome, packageRoot, piPackageRoot, type Launcher } from '@pikku/builder'
@@ -584,33 +584,16 @@ export class StudioProjectsService {
     }
   }
 
-  private async designCopy(key: string): Promise<string | undefined> {
-    const entry = this.options.designEntry
-    if (!entry) return undefined
-    const source = dirname(entry)
-    const copy = join(this.home, 'design', key)
-    await rm(copy, { recursive: true, force: true })
-    await cp(source, copy, {
-      recursive: true,
-      filter: (path) => path !== join(source, 'workspace'),
-    })
-    const modules = join(source, '..', 'node_modules')
-    if (existsSync(modules)) await symlink(modules, join(copy, 'node_modules'), 'dir')
-    return join(copy, basename(entry))
-  }
-
-  private confinement(worktree: StudioWorktree, design?: string): Confinement | null {
+  private confinement(worktree: StudioWorktree): Confinement | null {
     if (this.options.confine === false || !canConfine()) return null
     if (this.options.confine) return this.options.confine(worktree)
     const base = worktreeConfinement(worktree)
     const readable = [join(homedir(), '.fabric', 'auth.json')]
     if (this.options.designEntry) readable.push(resolve(this.options.designEntry, '..', '..'))
     readable.push(...linkedRepos(worktree.path))
-    const writable = design ? [dirname(design)] : []
     return {
       ...base,
-      readable: [...(base.readable ?? []), ...readable, ...writable],
-      writable: [...(base.writable ?? []), ...writable],
+      readable: [...(base.readable ?? []), ...readable],
     }
   }
 
@@ -644,8 +627,8 @@ export class StudioProjectsService {
     const token = randomBytes(32).toString('hex')
     const { command, args } = (this.options.devCommand ??
       ((p) => ({ command: 'npx', args: ['pikku', 'dev', '--port', String(p)] })))(port)
-    const design = await this.designCopy(key)
-    const confinement = this.confinement(worktree, design)
+    const design = this.options.designEntry
+    const confinement = this.confinement(worktree)
     await mkdir(join(this.home, 'logs'), { recursive: true })
     const logPath = join(this.home, 'logs', `${key}.log`)
     const log = openSync(logPath, 'w')

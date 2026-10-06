@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import type { UseMutationResult, UseQueryResult } from '@tanstack/react-query'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 
@@ -33,6 +34,14 @@ export const useRecentProjects = () => {
     select: (d: { projects: { key: string; name: string }[] }): RecentProject[] =>
       d.projects.slice(0, 2).map((p, i) => ({ key: p.key, name: p.name, colors: palette[i] })),
   } as never) as unknown as UseQueryResult<RecentProject[]>
+}
+export const useSignOut = () => {
+  const client = useQueryClient()
+  const mutation = usePikkuMutation('studio:signOut')
+  return {
+    ...mutation,
+    mutate: (input: object) => mutation.mutate(input as never, { onSuccess: () => client.invalidateQueries() }),
+  }
 }
 export const useSetProfile = () => usePikkuMutation('studio:setProfile')
 export const useUseLocally = () => usePikkuMutation('studio:useLocally')

@@ -41,7 +41,7 @@ export const resolveConsoleApp = () =>
   resolve(fileURLToPath(import.meta.resolve('@pikku/cli/fabric')), '..', '..', '..', '..', 'console-app')
 
 export const resolveDesignEntry = () =>
-  fileURLToPath(new URL('../design/start.mjs', import.meta.url))
+  fileURLToPath(import.meta.resolve('@pikku/design-server'))
 
 class StudioSettingsFile {
   constructor(private path: string) {}

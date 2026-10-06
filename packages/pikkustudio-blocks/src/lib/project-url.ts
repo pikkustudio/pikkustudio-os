@@ -1,28 +1,55 @@
 import type { LocationRewrite } from '@tanstack/react-router'
 
-const OUTSIDE = new Set(['projects', 'secrets', 'studio-metrics', 'new-project', 'new-team', 'accept-invite', 'sign-in', 'your-name', 'choose-ai'])
-const PAGES = new Set(['overview', 'changes-directions', 'prototype', 'build', 'emails', 'translations', 'artifacts', 'knowledge', 'content', 'apps', 'publish', 'explore', 'logs', 'performance', 'metrics', 'studio-metrics', 'assistants', 'virtual-users', 'routines', 'versions', 'lab', 'addons', 'add-ons', 'billing', 'team', 'settings', 'plans', 'ai'])
+// Every studio URL is scoped by its team: /<team>/projects, /<team>/<project>/<page>. The open edition
+// has one team, `local`. Inside the app the team and the project ride in the `team` and `project`
+// search params, so routes stay /projects and /overview.
+
+// Not scoped by a team: onboarding, and the signed-in template app at /app.
+const GLOBAL = new Set(['sign-in', 'your-name', 'choose-ai', 'new-team', 'accept-invite', 'app'])
+// The team's own pages: no project in their URL.
+const TEAM_PAGES = new Set(['projects', 'secrets', 'studio-metrics', 'new-project'])
+const PAGES = new Set(['overview', 'changes-directions', 'prototype', 'build', 'emails', 'translations', 'artifacts', 'knowledge', 'content', 'apps', 'publish', 'explore', 'logs', 'performance', 'metrics', 'assistants', 'virtual-users', 'routines', 'versions', 'lab', 'addons', 'add-ons', 'billing', 'team', 'settings', 'plans', 'ai', 'domains'])
 
 const unquote = (v: string) => v.replace(/^"(.*)"$/, '$1')
+// A project param from before teams were in the URL was `owner/slug`.
+const bareSlug = (v: string) => unquote(v).split('/').pop()!
+
+export const isTeamScoped = (pathname: string) => {
+  const first = pathname.split('/').filter(Boolean)[0]
+  return !!first && !GLOBAL.has(first)
+}
 
 export const projectRewrite: LocationRewrite = {
   input: ({ url }) => {
-    const [owner, second, ...more] = url.pathname.split('/').filter(Boolean)
-    if (!owner || OUTSIDE.has(owner) || PAGES.has(owner)) return url
-    if (owner === 'app' && second === 'p') return url
-    const owned = second !== undefined && !PAGES.has(second)
-    const rest = owned ? more : second === undefined ? [] : [second, ...more]
-    url.searchParams.set('project', JSON.stringify(owned ? `${owner}/${second}` : owner))
-    url.pathname = `/${rest.length ? rest.join('/') : 'overview'}`
+    const [first, second, ...more] = url.pathname.split('/').filter(Boolean)
+    // Unscoped paths pass through; the team guard adds the team.
+    if (!first || GLOBAL.has(first) || TEAM_PAGES.has(first) || PAGES.has(first)) return url
+    url.searchParams.set('team', JSON.stringify(first))
+    if (second === undefined) {
+      url.pathname = '/projects'
+    } else if (TEAM_PAGES.has(second) || PAGES.has(second)) {
+      url.pathname = `/${[second, ...more].join('/')}`
+    } else {
+      url.searchParams.set('project', JSON.stringify(second))
+      url.pathname = `/${more.length ? more.join('/') : 'overview'}`
+    }
     return url
   },
   output: ({ url }) => {
-    const slug = url.searchParams.get('project')
-    if (slug === null) return url
+    const team = url.searchParams.get('team')
+    const project = url.searchParams.get('project')
+    if (team === null && project === null) return url
+    url.searchParams.delete('team')
     url.searchParams.delete('project')
     const first = url.pathname.split('/').filter(Boolean)[0]
-    if (!first || OUTSIDE.has(first)) return url
-    url.pathname = `/${unquote(slug)}${url.pathname}`
+    if (!first || GLOBAL.has(first)) return url
+    if (team === null) {
+      // No team known yet: keep the project in the URL so it survives until the guard scopes it.
+      if (project !== null && !TEAM_PAGES.has(first)) url.pathname = `/${unquote(project)}${url.pathname}`
+      return url
+    }
+    const scope = `/${unquote(team)}`
+    url.pathname = project !== null && !TEAM_PAGES.has(first) ? `${scope}/${bareSlug(project)}${url.pathname}` : `${scope}${url.pathname}`
     return url
   },
 }

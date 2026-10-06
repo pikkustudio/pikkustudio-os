@@ -1,5 +1,6 @@
 import type { UseQueryResult } from '@tanstack/react-query'
-import { Link } from '@tanstack/react-router'
+import { useEffect } from 'react'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { Plus } from 'lucide-react'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { Button } from '../ui/button'
@@ -10,12 +11,13 @@ import { ProjectsGrid } from '../blocks/ProjectsGrid'
 import type { Project, ProjectState } from '../blocks/ProjectCard'
 import { CardsSkeleton, QueryState } from '../blocks/QueryState'
 import { keep } from '../lib/links'
+import { useAccount } from '../lib/onboarding'
 
 const looks = ['bakery', 'kiln', 'garden', 'dog'] as const
 
 const toCard = (p: { key: string; slug: string; owner?: string; name: string; location: string; open: boolean; missing: boolean }): Project => ({
   id: p.key,
-  slug: p.owner ? `${p.owner}/${p.slug}` : p.slug,
+  slug: p.slug,
   name: p.name,
   summary: p.location === 'cloud' ? 'In Fabric' : 'On this computer',
   look: looks[[...p.key].reduce((n, c) => n + c.charCodeAt(0), 0) % looks.length],
@@ -24,6 +26,11 @@ const toCard = (p: { key: string; slug: string; owner?: string; name: string; lo
 
 export function ProjectsScreen() {
   const projects = usePikkuQuery('studio:listProjects', {}, { select: (d: { projects: Parameters<typeof toCard>[0][] }) => d.projects.map(toCard) } as never) as unknown as UseQueryResult<Project[]>
+  const signedIn = !!useAccount().data?.signIn
+  const navigate = useNavigate()
+  useEffect(() => {
+    if (signedIn && projects.isSuccess && projects.data.length === 0) navigate({ to: '/new-project', search: ((prev: object) => prev) as never, replace: true })
+  }, [signedIn, projects.isSuccess, projects.data?.length])
   const reopen = usePikkuMutation('studio:openProject', { onSuccess: () => projects.refetch() })
 
   return (

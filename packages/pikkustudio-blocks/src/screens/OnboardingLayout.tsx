@@ -150,7 +150,7 @@ export function OnboardingLayout() {
     if (!done) return
     made.refetch().then((r) => {
       const made = (r.data as { projects: { key: string; slug: string; owner?: string }[] } | undefined)?.projects.find((p) => p.key === run.data?.key)
-      const slug = made ? (made.owner ? `${made.owner}/${made.slug}` : made.slug) : undefined
+      const slug = made?.slug
       const land = (to: '/overview' | '/projects' | '/artifacts' | '/artifacts/$id', params?: { id: string }) =>
         navigate({ to, ...(params ? { params } : {}), search: ((prev: object) => ({ ...prev, run: undefined, project: slug })) as never })
       if (!slug) return land('/projects')

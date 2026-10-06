@@ -1,4 +1,4 @@
-export const validateStudioSearch = (s: Record<string, unknown>): { size?: 'mobile' | 'tablet' | 'small' | 'big'; embed?: '1'; mock?: string; run?: string; project?: string; view?: 'healthy' | 'empty' | 'problem' | 'loading' | 'error' | 'restore-error'; look?: 'light' | 'dark'; panel?: 'chat' | 'updates' | 'workspace' | 'options' | 'provider' | 'diff' | 'why' | 'local' | 'accounts' | 'keys' | 'litellm' | 'fabric'; pitch?: 'a' | 'b'; via?: string; show?: 'done' | 'returning' | 'company' | 'empty' | 'loading' | 'error' | 'signin' | 'notin' | 'publishing' | 'live'; note?: string; email?: string; lang?: 'en' | 'de' | 'ar'; device?: 'phone' | 'text'; mode?: 'theme' | 'element' | 'component' | 'translations' | 'chat' | 'none'; screen?: 'tablet' | 'phone'; app?: 'staff'; pg?: string; item?: string } => {
+export const validateStudioSearch = (s: Record<string, unknown>): { size?: 'mobile' | 'tablet' | 'small' | 'big'; embed?: '1'; mock?: string; run?: string; team?: string; project?: string; view?: 'healthy' | 'empty' | 'problem' | 'loading' | 'error' | 'restore-error'; look?: 'light' | 'dark'; panel?: 'chat' | 'updates' | 'workspace' | 'options' | 'provider' | 'diff' | 'why' | 'local' | 'accounts' | 'keys' | 'litellm' | 'fabric'; pitch?: 'a' | 'b'; via?: string; show?: 'done' | 'returning' | 'company' | 'empty' | 'loading' | 'error' | 'signin' | 'notin' | 'publishing' | 'live'; note?: string; email?: string; lang?: 'en' | 'de' | 'ar'; device?: 'phone' | 'text'; mode?: 'theme' | 'element' | 'component' | 'translations' | 'chat' | 'none'; screen?: 'tablet' | 'phone'; app?: 'staff'; pg?: string; item?: string } => {
     const pick = <T extends string>(v: unknown, ok: readonly T[]) => (ok.includes(v as T) ? (v as T) : undefined)
     return {
       size: pick(s.size, ['mobile', 'tablet', 'small', 'big'] as const),
@@ -9,6 +9,7 @@ export const validateStudioSearch = (s: Record<string, unknown>): { size?: 'mobi
       via: typeof s.via === 'string' ? s.via : undefined,
       pitch: pick(s.pitch, ['a', 'b'] as const),
       show: pick(s.show, ['done', 'returning', 'company', 'empty', 'loading', 'error', 'signin', 'notin', 'publishing', 'live'] as const),
+      team: typeof s.team === 'string' && s.team ? s.team : undefined,
       project: typeof s.project === 'string' && s.project ? s.project : undefined,
       run: typeof s.run === 'string' ? s.run : undefined,
       mock: typeof s.mock === 'string' ? s.mock : undefined,

@@ -1,5 +1,5 @@
 import { useRef, useState, type ReactNode } from 'react'
-import { ArrowRight, Check, Monitor, Paperclip, Smartphone, Sparkles, UserRound, X } from 'lucide-react'
+import { ArrowRight, Check, Monitor, Paperclip, Smartphone, Sparkles, X } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Textarea } from '../ui/textarea'
 import type { Uses } from './OnboardingLayout'
@@ -45,7 +45,6 @@ export function NewProjectForm({
   ready: boolean
   go: () => void
 }) {
-  const [mine, setMine] = useState('')
   const [tooBig, setTooBig] = useState(false)
   const [over, setOver] = useState(false)
   const picker = useRef<HTMLInputElement>(null)
@@ -123,25 +122,6 @@ export function NewProjectForm({
                 ? 'Mobile means iPhone and Android. It takes noticeably longer to build and publish, so many people start with the browser.'
                 : 'Nothing goes online until you say so.'}
         </p>
-      </section>
-      <section aria-label="For me, in my Studio" className="flex flex-col gap-3 rounded-[22px] border border-hero-ink/30 bg-hero-ink/8 p-4">
-        <div className="flex items-center gap-2 text-[16px] font-bold">
-          <UserRound className="size-5" />
-          For me, in my Studio
-          <span className="rounded-full border border-hero-ink/40 px-2.5 py-0.5 text-[12px] font-semibold">Coming soon</span>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <input
-            aria-label="Something just for me"
-            value={mine}
-            onChange={(e) => setMine(e.target.value)}
-            placeholder="For example: every day, the 5 most critical emails I should answer"
-            className="h-12 min-w-60 flex-1 rounded-full border border-hero-ink/30 bg-transparent px-5 text-[15px] placeholder:text-hero-ink-2 focus:border-hero-ink focus:outline-none"
-          />
-          <Button variant="heroGhost" size="page" type="button" disabled>
-            Set it up
-          </Button>
-        </div>
       </section>
     </div>
   )
