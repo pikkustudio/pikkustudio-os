@@ -9,6 +9,7 @@ import { useProjectQuery } from '../lib/projectRpc'
 import { ShellCtx, type PanelId, type PublishNote, type View } from '../lib/shell'
 import { keep } from '../lib/links'
 import { NEW_QUESTIONS, answerPrompt, openQuestions, type KnowledgeBundle } from '../lib/knowledge'
+import { AiSpinner } from '../blocks/Spinner'
 import { Button } from '../ui/button'
 import { QuickFind } from '../blocks/QuickFind'
 import { Toaster } from '../blocks/Toaster'
@@ -472,7 +473,10 @@ export function ShellLayout() {
                       </div>
                     ),
                   )}
-                  {chat.busy && !chat.items.some((i) => i.kind === 'pikku' && !i.text) ? <p className="text-[14px] text-muted-foreground">Pikku is thinking…</p> : null}
+                  {chat.busy && !chat.items.some((i) => i.kind === 'pikku' && !i.text) ? <p className="flex items-center gap-2 text-[14px] text-muted-foreground">
+                      <AiSpinner />
+                      Pikku is thinking…
+                    </p> : null}
                 </div>
                 {attached.length ? (
                   <div className="flex flex-wrap gap-2 bg-card px-5 pt-2.5">

@@ -1,3 +1,4 @@
+import { AiSpinner } from '../blocks/Spinner'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { Button } from '../ui/button'
@@ -183,7 +184,10 @@ export function NewProjectScreen() {
         <div className="relative z-1 flex flex-col justify-center gap-5 px-13 pt-13 pb-12 @min-[1700px]/app:p-16 group-data-open/shell:@min-[1700px]/app:p-13">
           {loading ? (
             <div>
-              <h1 className={h1}>Exploring some directions.</h1>
+              <h1 className={h1}>
+                <AiSpinner className="mr-3 inline-grid size-9 align-middle" />
+                Exploring some directions.
+              </h1>
               <p className={lead}>This usually takes about two minutes. You can look around while you wait, and I will tell you the moment it is ready.</p>
             </div>
           ) : null}
@@ -227,6 +231,10 @@ export function NewProjectScreen() {
                     {s.state === 'done' ? (
                       <span className="grid size-7.5 shrink-0 place-items-center rounded-full bg-hero-ink text-hero">
                         <Check className="size-4" strokeWidth={3} />
+                      </span>
+                    ) : s.state === 'now' && s.label === LABELS['Ask for a first draft'] ? (
+                      <span className="grid size-7.5 shrink-0 place-items-center text-hero-ink">
+                        <AiSpinner className="size-7.5" />
                       </span>
                     ) : s.state === 'now' ? (
                       <span className="size-7.5 shrink-0 animate-[spin_0.9s_linear_infinite] rounded-full border-[2.5px] border-hero-ink border-r-transparent" />

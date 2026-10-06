@@ -38,7 +38,7 @@ export function ExploreDirections({ directions, onOpen }: { directions: Artifact
   return (
     <div className="flex min-h-0 flex-1 snap-x snap-mandatory gap-3.5 overflow-x-auto overflow-y-hidden pb-2">
       {directions.map((d, i) => (
-        <section key={d.id} className="flex min-w-60 flex-1 snap-start flex-col gap-3 rounded-2xl bg-card p-3.5 shadow-lift">
+        <section key={d.id} className="flex min-w-100 flex-1 snap-start flex-col gap-3 rounded-2xl bg-card p-3.5 shadow-lift">
           <header className="flex flex-col gap-0.5">
             <p className="m-0 text-px13 font-semibold text-muted-foreground">Idea {i + 1}</p>
             <h2 className="m-0 text-px20 font-bold">{d.title}</h2>
