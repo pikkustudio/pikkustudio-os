@@ -16,7 +16,7 @@ export const leased = <T>(
   name: string,
   fetchAll: () => Promise<Record<string, T>>,
   options: LeaseOptions = {},
-): Layer<T> & { forget(): void; expiresAt(): number | undefined } => {
+): Layer<T> & { all(): Promise<Record<string, T>>; forget(): void; expiresAt(): number | undefined } => {
   const ttl = options.ttlMs ?? LEASE_MS
   const now = options.now ?? Date.now
   let held: Held<T> | undefined
@@ -42,6 +42,10 @@ export const leased = <T>(
     async get(key) {
       const current = fresh() ? held : await renew()
       return current?.values.get(key)
+    },
+    async all() {
+      const current = fresh() ? held : await renew()
+      return current ? (Object.fromEntries(current.values) as Record<string, T>) : {}
     },
     forget() {
       held = undefined

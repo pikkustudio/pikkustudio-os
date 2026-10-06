@@ -360,7 +360,7 @@ export interface StudioProjectsOptions {
   designEntry?: string
   env?: (key: string) => Promise<Record<string, string>>
   personalSource?: (projectId: string) => ScopedSource | undefined
-  teamSource?: (projectId: string) => ScopedSource | undefined
+  teamSource?: (projectId: string, projectPath: string) => ScopedSource | undefined
   waitForPort?: (port: number) => Promise<void>
   startApps?: boolean
   createCommand?: (name: string) => { command: string; args: string[] }
@@ -1001,7 +1001,7 @@ export class StudioProjectsService {
   cascadeSources(key: string, projectPath: string): ScopedSource[] {
     const { id } = splitSessionKey(key)
     const personal = this.options.personalSource?.(id)
-    const team = this.options.teamSource?.(id)
+    const team = this.options.teamSource?.(id, projectPath)
     return [
       ...(personal ? [personal] : []),
       ...(team ? [team] : []),

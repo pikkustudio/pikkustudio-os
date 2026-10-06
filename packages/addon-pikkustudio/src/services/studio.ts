@@ -1,5 +1,7 @@
 import type { ScopedSource } from '../lib/sources/index.js'
 export { vaultPersonalSource, personalKey } from '../lib/sources/file-sources.js'
+export { leased } from '../lib/sources/lease.js'
+export type { ScopedSource } from '../lib/sources/cascade.js'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -34,7 +36,7 @@ export interface StudioServicesOptions {
   builder?: BuilderSession
   projectEnv?: (key: string) => Promise<Record<string, string>>
   personalSource?: (projectId: string) => ScopedSource | undefined
-  teamSource?: (projectId: string) => ScopedSource | undefined
+  teamSource?: (projectId: string, projectPath: string) => ScopedSource | undefined
   projectStore?: ProjectStore
   logStore?: LogStore
 }

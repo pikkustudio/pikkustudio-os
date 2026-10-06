@@ -124,6 +124,11 @@ describe('lease', () => {
     assert.equal(calls, 2)
   })
 
+  test('all returns the whole lease', async () => {
+    const l = leased('team', async () => ({ A: '1', B: '2' }))
+    assert.deepEqual(await l.all(), { A: '1', B: '2' })
+  })
+
   test('a failed renewal never serves the stale lease', async () => {
     let t = 0
     let fail = false
