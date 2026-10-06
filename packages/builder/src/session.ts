@@ -73,6 +73,31 @@ interface Drive {
 
 export const MAX_DRIVEN_TURNS = 25
 
+const FALLBACK_BRIEFS = [
+  'A calm, spacious layout with one big focus per screen, soft pastel colour, friendly and reassuring in tone.',
+  'A dense, dashboard-like layout with lots of information at a glance, a dark theme with one sharp accent colour, efficient and serious in tone.',
+  'A bold, editorial layout with oversized type and strong blocks of saturated colour, confident and playful in tone.',
+  'A warm, tactile layout with cards and rounded shapes, earthy natural colours, personal and handmade in tone.',
+]
+
+const PLAN_PROMPT = (count: number, idea: string) =>
+  `Plan ${count} design directions for the app below. Reply with only a JSON array of ${count} strings and nothing else. Each string is a brief of two or three plain sentences for one designer: the layout idea, the colour world, and the tone. The directions must differ from each other as much as possible in all three. No two may share a layout idea or a main colour. Do not write any files.\n\n${idea}`
+
+const DIRECTION_PROMPT = (n: number, count: number, idea: string, brief: string) =>
+  `${idea}\n\nYou are making direction ${n} of ${count}. Other designers are making the other directions at the same time, so stay strictly with your own brief and do not echo theirs:\n${brief}\n\nWrite only artifacts/direction-${n}/index.html, one self-contained page (inline CSS, no scripts, no external files), and artifacts/direction-${n}/artifact.json as {"kind":"Design","title":"a short name for the direction","summary":"one plain sentence an owner would use about what makes it different","exploration":"first","mode":"extreme"}. Write both files straight away. Do not change the app.`
+
+const parseBriefs = (output: string, count: number): string[] | null => {
+  const match = output.match(/\[[\s\S]*\]/)
+  if (!match) return null
+  try {
+    const parsed = JSON.parse(match[0])
+    const briefs = Array.isArray(parsed) ? parsed.filter((b): b is string => typeof b === 'string' && b.trim().length > 0) : []
+    return briefs.length >= count ? briefs.slice(0, count) : null
+  } catch {
+    return null
+  }
+}
+
 const HEAL_PROMPT = 'This project will not start. Get it running again as fast as you can, with the smallest change that works. Do not add features or tidy anything. Check it with `pikku all`, commit the fix, then call report_fix and stop. Here is what went wrong:'
 
 export class BuilderSession {
@@ -215,6 +240,55 @@ export class BuilderSession {
 
   explore(key: string, message: string) {
     return this.roleTurn(key, message, 'explore', 'Say what you want explored first')
+  }
+
+  private async runOnce(key: string, prompt: string, timeoutMs: number, role: 'explore' | 'inspect' = 'explore'): Promise<{ ok: boolean; output: string }> {
+    const { cwd, ai, env = {}, launch = spawnPi } = await this.resolve(key)
+    const skills = await writeSkills(this.home)
+    const child = launch(process.execPath, [resolvePi(), '-p', ...piArgs({ ai, skills, role, session: `pikku-${role}-${key}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}` }), prompt], {
+      cwd,
+      env: { ...process.env, ...env, ...piEnv(ai) },
+    })
+    let output = ''
+    child.stdout?.on('data', (chunk) => (output = (output + chunk).slice(-20_000)))
+    child.stderr?.on('data', (chunk) => (output = (output + chunk).slice(-20_000)))
+    child.stdin?.end()
+    const timer = setTimeout(() => child.kill(), timeoutMs)
+    const code = await new Promise<number | null>((resolve) => {
+      child.once('error', () => resolve(1))
+      child.once('exit', resolve)
+    })
+    clearTimeout(timer)
+    return { ok: code === 0, output }
+  }
+
+  async inspect(key: string, files: { name: string; path: string }[]): Promise<boolean> {
+    const list = files.map((f) => `- ${f.name}: ${f.path}`).join('\n')
+    const prompt = `The owner attached these files to a new project:\n${list}\n\nRead each one. For every file write knowledge/attachments/<short-name>.md: markdown with frontmatter holding type: reference, title, description (one plain sentence), tags (a few words), and resource: content:attachments/<file name exactly as listed>. The body is a short summary and the key facts someone designing an app around this file needs: names, numbers, structure, wording, style. Then write knowledge/attachments/index.md with the same frontmatter shape (no resource) and a body that lists every file with one sentence each. Reply when done.`
+    return (await this.runOnce(key, prompt, 10 * 60_000, 'inspect')).ok
+  }
+
+  async directions(key: string, idea: string, count = 4): Promise<number> {
+    const text = idea.trim()
+    if (!text) throw new Error('Say what you want explored first')
+    const state = await this.state(key)
+    if (state.busy || this.turns.has(key)) throw new Error('The builder is already working')
+    state.items.push({ kind: 'user', text, at: Date.now() })
+    state.busy = true
+    try {
+      const planned = await this.runOnce(key, PLAN_PROMPT(count, text), 3 * 60_000)
+      const briefs = (planned.ok ? parseBriefs(planned.output, count) : null) ?? FALLBACK_BRIEFS.slice(0, count)
+      const made = await Promise.all(briefs.map((brief, i) => this.runOnce(key, DIRECTION_PROMPT(i + 1, count, text, brief), 10 * 60_000)))
+      const ok = made.filter((r) => r.ok).length
+      if (!ok) throw new Error(made[0]?.output.trim().split('\n').slice(-4).join('\n') || 'The builder could not make any directions.')
+      return ok
+    } catch (error) {
+      this.push(key, `Pikku could not take the request: ${error instanceof Error ? error.message : String(error)}`)
+      throw error
+    } finally {
+      state.busy = false
+      await this.save(key)
+    }
   }
 
   prototype(key: string, message: string) {

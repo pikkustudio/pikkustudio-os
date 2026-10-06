@@ -18,9 +18,12 @@ export const builderPrompt = pikkuSessionlessFunc({
     const profile = name
       ? `The person you are working with is called ${name}. Address them by that name.${about ? ` About them: ${about}. Tailor your answers to that.` : ''}`
       : undefined
-    const state = explore
-      ? await studioBuilder.explore(key, [message, context].filter(Boolean).join('\n\n'))
-      : mode === 'prototype'
+    if (explore) {
+      await studioBuilder.directions(key, [message, context].filter(Boolean).join('\n\n'), DIRECTIONS)
+      return studioBuilder.state(key)
+    }
+    const state =
+      mode === 'prototype'
         ? await studioBuilder.prototype(key, [message, context].filter(Boolean).join('\n\n'))
         : await studioBuilder.prompt(key, message, [profile, context].filter(Boolean).join('\n\n') || undefined, mode, offer)
     if (!failOnError) return state

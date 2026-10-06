@@ -6,7 +6,7 @@ import { ProjectRpcCtx } from '../lib/projectRpc'
 import { Button } from '../ui/button'
 import { AiLitellmPanel, AiProviderPanel, providers } from '../blocks/AiConnectPanels'
 import { useSlots } from '../lib/slots'
-import { useAccount, useProjectRun, useRecentProjects, useStartProjectRun, useAttachFile, projectNameFrom, useNameTaken, type ProjectRun } from '../lib/onboarding'
+import { useAccount, useProjectRun, useRecentProjects, useStartProjectRun, useAttachFile, newProjectName, type ProjectRun } from '../lib/onboarding'
 import { ArrowRight, Bell, Check, CircleAlert, FolderOpen, Laptop, MessageCircle, Pin, ShieldCheck, User, X } from 'lucide-react'
 
 // The onboarding layout: setup rail (Getting set up), Pikku button + bubble, side panels.
@@ -29,7 +29,6 @@ export const OnbCtx = createContext<{
   setUses: (v: Uses) => void
   files: File[]
   setFiles: (v: File[]) => void
-  taken?: string
   example: string
   run?: ProjectRun
 }>(null as never)
@@ -126,7 +125,7 @@ export function OnboardingLayout() {
   const attach = useAttachFile()
   const begin = async (key?: string) => {
     setSt('loading')
-    const name = projectNameFrom(idea)
+    const name = newProjectName()
     const uploadId = files.length ? crypto.randomUUID() : undefined
     try {
       for (const file of files) {
@@ -181,7 +180,6 @@ export function OnboardingLayout() {
   const [idea, setIdea] = useState('')
   const [files, setFiles] = useState<File[]>([])
   const [uses, setUses] = useState<Uses>({ audience: 'others', surfaces: ['screens'], devices: ['browser'] })
-  const { taken, name: checked } = useNameTaken(idea)
   const fillExample = () => {
     setIdea(EXAMPLE)
     document.getElementById('idea')?.focus()
@@ -257,7 +255,7 @@ export function OnboardingLayout() {
         : []
 
   return (
-    <OnbCtx.Provider value={{ st: signIn || choose || proj || yourName ? st : 'empty', go, retry, open, cancel, idea, setIdea, uses, setUses, files, setFiles, taken: taken ? checked : undefined, example: EXAMPLE, run: run.data }}>
+    <OnbCtx.Provider value={{ st: signIn || choose || proj || yourName ? st : 'empty', go, retry, open, cancel, idea, setIdea, uses, setUses, files, setFiles, example: EXAMPLE, run: run.data }}>
       <div
         className="@container/app fixed inset-0 z-0 overflow-hidden bg-background font-sans text-[16px] leading-[1.5] text-foreground antialiased"
       >

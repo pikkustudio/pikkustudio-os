@@ -62,6 +62,11 @@ export const EXPLORE_PROMPT = [
   'Write only the files you are asked to write, and do not change the app.',
 ].join(' ')
 
+export const INSPECT_PROMPT = [
+  'You look through files an owner attached to a new project and write down what is in them, so designers and builders never need to open the originals.',
+  'Read each file named in the request. Write only the notes you are asked to write, in knowledge/attachments/. Do not change anything else.',
+].join(' ')
+
 export const PROTOTYPE_PROMPT = [
   'You make screens for a design prototype. Your whole world is this folder.',
   'Read PROTOTYPE.md first and follow it exactly. Use the impeccable skill for every design decision.',
@@ -75,10 +80,11 @@ export const impeccableSkill = () => {
   return found
 }
 
-export function piArgs(options: { ai?: BuilderAi; skills: string; mode?: 'rpc'; session?: string; role?: 'explore' | 'prototype'; scope?: BuilderMode }): string[] {
+export function piArgs(options: { ai?: BuilderAi; skills: string; mode?: 'rpc'; session?: string; role?: 'explore' | 'prototype' | 'inspect'; scope?: BuilderMode }): string[] {
   const args: string[] = []
   if (options.mode) args.push('--mode', options.mode)
-  if (options.role) args.push('--approve', '--no-skills', '--no-context-files', '--skill', impeccableSkill(), '--append-system-prompt', options.role === 'prototype' ? PROTOTYPE_PROMPT : EXPLORE_PROMPT)
+  if (options.role === 'inspect') args.push('--approve', '--no-skills', '--no-context-files', '--append-system-prompt', INSPECT_PROMPT)
+  else if (options.role) args.push('--approve', '--no-skills', '--no-context-files', '--skill', impeccableSkill(), '--append-system-prompt', options.role === 'prototype' ? PROTOTYPE_PROMPT : EXPLORE_PROMPT)
   else args.push('--approve', '--skill', options.skills, '--append-system-prompt', options.scope && options.scope !== 'build' ? `${SYSTEM_PROMPT} ${MODE_PROMPTS[options.scope]}` : SYSTEM_PROMPT)
   for (const path of extensionPaths()) args.push('-e', path)
   if (options.session) args.push('--session-id', options.session)

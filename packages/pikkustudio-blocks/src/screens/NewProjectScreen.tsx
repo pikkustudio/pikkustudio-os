@@ -65,6 +65,7 @@ const sample = {
 
 const LABELS: Record<string, string> = {
   'Make the project': 'Making your project',
+  'Look through your files': 'Reading through your files',
   'Set up its workspace': 'Setting up your workspace',
   'Set up its database': 'Preparing where your data lives',
   'Fix what stopped it': 'Something got in the way, so I am fixing it',
@@ -151,7 +152,7 @@ function ImportProject() {
 }
 
 export function NewProjectScreen() {
-  const { st, go, retry, cancel, idea, setIdea, example, run, taken, uses, setUses, files, setFiles } = useContext(OnbCtx)
+  const { st, go, retry, cancel, idea, setIdea, example, run, uses, setUses, files, setFiles } = useContext(OnbCtx)
   const [picked, setPicked] = useState(-1)
   const hero = useRef<HTMLElement>(null)
   const loading = st === 'loading'
@@ -160,7 +161,7 @@ export function NewProjectScreen() {
   const needsAi = /Choose your AI/.test(run?.error ?? '')
   const empty = st === 'empty'
   const usable = uses.devices.length > 0
-  const ready = idea.trim().length >= 8 && !taken && usable
+  const ready = idea.trim().length >= 8 && usable
 
   useEffect(() => {
     if (st === 'error' && !idea.trim()) setIdea(example)
@@ -252,7 +253,7 @@ export function NewProjectScreen() {
               </div>
             </div>
           ) : (
-            <NewProjectForm idea={idea} setIdea={setIdea} uses={uses} setUses={setUses} files={files} setFiles={setFiles} taken={taken} ready={ready} go={go} />
+            <NewProjectForm idea={idea} setIdea={setIdea} uses={uses} setUses={setUses} files={files} setFiles={setFiles} ready={ready} go={go} />
           )}
         </div>
         <div className="relative min-h-55 group-data-open/shell:min-h-0" aria-hidden="true">

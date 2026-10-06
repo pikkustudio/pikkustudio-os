@@ -31,7 +31,6 @@ export function NewProjectForm({
   setUses,
   files,
   setFiles,
-  taken,
   ready,
   go,
 }: {
@@ -41,7 +40,6 @@ export function NewProjectForm({
   setUses: (v: Uses) => void
   files: File[]
   setFiles: (v: File[]) => void
-  taken?: string
   ready: boolean
   go: () => void
 }) {
@@ -114,13 +112,11 @@ export function NewProjectForm({
           </Button>
         </div>
         <p className="min-h-5 text-[14.5px] text-hero-ink-2">
-          {taken
-            ? `You already have a project called ${taken}. Change the first few words.`
-            : uses.devices.length === 0
-              ? 'Pick at least one: browser, mobile, or both.'
-              : uses.devices.includes('phones')
-                ? 'Mobile means iPhone and Android. It takes noticeably longer to build and publish, so many people start with the browser.'
-                : 'Nothing goes online until you say so.'}
+          {uses.devices.length === 0
+            ? 'Pick at least one: browser, mobile, or both.'
+            : uses.devices.includes('phones')
+              ? 'Mobile means iPhone and Android. It takes noticeably longer to build and publish, so many people start with the browser.'
+              : 'Nothing goes online until you say so.'}
         </p>
       </section>
     </div>

@@ -16,7 +16,7 @@ export const adoptUploads = pikkuSessionlessFunc({
     const names = await readdir(from).catch(() => [] as string[])
     if (!names.length) return { names }
     const { cwd } = await studioProjects.builderLaunch(key)
-    const to = join(cwd, 'knowledge', 'attachments')
+    const to = join(cwd, '.pikku-runtime', 'content', 'private', 'attachments')
     await mkdir(to, { recursive: true })
     await cp(from, to, { recursive: true })
     await rm(from, { recursive: true, force: true })
