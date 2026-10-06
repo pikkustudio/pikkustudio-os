@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { ChevronDown, LayoutGrid, Rows3, X } from 'lucide-react'
+import { ChevronDown, Image, LayoutGrid, Rows3, X } from 'lucide-react'
 import { Segmented } from '../blocks/Segmented'
-import { CHANGES, FACTS, SETS, byState, type Change } from './data'
+import { CHANGES, REAL, SETS, SET_INFO, SOURCE, byState, type Change } from './data'
 import { Actions, Asks, Pill, Thread, WhatChanges } from './parts'
 
 const DAYS = [
@@ -10,15 +10,19 @@ const DAYS = [
   { day: 'Earlier', ids: ['c7', 'c8'] },
 ]
 
+const list = (xs: string[]) => (xs.length ? xs.join(', ') : 'nothing')
+
 function Facts({ c }: { c: Change }) {
-  const f = FACTS[c.id]
+  const r = REAL[c.id]
+  const set = SETS.find((x) => x.id === c.set)
+  const info = SET_INFO[c.set]
   const rows: [string, string][] = [
-    ['Where it shows up', f.pages.join(', ')],
-    ['Checked', f.checked.join('. ')],
-    ['Where it is now', f.where],
-    ['Who decided', f.by],
-    ['Time and cost', `${f.took}, ${f.cost}`],
-    ['Part of', SETS.find((x) => x.id === c.set)?.title ?? ''],
+    ['Filed', `${SOURCE[r.source]}, ${c.when}`],
+    ...(r.route ? ([['Where it shows up', `${r.route}${r.circled ? `, around the ${r.circled}` : ''}`]] as [string, string][]) : []),
+    ['Where it is now', r.live],
+    ...(r.commit ? ([['Saved as', `${r.branch === 'main' ? 'main' : r.branch} · ${r.commit}`]] as [string, string][]) : r.branch ? ([['Worked on in', r.branch]] as [string, string][]) : []),
+    ...(r.approvedBy ? ([['Approved by', r.approvedBy]] as [string, string][]) : r.approval ? ([['Approval', 'Waiting for you before it goes ahead']] as [string, string][]) : []),
+    ['Part of', `${set?.title ?? ''}. Adds ${list(info.creates)}, changes ${list(info.alters)}, reads ${list(info.reads)}.${info.needsPlan ? ' Pikku wrote a plan first.' : ''}`],
   ]
   return (
     <dl className="grid grid-cols-[9.5rem_1fr] gap-x-4 gap-y-2.5 rounded-[18px] border border-border p-5 text-[15px]">
@@ -32,12 +36,33 @@ function Facts({ c }: { c: Change }) {
   )
 }
 
+function Evidence({ c }: { c: Change }) {
+  const r = REAL[c.id]
+  const items = [...(r.shot ? [{ label: r.shot, note: r.circled ? `Circled: ${r.circled}` : 'Screenshot' }] : []), ...(r.evidence ?? []).filter((e) => e.kind === 'evidence').map((e) => ({ label: e.label, note: 'Evidence' }))]
+  if (!items.length) return null
+  return (
+    <div className="grid grid-cols-2 gap-2.5">
+      {items.map((s) => (
+        <div key={s.label} className="flex flex-col gap-1.5">
+          <div className="grid h-24 place-items-center rounded-xl bg-secondary text-muted-foreground">
+            <Image className="size-6" />
+          </div>
+          <span className="text-[13px] text-ink-2">
+            <b>{s.label}</b> · {s.note}
+          </span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 function Detail({ c }: { c: Change }) {
   return (
     <div className="flex flex-col gap-4">
       <Asks c={c} />
       <WhatChanges c={c} />
       <Facts c={c} />
+      <Evidence c={c} />
       <Actions c={c} size="compact" />
       <Thread c={c} compact />
     </div>
@@ -54,7 +79,7 @@ function Card({ c, on, onPick }: { c: Change; on: boolean; onPick: () => void })
       <b className="text-[17px] leading-[1.3]">{c.title}</b>
       {c.now ? <span className="text-[14px] text-info-foreground">{c.now}</span> : null}
       <span className="mt-auto text-[13px] text-ink-2">
-        {c.from} · {FACTS[c.id].checked[0]}
+        {c.from} · {REAL[c.id].shortId}
       </span>
     </button>
   )
@@ -71,14 +96,14 @@ function Entry({ c, open, onToggle }: { c: Change; open: boolean; onToggle: () =
             <div className="flex flex-wrap items-center gap-2.5">
               <Pill s={c.state} small />
               <span className="text-[13px] text-muted-foreground">
-                {c.from} · {c.when}
+                {c.from} · {REAL[c.id].shortId} · {c.when}
               </span>
             </div>
             <b className="text-[18px] leading-[1.3]">{c.title}</b>
             {c.now ? <span className="text-[15px] text-info-foreground">{c.now}</span> : null}
             <div className="flex flex-wrap gap-1.5 pt-0.5 text-[13px] text-ink-2">
               <span className="rounded-full bg-secondary px-2.5 py-0.5">Part of: {SETS.find((x) => x.id === c.set)?.title}</span>
-              <span className="rounded-full bg-secondary px-2.5 py-0.5">{FACTS[c.id].pages.length === 1 ? FACTS[c.id].pages[0] : `${FACTS[c.id].pages.length} places`}</span>
+              {REAL[c.id].route ? <span className="rounded-full bg-secondary px-2.5 py-0.5">{REAL[c.id].route}</span> : null}
               <span className="rounded-full bg-secondary px-2.5 py-0.5">{FACTS[c.id].checked[0]}</span>
             </div>
           </div>

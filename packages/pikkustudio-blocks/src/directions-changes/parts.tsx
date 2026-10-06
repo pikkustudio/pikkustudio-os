@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react'
-import { Check, CircleAlert, Clock, Loader, MessageCircle, Minus, Send, Undo2 } from 'lucide-react'
+import { Check, CircleAlert, Image, Clock, Loader, MessageCircle, Minus, Send, Undo2 } from 'lucide-react'
 import { Button } from '../ui/button'
-import { LABEL, type Change, type State } from './data'
+import { LABEL, REAL, type Change, type State } from './data'
 
 const TONE: Record<State, string> = {
   needs: 'bg-warning text-on-warning',
@@ -108,9 +108,11 @@ export function Actions({ c, size = 'page' }: { c: Change; size?: 'page' | 'comp
     <div className="flex flex-wrap items-center gap-2.5">
       {c.state === 'needs' ? (
         <>
-          <Button variant="default" size={size}>
-            Approve and keep it
-          </Button>
+          {REAL[c.id].approval ? (
+            <Button variant="default" size={size}>
+              Approve and keep it
+            </Button>
+          ) : null}
           <Button variant="bordered" size={size}>
             Not now
           </Button>
@@ -137,13 +139,37 @@ export function Actions({ c, size = 'page' }: { c: Change; size?: 'page' | 'comp
 }
 
 export function Asks({ c }: { c: Change }) {
+  const [chosen, setChosen] = useState<string | null>(null)
   if (!c.asks) return null
+  const options = REAL[c.id].options ?? []
+  const shots = (REAL[c.id].evidence ?? []).filter((e) => e.kind === 'option')
   return (
-    <div className="flex gap-3 rounded-[18px] border-[1.5px] border-warning bg-card p-4">
-      <MessageCircle className="mt-0.5 size-5 shrink-0 text-warning-foreground" />
-      <div>
-        <b className="block text-[14px] text-warning-foreground">Pikku is asking</b>
-        <p className="text-[16px]">{c.asks}</p>
+    <div className="flex flex-col gap-3 rounded-[18px] border-[1.5px] border-warning bg-card p-4">
+      <div className="flex gap-3">
+        <MessageCircle className="mt-0.5 size-5 shrink-0 text-warning-foreground" />
+        <div>
+          <b className="block text-[14px] text-warning-foreground">Pikku is asking</b>
+          <p className="text-[16px]">{c.asks}</p>
+        </div>
+      </div>
+      {shots.length ? (
+        <div className="grid grid-cols-2 gap-2.5">
+          {shots.map((s) => (
+            <div key={s.label} className="flex flex-col gap-1.5">
+              <div className="grid h-24 place-items-center rounded-xl bg-secondary text-muted-foreground">
+                <Image className="size-6" />
+              </div>
+              <span className="text-[13px] text-ink-2">{s.label}</span>
+            </div>
+          ))}
+        </div>
+      ) : null}
+      <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Pick an answer">
+        {options.map((o) => (
+          <button key={o} type="button" role="radio" aria-checked={chosen === o} onClick={() => setChosen(o)} className={`rounded-full border-[1.5px] px-4 py-1.5 text-[15px] ${chosen === o ? 'border-primary bg-accent font-bold' : 'border-input bg-card'}`}>
+            {o}
+          </button>
+        ))}
       </div>
     </div>
   )

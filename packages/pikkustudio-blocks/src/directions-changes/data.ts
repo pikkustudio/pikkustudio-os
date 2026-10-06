@@ -143,15 +143,46 @@ export const LABEL: Record<State, string> = {
 export const byState = (s: State) => CHANGES.filter((c) => c.state === s)
 export const inSet = (id: string) => CHANGES.filter((c) => c.set === id)
 
-export type Facts = { pages: string[]; checked: string[]; cost: string; where: string; by: string; took: string }
+export type Status = 'open' | 'claimed' | 'needs_answer' | 'in_progress' | 'done' | 'dismissed'
 
-export const FACTS: Record<string, Facts> = {
-  c1: { pages: ['Class page', 'Booking confirmation email'], checked: ['14 checks passed', 'Tom tried it and booked two seats'], cost: '0.40 of AI credit', where: 'On your copy only. Not on your preview or live site yet.', by: 'Waiting for you', took: '4 minutes' },
-  c2: { pages: ['Class list'], checked: ['6 checks passed'], cost: '0.15 of AI credit', where: 'On your copy only. Not on your preview or live site yet.', by: 'Waiting for you', took: '2 minutes' },
-  c3: { pages: ['Project settings'], checked: ['Not finished yet'], cost: '0.05 so far', where: 'Not started on your preview yet.', by: 'You asked for it', took: 'Running for 6 minutes' },
-  c4: { pages: ['Virtual users'], checked: ['Not finished yet'], cost: '0.10 so far', where: 'Not started on your preview yet.', by: 'Pikku decided this was needed', took: 'Running for 4 minutes' },
-  c5: { pages: ['Every page with a Book now button'], checked: ['Not started'], cost: 'About 0.05', where: 'Not started.', by: 'You asked for it', took: 'Not started' },
-  c6: { pages: ['Class list', 'German and English text'], checked: ['Not started'], cost: 'About 0.05', where: 'Not started.', by: 'The live site reported it', took: 'Not started' },
-  c7: { pages: ['Class page', 'New waiting list', 'New email'], checked: ['Not started'], cost: 'About 1.20', where: 'Set aside. Nothing was changed.', by: 'You set it aside', took: 'Not started' },
-  c8: { pages: ['Classes', 'Booking', 'Emails'], checked: ['42 checks passed', 'Hana, Tom and Priya all finished'], cost: '3.80 of AI credit', where: 'On your preview site. Not on your live site.', by: 'You approved it on Monday', took: '1 hour 10 minutes' },
+export type Real = {
+  shortId: string
+  status: Status
+  source: 'panel' | 'console' | 'system'
+  route?: string
+  circled?: string
+  shot?: string
+  branch?: string
+  commit?: string
+  approval?: boolean
+  approvedBy?: string
+  options?: string[]
+  evidence?: { label: string; kind: 'option' | 'evidence' }[]
+  live: string
+}
+
+export const REAL: Record<string, Real> = {
+  c1: { shortId: '#12', status: 'needs_answer', source: 'console', route: '/classes/saturday', circled: 'Book now button', shot: 'Class page, before', branch: 'changeset/book-for-two', commit: 'a41f9c2', approval: true, options: ['Hold the seat for 15 minutes', 'Release it straight away', 'Hold it until I confirm'], evidence: [{ label: 'Two seats, held', kind: 'option' }, { label: 'Two seats, released', kind: 'option' }], live: 'On your copy only. Not on your preview or live site yet.' },
+  c2: { shortId: '#13', status: 'in_progress', source: 'system', route: '/classes', circled: 'Saturday 10:00 class card', shot: 'Tom stuck on Saturday', branch: 'changeset/book-for-two', commit: '7be03d1', approval: true, evidence: [{ label: 'Tom tried to book it twice', kind: 'evidence' }], live: 'On your copy only. Not on your preview or live site yet.' },
+  c3: { shortId: '#14', status: 'in_progress', source: 'console', branch: 'changeset/virtual-users', live: 'Not started on your preview yet.' },
+  c4: { shortId: '#15', status: 'in_progress', source: 'system', branch: 'changeset/virtual-users', live: 'Not started on your preview yet.' },
+  c5: { shortId: '#16', status: 'open', source: 'panel', route: '/classes/saturday', circled: 'Book now button', shot: 'Button as it is today', live: 'Not started.' },
+  c6: { shortId: '#17', status: 'open', source: 'panel', route: '/classes', circled: '"Sat." in the class list', live: 'Not started.' },
+  c7: { shortId: '#11', status: 'dismissed', source: 'console', live: 'Set aside. Nothing was changed.' },
+  c8: { shortId: '#1', status: 'done', source: 'console', branch: 'main', commit: '3c90e17', approvedBy: 'You, on Monday', live: 'On your preview site. Not on your live site.' },
+}
+
+export type SetInfo = { creates: string[]; alters: string[]; reads: string[]; needsPlan: boolean; claimedBy?: string; lease?: string }
+
+export const SET_INFO: Record<string, SetInfo> = {
+  s1: { creates: [], alters: ['bookings'], reads: ['classes', 'guests'], needsPlan: true, claimedBy: 'Pikku', lease: 'Held for 38 more minutes' },
+  s2: { creates: ['virtual_user_runs'], alters: [], reads: ['classes'], needsPlan: true, claimedBy: 'Pikku', lease: 'Held for 51 more minutes' },
+  s3: { creates: [], alters: [], reads: ['classes'], needsPlan: false },
+  s0: { creates: ['classes', 'bookings', 'guests'], alters: [], reads: [], needsPlan: true },
+}
+
+export const SOURCE: Record<Real['source'], string> = {
+  console: 'Filed from Studio',
+  panel: 'Circled on the live site',
+  system: 'Filed by Pikku',
 }
