@@ -75,7 +75,7 @@ function Row({ item, props }: { item: ItemInstance<Node>; props: ContentTreeProp
     const Icon = owner ? Package : Folder
     const [bucket, ...rest] = node.path.split('/')
     return (
-      <div {...item.getProps()} className={`${row} cursor-pointer`} style={{ '--pad': pad(12) } as CSSProperties} onClick={(e) => { item.getProps().onClick?.(e); if (item.isExpanded()) item.collapse(); else item.expand() }}>
+      <div {...item.getProps()} className={`${row} cursor-pointer`} style={{ '--pad': pad(12) } as CSSProperties}>
         <div className="flex min-w-0 items-center gap-2">
           <ChevronRight className={`size-4 shrink-0 text-muted-foreground transition-transform rtl:-scale-x-100 ${item.isExpanded() ? 'rotate-90 rtl:-rotate-90' : ''}`} aria-hidden="true" />
           <Icon className="size-4.5 shrink-0 text-primary" aria-hidden="true" />
