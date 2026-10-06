@@ -146,7 +146,7 @@ export class BuilderSession {
     return state
   }
 
-  private async send(key: string, sent: string, session?: string, explore = false) {
+  private async send(key: string, sent: string, session?: string, role?: 'explore' | 'prototype') {
     const state = await this.state(key)
     const running = this.turns.get(key)
     if (running) {
@@ -156,11 +156,13 @@ export class BuilderSession {
       return
     }
     const gen = this.drive(key).gen
-    const mode = explore ? 'build' : (this.modes.get(key) ?? 'build')
-    const { cwd, ai, env = {}, launch = spawnPi, queueHome } = await this.resolve(key, mode)
+    const mode = role ? 'build' : (this.modes.get(key) ?? 'build')
+    const resolved = await this.resolve(key, mode)
+    const { ai, env = {}, launch = spawnPi, queueHome } = resolved
+    const cwd = role === 'prototype' ? join(resolved.cwd, 'prototypes', 'app') : resolved.cwd
     const skills = await writeSkills(this.home)
     const shims = await writePikkuShim(this.home, queueHome)
-    const child = launch(process.execPath, [resolvePi(), ...piArgs({ ai, skills, mode: 'rpc', session: session ?? state.session, explore, scope: mode })], {
+    const child = launch(process.execPath, [resolvePi(), ...piArgs({ ai, skills, mode: 'rpc', session: session ?? state.session, role, scope: mode })], {
       cwd,
       env: { ...process.env, ...env, ...piEnv(ai), PATH: `${shims}:${env.PATH ?? process.env.PATH ?? ''}` },
     })
@@ -182,27 +184,35 @@ export class BuilderSession {
       const drive = this.drive(key)
       drive.quiet = turn.tools === 0 ? drive.quiet + 1 : 0
       void this.save(key)
-      if (!code && !explore && mode === 'build' && drive.gen === gen) void this.advance(key, gen)
+      if (!code && !role && mode === 'build' && drive.gen === gen) void this.advance(key, gen)
     })
     child.stdin?.write(`${JSON.stringify({ type: 'prompt', id: 'r1', message: sent })}\n`)
     await this.save(key)
   }
 
-  async explore(key: string, message: string): Promise<BuilderState> {
+  private async roleTurn(key: string, message: string, role: 'explore' | 'prototype', empty: string): Promise<BuilderState> {
     const text = message.trim()
-    if (!text) throw new Error('Say what you want explored first')
+    if (!text) throw new Error(empty)
     const state = await this.state(key)
     if (state.busy || this.turns.has(key)) throw new Error('The builder is already working')
     state.items.push({ kind: 'user', text, at: Date.now() })
     state.busy = true
     try {
-      await this.send(key, text, `pikku-explore-${key}-${Date.now()}`, true)
+      await this.send(key, text, `pikku-${role}-${key}-${Date.now()}`, role)
     } catch (error) {
       state.busy = false
       this.push(key, `Pikku could not take the request: ${error instanceof Error ? error.message : String(error)}`)
       await this.save(key)
     }
     return state
+  }
+
+  explore(key: string, message: string) {
+    return this.roleTurn(key, message, 'explore', 'Say what you want explored first')
+  }
+
+  prototype(key: string, message: string) {
+    return this.roleTurn(key, message, 'prototype', 'Say which screen to make first')
   }
 
   async heal(key: string, problem: string, timeoutMs = 5 * 60_000): Promise<{ ok: boolean; summary: string }> {

@@ -6,6 +6,7 @@ export type Artifact = {
   device?: 'computer' | 'phone'
   exploration?: string
   mode?: 'extreme' | 'controlled'
+  chosen?: boolean
   at: number
   html?: string
   text?: string

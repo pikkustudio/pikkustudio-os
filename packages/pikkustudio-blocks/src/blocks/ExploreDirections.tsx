@@ -1,7 +1,7 @@
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ArrowRight, Check } from 'lucide-react'
 import { Button } from '../ui/button'
-import { ShellCtx } from '../lib/shell'
+import { useChooseDirection } from '../lib/useChooseDirection'
 import { ArtifactFrame } from './ArtifactFrame'
 import type { Artifact } from '../types/artifacts'
 
@@ -31,10 +31,8 @@ export const moreIdeasMessage = (mode: 'controlled' | 'extreme', exploration: st
     ? `Explore a few more options as a new exploration, staying close to the current direction. Use Tailwind, and the project's design guide if it has one, and vary the details. Write each to artifacts/<id> with artifact.json including "exploration":"<a new short id>","mode":"controlled", and add them one at a time. Earlier exploration: ${exploration}.`
     : `Explore a few completely different directions as a new exploration, ignoring the design system. Self-contained HTML with inline CSS and no scripts. Write each to artifacts/<id> with artifact.json including "exploration":"<a new short id>","mode":"extreme", and add them one at a time. Earlier exploration: ${exploration}.`
 
-export const chooseMessage = (title: string) => `Use the direction "${title}" and build the prototype app from it, as its own app next to the real app.`
-
 export function ExploreDirections({ directions, onOpen }: { directions: Artifact[]; onOpen: (id: string) => void }) {
-  const { say } = useContext(ShellCtx)
+  const choose = useChooseDirection()
   return (
     <div className="flex min-h-0 flex-1 snap-x snap-mandatory gap-3.5 overflow-x-auto overflow-y-hidden pb-2">
       {directions.map((d, i) => (
@@ -49,7 +47,7 @@ export function ExploreDirections({ directions, onOpen }: { directions: Artifact
             <Button variant="bordered" size="compact" type="button" onClick={() => onOpen(d.id)}>
               Look closer <ArrowRight />
             </Button>
-            <Button size="compact" type="button" onClick={() => say(chooseMessage(d.title))}>
+            <Button size="compact" type="button" onClick={() => choose(d)}>
               <Check /> Use this one
             </Button>
           </div>

@@ -615,10 +615,11 @@ export class StudioProjectsService {
     await mkdir(staging, { recursive: true })
     try {
       const { command, args } = (this.options.createCommand ??
-        ((n) => ({
-          command: 'npx',
-          args: ['-y', 'create-pikku@latest', '--template', 'fabric', '--name', n, '--skip-install'],
-        })))(slugify(name))
+        ((n) => {
+          const starter = process.env.PIKKU_STARTER_TEMPLATE
+          if (starter && existsSync(starter)) return { command: 'cp', args: ['-R', starter, join(staging, n)] }
+          return { command: 'npx', args: ['-y', 'create-pikku@latest', '--template', 'fabric', '--name', n, '--skip-install'] }
+        }))(slugify(name))
       await run(command, args, staging)
       const scaffold = join(staging, slugify(name))
       await mkdir(join(scaffold, '.studio'), { recursive: true })
@@ -1175,22 +1176,25 @@ export class StudioProjectsService {
   }
 
   private startApps(key: string, projectDir: string, apiPort: number, confinement: Confinement | null, env: NodeJS.ProcessEnv) {
-    const root = join(projectDir, 'apps')
-    const slugs = entries(root).filter((slug) => {
-      const pkg = join(root, slug, 'package.json')
-      if (!existsSync(pkg)) return false
-      try {
-        return /\bvite\b/.test(JSON.parse(readFileSync(pkg, 'utf8')).scripts?.dev ?? '')
-      } catch {
-        return false
-      }
-    })
-    const apps: RunningApp[] = slugs.map((slug) => ({ slug, url: null, state: 'starting', child: null }))
+    const found = ['apps', 'prototypes'].flatMap((group) =>
+      entries(join(projectDir, group))
+        .filter((dir) => {
+          const pkg = join(projectDir, group, dir, 'package.json')
+          if (!existsSync(pkg)) return false
+          try {
+            return /\bvite\b/.test(JSON.parse(readFileSync(pkg, 'utf8')).scripts?.dev ?? '')
+          } catch {
+            return false
+          }
+        })
+        .map((dir) => ({ slug: group === 'apps' ? dir : `prototype-${dir}`, cwd: join(projectDir, group, dir) }))
+    )
+    const apps: RunningApp[] = found.map(({ slug }) => ({ slug, url: null, state: 'starting', child: null }))
     this.apps.set(key, apps)
     for (const app of apps) {
       void (async () => {
         const port = await freePort()
-        const cwd = join(root, app.slug)
+        const cwd = found.find((entry) => entry.slug === app.slug)!.cwd
         const logPath = this.logFile(key, app.slug)
         const log = openSync(logPath, 'a')
         const args = ['vite', 'dev', '--port', String(port), '--strictPort', '--host', '127.0.0.1']

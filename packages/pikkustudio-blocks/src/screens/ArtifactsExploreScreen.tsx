@@ -5,7 +5,8 @@ import { Button } from '../ui/button'
 import { PreviewBar } from '../blocks/PreviewBar'
 import { EmptyState } from '../blocks/EmptyState'
 import { CardsSkeleton, QueryState } from '../blocks/QueryState'
-import { ExploreDirection, ExploreDirections, chooseMessage, moreIdeasMessage } from '../blocks/ExploreDirections'
+import { useChooseDirection } from '../lib/useChooseDirection'
+import { ExploreDirection, ExploreDirections, moreIdeasMessage } from '../blocks/ExploreDirections'
 import { useProjectKey } from '../lib/project'
 import { useProjectQuery } from '../lib/projectRpc'
 import { ShellCtx } from '../lib/shell'
@@ -16,6 +17,7 @@ function Directions({ directions, exploration }: { directions: Artifact[]; explo
   const q = useSearch({ strict: false }) as { screen?: 'tablet' | 'phone' }
   const navigate = useNavigate()
   const { say } = useContext(ShellCtx)
+  const choose = useChooseDirection()
   const [dirId, setDirId] = useState('all')
   const [reloadKey, setReloadKey] = useState(0)
   const device: Device = q.screen ?? 'computer'
@@ -71,7 +73,7 @@ function Directions({ directions, exploration }: { directions: Artifact[]; explo
               <Button variant="bordered" size="compact" type="button" onClick={() => say(`Change something in "${dir.title}": `)}>
                 <SlidersHorizontal /> Change something
               </Button>
-              <Button size="compact" type="button" onClick={() => say(chooseMessage(dir.title))}>
+              <Button size="compact" type="button" onClick={() => choose(dir)}>
                 <Check /> Use this one
               </Button>
             </>

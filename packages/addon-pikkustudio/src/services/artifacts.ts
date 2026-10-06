@@ -9,6 +9,7 @@ export type ProjectArtifact = {
   device?: 'computer' | 'phone'
   exploration?: string
   mode?: 'extreme' | 'controlled'
+  chosen?: boolean
   at: number
   html?: string
   text?: string
@@ -43,6 +44,7 @@ const load = async (root: string, id: string): Promise<ProjectArtifact | undefin
     ...(parsed.device ? { device: parsed.device } : {}),
     ...(parsed.exploration ? { exploration: parsed.exploration } : {}),
     ...(parsed.mode === 'extreme' || parsed.mode === 'controlled' ? { mode: parsed.mode } : {}),
+    ...(parsed.chosen ? { chosen: true } : {}),
     at: info.mtimeMs,
     ...(html !== undefined ? { html } : {}),
     ...(text !== undefined ? { text } : {}),

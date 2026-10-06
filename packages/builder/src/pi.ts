@@ -62,16 +62,23 @@ export const EXPLORE_PROMPT = [
   'Write only the files you are asked to write, and do not change the app.',
 ].join(' ')
 
+export const PROTOTYPE_PROMPT = [
+  'You make screens for a design prototype. Your whole world is this folder.',
+  'Read PROTOTYPE.md first and follow it exactly. Use the impeccable skill for every design decision.',
+  'A reference design from the owner may be in reference/. Recreate it as a real screen with the blocks, keeping its look and content, then reply in one plain sentence saying which screen you made.',
+  'Never touch anything outside this folder, and never start or stop servers.',
+].join(' ')
+
 export const impeccableSkill = () => {
   const found = [process.env.PIKKU_IMPECCABLE_SKILL, join(homedir(), '.claude', 'skills', 'impeccable')].find((path) => path && existsSync(join(path, 'SKILL.md')))
   if (!found) throw new Error('The design skill is not installed on this computer')
   return found
 }
 
-export function piArgs(options: { ai?: BuilderAi; skills: string; mode?: 'rpc'; session?: string; explore?: boolean; scope?: BuilderMode }): string[] {
+export function piArgs(options: { ai?: BuilderAi; skills: string; mode?: 'rpc'; session?: string; role?: 'explore' | 'prototype'; scope?: BuilderMode }): string[] {
   const args: string[] = []
   if (options.mode) args.push('--mode', options.mode)
-  if (options.explore) args.push('--approve', '--no-skills', '--no-context-files', '--skill', impeccableSkill(), '--append-system-prompt', EXPLORE_PROMPT)
+  if (options.role) args.push('--approve', '--no-skills', '--no-context-files', '--skill', impeccableSkill(), '--append-system-prompt', options.role === 'prototype' ? PROTOTYPE_PROMPT : EXPLORE_PROMPT)
   else args.push('--approve', '--skill', options.skills, '--append-system-prompt', options.scope && options.scope !== 'build' ? `${SYSTEM_PROMPT} ${MODE_PROMPTS[options.scope]}` : SYSTEM_PROMPT)
   for (const path of extensionPaths()) args.push('-e', path)
   if (options.session) args.push('--session-id', options.session)

@@ -20,7 +20,9 @@ export const builderPrompt = pikkuSessionlessFunc({
       : undefined
     const state = explore
       ? await studioBuilder.explore(key, [message, context].filter(Boolean).join('\n\n'))
-      : await studioBuilder.prompt(key, message, [profile, context].filter(Boolean).join('\n\n') || undefined, mode, offer)
+      : mode === 'prototype'
+        ? await studioBuilder.prototype(key, [message, context].filter(Boolean).join('\n\n'))
+        : await studioBuilder.prompt(key, message, [profile, context].filter(Boolean).join('\n\n') || undefined, mode, offer)
     if (!failOnError) return state
     const { cwd } = await studioProjects.builderLaunch(key)
     const started = Date.now()
