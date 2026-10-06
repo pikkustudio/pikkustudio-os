@@ -65,7 +65,7 @@ function Row({ item, props, picked, onPick, onMore }: RowProps) {
   const node = item.getItemData()
   const level = item.getItemMeta().level
   const pad = (extra: number) => `${level * STEP + extra}px`
-  const base = `grid ${COLUMNS} items-center gap-x-3 border-t border-border px-3 py-2 outline-none focus-visible:bg-secondary`
+  const base = `group grid ${COLUMNS} items-center gap-x-3 border-t border-border px-3 py-2 outline-none focus-visible:bg-secondary`
   const tint = picked ? 'bg-primary/10' : node.kind === 'folder' ? 'bg-secondary/60' : 'bg-card'
   const row = `${base} ${tint}`
   const stop = { onKeyDown: (e: React.KeyboardEvent) => e.stopPropagation(), onClick: (e: React.MouseEvent) => e.stopPropagation() }
@@ -111,7 +111,7 @@ function Row({ item, props, picked, onPick, onMore }: RowProps) {
             <Confirm label={m.content_folder__remove_all({ count: node.fileCount })} keep={m.content_folder__keep_them()} busy={props.busy} onYes={() => { props.onRemoveFolder(bucket!, rest.length ? `${rest.join('/')}/` : ''); setSure(false) }} onNo={() => setSure(false)} />
           ) : (
             <div className="flex justify-end">
-              <Button type="button" variant="ghost" size="compactTight" onClick={() => setSure(true)} aria-label={m.content_folder__remove()} title={m.content_folder__remove()}>
+              <Button type="button" variant="ghost" size="compactTight" className="opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 pointer-coarse:opacity-100" onClick={() => setSure(true)} aria-label={m.content_folder__remove()} title={m.content_folder__remove()}>
                 <Trash2 className="size-4" />
               </Button>
             </div>
@@ -149,7 +149,7 @@ function Row({ item, props, picked, onPick, onMore }: RowProps) {
                 <Download className="size-4" />
               </Button>
             ) : null}
-            <Button type="button" variant="ghost" size="compactTight" onClick={() => setSure(true)} aria-label={m.content_file__remove()} title={m.content_file__remove()}>
+            <Button type="button" variant="ghost" size="compactTight" className="opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 pointer-coarse:opacity-100" onClick={() => setSure(true)} aria-label={m.content_file__remove()} title={m.content_file__remove()}>
               <Trash2 className="size-4" />
             </Button>
           </div>
