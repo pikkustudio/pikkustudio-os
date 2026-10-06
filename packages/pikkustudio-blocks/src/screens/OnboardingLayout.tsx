@@ -6,7 +6,7 @@ import { ProjectRpcCtx } from '../lib/projectRpc'
 import { Button } from '../ui/button'
 import { AiLitellmPanel, AiProviderPanel, providers } from '../blocks/AiConnectPanels'
 import { useSlots } from '../lib/slots'
-import { useAccount, useProjectRun, useRecentProjects, useStartProjectRun, projectNameFrom, useNameTaken, type ProjectRun } from '../lib/onboarding'
+import { useAccount, useProjectRun, useRecentProjects, useStartProjectRun, useAttachFile, projectNameFrom, useNameTaken, type ProjectRun } from '../lib/onboarding'
 import { ArrowRight, Bell, Check, CircleAlert, FolderOpen, Laptop, MessageCircle, Pin, ShieldCheck, User, X } from 'lucide-react'
 
 // The onboarding layout: setup rail (Getting set up), Pikku button + bubble, side panels.
@@ -27,6 +27,8 @@ export const OnbCtx = createContext<{
   setIdea: (v: string) => void
   uses: Uses
   setUses: (v: Uses) => void
+  files: File[]
+  setFiles: (v: File[]) => void
   taken?: string
   example: string
   run?: ProjectRun
@@ -121,11 +123,23 @@ export function OnboardingLayout() {
     navigate({ to: '.', search: ((prev: object) => ({ ...prev, ...patch })) as never, replace: true })
   const open = (id: PanelId | '') => set({ panel: id || undefined })
   const start = useStartProjectRun()
-  const begin = (key?: string) => {
+  const attach = useAttachFile()
+  const begin = async (key?: string) => {
     setSt('loading')
     const name = projectNameFrom(idea)
+    const uploadId = files.length ? crypto.randomUUID() : undefined
+    try {
+      for (const file of files) {
+        const bytes = new Uint8Array(await file.arrayBuffer())
+        let binary = ''
+        for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000))
+        await attach.mutateAsync({ uploadId: uploadId!, name: file.name, data: btoa(binary) })
+      }
+    } catch {
+      return setSt('error')
+    }
     start.mutate(
-      { name, idea: idea.trim(), ...(key ? { key } : {}), surfaces: uses.surfaces, ...(uses.surfaces.includes('screens') ? { devices: uses.devices } : {}) },
+      { name, idea: idea.trim(), ...(uploadId ? { uploadId } : {}), ...(key ? { key } : {}), surfaces: uses.surfaces, ...(uses.surfaces.includes('screens') ? { devices: uses.devices } : {}) },
       { onSuccess: (r: { runId: string }) => set({ run: r.runId }), onError: () => setSt('error') },
     )
   }
@@ -165,6 +179,7 @@ export function OnboardingLayout() {
     setSt('normal')
   }
   const [idea, setIdea] = useState('')
+  const [files, setFiles] = useState<File[]>([])
   const [uses, setUses] = useState<Uses>({ audience: 'others', surfaces: ['screens'], devices: ['browser'] })
   const { taken, name: checked } = useNameTaken(idea)
   const fillExample = () => {
@@ -242,7 +257,7 @@ export function OnboardingLayout() {
         : []
 
   return (
-    <OnbCtx.Provider value={{ st: signIn || choose || proj || yourName ? st : 'empty', go, retry, open, cancel, idea, setIdea, uses, setUses, taken: taken ? checked : undefined, example: EXAMPLE, run: run.data }}>
+    <OnbCtx.Provider value={{ st: signIn || choose || proj || yourName ? st : 'empty', go, retry, open, cancel, idea, setIdea, uses, setUses, files, setFiles, taken: taken ? checked : undefined, example: EXAMPLE, run: run.data }}>
       <div
         className="@container/app fixed inset-0 z-0 overflow-hidden bg-background font-sans text-[16px] leading-[1.5] text-foreground antialiased"
       >

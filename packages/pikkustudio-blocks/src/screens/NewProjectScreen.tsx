@@ -151,7 +151,7 @@ function ImportProject() {
 }
 
 export function NewProjectScreen() {
-  const { st, go, retry, cancel, idea, setIdea, example, run, taken, uses, setUses } = useContext(OnbCtx)
+  const { st, go, retry, cancel, idea, setIdea, example, run, taken, uses, setUses, files, setFiles } = useContext(OnbCtx)
   const [picked, setPicked] = useState(-1)
   const hero = useRef<HTMLElement>(null)
   const loading = st === 'loading'
@@ -252,7 +252,7 @@ export function NewProjectScreen() {
               </div>
             </div>
           ) : (
-            <NewProjectForm idea={idea} setIdea={setIdea} uses={uses} setUses={setUses} taken={taken} ready={ready} go={go} />
+            <NewProjectForm idea={idea} setIdea={setIdea} uses={uses} setUses={setUses} files={files} setFiles={setFiles} taken={taken} ready={ready} go={go} />
           )}
         </div>
         <div className="relative min-h-55 group-data-open/shell:min-h-0" aria-hidden="true">

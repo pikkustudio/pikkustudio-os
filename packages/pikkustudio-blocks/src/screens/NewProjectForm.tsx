@@ -1,5 +1,5 @@
-import { useState, type ReactNode } from 'react'
-import { ArrowRight, Check, Monitor, Smartphone, Sparkles, UserRound } from 'lucide-react'
+import { useRef, useState, type ReactNode } from 'react'
+import { ArrowRight, Check, Monitor, Paperclip, Smartphone, Sparkles, UserRound, X } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Textarea } from '../ui/textarea'
 import type { Uses } from './OnboardingLayout'
@@ -29,6 +29,8 @@ export function NewProjectForm({
   setIdea,
   uses,
   setUses,
+  files,
+  setFiles,
   taken,
   ready,
   go,
@@ -37,11 +39,22 @@ export function NewProjectForm({
   setIdea: (v: string) => void
   uses: Uses
   setUses: (v: Uses) => void
+  files: File[]
+  setFiles: (v: File[]) => void
   taken?: string
   ready: boolean
   go: () => void
 }) {
   const [mine, setMine] = useState('')
+  const [tooBig, setTooBig] = useState(false)
+  const picker = useRef<HTMLInputElement>(null)
+  const add = (list: FileList | null) => {
+    const next = Array.from(list ?? [])
+    setTooBig(next.some((f) => f.size > 25 * 1024 * 1024))
+    const fits = next.filter((f) => f.size <= 25 * 1024 * 1024 && !files.some((x) => x.name === f.name && x.size === f.size))
+    setFiles([...files, ...fits].slice(0, 20))
+    if (picker.current) picker.current.value = ''
+  }
   const flip = (id: string) => setUses({ ...uses, devices: uses.devices.includes(id) ? uses.devices.filter((x) => x !== id) : [...uses.devices, id] })
   return (
     <div className="flex max-w-[680px] flex-col gap-4">
@@ -51,6 +64,23 @@ export function NewProjectForm({
           Build an app
         </label>
         <Textarea id="idea" tone="hero" value={idea} onChange={(e) => setIdea(e.target.value)} placeholder="For example: a booking page for my baking classes, where people can pick a day and pay." />
+        <div className="flex flex-wrap items-center gap-2">
+          <input ref={picker} id="attach" type="file" multiple hidden onChange={(e) => add(e.target.files)} />
+          <Button variant="heroGhost" size="page" type="button" onClick={() => picker.current?.click()}>
+            <Paperclip className="size-4.5" />
+            Add files
+          </Button>
+          {files.map((f) => (
+            <span key={`${f.name}-${f.size}`} className="flex h-10 max-w-64 items-center gap-1.5 rounded-full border border-hero-ink/35 pr-1.5 pl-3.5 text-[14.5px] font-semibold">
+              <span className="truncate">{f.name}</span>
+              <button type="button" aria-label={`Remove ${f.name}`} onClick={() => setFiles(files.filter((x) => x !== f))} className="grid size-7 shrink-0 place-items-center rounded-full hover:bg-hero-ink/12">
+                <X className="size-4" />
+              </button>
+            </span>
+          ))}
+          {files.length === 0 ? <span className="text-[14.5px] text-hero-ink-2">Pictures, documents or notes Pikku should read first. Optional.</span> : null}
+          {tooBig ? <span role="alert" className="text-[14.5px] font-semibold">A file was left out because it is over 25 MB.</span> : null}
+        </div>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-3">
           <div role="group" aria-label="Where people will use it" className="flex items-center gap-2">
             {PLATFORMS.map((p) => (

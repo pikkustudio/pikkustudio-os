@@ -47,7 +47,8 @@ export type ProjectRun = {
 
 const finished = (status?: string) => status === 'completed' || status === 'failed' || status === 'cancelled'
 
-export const useStartProjectRun = () => usePikkuMutation('studio:startProjectRun' as never) as unknown as UseMutationResult<{ runId: string }, Error, { name: string; idea: string; key?: string; surfaces?: string[]; devices?: string[] }>
+export const useStartProjectRun = () => usePikkuMutation('studio:startProjectRun' as never) as unknown as UseMutationResult<{ runId: string }, Error, { name: string; idea: string; key?: string; surfaces?: string[]; devices?: string[]; uploadId?: string }>
+export const useAttachFile = () => usePikkuMutation('studio:attachFile' as never) as unknown as UseMutationResult<{ name: string }, Error, { uploadId: string; name: string; data: string }>
 export const useImportProject = () => usePikkuMutation('studio:importProject' as never) as unknown as UseMutationResult<{ key: string; slug: string; owner?: string; name: string }, Error, { url: string; name?: string }>
 export const projectNameFrom = (idea: string) =>
   idea.trim().split(/\s+/).slice(0, 5).join(' ').replace(/[^\p{L}\p{N} ]/gu, '').trim() || 'My project'

@@ -3,7 +3,7 @@ import { pikkuWorkflowFunc } from '#pikku/addon/workflow'
 
 export const Surfaces = z.array(z.enum(['screens', 'automations', 'assistant', 'commands', 'connection']))
 export const Devices = z.array(z.enum(['browser', 'phones']))
-export const StartProjectInput = z.object({ name: z.string(), idea: z.string(), key: z.string().optional(), surfaces: Surfaces.optional(), devices: Devices.optional() })
+export const StartProjectInput = z.object({ name: z.string(), idea: z.string(), key: z.string().optional(), surfaces: Surfaces.optional(), devices: Devices.optional(), uploadId: z.string().optional() })
 export const StartProjectOutput = z.object({ key: z.string() })
 
 export const startProject = pikkuWorkflowFunc({
@@ -16,6 +16,7 @@ export const startProject = pikkuWorkflowFunc({
       made = await workflow.do('Make the project', 'createProject', { name: data.name, idea: data.idea, surfaces: data.surfaces, devices: data.devices })
     }
     const key = data.key ?? made!.key
+    const adopted = data.uploadId ? await workflow.do('Keep your files', 'adoptUploads', { key, uploadId: data.uploadId }, { retries: 0 }) : { names: [] as string[] }
     await workflow.do('Set up its workspace', 'prepareProject', { key })
     const data1 = await workflow.do('Set up its database', 'setUpDatabase', { key }, { retries: 0 })
     let data2: { ok: boolean; problem?: string } | undefined
@@ -43,7 +44,7 @@ export const startProject = pikkuWorkflowFunc({
       failOnError: true,
       explore: true,
       context:
-        `${where} Before building anything, explore four different design directions for this for the owner to compare. Do not read knowledge files or explore the project first; the project is new and has nothing about this yet. Create the files straight away. Make each direction look clearly different from the others in layout, colour and tone, not four variations of one idea. For each, write artifacts/direction-1 to artifacts/direction-4, each with index.html as one self-contained page (inline CSS, no scripts, no external files), with whatever CSS and layout suit the direction. Do not limit yourself to any framework or component library and artifact.json as {"kind":"Design","title":"a short name for the direction","summary":"one plain sentence an owner would use about what makes it different","exploration":"first","mode":"extreme"}. Write them one after another so the first appears early. Do not change the app yet.`,
+        `${where} Before building anything, explore four different design directions for this for the owner to compare. ${adopted.names.length ? `The owner attached files, now in knowledge/attachments: ${adopted.names.join(', ')}. Read them first; they matter more than anything else here, so let them shape every direction.` : 'Do not read knowledge files or explore the project first; the project is new and has nothing about this yet.'} Create the files straight away. Make each direction look clearly different from the others in layout, colour and tone, not four variations of one idea. For each, write artifacts/direction-1 to artifacts/direction-4, each with index.html as one self-contained page (inline CSS, no scripts, no external files), with whatever CSS and layout suit the direction. Do not limit yourself to any framework or component library and artifact.json as {"kind":"Design","title":"a short name for the direction","summary":"one plain sentence an owner would use about what makes it different","exploration":"first","mode":"extreme"}. Write them one after another so the first appears early. Do not change the app yet.`,
     }, { retries: 0 })
     return { key }
   },

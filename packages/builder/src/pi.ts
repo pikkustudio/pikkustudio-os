@@ -58,7 +58,7 @@ const PROVIDERS: Record<string, string> = { gemini: 'google' }
 
 export const EXPLORE_PROMPT = [
   'You are exploring design directions for an app the owner has described.',
-  'Use the impeccable skill for every design decision. Do not read the project or any other files first.',
+  'Use the impeccable skill for every design decision. Do not read the project or any other files first, except files the owner attached, which the request names.',
   'Write only the files you are asked to write, and do not change the app.',
 ].join(' ')
 
