@@ -5,10 +5,10 @@ import type { LocationRewrite } from '@tanstack/react-router'
 // search params, so routes stay /projects and /overview.
 
 // Not scoped by a team: onboarding, and the signed-in template app at /app.
-const GLOBAL = new Set(['claim-stripe', 'sign-in', 'your-name', 'choose-ai', 'new-team', 'accept-invite', 'app'])
+const GLOBAL = new Set(['claim-stripe', 'sign-in', 'your-name', 'choose-ai', 'new-team', 'accept-invite', 'app', 'login', 'signup'])
 // The team's own pages: no project in their URL.
 const TEAM_PAGES = new Set(['projects', 'secrets', 'studio-metrics', 'new-project'])
-const PAGES = new Set(['overview', 'changes-directions', 'prototype', 'build', 'emails', 'translations', 'artifacts', 'knowledge', 'content', 'apps', 'publish', 'explore', 'logs', 'performance', 'metrics', 'assistants', 'virtual-users', 'routines', 'versions', 'lab', 'addons', 'add-ons', 'billing', 'team', 'settings', 'plans', 'ai', 'domains'])
+const PAGES = new Set(['overview', 'changes-directions', 'prototype', 'build', 'emails', 'translations', 'artifacts', 'knowledge', 'content', 'apps', 'publish', 'explore', 'logs', 'performance', 'metrics', 'assistants', 'virtual-users', 'routines', 'versions', 'lab', 'addons', 'add-ons', 'billing', 'team', 'settings', 'plans', 'ai', 'domains', 'mocks'])
 
 const unquote = (v: string) => v.replace(/^"(.*)"$/, '$1')
 // A project param from before teams were in the URL was `owner/slug`.
