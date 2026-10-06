@@ -1,5 +1,6 @@
 import { useContext, useState, type ReactNode } from 'react'
 import { ShellCtx } from '../lib/shell'
+import { PinButton } from '../blocks/PinButton'
 import { SlidersHorizontal } from 'lucide-react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
@@ -49,9 +50,12 @@ export function PrototypeScreen() {
         onTool={() => {}}
         onReload={() => setReload((k) => k + 1)}
         actions={
+          <>
+          <PinButton variant="bar" />
           <Button variant="bar" size="bar" type="button" aria-label="Options" title="Options" onClick={() => shell.open('options')}>
             <SlidersHorizontal className="size-4.5" />
           </Button>
+          </>
         }
       />
       <div className="flex min-h-0 flex-1 justify-center">

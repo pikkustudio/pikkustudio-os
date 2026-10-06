@@ -1,3 +1,4 @@
+import { PinButton } from '../blocks/PinButton'
 import { Link } from '@tanstack/react-router'
 import { useContext, useState } from 'react'
 import { useProjectKey, useProjectName } from '../lib/project'
@@ -74,23 +75,7 @@ export function OverviewScreen() {
             {pending.length ? pending[0].title : `${projectName} has ${counts.functions ?? 0} things it can do. Tell Pikku what you want next.`}
           </p>
         </div>
-        <div className="flex flex-col items-end gap-2">
-          <Button asChild variant="bordered" size="page">
-            <a href="/prototype/build" target="_blank" rel="noreferrer">
-              <ExternalLink className="size-4.5" />
-              Open your app
-            </a>
-          </Button>
-          <Button variant="bordered" size="page" type="button" onClick={check} disabled={checking} aria-busy={checking}>
-            {checking ? (
-              <i className="size-4.5 animate-[spin_0.8s_linear_infinite] rounded-full border-[2.5px] border-current border-r-transparent" />
-            ) : (
-              <RotateCw className="size-4.5" />
-            )}
-            Check again
-          </Button>
-          <StatusLine status={checked} />
-        </div>
+        <PinButton />
       </div>
 
       {/* What to do next */}
@@ -108,6 +93,20 @@ export function OverviewScreen() {
                 <Button variant="heroGhost" size="pageLg" type="button" onClick={() => open('updates')}>
                   See all updates
                 </Button>
+                <Button asChild variant="heroGhost" size="pageLg">
+                  <a href="/prototype/build" target="_blank" rel="noreferrer">
+                    <ExternalLink className="size-4.5" />
+                    Open your app
+                  </a>
+                </Button>
+                <Button variant="heroGhost" size="pageLg" type="button" onClick={check} disabled={checking} aria-busy={checking}>
+                  {checking ? (
+                    <i className="size-4.5 animate-[spin_0.8s_linear_infinite] rounded-full border-[2.5px] border-current border-r-transparent" />
+                  ) : (
+                    <RotateCw className="size-4.5" />
+                  )}
+                  Check again
+                </Button>
               </div>
             </>
           ) : (
@@ -120,12 +119,24 @@ export function OverviewScreen() {
                 <Button variant="hero" size="pageLg" type="button" onClick={() => open('chat')}>
                   Describe what you want
                 </Button>
-                <Button asChild variant="heroGhost" size="pageLg"><Link {...keep} to="/publish">
-                  Go to Publish
-                </Link></Button>
+                <Button asChild variant="heroGhost" size="pageLg">
+                  <a href="/prototype/build" target="_blank" rel="noreferrer">
+                    <ExternalLink className="size-4.5" />
+                    Open your app
+                  </a>
+                </Button>
+                <Button variant="heroGhost" size="pageLg" type="button" onClick={check} disabled={checking} aria-busy={checking}>
+                  {checking ? (
+                    <i className="size-4.5 animate-[spin_0.8s_linear_infinite] rounded-full border-[2.5px] border-current border-r-transparent" />
+                  ) : (
+                    <RotateCw className="size-4.5" />
+                  )}
+                  Check again
+                </Button>
               </div>
             </>
           )}
+          <StatusLine status={checked} />
         </div>
         <div className="relative min-h-42.5">
           <svg viewBox="0 0 300 200" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 size-full" aria-hidden="true">

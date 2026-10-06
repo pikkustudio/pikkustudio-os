@@ -1,3 +1,4 @@
+import { PinButton } from './PinButton'
 import { m } from '@/i18n/messages'
 import { useContext, useState, type CSSProperties } from 'react'
 import { Globe, MousePointer2 } from 'lucide-react'
@@ -176,6 +177,7 @@ export function DesignWorkbench({ mode, device, app, page, onMode, onDevice, onO
         onDevice={onDevice}
         onTool={pickTool}
         onReload={() => setReloadKey((k) => k + 1)}
+        actions={<PinButton variant="bar" />}
       />
       <div className={`grid min-h-0 flex-1 gap-3.5 ${mode === 'none' ? 'grid-cols-1' : 'grid-cols-[minmax(0,1fr)_340px]'}`}>
         <SitePreview device={device} page={page} vars={look.vars} heroColor={look.heroColor} mode={mode} comp={comp} own={own} sel={sel?.id ?? null} tr={tr} content={sample.content} reloadKey={reloadKey} onPick={pick} />

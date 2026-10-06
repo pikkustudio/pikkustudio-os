@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
+import { PinButton } from './PinButton'
 
 const head = cva('flex flex-wrap justify-between gap-5', {
   variants: { align: { start: 'items-start', end: 'items-end' } },
@@ -24,7 +25,10 @@ export function PageHead({ crumb, title, text, children, size, width, ...v }: { 
         <h1 className="text-[40px] leading-[1.08] font-bold tracking-[-0.012em] text-balance">{title}</h1>
         {text ? <p className={lead({ size })}>{text}</p> : null}
       </div>
-      {children}
+      <div className="flex items-start gap-2.5">
+        {children}
+        <PinButton />
+      </div>
     </div>
   )
 }

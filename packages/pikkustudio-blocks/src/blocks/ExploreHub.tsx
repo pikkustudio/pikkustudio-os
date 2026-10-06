@@ -11,6 +11,7 @@ import { NextCard } from './NextCard'
 import { PageHead } from './PageHead'
 import { Section } from './Section'
 import { questions } from './exploreSample'
+import { MOVABLE, usePins } from '../lib/pins'
 
 const icons: Record<string, LucideIcon> = { away: ScrollText, secrets: KeyRound, cost: Wallet, who: KeyRound, own: Clock, mem: Database, well: HeartPulse, ai: Bot, plug: Plug }
 
@@ -26,7 +27,7 @@ export function Art() {
 }
 
 const cls = 'flex w-full items-center gap-4 px-5 py-4 text-left no-underline transition-colors duration-140 hover:bg-secondary'
-const pages: Record<string, string> = { away: '/logs', secrets: '/secrets' }
+const pages: Record<string, string> = { away: '/logs', secrets: '/secrets', well: '/performance' }
 
 function Row({ q }: { q: (typeof questions)[number] }) {
   const { say } = useContext(ShellCtx)
@@ -57,6 +58,7 @@ function Row({ q }: { q: (typeof questions)[number] }) {
 export function ExploreHub() {
   const projectName = useProjectName()
   const { openFind, say } = useContext(ShellCtx)
+  const { pins } = usePins()
 
   return (
     <Page gap="snug">
@@ -81,6 +83,18 @@ export function ExploreHub() {
           </Button>
         </div>
       </NextCard>
+
+      <Section title="More of your project">
+        <div className="divide-y divide-border overflow-hidden rounded-[22px] border border-border bg-card">
+          {MOVABLE.map((id) => (
+            <Link {...keep} key={id} to={`/${id}` as never} className={cls}>
+              <b className="min-w-0 flex-1 text-[17px] capitalize text-foreground">{id.replace('-', ' ')}</b>
+              <span className="text-[14px] text-ink-2">{pins.includes(id) ? 'Pinned to the sidebar' : 'Open, then pin it'}</span>
+              <ChevronRight className="size-5 shrink-0 text-muted-foreground" />
+            </Link>
+          ))}
+        </div>
+      </Section>
 
       <Section title={m.explore_hub__things_to_look_into()}>
         <div className="divide-y divide-border overflow-hidden rounded-[22px] border border-border bg-card">

@@ -8,6 +8,7 @@ import { usePikkuChat } from '../lib/chat'
 import { ScreensCard } from '../blocks/ScreensCard'
 import { modeForPath, useBuilderChat } from '../lib/builder-chat'
 import { useProjectQuery } from '../lib/projectRpc'
+import { MOVABLE, usePins, type Movable } from '../lib/pins'
 import { PreviewOptionsCtx } from '../lib/previewOptions'
 import { ShellCtx, type PanelId, type PublishNote, type View } from '../lib/shell'
 import { keep } from '../lib/links'
@@ -17,7 +18,7 @@ import { AiSpinner } from '../blocks/Spinner'
 import { Button } from '../ui/button'
 import { QuickFind } from '../blocks/QuickFind'
 import { Toaster } from '../blocks/Toaster'
-import { ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FlaskConical, FolderOpen, Gauge, Globe, Hammer, Home, Info, Compass, KeyRound, Search, Laptop, LayoutGrid, Mail, MessageCircle, MousePointer2, Palette, Plus, ShieldCheck, SlidersHorizontal, Smartphone, Upload, User, UserRoundCheck, Wrench, X } from 'lucide-react'
+import { GitPullRequest, type LucideIcon, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FlaskConical, FolderOpen, Gauge, Globe, Hammer, Home, Info, Compass, KeyRound, Search, Laptop, LayoutGrid, Mail, MessageCircle, MousePointer2, Palette, Plus, ShieldCheck, SlidersHorizontal, Smartphone, Upload, User, UserRoundCheck, Wrench, X } from 'lucide-react'
 
 // The app shell: rail, preview drawer (right edge), Pikku button + bubble, side panels.
 // Every screen route is a child of this layout. Page content lives in the route files.
@@ -32,6 +33,8 @@ const NOT_NOW = 'No problem. I will ask again tomorrow.'
 
 const item =
   'flex w-full items-center gap-3 rounded-lg px-3 text-left font-semibold no-underline transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'
+const PIN_ICON: Record<Movable, LucideIcon> = { prototype: FlaskConical, 'virtual-users': UserRoundCheck, translations: Globe, artifacts: FileText, content: FolderOpen, apps: Smartphone }
+const PIN_LABEL: Record<Movable, string> = { prototype: 'Prototype', 'virtual-users': 'Virtual users', translations: 'Translations', artifacts: 'Artifacts', content: m.content__title(), apps: 'Apps' }
 const navItem = `${item} h-9.25 text-[14px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`
 const iconBtn =
   'grid size-11 shrink-0 place-items-center rounded-full text-ink-2 transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'
@@ -160,6 +163,7 @@ export function ShellLayout() {
   const onPublish = useLocation({ select: (l) => l.pathname.endsWith('/publish') })
   const onPrototype = useLocation({ select: (l) => l.pathname.endsWith('/prototype') })
   const OptionsBody = useContext(PreviewOptionsCtx)
+  const { pins } = usePins()
   const onEmails = useLocation({ select: (l) => l.pathname.endsWith('/emails') })
   const [pub, setPublish] = useState<PublishNote | null>(null)
   const [dismissed, setDismissed] = useState<string | null>(null)
@@ -276,41 +280,30 @@ export function ShellLayout() {
                 <LayoutGrid className="size-5" />
                 Overview
               </Link>
-              <Link {...keep} to={'/prototype' as never} className={navItem}>
-                <FlaskConical className="size-5" />
-                Prototype
+              <Link {...keep} to={'/changes-directions' as never} className={navItem}>
+                <GitPullRequest className="size-5" />
+                Changes
               </Link>
               <Link {...keep} to="/build" className={navItem}>
                 <Hammer className="size-5" />
                 Build
               </Link>
-              <Link {...keep} to={'/virtual-users' as never} className={navItem}>
-                <UserRoundCheck className="size-5" />
-                Virtual users
-              </Link>
+              {MOVABLE.filter((id) => pins.includes(id)).map((id) => {
+                const Icon = PIN_ICON[id]
+                return (
+                  <Link {...keep} key={id} to={`/${id}` as never} className={navItem}>
+                    <Icon className="size-5" />
+                    {PIN_LABEL[id]}
+                  </Link>
+                )
+              })}
               <Link {...keep} to="/emails" className={navItem}>
                 <Mail className="size-5" />
                 Emails
               </Link>
-              <Link {...keep} to="/translations" className={navItem}>
-                <Globe className="size-5" />
-                Translations
-              </Link>
-              <Link {...keep} to="/artifacts" className={navItem}>
-                <FileText className="size-5" />
-                Artifacts
-              </Link>
               <Link {...keep} to="/knowledge" className={navItem}>
                 <BookOpen className="size-5" />
                 Knowledge
-              </Link>
-              <Link {...keep} to={'/content' as never} className={navItem}>
-                <FolderOpen className="size-5" />
-                {m.content__title()}
-              </Link>
-              <Link {...keep} to={'/apps' as never} className={navItem}>
-                <Smartphone className="size-5" />
-                Apps
               </Link>
               <Link {...keep} to="/publish" className={navItem}>
                 <Upload className="size-5" />
