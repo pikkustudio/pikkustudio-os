@@ -305,8 +305,9 @@ export function ContentTree(props: ContentTreeProps) {
 
   return (
     <div className="overflow-hidden rounded-card border border-border bg-card">
-      {top > 0 ? (
-        <div className="flex flex-wrap items-center gap-3 bg-primary/10 px-3 py-2">
+      <div className={`flex h-12 items-center gap-3 px-3 ${top > 0 ? 'bg-primary/10' : ''}`}>
+        {top > 0 ? (
+          <>
           <span className="text-px14 font-bold">{m.content_tree__selected({ count: top })}</span>
           {asking ? (
             <Confirm label={m.content_tree__remove_selected({ count: top })} keep={m.content_folder__keep_them()} busy={props.busy} onYes={removePicked} onNo={() => setAsking(false)} />
@@ -317,8 +318,9 @@ export function ContentTree(props: ContentTreeProps) {
             </Button>
           )}
           <Button type="button" variant="ghost" size="compactTight" onClick={() => { setPicked(new Set()); setAsking(false) }}>{m.content_tree__clear()}</Button>
-        </div>
-      ) : null}
+          </>
+        ) : null}
+      </div>
       <div className={`grid ${COLUMNS} gap-x-3 px-3 py-2 text-px13 font-bold text-muted-foreground`}>
         <div className="flex items-center justify-center">
           <input type="checkbox" className="size-4 accent-primary" checked={allPicked} aria-label={m.content_tree__select_all()} onChange={() => setPicked(allPicked ? new Set() : new Set(shown))} />
