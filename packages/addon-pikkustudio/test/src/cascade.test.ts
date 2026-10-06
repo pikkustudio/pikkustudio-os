@@ -1,10 +1,10 @@
 import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtempSync, writeFileSync, readFileSync, statSync } from 'node:fs'
+import { mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { chainFor, isScope, resolveEffective, setIn, toEnv, unsetIn, type ScopedSource } from '../../src/lib/sources/index.js'
-import { generatedSource, personalSource, projectSource } from '../../src/lib/sources/file-sources.js'
+import { generatedSource, projectSource, vaultPersonalSource, personalKey } from '../../src/lib/sources/file-sources.js'
 import { LEASE_MS, leased } from '../../src/lib/sources/lease.js'
 import { LayeredSecretService, fromSecretService } from '../../src/lib/sources/layered-secret-service.js'
 import { resolve, writeTo, type Layer } from '../../src/lib/sources/layers.js'
@@ -56,7 +56,7 @@ describe('resolveEffective', () => {
 })
 
 describe('file sources', () => {
-  test('project reads .env files per scope, personal is a private json file, generated is default only', async () => {
+  test('project reads .env files per scope, personal is read from the vault per project, generated is default only', async () => {
     const dir = mkdtempSync(join(tmpdir(), 'cascade-'))
     writeFileSync(join(dir, '.env'), 'A=1\nexport B="two"\n')
     writeFileSync(join(dir, '.env.dev'), 'A=dev\n')
@@ -67,13 +67,11 @@ describe('file sources', () => {
     assert.deepEqual(await project.read('workspace:menu'), { C: '3' })
     assert.deepEqual(await project.read('ci'), {})
 
-    const personalPath = join(dir, 'home', 'p.personal.json')
-    const personal = personalSource(personalPath)
-    await personal.write!('dev', { A: 'mine' })
+    const sealed = new Map([[personalKey('p1', 'dev', 'A'), 'mine'], [personalKey('p2', 'dev', 'A'), 'other'], [personalKey('p1', 'ci', 'B'), 'b']])
+    const personal = vaultPersonalSource({ keys: async () => [...sealed.keys()], get: async (k) => sealed.get(k) }, 'p1')
     assert.deepEqual(await personal.read('dev'), { A: 'mine' })
-    assert.equal(statSync(personalPath).mode & 0o777, 0o600)
-    await personal.write!('dev', {})
-    assert.deepEqual(JSON.parse(readFileSync(personalPath, 'utf8')), {})
+    assert.deepEqual(await personal.read('ci'), { B: 'b' })
+    assert.equal(personal.write, undefined)
 
     const generated = generatedSource(join(dir, 'home', 'g.env'))
     await generated.write!('default', { S: 'x' })

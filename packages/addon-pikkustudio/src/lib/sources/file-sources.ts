@@ -32,26 +32,26 @@ export const projectSource = (projectPath: string): ScopedSource => ({
   write: async (scope, values) => writeDotenv(join(projectPath, dotenvFileFor(scope)), values),
 })
 
-export const personalSource = (path: string): ScopedSource => {
-  const load = (): Record<string, Record<string, string>> => {
-    try {
-      return JSON.parse(readFileSync(path, 'utf8'))
-    } catch {
-      return {}
-    }
-  }
-  return {
-    name: 'personal',
-    read: async (scope) => load()[scope] ?? {},
-    write: async (scope, values) => {
-      const all = load()
-      if (Object.keys(values).length) all[scope] = values
-      else delete all[scope]
-      await mkdir(dirname(path), { recursive: true })
-      await writeFile(path, JSON.stringify(all, null, 2) + '\n', { mode: 0o600 })
-    },
-  }
+export interface SealedStore {
+  keys(): Promise<string[]>
+  get(key: string): Promise<string | undefined>
 }
+
+export const personalKey = (projectId: string, scope: string, name: string) => `personal:${projectId}:${scope}:${name}`
+
+export const vaultPersonalSource = (store: SealedStore, projectId: string): ScopedSource => ({
+  name: 'personal',
+  read: async (scope) => {
+    const prefix = personalKey(projectId, scope, '')
+    const out: Record<string, string> = {}
+    for (const key of await store.keys()) {
+      if (!key.startsWith(prefix)) continue
+      const value = await store.get(key)
+      if (value !== undefined) out[key.slice(prefix.length)] = value
+    }
+    return out
+  },
+})
 
 export const generatedSource = (path: string): ScopedSource => ({
   name: 'generated',

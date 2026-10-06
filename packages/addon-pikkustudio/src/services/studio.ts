@@ -1,3 +1,5 @@
+import type { ScopedSource } from '../lib/sources/index.js'
+export { vaultPersonalSource, personalKey } from '../lib/sources/file-sources.js'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -31,6 +33,8 @@ export interface StudioServicesOptions {
   account?: AccountProvider
   builder?: BuilderSession
   projectEnv?: (key: string) => Promise<Record<string, string>>
+  personalSource?: (projectId: string) => ScopedSource | undefined
+  teamSource?: (projectId: string) => ScopedSource | undefined
   projectStore?: ProjectStore
   logStore?: LogStore
 }
@@ -65,6 +69,8 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
       pinned: Boolean(process.env.PIKKU_STUDIO_PROJECT),
       designEntry: options.designEntry ?? resolveDesignEntry(),
       store: options.projectStore,
+      personalSource: options.personalSource,
+      teamSource: options.teamSource,
       owner: async () => (await new StudioSettingsFile(join(home, 'settings.json')).read()).name ?? '',
       env: async (key) => ({ ...(await studioAi.env()), ...((await options.projectEnv?.(key)) ?? {}) }),
     })

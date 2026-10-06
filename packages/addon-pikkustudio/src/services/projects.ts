@@ -9,7 +9,7 @@ import { modeScope } from './builder-scope.js'
 import { basename, dirname, join, resolve, sep } from 'node:path'
 import { randomBytes, randomUUID } from 'node:crypto'
 import { ConflictError } from '@pikku/core/errors'
-import { generatedSource, isScope, personalSource, projectSource, resolveEffective, setIn, setMany, toEnv, unsetIn, type ScopedSource } from '../lib/sources/index.js'
+import { generatedSource, projectSource, resolveEffective, setMany, toEnv, type ScopedSource } from '../lib/sources/index.js'
 import { DEVELOP, MAIN, addWorktree, listWorktrees, layoutRoot, sessionKey, splitSessionKey, cloneLayout, commitPaths, createLayout, ensureWorktree, keepChanges, mainEnv, keepStatus, listVersions, listThemes, type ProjectTheme, type VersionCommit, worktreeConfinement, type KeepResult, type KeepStatus, type StudioWorktree } from './worktree.js'
 import { canConfine, confinedSpawn, type Confinement } from './confine.js'
 import { diskUsage } from './disk.js'
@@ -359,6 +359,7 @@ export interface StudioProjectsOptions {
   stopTimeoutMs?: number
   designEntry?: string
   env?: (key: string) => Promise<Record<string, string>>
+  personalSource?: (projectId: string) => ScopedSource | undefined
   teamSource?: (projectId: string) => ScopedSource | undefined
   waitForPort?: (port: number) => Promise<void>
   startApps?: boolean
@@ -999,9 +1000,10 @@ export class StudioProjectsService {
 
   cascadeSources(key: string, projectPath: string): ScopedSource[] {
     const { id } = splitSessionKey(key)
+    const personal = this.options.personalSource?.(id)
     const team = this.options.teamSource?.(id)
     return [
-      personalSource(join(this.home, 'env', `${id}.personal.json`)),
+      ...(personal ? [personal] : []),
       ...(team ? [team] : []),
       projectSource(projectPath),
       generatedSource(join(this.home, 'env', `${id}.env`)),
@@ -1029,16 +1031,6 @@ export class StudioProjectsService {
 
   async cascade(key: string, kind: 'dev' | 'ci' = 'dev') {
     return this.projectCascade(key, (await this.entry(key)).path, kind)
-  }
-
-  async setPersonal(key: string, projectPath: string, scope: string, name: string, value: string) {
-    if (!isScope(scope)) throw new Error(`"${scope}" is not a scope`)
-    await setIn(this.cascadeSources(key, projectPath)[0]!, scope, name, value)
-  }
-
-  async unsetPersonal(key: string, projectPath: string, scope: string, name: string) {
-    if (!isScope(scope)) throw new Error(`"${scope}" is not a scope`)
-    await unsetIn(this.cascadeSources(key, projectPath)[0]!, scope, name)
   }
 
   touch(key: string) {
