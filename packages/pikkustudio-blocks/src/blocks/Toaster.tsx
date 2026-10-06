@@ -12,7 +12,7 @@ export function Toaster() {
       if (e.type === 'updated' && e.action.type === 'error') toast(errorText(e.action.error))
     })
     const onMutation = client.getMutationCache().subscribe((e) => {
-      if (e.type === 'updated' && e.action.type === 'error') toast(errorText(e.action.error))
+      if (e.type === 'updated' && e.action.type === 'error' && !/runVirtualUser/.test(String((e.action.error as Error)?.message))) toast(errorText(e.action.error))
     })
     return () => {
       onQuery()

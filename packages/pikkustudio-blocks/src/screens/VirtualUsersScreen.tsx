@@ -72,7 +72,20 @@ export function VirtualUsersScreen() {
               </div>
             </NextCard>
 
-            {send.isError ? <ErrorState error={send.error} what="Sending a virtual user on a visit" onRetry={() => send.reset()} /> : null}
+            {send.isError && /runVirtualUser/.test(String((send.error as Error)?.message)) ? (
+              <section role="alert" className="flex flex-col gap-3 rounded-[22px] border-[1.5px] border-border bg-card p-7">
+                <b className="font-heading text-[22px]">Virtual users are switched off in {app}</b>
+                <p className="max-w-ch56 text-[16px] text-ink-2">Turn them on and {users.find((u) => u.id === send.variables?.persona)?.name ?? 'they'} can visit {app}. Nothing changes for your visitors.</p>
+                <div className="flex flex-wrap gap-3">
+                  <Button variant="default" size="page" onClick={() => { send.reset(); say(`Turn on virtual users in ${app} so ${users.find((u) => u.id === send.variables?.persona)?.name ?? 'a virtual user'} can visit it. Just do it and tell me in one plain sentence when it is done. Do not ask me about files or settings.`) }}>
+                    Turn on virtual users
+                  </Button>
+                  <Button variant="bordered" size="page" onClick={() => send.reset()}>
+                    Not now
+                  </Button>
+                </div>
+              </section>
+            ) : send.isError ? (<ErrorState error={send.error} what="Sending a virtual user on a visit" onRetry={() => send.reset()} />) : null}
             {runs.isError ? <ErrorState error={runs.error} what="Reading past visits" onRetry={() => runs.refetch()} retrying={runs.isFetching} /> : null}
 
             <Section title="Who can visit" sub="Each one pretends to be a different kind of person. Visits go to your preview site only.">
