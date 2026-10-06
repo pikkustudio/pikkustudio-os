@@ -10,6 +10,7 @@ import { useProjectQuery } from '../lib/projectRpc'
 import { ShellCtx, type PanelId, type PublishNote, type View } from '../lib/shell'
 import { keep } from '../lib/links'
 import { NEW_QUESTIONS, answerPrompt, openQuestions, type KnowledgeBundle } from '../lib/knowledge'
+import { ChatMarkdown } from '../blocks/ChatMarkdown'
 import { AiSpinner } from '../blocks/Spinner'
 import { Button } from '../ui/button'
 import { QuickFind } from '../blocks/QuickFind'
@@ -471,7 +472,7 @@ export function ShellLayout() {
                           <Avatar mood="calm" size="sm" />
                         </span>
                         <div className="flex min-w-0 flex-col gap-2 text-[16px] leading-[1.5] text-foreground">
-                          <p className="text-pretty">{m.text}</p>
+                          <ChatMarkdown>{m.text}</ChatMarkdown>
                         </div>
                       </div>
                     ),
