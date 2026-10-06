@@ -329,7 +329,13 @@ export function ContentTree(props: ContentTreeProps) {
         <div className="max-md:hidden">{m.content_tree__size()}</div>
         <div className="max-md:hidden">{m.content_tree__changed()}</div>
         <div className="max-md:hidden">{m.content_tree__by()}</div>
-        <div />
+        <div className="flex justify-end">
+          {top > 1 ? (
+            <Button type="button" variant="ghost" size="compactTight" onClick={() => setAsking(true)} aria-label={m.content_tree__remove_selected_ask()} title={m.content_tree__remove_selected_ask()}>
+              <Trash2 className="size-4" />
+            </Button>
+          ) : null}
+        </div>
       </div>
       <div {...tree.getContainerProps(m.content__all_folders())}>
         {items.map((item) => (
