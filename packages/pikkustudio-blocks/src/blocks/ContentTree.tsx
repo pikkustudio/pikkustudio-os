@@ -9,12 +9,11 @@ import { contentKind, formatBytes, timeAgo, type ContentKind } from '../lib/cont
 
 const ICONS: Record<ContentKind, typeof FileIcon> = { picture: Image, document: FileText, sound: Music, video: Video, data: Table, file: FileIcon }
 
-const COLUMNS = 'grid-cols-[minmax(0,1fr)_auto] md:grid-cols-[minmax(0,1fr)_112px_112px_112px_auto]'
+const COLUMNS = 'grid-cols-[2rem_minmax(0,1fr)_7rem] md:grid-cols-[2rem_minmax(0,1fr)_7rem_7rem_7rem_11rem]'
 
 type FileRef = { bucket: string; key: string }
 
 export type ContentTreeProps = {
-  onMore: (path: string) => void
   side: 'private' | 'public'
   stamp: number
   canDownload: boolean
@@ -31,7 +30,7 @@ export type ContentTreeProps = {
 const locale = () => (typeof navigator === 'undefined' ? 'en' : navigator.language)
 
 const Confirm = ({ label, keep, busy, onYes, onNo }: { label: string; keep: string; busy: boolean; onYes: () => void; onNo: () => void }) => (
-  <div className="flex items-center justify-end gap-2">
+  <div className="flex flex-wrap items-center justify-end gap-x-2 gap-y-1">
     <Button type="button" variant="destructive" size="compact" disabled={busy} onClick={onYes}>{label}</Button>
     <Button type="button" variant="ghost" size="compactTight" onClick={onNo}>{keep}</Button>
   </div>
@@ -51,22 +50,41 @@ const ROOT = 'root'
 const STEP = 22
 
 const isRtl = () => typeof document !== 'undefined' && document.dir === 'rtl'
+const selectable = (node: Node) => node.kind === 'file' || node.kind === 'folder'
 
-function Row({ item, props }: { item: ItemInstance<Node>; props: ContentTreeProps }) {
+type RowProps = { item: ItemInstance<Node>; props: ContentTreeProps; picked: boolean; onPick: (id: string, range: boolean) => void; onMore: (path: string) => void }
+
+const Pick = ({ name, picked, onChange }: { name: string; picked: boolean; onChange: (range: boolean) => void }) => (
+  <div className="flex items-center justify-center" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+    <input type="checkbox" className="size-4 accent-primary" checked={picked} aria-label={m.content_tree__select({ name })} onClick={(e) => onChange(e.shiftKey)} onChange={() => undefined} />
+  </div>
+)
+
+function Row({ item, props, picked, onPick, onMore }: RowProps) {
   const [sure, setSure] = useState(false)
   const node = item.getItemData()
   const level = item.getItemMeta().level
   const pad = (extra: number) => `${level * STEP + extra}px`
-  const row = `grid ${COLUMNS} ps-(--pad) items-center gap-x-3 border-t border-border py-2 pe-3 outline-none focus-visible:bg-secondary aria-selected:bg-secondary`
+  const base = `grid ${COLUMNS} items-center gap-x-3 border-t border-border px-3 py-2 outline-none focus-visible:bg-secondary`
+  const tint = picked ? 'bg-primary/10' : node.kind === 'folder' ? 'bg-secondary/60' : 'bg-card'
+  const row = `${base} ${tint}`
   const stop = { onKeyDown: (e: React.KeyboardEvent) => e.stopPropagation(), onClick: (e: React.MouseEvent) => e.stopPropagation() }
 
   if (node.kind === 'empty') {
-    return <div {...item.getProps()} className={`${row} text-px14 text-ink-2`} style={{ '--pad': pad(34) } as CSSProperties}>{m.content_tree__empty_folder()}</div>
+    return (
+      <div {...item.getProps()} className={`${row} text-px14 text-ink-2`}>
+        <div />
+        <div className="ps-(--pad)" style={{ '--pad': pad(24) } as CSSProperties}>{m.content_tree__empty_folder()}</div>
+      </div>
+    )
   }
   if (node.kind === 'more') {
     return (
-      <div {...item.getProps()} className={row} style={{ '--pad': pad(34) } as CSSProperties}>
-        <Button type="button" variant="bordered" size="compact" onClick={() => props.onMore(node.path)}>{m.content_tree__more()}</Button>
+      <div {...item.getProps()} className={row}>
+        <div />
+        <div className="ps-(--pad)" style={{ '--pad': pad(24) } as CSSProperties}>
+          <Button type="button" variant="bordered" size="compact" onClick={() => onMore(node.path)}>{m.content_tree__more()}</Button>
+        </div>
       </div>
     )
   }
@@ -75,8 +93,9 @@ function Row({ item, props }: { item: ItemInstance<Node>; props: ContentTreeProp
     const Icon = owner ? Package : Folder
     const [bucket, ...rest] = node.path.split('/')
     return (
-      <div {...item.getProps()} className={`${row} cursor-pointer`} style={{ '--pad': pad(12) } as CSSProperties}>
-        <div className="flex min-w-0 items-center gap-2">
+      <div {...item.getProps()} className={`${row} cursor-pointer`}>
+        <Pick name={node.name} picked={picked} onChange={(range) => onPick(node.id, range)} />
+        <div className="flex min-w-0 items-center gap-2 ps-(--pad)" style={{ '--pad': pad(0) } as CSSProperties}>
           <ChevronRight className={`size-4 shrink-0 text-muted-foreground transition-transform rtl:-scale-x-100 ${item.isExpanded() ? 'rotate-90 rtl:-rotate-90' : ''}`} aria-hidden="true" />
           <Icon className="size-4.5 shrink-0 text-primary" aria-hidden="true" />
           <span className="truncate text-px15 font-bold">{node.name}</span>
@@ -84,9 +103,7 @@ function Row({ item, props }: { item: ItemInstance<Node>; props: ContentTreeProp
           {item.isLoading() ? <span className="size-3 shrink-0 animate-pulse rounded-full bg-secondary" aria-label={m.content_tree__loading()} /> : null}
           {owner ? <span className="shrink-0 text-px13 text-muted-foreground max-md:hidden">· {m.content__kept_by_addon({ addon: owner })}</span> : null}
         </div>
-        <div className="text-px14 font-semibold tabular-nums max-md:hidden">
-          {formatBytes(node.totalBytes)}
-        </div>
+        <div className="text-px14 font-semibold tabular-nums max-md:hidden">{formatBytes(node.totalBytes)}</div>
         <div className="text-px14 text-ink-2 max-md:hidden">{node.lastChanged ? timeAgo(node.lastChanged, locale(), m.content_tree__just_now()) : ''}</div>
         <div className="max-md:hidden" />
         <div {...stop}>
@@ -107,14 +124,13 @@ function Row({ item, props }: { item: ItemInstance<Node>; props: ContentTreeProp
   const Icon = ICONS[contentKind(node.name)]
   const id = `${node.bucket}/${node.key}`
   return (
-    <div {...item.getProps()} className={row} style={{ '--pad': pad(34) } as CSSProperties}>
-      <div className="flex min-w-0 items-center gap-2">
+    <div {...item.getProps()} className={row}>
+      <Pick name={node.name} picked={picked} onChange={(range) => onPick(node.id, range)} />
+      <div className="flex min-w-0 items-center gap-2 ps-(--pad)" style={{ '--pad': pad(24) } as CSSProperties}>
         <Icon className="size-4.5 shrink-0 text-muted-foreground" aria-hidden="true" />
         <span className="truncate text-px15 font-semibold">{node.name}</span>
       </div>
-      <div className="text-px14 tabular-nums max-md:hidden">
-        {formatBytes(node.sizeBytes)}
-      </div>
+      <div className="text-px14 tabular-nums max-md:hidden">{formatBytes(node.sizeBytes)}</div>
       <div className="text-px14 text-ink-2 max-md:hidden">{timeAgo(node.changedAt, locale(), m.content_tree__just_now())}</div>
       <div className="truncate text-px14 text-ink-2 max-md:hidden">{whoText(node.createdBy)}</div>
       <div {...stop}>
@@ -143,12 +159,15 @@ function Row({ item, props }: { item: ItemInstance<Node>; props: ContentTreeProp
   )
 }
 
-export function ContentTree(props: Omit<ContentTreeProps, 'onMore'>) {
+export function ContentTree(props: ContentTreeProps) {
   const list = usePikkuMutation('listContentFolder')
   const nodes = useRef(new Map<string, Node>([[ROOT, { kind: 'root', id: ROOT }]]))
   const levels = useRef(new Map<string, { ids: string[]; cursor: string | null }>())
   const latest = useRef({ side: props.side, list })
   latest.current = { side: props.side, list }
+  const [picked, setPicked] = useState<Set<string>>(new Set())
+  const [asking, setAsking] = useState(false)
+  const anchor = useRef<string | null>(null)
 
   const load = async (path: string, more: boolean): Promise<string[]> => {
     const before = more ? levels.current.get(path) : undefined
@@ -178,6 +197,14 @@ export function ContentTree(props: Omit<ContentTreeProps, 'onMore'>) {
 
   const pathOf = (id: string) => (id === ROOT ? '' : (nodes.current.get(id) as FolderNode).path)
 
+  const toggle = (id: string) =>
+    setPicked((now) => {
+      const next = new Set(now)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+
   const tree = useTree<Node>({
     rootItemId: ROOT,
     getItemName: (item) => {
@@ -194,7 +221,17 @@ export function ContentTree(props: Omit<ContentTreeProps, 'onMore'>) {
       getChildren: (id) => load(pathOf(id), false),
     },
     indent: STEP,
-    hotkeys: isRtl() ? { expandOrDown: { hotkey: 'ArrowLeft' }, collapseOrUp: { hotkey: 'ArrowRight' } } : undefined,
+    hotkeys: {
+      customPick: {
+        hotkey: 'Space',
+        preventDefault: true,
+        handler: (_e, instance) => {
+          const focused = instance.getFocusedItem()
+          if (selectable(focused.getItemData())) toggle(focused.getId())
+        },
+      },
+      ...(isRtl() ? { expandOrDown: { hotkey: 'ArrowLeft' }, collapseOrUp: { hotkey: 'ArrowRight' } } : {}),
+    },
     features: [asyncDataLoaderFeature, hotkeysCoreFeature],
   })
 
@@ -206,16 +243,56 @@ export function ContentTree(props: Omit<ContentTreeProps, 'onMore'>) {
   useEffect(() => {
     if (props.stamp === 0) return
     levels.current.clear()
+    setPicked(new Set())
     const open = tree.getItems().filter((item) => item.isFolder() && item.isExpanded()).map((item) => item.getId())
     for (const id of [ROOT, ...open]) void tree.getItemInstance(id).invalidateChildrenIds()
   }, [props.stamp])
 
   const items = tree.getItems().filter((item) => item.getId() !== ROOT)
-  const treeProps = { ...props, onMore: more }
+  const shown = items.filter((item) => selectable(item.getItemData())).map((item) => item.getId())
+  const allPicked = shown.length > 0 && shown.every((id) => picked.has(id))
+
+  const pick = (id: string, range: boolean) => {
+    if (range && anchor.current && shown.includes(anchor.current)) {
+      const [a, b] = [shown.indexOf(anchor.current), shown.indexOf(id)].sort((x, y) => x - y)
+      setPicked((now) => new Set([...now, ...shown.slice(a, b! + 1)]))
+    } else toggle(id)
+    anchor.current = id
+  }
+
+  const removePicked = () => {
+    for (const id of picked) {
+      const node = nodes.current.get(id)
+      if (node?.kind === 'file') props.onRemoveFile(node)
+      else if (node?.kind === 'folder') {
+        const [bucket, ...rest] = node.path.split('/')
+        props.onRemoveFolder(bucket!, rest.length ? `${rest.join('/')}/` : '')
+      }
+    }
+    setPicked(new Set())
+    setAsking(false)
+  }
 
   return (
     <div className="overflow-hidden rounded-card border border-border bg-card">
-      <div className={`grid ${COLUMNS} gap-x-3 ps-3 pe-3 py-2 text-px13 font-bold text-muted-foreground`}>
+      {picked.size > 0 ? (
+        <div className="flex flex-wrap items-center gap-3 bg-primary/10 px-3 py-2">
+          <span className="text-px14 font-bold">{m.content_tree__selected({ count: picked.size })}</span>
+          {asking ? (
+            <Confirm label={m.content_tree__remove_selected({ count: picked.size })} keep={m.content_folder__keep_them()} busy={props.busy} onYes={removePicked} onNo={() => setAsking(false)} />
+          ) : (
+            <Button type="button" variant="bordered" size="compact" onClick={() => setAsking(true)}>
+              <Trash2 className="size-4" />
+              {m.content_tree__remove_selected_ask()}
+            </Button>
+          )}
+          <Button type="button" variant="ghost" size="compactTight" onClick={() => { setPicked(new Set()); setAsking(false) }}>{m.content_tree__clear()}</Button>
+        </div>
+      ) : null}
+      <div className={`grid ${COLUMNS} gap-x-3 px-3 py-2 text-px13 font-bold text-muted-foreground`}>
+        <div className="flex items-center justify-center">
+          <input type="checkbox" className="size-4 accent-primary" checked={allPicked} aria-label={m.content_tree__select_all()} onChange={() => setPicked(allPicked ? new Set() : new Set(shown))} />
+        </div>
         <div>{m.content_tree__name()}</div>
         <div className="max-md:hidden">{m.content_tree__size()}</div>
         <div className="max-md:hidden">{m.content_tree__changed()}</div>
@@ -224,7 +301,7 @@ export function ContentTree(props: Omit<ContentTreeProps, 'onMore'>) {
       </div>
       <div {...tree.getContainerProps(m.content__all_folders())}>
         {items.map((item) => (
-          <Row key={item.getId()} item={item} props={treeProps} />
+          <Row key={item.getId()} item={item} props={props} picked={picked.has(item.getId())} onPick={pick} onMore={more} />
         ))}
       </div>
     </div>

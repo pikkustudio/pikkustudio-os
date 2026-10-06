@@ -574,5 +574,11 @@
   "content_tree__failed": "This folder could not be read. Try again in a moment.",
   "content_tree__try_again": "Try again",
   "content_tree__total": "Everything here takes up {size}",
-  "content_tree__share": "{share} of the space"
+  "content_tree__share": "{share} of the space",
+  "content_tree__select": "Select {name}",
+  "content_tree__select_all": "Select everything shown",
+  "content_tree__selected": "{count} selected",
+  "content_tree__clear": "Clear",
+  "content_tree__remove_selected": "Remove {count} for good",
+  "content_tree__remove_selected_ask": "Remove selected"
 }
