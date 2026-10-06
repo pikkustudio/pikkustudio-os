@@ -5,13 +5,14 @@ import type { ChatItem } from './chat'
 export const OFFER_MARKER = '[[offer:changeset]]'
 const SCREENS_MARKER = /^\[\[screens:([^\]]*)\]\]/
 
-export type WorkMode = 'build' | 'prototype' | 'artifacts' | 'knowledge'
+export type WorkMode = 'build' | 'prototype' | 'artifacts' | 'knowledge' | 'emails'
 
 export const modeForPath = (path: string): WorkMode | null => {
   if (/\/artifacts(\/|$)/.test(path)) return 'artifacts'
   if (/\/prototype$/.test(path)) return 'prototype'
   if (/\/build$/.test(path)) return 'build'
   if (/\/knowledge$/.test(path)) return 'knowledge'
+  if (/\/emails$/.test(path)) return 'emails'
   return null
 }
 

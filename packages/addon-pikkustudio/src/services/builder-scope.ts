@@ -3,7 +3,7 @@ import { join } from 'node:path'
 
 import type { BuilderMode } from '@pikku/builder'
 
-export const BUILDER_MODES: BuilderMode[] = ['build', 'prototype', 'artifacts', 'knowledge']
+export const BUILDER_MODES: BuilderMode[] = ['build', 'prototype', 'artifacts', 'knowledge', 'emails']
 
 const SUFFIX = '-prototype'
 
@@ -22,6 +22,7 @@ export const prototypeFolders = (projectDir: string) => appFolders(projectDir).m
 export function modeScope(mode: BuilderMode, projectDir: string): { only?: string[]; protected?: string[] } {
   if (mode === 'artifacts') return { only: ['artifacts'] }
   if (mode === 'knowledge') return { only: ['knowledge'] }
+  if (mode === 'emails') return { only: ['emails'] }
   const prototypes = prototypeFolders(projectDir)
   if (mode === 'prototype') {
     for (const folder of prototypes) mkdirSync(join(projectDir, folder), { recursive: true })

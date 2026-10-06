@@ -7,7 +7,7 @@ const DIRECTIONS = 4
 const DRAFT_TIMEOUT_MS = 15 * 60_000
 const pause = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-export const BuilderPromptInput = z.object({ key: z.string(), message: z.string(), context: z.string().optional(), failOnError: z.boolean().optional(), explore: z.boolean().optional(), mode: z.enum(['build', 'prototype', 'artifacts', 'knowledge']).optional(), offer: z.boolean().optional() })
+export const BuilderPromptInput = z.object({ key: z.string(), message: z.string(), context: z.string().optional(), failOnError: z.boolean().optional(), explore: z.boolean().optional(), mode: z.enum(['build', 'prototype', 'artifacts', 'knowledge', 'emails']).optional(), offer: z.boolean().optional() })
 
 export const builderPrompt = pikkuSessionlessFunc({
   expose: true,
@@ -19,7 +19,7 @@ export const builderPrompt = pikkuSessionlessFunc({
       ? `The person you are working with is called ${name}. Address them by that name.${about ? ` About them: ${about}. Tailor your answers to that.` : ''}`
       : undefined
     if (explore) {
-      await studioBuilder.directions(key, [message, context].filter(Boolean).join('\n\n'), DIRECTIONS)
+      await studioBuilder.directions(key, message, DIRECTIONS, context)
       return studioBuilder.state(key)
     }
     const state =

@@ -29,7 +29,7 @@ export const SYSTEM_PROMPT = [
   'Build one changeset, commit each change on its own, mark it done and stop; the builder merges it and starts the next.',
 ].join(' ')
 
-export type BuilderMode = 'build' | 'prototype' | 'artifacts' | 'knowledge'
+export type BuilderMode = 'build' | 'prototype' | 'artifacts' | 'knowledge' | 'emails'
 
 export const MODE_PROMPTS: Record<Exclude<BuilderMode, 'build'>, string> = {
   prototype: [
@@ -51,6 +51,12 @@ export const MODE_PROMPTS: Record<Exclude<BuilderMode, 'build'>, string> = {
     'Whenever a question comes up that the owner has not answered yet, record it as a note in knowledge/questions/ with `status: open` in its frontmatter, and set `status: answered` when it is settled. The owner sees the open ones as buttons.',
     'Maintain: keep notes consistent, merge duplicates, retire what the app no longer does, and run `pikku knowledge validate`.',
     'Say in plain words what you added or tidied.',
+  ].join(' '),
+  emails: [
+    'You look after the emails this app sends: the templates, their wording in every language, the shared partials and the theme, all in emails/. Write only there; the rest of the project is read-only for you.',
+    'Read the pikku-emails skill first and follow it. After a change run `pikku emails generate` and render the template with sample data to check it.',
+    'Write the way the owner talks to their own customers: short, warm and plain, with no jargon. Keep every language of a template in step, and keep the variables a template uses the same unless the owner asks for a new one.',
+    'You never change the app itself, and you never file or suggest changes to it. Say in plain words what you changed.',
   ].join(' '),
 }
 
@@ -85,7 +91,7 @@ export function piArgs(options: { ai?: BuilderAi; skills: string; mode?: 'rpc'; 
   if (options.mode) args.push('--mode', options.mode)
   if (options.role === 'inspect') args.push('--approve', '--no-skills', '--no-context-files', '--append-system-prompt', INSPECT_PROMPT)
   else if (options.role) args.push('--approve', '--no-skills', '--no-context-files', '--skill', impeccableSkill(), '--append-system-prompt', options.role === 'prototype' ? PROTOTYPE_PROMPT : EXPLORE_PROMPT)
-  else args.push('--approve', '--skill', options.skills, '--append-system-prompt', options.scope && options.scope !== 'build' ? `${SYSTEM_PROMPT} ${MODE_PROMPTS[options.scope]}` : SYSTEM_PROMPT)
+  else args.push('--approve', '--skill', options.skills, '--append-system-prompt', options.scope && options.scope !== 'build' ? MODE_PROMPTS[options.scope] : SYSTEM_PROMPT)
   for (const path of extensionPaths()) args.push('-e', path)
   if (options.session) args.push('--session-id', options.session)
   if (options.ai?.proxy) args.push('--provider', 'pikku-proxy')

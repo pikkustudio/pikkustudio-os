@@ -268,7 +268,7 @@ export class BuilderSession {
     return (await this.runOnce(key, prompt, 10 * 60_000, 'inspect')).ok
   }
 
-  async directions(key: string, idea: string, count = 4): Promise<number> {
+  async directions(key: string, idea: string, count = 4, context?: string): Promise<number> {
     const text = idea.trim()
     if (!text) throw new Error('Say what you want explored first')
     const state = await this.state(key)
@@ -276,9 +276,10 @@ export class BuilderSession {
     state.items.push({ kind: 'user', text, at: Date.now() })
     state.busy = true
     try {
-      const planned = await this.runOnce(key, PLAN_PROMPT(count, text), 3 * 60_000)
+      const full = context ? `${text}\n\n${context}` : text
+      const planned = await this.runOnce(key, PLAN_PROMPT(count, full), 3 * 60_000)
       const briefs = (planned.ok ? parseBriefs(planned.output, count) : null) ?? FALLBACK_BRIEFS.slice(0, count)
-      const made = await Promise.all(briefs.map((brief, i) => this.runOnce(key, DIRECTION_PROMPT(i + 1, count, text, brief), 10 * 60_000)))
+      const made = await Promise.all(briefs.map((brief, i) => this.runOnce(key, DIRECTION_PROMPT(i + 1, count, full, brief), 10 * 60_000)))
       const ok = made.filter((r) => r.ok).length
       if (!ok) throw new Error(made[0]?.output.trim().split('\n').slice(-4).join('\n') || 'The builder could not make any directions.')
       return ok

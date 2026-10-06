@@ -201,7 +201,7 @@ export function ShellLayout() {
   const bubbleIsOpen = bubbleOpen ?? false
   const unread = needsPerson && isDismissed
 
-  const agentName = { artifacts: 'Pikku Designer', prototype: 'Pikku Prototype', build: 'Pikku Builder', knowledge: 'Pikku Librarian' }
+  const agentName = { artifacts: 'Pikku Designer', prototype: 'Pikku Prototype', build: 'Pikku Builder', knowledge: 'Pikku Librarian', emails: 'Pikku Mailer' }
   const panelTitle = { chat: workMode ? agentName[workMode] : 'Talk to Pikku', updates: 'Updates', workspace: 'Your workspace', account: 'Your account', options: 'Pikku Prototype' }
   const tabs = panel === 'chat' || panel === 'updates' || (panel === 'options' && onPrototype)
   const tab =
