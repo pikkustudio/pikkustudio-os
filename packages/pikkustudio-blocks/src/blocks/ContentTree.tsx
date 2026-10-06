@@ -197,11 +197,39 @@ export function ContentTree(props: ContentTreeProps) {
 
   const pathOf = (id: string) => (id === ROOT ? '' : (nodes.current.get(id) as FolderNode).path)
 
+  const below = (id: string) => {
+    if (!id.startsWith('d:')) return []
+    const path = id.slice(2)
+    return [...nodes.current.keys()].filter((key) => key.startsWith(`d:${path}/`) || key.startsWith(`f:${path}/`))
+  }
+
+  const up = (id: string) => {
+    const out: string[] = []
+    let at = tree.getItemInstance(id).getItemMeta().parentId
+    while (at && at !== ROOT) {
+      out.push(at)
+      at = tree.getItemInstance(at).getItemMeta().parentId
+    }
+    return out
+  }
+
+  const covered = (id: string, set: Set<string>) => set.has(id) || up(id).some((parent) => set.has(parent))
+
   const toggle = (id: string) =>
     setPicked((now) => {
       const next = new Set(now)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
+      if (covered(id, now)) {
+        const parents = up(id).filter((parent) => now.has(parent))
+        next.delete(id)
+        for (const parent of parents) {
+          next.delete(parent)
+          for (const key of below(parent)) if (key !== id && !up(id).includes(key) && !below(id).includes(key)) next.add(key)
+        }
+        for (const key of below(id)) next.delete(key)
+      } else {
+        next.add(id)
+        for (const key of below(id)) next.add(key)
+      }
       return next
     })
 
@@ -250,18 +278,20 @@ export function ContentTree(props: ContentTreeProps) {
 
   const items = tree.getItems().filter((item) => item.getId() !== ROOT)
   const shown = items.filter((item) => selectable(item.getItemData())).map((item) => item.getId())
-  const allPicked = shown.length > 0 && shown.every((id) => picked.has(id))
+  const top = [...picked].filter((id) => !up(id).some((parent) => picked.has(parent))).length
+  const allPicked = shown.length > 0 && shown.every((id) => covered(id, picked))
 
   const pick = (id: string, range: boolean) => {
     if (range && anchor.current && shown.includes(anchor.current)) {
       const [a, b] = [shown.indexOf(anchor.current), shown.indexOf(id)].sort((x, y) => x - y)
-      setPicked((now) => new Set([...now, ...shown.slice(a, b! + 1)]))
+      for (const key of shown.slice(a, b! + 1)) if (!covered(key, picked)) toggle(key)
     } else toggle(id)
     anchor.current = id
   }
 
   const removePicked = () => {
     for (const id of picked) {
+      if (up(id).some((parent) => picked.has(parent))) continue
       const node = nodes.current.get(id)
       if (node?.kind === 'file') props.onRemoveFile(node)
       else if (node?.kind === 'folder') {
@@ -275,11 +305,11 @@ export function ContentTree(props: ContentTreeProps) {
 
   return (
     <div className="overflow-hidden rounded-card border border-border bg-card">
-      {picked.size > 0 ? (
+      {top > 0 ? (
         <div className="flex flex-wrap items-center gap-3 bg-primary/10 px-3 py-2">
-          <span className="text-px14 font-bold">{m.content_tree__selected({ count: picked.size })}</span>
+          <span className="text-px14 font-bold">{m.content_tree__selected({ count: top })}</span>
           {asking ? (
-            <Confirm label={m.content_tree__remove_selected({ count: picked.size })} keep={m.content_folder__keep_them()} busy={props.busy} onYes={removePicked} onNo={() => setAsking(false)} />
+            <Confirm label={m.content_tree__remove_selected({ count: top })} keep={m.content_folder__keep_them()} busy={props.busy} onYes={removePicked} onNo={() => setAsking(false)} />
           ) : (
             <Button type="button" variant="bordered" size="compact" onClick={() => setAsking(true)}>
               <Trash2 className="size-4" />
@@ -301,7 +331,7 @@ export function ContentTree(props: ContentTreeProps) {
       </div>
       <div {...tree.getContainerProps(m.content__all_folders())}>
         {items.map((item) => (
-          <Row key={item.getId()} item={item} props={props} picked={picked.has(item.getId())} onPick={pick} onMore={more} />
+          <Row key={item.getId()} item={item} props={props} picked={covered(item.getId(), picked)} onPick={pick} onMore={more} />
         ))}
       </div>
     </div>
