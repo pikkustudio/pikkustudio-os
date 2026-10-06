@@ -120,6 +120,7 @@ export function ContentScreen() {
           </EmptyState>
         ) : (
           <ContentTree
+            key={side}
             side={side}
             stamp={stamp}
             canDownload={overview.data?.canDownload ?? false}
