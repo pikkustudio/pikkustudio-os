@@ -112,14 +112,14 @@ export function SitePreview({
   const show = (p: string) => (page === p ? 'block' : 'hidden')
   return (
     <SiteCtx.Provider value={{ mode, comp, own, sel, tr }}>
-      <div className="relative flex items-start justify-center overflow-auto rounded-card bg-surface-3 p-4.5">
-        <div data-device={device === 'computer' ? undefined : device} className="group/wrap w-full max-w-full self-start transition-[max-width] duration-420 ease-[cubic-bezier(.16,1,.3,1)] data-[device=phone]:max-w-97.5 data-[device=tablet]:max-w-192">
+      <div className={`relative flex justify-center overflow-auto rounded-card ${device === 'computer' ? 'items-stretch bg-(--s-bg)' : 'items-start bg-surface-3 p-4.5'}`}>
+        <div data-device={device === 'computer' ? undefined : device} className={`group/wrap w-full max-w-full ${device === 'computer' ? 'self-stretch' : 'self-start'} transition-[max-width] duration-420 ease-[cubic-bezier(.16,1,.3,1)] data-[device=phone]:max-w-97.5 data-[device=tablet]:max-w-192`}>
           <div
             key={reloadKey}
             id="site"
             onClick={click}
             style={vars}
-            className="animate-in overflow-hidden rounded-2xl bg-(--s-bg) font-(family-name:--s-bf) text-(--s-ink) shadow-lift duration-400 fade-in-30"
+            className={`animate-in overflow-hidden bg-(--s-bg) font-(family-name:--s-bf) text-(--s-ink) duration-400 fade-in-30 ${device === 'computer' ? 'min-h-full' : 'rounded-2xl shadow-lift'}`}
           >
             <div className={show('home')}>
               <Header name="Sunrise Bakery">
