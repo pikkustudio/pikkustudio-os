@@ -1,7 +1,6 @@
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { PageHead } from '../blocks/PageHead'
 import { Segmented } from '../blocks/Segmented'
-import { SideFrame } from '../directions-changes/parts'
 import { InboxDock, InboxMain } from '../directions-changes/A'
 import { TimelineDock, TimelineMain } from '../directions-changes/B'
 import { BoardDock, BoardMain } from '../directions-changes/C'
@@ -18,7 +17,7 @@ export function ChangesDirectionsScreen() {
   const raw = useSearch({ strict: false }) as { d?: string }
   const d = (['a', 'b', 'c', 'd'].includes(String(raw.d)) ? raw.d : 'a') as keyof typeof WAYS
   const nav = useNavigate()
-  const { Main, Dock, line } = WAYS[d]
+  const { Main, line } = WAYS[d]
   return (
     <div className="flex flex-col gap-6">
       <PageHead crumb="Changes" title="Changes" text={line}>
@@ -26,9 +25,6 @@ export function ChangesDirectionsScreen() {
       </PageHead>
       <div className="flex items-start gap-6">
         <Main />
-        <SideFrame>
-          <Dock />
-        </SideFrame>
       </div>
     </div>
   )

@@ -142,3 +142,16 @@ export const LABEL: Record<State, string> = {
 
 export const byState = (s: State) => CHANGES.filter((c) => c.state === s)
 export const inSet = (id: string) => CHANGES.filter((c) => c.set === id)
+
+export type Facts = { pages: string[]; checked: string[]; cost: string; where: string; by: string; took: string }
+
+export const FACTS: Record<string, Facts> = {
+  c1: { pages: ['Class page', 'Booking confirmation email'], checked: ['14 checks passed', 'Tom tried it and booked two seats'], cost: '0.40 of AI credit', where: 'On your copy only. Not on your preview or live site yet.', by: 'Waiting for you', took: '4 minutes' },
+  c2: { pages: ['Class list'], checked: ['6 checks passed'], cost: '0.15 of AI credit', where: 'On your copy only. Not on your preview or live site yet.', by: 'Waiting for you', took: '2 minutes' },
+  c3: { pages: ['Project settings'], checked: ['Not finished yet'], cost: '0.05 so far', where: 'Not started on your preview yet.', by: 'You asked for it', took: 'Running for 6 minutes' },
+  c4: { pages: ['Virtual users'], checked: ['Not finished yet'], cost: '0.10 so far', where: 'Not started on your preview yet.', by: 'Pikku decided this was needed', took: 'Running for 4 minutes' },
+  c5: { pages: ['Every page with a Book now button'], checked: ['Not started'], cost: 'About 0.05', where: 'Not started.', by: 'You asked for it', took: 'Not started' },
+  c6: { pages: ['Class list', 'German and English text'], checked: ['Not started'], cost: 'About 0.05', where: 'Not started.', by: 'The live site reported it', took: 'Not started' },
+  c7: { pages: ['Class page', 'New waiting list', 'New email'], checked: ['Not started'], cost: 'About 1.20', where: 'Set aside. Nothing was changed.', by: 'You set it aside', took: 'Not started' },
+  c8: { pages: ['Classes', 'Booking', 'Emails'], checked: ['42 checks passed', 'Hana, Tom and Priya all finished'], cost: '3.80 of AI credit', where: 'On your preview site. Not on your live site.', by: 'You approved it on Monday', took: '1 hour 10 minutes' },
+}

@@ -1,3 +1,4 @@
+import { ChangesDock } from '../directions-changes/ChangesDock'
 import { Link, Outlet, useLocation, useNavigate, useSearch } from '@tanstack/react-router'
 import { useEffect, useMemo, useState, type ComponentType, type ReactNode } from 'react'
 import { m } from '@/i18n/messages'
@@ -399,6 +400,7 @@ export function ShellLayout() {
                 </button>
               </div>
             ) : null}
+            {panel ? <ChangesDock /> : null}
             {panel === 'updates' ? (
               <div className="flex min-h-0 flex-1 flex-col overflow-auto px-6 pt-5 pb-7">
                 <div className="flex flex-col gap-3.5">
