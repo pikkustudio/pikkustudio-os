@@ -1,7 +1,7 @@
 import type { LocationRewrite } from '@tanstack/react-router'
 
 const OUTSIDE = new Set(['projects', 'secrets', 'studio-metrics', 'new-project', 'new-team', 'accept-invite', 'sign-in', 'your-name', 'choose-ai'])
-const PAGES = new Set(['overview', 'prototype', 'build', 'emails', 'translations', 'artifacts', 'knowledge', 'content', 'apps', 'publish', 'explore', 'logs', 'performance', 'metrics', 'studio-metrics', 'assistants', 'virtual-users', 'routines', 'versions', 'lab', 'addons', 'add-ons', 'billing', 'team', 'settings', 'plans', 'ai'])
+const PAGES = new Set(['overview', 'changes-directions', 'prototype', 'build', 'emails', 'translations', 'artifacts', 'knowledge', 'content', 'apps', 'publish', 'explore', 'logs', 'performance', 'metrics', 'studio-metrics', 'assistants', 'virtual-users', 'routines', 'versions', 'lab', 'addons', 'add-ons', 'billing', 'team', 'settings', 'plans', 'ai'])
 
 const unquote = (v: string) => v.replace(/^"(.*)"$/, '$1')
 
