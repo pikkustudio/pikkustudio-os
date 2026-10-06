@@ -1,4 +1,3 @@
-import { PreviewOptionsCtx } from '../lib/previewOptions'
 import { ChangesDock } from '../directions-changes/ChangesDock'
 import { Link, Outlet, useLocation, useNavigate, useSearch } from '@tanstack/react-router'
 import { useContext, useEffect, useMemo, useState, type ComponentType, type ReactNode } from 'react'
@@ -124,8 +123,6 @@ export function ShellLayout() {
     navigate({ to: '.', search: ((prev: object) => ({ ...prev, ...patch })) as never, replace: true })
   const setPanel = (id: PanelId | '') => set({ panel: id || undefined })
   const [pinned, setPinned] = useState(false)
-  const OptionsBody = useContext(PreviewOptionsCtx)
-  const [options, setOptions] = useState(false)
   const [find, setFind] = useState(false)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -348,22 +345,6 @@ export function ShellLayout() {
               <Outlet />
             </div>
           </div>
-
-          {options ? (
-            <aside className="fixed top-0 right-0 z-50 flex h-full w-80 flex-col gap-4 overflow-y-auto border-l border-border bg-muted px-4 py-4 text-[14px] text-foreground">
-              <div className="flex items-center justify-between">
-                <h2 className="text-[20px] font-bold">Options</h2>
-                <button type="button" aria-label="Close options" onClick={() => setOptions(false)} className={iconBtn}>
-                  <X className="size-5.5" />
-                </button>
-              </div>
-              {OptionsBody ? (
-                <OptionsBody />
-              ) : (
-                <p className="text-[14px] text-muted-foreground">This is your real project, so there are no pretend answers to pick from. These options appear in the design preview, where each page can show healthy, empty or broken.</p>
-              )}
-            </aside>
-          ) : null}
 
           <Toaster />
 
@@ -732,15 +713,6 @@ export function ShellLayout() {
               </section>
             ) : null}
             <div className="flex items-center gap-3">
-              <button
-                type="button"
-                aria-expanded={options}
-                onClick={() => setOptions((o) => !o)}
-                className="inline-flex h-11 items-center gap-2 rounded-full border border-border bg-card px-4 text-[15px] font-semibold text-foreground shadow-card hover:bg-secondary"
-              >
-                <SlidersHorizontal className="size-4.5" />
-                Options
-              </button>
               <button
                 type="button"
                 aria-label="Pikku, your helper"
