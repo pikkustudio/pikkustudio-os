@@ -9,6 +9,7 @@ import { modeScope } from './builder-scope.js'
 import { basename, dirname, join, resolve, sep } from 'node:path'
 import { randomBytes, randomUUID } from 'node:crypto'
 import { ConflictError } from '@pikku/core/errors'
+import { generatedSource, isScope, personalSource, projectSource, resolveEffective, setIn, setMany, toEnv, unsetIn, type ScopedSource } from '../lib/sources/index.js'
 import { DEVELOP, MAIN, addWorktree, listWorktrees, layoutRoot, sessionKey, splitSessionKey, cloneLayout, commitPaths, createLayout, ensureWorktree, keepChanges, mainEnv, keepStatus, listVersions, listThemes, type ProjectTheme, type VersionCommit, worktreeConfinement, type KeepResult, type KeepStatus, type StudioWorktree } from './worktree.js'
 import { canConfine, confinedSpawn, type Confinement } from './confine.js'
 import { diskUsage } from './disk.js'
@@ -57,16 +58,6 @@ export interface ProjectApp {
 type RunningApp = ProjectApp & { child: ChildProcess | null }
 
 const GENERATED_SECRETS = ['BETTER_AUTH_SECRET', 'SCENARIO_ACTOR_SECRET']
-
-const parseEnv = (path: string): Record<string, string> => {
-  if (!existsSync(path)) return {}
-  const env: Record<string, string> = {}
-  for (const line of readFileSync(path, 'utf8').split('\n')) {
-    const match = /^\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$/.exec(line)
-    if (match) env[match[1]!] = match[2]!.trim().replace(/^["']|["']$/g, '')
-  }
-  return env
-}
 
 const VITE_CONFIGS = ['vite.config.ts', 'vite.config.mjs', 'vite.config.js']
 const PREVIEW_CONFIG = '__pikku_studio.vite.config.mjs'
@@ -368,6 +359,7 @@ export interface StudioProjectsOptions {
   stopTimeoutMs?: number
   designEntry?: string
   env?: (key: string) => Promise<Record<string, string>>
+  teamSource?: (projectId: string) => ScopedSource | undefined
   waitForPort?: (port: number) => Promise<void>
   startApps?: boolean
   createCommand?: (name: string) => { command: string; args: string[] }
@@ -1005,17 +997,44 @@ export class StudioProjectsService {
     }
   }
 
-  async projectEnv(key: string, projectPath: string): Promise<Record<string, string>> {
-    const own = parseEnv(join(projectPath, '.env'))
-    const path = join(this.home, 'env', `${splitSessionKey(key).id}.env`)
-    const defaults = parseEnv(path)
-    const missing = GENERATED_SECRETS.filter((name) => !own[name] && !defaults[name])
+  cascadeSources(key: string, projectPath: string): ScopedSource[] {
+    const { id } = splitSessionKey(key)
+    const team = this.options.teamSource?.(id)
+    return [
+      personalSource(join(this.home, 'env', `${id}.personal.json`)),
+      ...(team ? [team] : []),
+      projectSource(projectPath),
+      generatedSource(join(this.home, 'env', `${id}.env`)),
+    ]
+  }
+
+  async projectEnv(key: string, projectPath: string, kind: 'dev' | 'ci' = 'dev'): Promise<Record<string, string>> {
+    const { worktree } = splitSessionKey(key)
+    const sources = this.cascadeSources(key, projectPath)
+    const target = { kind, workspace: worktree }
+    const known = await resolveEffective(sources, target)
+    const missing = GENERATED_SECRETS.filter((name) => !known[name])
     if (missing.length > 0) {
-      for (const name of missing) defaults[name] = randomBytes(32).toString('base64')
-      await mkdir(dirname(path), { recursive: true })
-      await writeFile(path, Object.entries(defaults).map(([name, value]) => `${name}=${value}`).join('\n') + '\n', { mode: 0o600 })
+      const generated = sources[sources.length - 1]!
+      await setMany(generated, 'default', Object.fromEntries(missing.map((name) => [name, randomBytes(32).toString('base64')])))
     }
-    return { ...defaults, ...own }
+    return toEnv(await resolveEffective(sources, target))
+  }
+
+  async projectCascade(key: string, projectPath: string, kind: 'dev' | 'ci' = 'dev') {
+    const { worktree } = splitSessionKey(key)
+    const effective = await resolveEffective(this.cascadeSources(key, projectPath), { kind, workspace: worktree })
+    return Object.entries(effective).map(([name, e]) => ({ name, scope: e.scope, source: e.source }))
+  }
+
+  async setPersonal(key: string, projectPath: string, scope: string, name: string, value: string) {
+    if (!isScope(scope)) throw new Error(`"${scope}" is not a scope`)
+    await setIn(this.cascadeSources(key, projectPath)[0]!, scope, name, value)
+  }
+
+  async unsetPersonal(key: string, projectPath: string, scope: string, name: string) {
+    if (!isScope(scope)) throw new Error(`"${scope}" is not a scope`)
+    await unsetIn(this.cascadeSources(key, projectPath)[0]!, scope, name)
   }
 
   touch(key: string) {
