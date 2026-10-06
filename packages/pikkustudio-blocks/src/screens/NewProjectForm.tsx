@@ -47,6 +47,7 @@ export function NewProjectForm({
 }) {
   const [mine, setMine] = useState('')
   const [tooBig, setTooBig] = useState(false)
+  const [over, setOver] = useState(false)
   const picker = useRef<HTMLInputElement>(null)
   const add = (list: FileList | null) => {
     const next = Array.from(list ?? [])
@@ -59,7 +60,24 @@ export function NewProjectForm({
   return (
     <div className="flex max-w-[680px] flex-col gap-4">
       <h1 className="max-w-[20ch] text-[44px] leading-[1.06] font-bold tracking-[-0.02em] text-balance group-data-open/shell:text-[38px] @min-[1700px]/app:text-[52px]">What do you want to make?</h1>
-      <section aria-label="Build an app" className="flex flex-col gap-3.5">
+      <section
+        aria-label="Build an app"
+        className={`flex flex-col gap-3.5 rounded-[22px] transition ${over ? 'outline-2 outline-offset-8 outline-dashed outline-hero-ink' : ''}`}
+        onDragOver={(e) => {
+          if (!e.dataTransfer.types.includes('Files')) return
+          e.preventDefault()
+          setOver(true)
+        }}
+        onDragLeave={(e) => {
+          if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setOver(false)
+        }}
+        onDrop={(e) => {
+          if (!e.dataTransfer.files.length) return
+          e.preventDefault()
+          setOver(false)
+          add(e.dataTransfer.files)
+        }}
+      >
         <label htmlFor="idea" className="text-[17px] font-bold">
           Build an app
         </label>
@@ -78,7 +96,7 @@ export function NewProjectForm({
               </button>
             </span>
           ))}
-          {files.length === 0 ? <span className="text-[14.5px] text-hero-ink-2">Pictures, documents or notes Pikku should read first. Optional.</span> : null}
+          {files.length === 0 ? <span className="text-[14.5px] text-hero-ink-2">Drop files here, or add them. Pictures, documents or notes Pikku should read first. Optional.</span> : null}
           {tooBig ? <span role="alert" className="text-[14.5px] font-semibold">A file was left out because it is over 25 MB.</span> : null}
         </div>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-3">
