@@ -1,20 +1,10 @@
-import { m } from '@/i18n/messages'
 import type { ReactNode } from 'react'
 import type { UseQueryResult } from '@tanstack/react-query'
-import { Button } from '../ui/button'
-import { EmptyState } from './EmptyState'
+import { ErrorState } from './ErrorState'
 
 export function QueryState<T>({ query, skeleton, empty, children }: { query: UseQueryResult<T>; skeleton: ReactNode; empty?: (data: T) => ReactNode | null; children: (data: T) => ReactNode }) {
   if (query.isPending) return <div role="status" aria-busy="true">{skeleton}</div>
-  if (query.isError)
-    return (
-      <EmptyState layout="row" title={m.query_state__that_did_not_load()} text={m.query_state__something_went_wrong_on()}>
-        <Button variant="bordered" size="page" type="button" onClick={() => query.refetch()} disabled={query.isFetching}>
-          
-          {m.query_state__try_again()}
-        </Button>
-      </EmptyState>
-    )
+  if (query.isError) return <ErrorState error={query.error} onRetry={() => query.refetch()} retrying={query.isFetching} />
   return <>{empty?.(query.data) ?? children(query.data)}</>
 }
 
