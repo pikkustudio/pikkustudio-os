@@ -104,7 +104,6 @@ function Entry({ c, open, onToggle }: { c: Change; open: boolean; onToggle: () =
             <div className="flex flex-wrap gap-1.5 pt-0.5 text-[13px] text-ink-2">
               <span className="rounded-full bg-secondary px-2.5 py-0.5">Part of: {SETS.find((x) => x.id === c.set)?.title}</span>
               {REAL[c.id].route ? <span className="rounded-full bg-secondary px-2.5 py-0.5">{REAL[c.id].route}</span> : null}
-              <span className="rounded-full bg-secondary px-2.5 py-0.5">{FACTS[c.id].checked[0]}</span>
             </div>
           </div>
           <ChevronDown className={`mt-1 size-5 shrink-0 text-muted-foreground transition-transform ${open ? 'rotate-180' : ''}`} />
