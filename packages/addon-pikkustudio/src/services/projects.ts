@@ -13,6 +13,7 @@ import { generatedSource, projectSource, resolveEffective, setMany, toEnv, type 
 import { DEVELOP, MAIN, addWorktree, listWorktrees, layoutRoot, sessionKey, splitSessionKey, cloneLayout, commitPaths, createLayout, ensureWorktree, saveWorktrees, keepChanges, mainEnv, keepStatus, listVersions, listThemes, type ProjectTheme, type VersionCommit, worktreeConfinement, type KeepResult, type KeepStatus, type StudioWorktree } from './worktree.js'
 import { canConfine, confinedSpawn, type Confinement } from './confine.js'
 import { diskUsage } from './disk.js'
+import { linkDevPikku } from './dev-link.js'
 import { previewViteConfig } from './vite-preview.js'
 
 const execFileAsync = promisify(execFile)
@@ -829,6 +830,7 @@ export class StudioProjectsService {
     const { id } = splitSessionKey(key)
     const entry = await this.entry(id)
     const ready = await this.prepareMain(id)
+    await linkDevPikku(main.projectDir)
     if (!ready) throw new Error('Only projects with a main version can be published')
     const main = { projectDir: ready.dir }
     const kept = { kept: ready.kept }
@@ -1073,6 +1075,7 @@ export class StudioProjectsService {
     return { entry, worktree }
   }
 
+      await linkDevPikku(worktree.projectDir)
   async workspaceLink(key: string): Promise<WorkspaceLink> {
     if (!key.startsWith('cloud:')) throw new Error('Only a cloud project has a workspace link')
     if (!this.account.workspaceLink) throw new Error('Cloud workspaces are not part of this edition')

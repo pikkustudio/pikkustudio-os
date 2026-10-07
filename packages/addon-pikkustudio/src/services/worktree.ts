@@ -12,7 +12,7 @@ const exec = promisify(execFile)
 const git = async (cwd: string, ...args: string[]) =>
   (await exec('git', args, { cwd })).stdout.trim()
 
-const IDENTITY = ['-c', 'user.name=Pikku Studio', '-c', 'user.email=studio@pikku.dev']
+const IDENTITY = ['-c', 'user.name=Pikku Studio', '-c', 'user.email=studio@pikku.dev', '-c', 'gc.auto=0', '-c', 'maintenance.auto=false']
 
 export interface StudioWorktree {
   path: string

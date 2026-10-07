@@ -104,7 +104,7 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
             }
           : fabric
           ? {
-              model: studioModels.get(key) ?? process.env.PIKKU_STUDIO_MODEL ?? env.PIKKU_STUDIO_MODEL ?? 'gemini-flash-lite-latest',
+              model: studioModels.get(key) ?? process.env.PIKKU_STUDIO_MODEL ?? env.PIKKU_STUDIO_MODEL ?? 'deepseek-v4.1-flash',
               proxy: { url: fabric.proxyUrl, key: fabric.apiKey },
             }
           : { provider: env.PIKKU_STUDIO_AI_PROVIDER, model: studioModels.get(key) ?? env.PIKKU_STUDIO_MODEL },

@@ -1,10 +1,11 @@
 import { ChangesPanel } from '../directions-changes/ChangesPanel'
 import { EmptyState } from '../blocks/EmptyState'
+import { NotFoundState } from '../blocks/NotFoundState'
 import { useChangeChat } from '../directions-changes/useChangeChat'
 import { Link, Outlet, useLocation, useNavigate, useSearch } from '@tanstack/react-router'
 import { useContext, useEffect, useMemo, useState, type ComponentType, type ReactNode } from 'react'
 import { m } from '@/i18n/messages'
-import { useProjectKey, useProjectName, useProjectSlug } from '../lib/project'
+import { useProjectKey, useProjectMissing, useProjectName, useProjectSlug } from '../lib/project'
 import { useAddonNav } from '../lib/addon-nav'
 import { usePikkuChat } from '../lib/chat'
 import { LocalAccountName, LocalShellAccount, LocalWorkspaceAbout, SignOutSection } from '../blocks/ShellAccount'
@@ -37,7 +38,7 @@ const NOT_NOW = 'No problem. I will ask again tomorrow.'
 const item =
   'flex w-full items-center gap-3 rounded-lg px-3 text-left font-semibold no-underline transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'
 const PIN_ICON: Record<Movable, LucideIcon> = { 'virtual-users': UserRoundCheck, translations: Globe, artifacts: FileText, content: FolderOpen, apps: Smartphone }
-const PIN_LABEL: Record<Movable, string> = { 'virtual-users': 'Virtual users', translations: 'Translations', artifacts: 'Artifacts', content: m.content__title(), apps: 'Apps' }
+const PIN_LABEL: Record<Movable, string> = { 'virtual-users': 'Virtual users', translations: 'Translations', artifacts: SCREEN_NAME.artifacts, content: m.content__title(), apps: 'Apps' }
 const navItem = `${item} h-9.25 text-[14px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`
 const iconBtn =
   'grid size-11 shrink-0 place-items-center rounded-full text-ink-2 transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'
@@ -116,6 +117,7 @@ function Note({
 export function ShellLayout() {
   const projectName = useProjectName()
   const projectSlug = useProjectSlug()
+  const projectMissing = useProjectMissing()
   const addonNav = useAddonNav()
   const slots = useSlots()
   const Account = slots.ShellAccount ?? LocalShellAccount
@@ -271,7 +273,7 @@ export function ShellLayout() {
                   </Link>
                 ))}
               </div>
-            ) : /\/studio-metrics$/.test(path) || !projectSlug ? null : (
+            ) : /\/studio-metrics$/.test(path) || !projectSlug || projectMissing ? null : (
             <div className="flex flex-col gap-0.5 px-1">
               <div className="mb-1.5 px-3 text-[13px] font-semibold text-muted-foreground">{projectName}</div>
               <Link {...keep} to={'/explore' as never} className={navItem}>
@@ -321,7 +323,15 @@ export function ShellLayout() {
           {/* Page area */}
           <div className="flex min-h-0 min-w-0 flex-1 flex-col pr-0 transition-all duration-420 ease-[cubic-bezier(.16,1,.3,1)] group-data-open/shell:pr-102 @min-[1700px]/app:group-data-open/shell:pr-120">
             <div className={`min-h-0 flex-1 ${fill ? 'overflow-hidden pt-4 pr-6.5 pb-3.5 pl-6' : 'overflow-auto scroll-smooth [scrollbar-width:thin] px-12 pt-9 pb-7 @min-[1700px]/app:px-16 @min-[1700px]/app:pt-11 @min-[1700px]/app:pb-8'}`}>
-              <Outlet />
+              {projectMissing ? (
+                <NotFoundState what={`the project “${projectSlug}”`}>
+                  <Button asChild variant="hero" size="pageLg">
+                    <Link {...keep} to="/projects">{m.not_found__projects()}</Link>
+                  </Button>
+                </NotFoundState>
+              ) : (
+                <Outlet />
+              )}
             </div>
           </div>
 

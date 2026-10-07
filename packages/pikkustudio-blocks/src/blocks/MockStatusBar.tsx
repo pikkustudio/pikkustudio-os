@@ -1,11 +1,14 @@
+import { useState } from 'react'
 import { Sparkles } from 'lucide-react'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { m } from '@/i18n/messages'
 import { useProjectKey } from '../lib/project'
 import { Button } from '../ui/button'
+import { MockPlanPanel } from './MockPlanPanel'
 
 export function MockStatusBar() {
   const key = useProjectKey()
+  const [open, setOpen] = useState(false)
   const status = usePikkuQuery('studio:mockStatus', { key }, { enabled: !!key, refetchInterval: 15000 } as never)
   if (status.isError) {
     return (
@@ -24,13 +27,11 @@ export function MockStatusBar() {
       <span className="text-px145 text-ink-2" role="status">
         {data.screens === 1 ? m.mock_status__one() : m.mock_status__many({ count: data.screens })}
       </span>
-      <div className="flex items-center gap-3">
-        <span className="text-px145 text-muted-foreground">{m.mock_status__coming_next()}</span>
-        <Button variant="default" size="compact" type="button" disabled>
-          <Sparkles className="size-4.5" />
-          {m.mock_status__make_it_real()}
-        </Button>
-      </div>
+      <Button variant="default" size="compact" type="button" data-testid="make-it-real" aria-haspopup="dialog" onClick={() => setOpen(true)}>
+        <Sparkles className="size-4.5" />
+        {m.mock_status__make_it_real()}
+      </Button>
+      {open ? <MockPlanPanel onClose={() => setOpen(false)} /> : null}
     </div>
   )
 }

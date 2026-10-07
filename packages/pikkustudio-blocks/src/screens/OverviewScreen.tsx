@@ -5,7 +5,7 @@ import { useContext, useState } from 'react'
 import { useProjectKey, useProjectName } from '../lib/project'
 import { useProjectQuery } from '../lib/projectRpc'
 import { Button } from '../ui/button'
-import { Check, ChevronRight, CircleAlert, ExternalLink, Info, MessageCircle, RotateCw, Blocks } from 'lucide-react'
+import { Check, ChevronRight, CircleAlert, Info, MessageCircle, RotateCw, Blocks } from 'lucide-react'
 import { ShellCtx } from '../lib/shell'
 import { keep } from '../lib/links'
 
@@ -95,10 +95,10 @@ export function OverviewScreen() {
                   See all updates
                 </Button>
                 <Button asChild variant="heroGhost" size="pageLg">
-                  <a href="/prototype" target="_blank" rel="noreferrer">
-                    <ExternalLink className="size-4.5" />
+                  <Link {...keep} to="/design">
+                    <ChevronRight className="size-4.5" />
                     Open your app
-                  </a>
+                  </Link>
                 </Button>
                 <Button variant="heroGhost" size="pageLg" type="button" onClick={check} disabled={checking} aria-busy={checking}>
                   {checking ? (
@@ -121,10 +121,10 @@ export function OverviewScreen() {
                   Describe what you want
                 </Button>
                 <Button asChild variant="heroGhost" size="pageLg">
-                  <a href="/prototype" target="_blank" rel="noreferrer">
-                    <ExternalLink className="size-4.5" />
+                  <Link {...keep} to="/design">
+                    <ChevronRight className="size-4.5" />
                     Open your app
-                  </a>
+                  </Link>
                 </Button>
                 <Button variant="heroGhost" size="pageLg" type="button" onClick={check} disabled={checking} aria-busy={checking}>
                   {checking ? (
