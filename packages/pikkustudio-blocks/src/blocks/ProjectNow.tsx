@@ -1,4 +1,4 @@
-import { Check, Cloud, CircleAlert, Laptop } from 'lucide-react'
+import { Check, Cloud, CircleAlert, Globe, Laptop } from 'lucide-react'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { EmptyState } from './EmptyState'
@@ -43,7 +43,7 @@ export function WhatIsOnline({ stages, calm, online }: { stages: Stage[]; calm: 
   if (!stages.length)
     return (
       <Section title="What is online">
-        <EmptyState layout="row" title="Nothing is online yet." text="When you put this project on the internet, you will see how it is doing here." />
+        <EmptyState layout="row" icon={Globe} title="Nothing is online yet." text="When you put this project on the internet, you will see how it is doing here." />
       </Section>
     )
   if (!calm.length) return null

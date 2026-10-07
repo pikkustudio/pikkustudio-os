@@ -20,7 +20,7 @@ export function ProjectActions({ item, onRestore, className }: { item: Project; 
             </Button>
           ) : item.state === 'sketch' ? (
             <Button asChild variant="default" size="compact">
-              <Link {...keep} to="/artifacts" search={((s: object) => ({ ...s, project: item.slug ?? item.id })) as any}>
+              <Link {...keep} to="/overview" search={((s: object) => ({ ...s, project: item.slug ?? item.id })) as any}>
                 {goesTo.sketch}
                 <ArrowRight className="size-4.5" />
               </Link>

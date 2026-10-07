@@ -1,6 +1,6 @@
 import { m } from '@/i18n/messages'
 import { useState, type ReactNode } from 'react'
-import { Globe, Lock, Upload } from 'lucide-react'
+import { FolderOpen, Globe, Lock, Upload } from 'lucide-react'
 import { Button } from '../ui/button'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { absoluteLink, saveLink } from '../lib/content'
@@ -115,7 +115,7 @@ export function ContentScreen() {
         ) : !root.data.supported ? (
           <EmptyState layout="row" title={m.content__cannot_list_title()} text={m.content__cannot_list_text()} />
         ) : root.data.folders.length === 0 && root.data.files.length === 0 ? (
-          <EmptyState layout="row" title={isPublic ? m.content__nothing_public_title() : m.content__nothing_private_title()} text={m.content__nothing_text()}>
+          <EmptyState layout="row" icon={FolderOpen} title={isPublic ? m.content__nothing_public_title() : m.content__nothing_private_title()} text={m.content__nothing_text()}>
             <Button type="button" size="page" onClick={() => setUploading(true)}>{m.content__add_a_file()}</Button>
           </EmptyState>
         ) : (

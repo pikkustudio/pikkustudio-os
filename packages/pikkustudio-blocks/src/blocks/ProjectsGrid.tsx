@@ -1,6 +1,6 @@
 import { m } from '@/i18n/messages'
 import { useState } from 'react'
-import { LayoutGrid, List, Search } from 'lucide-react'
+import { LayoutGrid, List, Search, SearchX } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { EmptyState } from './EmptyState'
@@ -64,7 +64,7 @@ export function ProjectsGrid({ items, onRestore }: { items: Project[]; onRestore
           ))}
         </div>
       ) : (
-        <EmptyState layout="row" title={m.projects_grid__no_projects_match_that()} text={m.projects_grid__try_a_different_word()}>
+        <EmptyState layout="row" icon={SearchX} title={m.projects_grid__no_projects_match_that()} text={m.projects_grid__try_a_different_word()}>
           <Button variant="bordered" size="page" type="button" onClick={reset}>
             
             {m.projects_grid__show_all_projects()}

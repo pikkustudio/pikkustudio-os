@@ -6,6 +6,7 @@ import { Page } from '../blocks/Page'
 import { PageHead } from '../blocks/PageHead'
 import { TransRows } from '../blocks/TransRows'
 import { EmptyState } from '../blocks/EmptyState'
+import { Languages } from 'lucide-react'
 import { CardsSkeleton, QueryState } from '../blocks/QueryState'
 import { AskPikku } from '../blocks/AskPikku'
 import type { TransString } from '../types/translations'
@@ -37,7 +38,7 @@ function Editor({ app, projectKey }: { app: I18nApp; projectKey: string }) {
   }
   if (!locales.length)
     return (
-      <EmptyState layout="row" title="Only one language so far." text="Ask Pikku to add another language and translate everything for you.">
+      <EmptyState layout="row" icon={Languages} title="Only one language so far." text="Ask Pikku to add another language and translate everything for you.">
         <AskPikku label="Add a language" prompt="I would like to add another language to this app. Which one should it be? Tell me the language and I will work out the right locale, then translate everything." />
       </EmptyState>
     )
@@ -59,7 +60,7 @@ export function TranslationsScreen() {
               <Editor key={app.app} app={app} projectKey={key} />
             </div>
           ) : (
-            <EmptyState layout="row" title="Nothing to translate yet." text="Once your app has screens with wording, it will show up here." />
+            <EmptyState layout="row" icon={Languages} title="Nothing to translate yet." text="Once your app has screens with wording, it will show up here." />
           )
         }}
       </QueryState>

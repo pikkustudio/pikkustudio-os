@@ -122,7 +122,7 @@ export function ArtifactsExploreScreen() {
       skeleton={<CardsSkeleton count={3} />}
       empty={(data) =>
         data.artifacts.some((a) => a.kind === 'Design') ? null : (
-          <EmptyState layout="row" title="No ideas yet" text="The directions show up here as soon as they are ready." />
+          <EmptyState layout="row" icon={Sparkles} title="No ideas yet" text="The directions show up here as soon as they are ready." />
         )
       }
     >

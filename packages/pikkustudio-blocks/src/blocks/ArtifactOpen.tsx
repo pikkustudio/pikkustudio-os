@@ -2,7 +2,7 @@ import { m } from '@/i18n/messages'
 import { useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { keep } from '../lib/links'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, FileQuestion } from 'lucide-react'
 import { Button } from '../ui/button'
 import { EmptyState } from './EmptyState'
 import { PreviewBar } from './PreviewBar'
@@ -22,7 +22,7 @@ export function ArtifactOpen({ item, all }: { item?: Artifact; all: Artifact[] }
   const [reloadKey, setReloadKey] = useState(0)
   if (!item)
     return (
-      <EmptyState layout="row" title={m.artifact_open__we_could_not_find()} text={m.artifact_open__it_may_have_been()}>
+      <EmptyState layout="row" icon={FileQuestion} title={m.artifact_open__we_could_not_find()} text={m.artifact_open__it_may_have_been()}>
         <Button asChild variant="bordered" size="page">
           <Link {...keep} to="/artifacts">{m.artifact_open__see_all_artifacts()}</Link>
         </Button>

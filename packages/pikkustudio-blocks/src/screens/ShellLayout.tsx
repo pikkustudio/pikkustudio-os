@@ -535,12 +535,12 @@ export function ShellLayout() {
               <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-auto px-6 pt-5 pb-7">
                 <section className="flex flex-col gap-3.5">
                   <h3 className="text-[18px] font-bold tracking-[-0.012em] text-balance">Settings</h3>
-                  {[
+                  {([
                     [User, 'Your name and photo', <AccountName key="name" />],
                     [Globe, 'Language', 'English'],
                     [Bell, 'Tell me when', 'Pikku needs you, or something goes wrong'],
                     [Palette, 'Looks', 'Match this computer'],
-                  ].map(([Icon, title, text]) => (
+                  ] as [LucideIcon, string, ReactNode][]).map(([Icon, title, text]) => (
                     <button key={title as string} type="button" className="flex items-start gap-3.5 rounded-lg text-left transition-colors duration-140 hover:bg-secondary">
                       <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-secondary text-ink-2">
                         <Icon className="size-5" />

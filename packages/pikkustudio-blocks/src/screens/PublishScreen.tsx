@@ -2,6 +2,7 @@ import { useContext } from 'react'
 import { Button } from '../ui/button'
 import { useProjectName } from '../lib/project'
 import { EmptyState } from '../blocks/EmptyState'
+import { Rocket } from 'lucide-react'
 import { PageHead } from '../blocks/PageHead'
 import { PublishHosts } from '../blocks/PublishHosts'
 import { useSlots } from '../lib/slots'
@@ -23,6 +24,7 @@ export function PublishScreen() {
       {view === 'empty' ? (
         <EmptyState
           layout="row"
+          icon={Rocket}
           title="There is nothing to publish yet."
           text="Your app has no pages yet. Tell Pikku what you want to make, and once something is built you can put it online from here."
         >

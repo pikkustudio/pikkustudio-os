@@ -4,6 +4,7 @@ import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/ap
 import { Page } from '../blocks/Page'
 import { PageHead } from '../blocks/PageHead'
 import { EmptyState } from '../blocks/EmptyState'
+import { KeyRound } from 'lucide-react'
 import { QueryState } from '../blocks/QueryState'
 import { SecretForm } from '../blocks/SecretForm'
 import { SecretsHero } from '../blocks/SecretsHero'
@@ -65,7 +66,7 @@ export function SecretsScreen() {
               skeleton={<div className="h-24 animate-pulse rounded-card border border-border bg-secondary" />}
               empty={(data) =>
                 data.secrets.length ? null : (
-                  <EmptyState layout="row" title="Nothing saved yet." text="Add a secret and your projects can use it.">
+                  <EmptyState layout="row" icon={KeyRound} title="Nothing saved yet." text="Add a secret and your projects can use it.">
                     <Button type="button" size="page" onClick={() => open('', false)}>
                       Add a secret
                     </Button>

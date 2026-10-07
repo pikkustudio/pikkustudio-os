@@ -1,7 +1,7 @@
 import type { UseQueryResult } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { Plus } from 'lucide-react'
+import { FolderPlus, Plus } from 'lucide-react'
 import { usePikkuMutation } from '@project/functions-sdk/pikku/api.gen'
 import { Button } from '../ui/button'
 import { Page } from '../blocks/Page'
@@ -69,7 +69,7 @@ export function ProjectsScreen() {
         skeleton={<CardsSkeleton />}
         empty={(items) =>
           items.length ? null : (
-            <EmptyState layout="row" title="You have no projects yet." text="Start one and it will show up here.">
+            <EmptyState layout="row" icon={FolderPlus} title="You have no projects yet." text="Start one and it will show up here.">
               <Button asChild size="page">
                 <Link {...keep} to="/new-project">New project</Link>
               </Button>

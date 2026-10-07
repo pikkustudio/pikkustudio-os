@@ -1,6 +1,6 @@
 import { m } from '@/i18n/messages'
 import { useState } from 'react'
-import { Search } from 'lucide-react'
+import { Search, Sparkles } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
@@ -22,7 +22,7 @@ export function ArtifactsGallery({ view, items, onAsk }: { items: Artifact[]; vi
 
   if (!items.length)
     return (
-      <EmptyState layout="row" title={m.artifacts_gallery__nothing_has_been_made()} text={m.artifacts_gallery__designs_pages_and_documents()}>
+      <EmptyState layout="row" icon={Sparkles} title={m.artifacts_gallery__nothing_has_been_made()} text={m.artifacts_gallery__designs_pages_and_documents()}>
         <Button variant="bordered" size="page" type="button" onClick={() => onAsk(m.artifacts_gallery__poster_request())}>
           <PikkuDot />
           

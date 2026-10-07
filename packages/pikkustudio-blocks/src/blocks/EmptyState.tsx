@@ -1,26 +1,45 @@
 import type { ReactNode } from 'react'
-import { cva, type VariantProps } from 'class-variance-authority'
+import { Inbox } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+import type { VariantProps } from 'class-variance-authority'
+import { cva } from 'class-variance-authority'
 
-const box = cva('flex gap-5 rounded-[22px] border-2 border-dashed border-input p-7 text-ink-2', {
-  variants: { layout: { column: 'flex-col items-start', row: 'items-center' } },
+const box = cva('flex flex-col items-center gap-4 rounded-card border border-border bg-card px-6 py-9 text-center shadow-card', {
+  variants: { layout: { column: '', row: '' } },
   defaultVariants: { layout: 'column' },
 })
 
-export function EmptyState({ title, text, children, layout }: { title: string; text: string; children?: ReactNode } & VariantProps<typeof box>) {
+function Spot({ icon: Icon }: { icon: LucideIcon }) {
+  return (
+    <div className="relative grid size-32 shrink-0 place-items-center" aria-hidden="true">
+      <svg viewBox="0 0 128 128" className="absolute inset-0 size-full">
+        <circle cx="64" cy="66" r="56" className="fill-secondary" />
+        <circle cx="98" cy="30" r="20" className="fill-accent" />
+        <circle cx="26" cy="96" r="12" className="fill-surface-3" />
+        <circle cx="64" cy="66" r="40" fill="none" className="stroke-input" strokeWidth="2" strokeDasharray="2 7" strokeLinecap="round" />
+      </svg>
+      <span className="relative grid size-16 place-items-center rounded-card bg-card text-accent-foreground shadow-card">
+        <Icon className="size-8" />
+      </span>
+    </div>
+  )
+}
+
+export function EmptyState({
+  title,
+  text,
+  children,
+  layout,
+  icon = Inbox,
+}: { title: string; text: string; children?: ReactNode; icon?: LucideIcon } & VariantProps<typeof box>) {
   return (
     <div className={box({ layout })}>
-      <span className="size-21 shrink-0 overflow-hidden rounded-card">
-        <svg viewBox="0 0 40 40" className="block size-full" aria-hidden="true">
-          <rect width="40" height="40" className="fill-[#D5E8EB]" />
-          <circle cx="34" cy="6" r="22" className="fill-[#BCD6DA]" />
-          <circle cx="20" cy="20" r="8" fill="none" className="stroke-white" strokeWidth="2" strokeDasharray="2 4" strokeLinecap="round" />
-        </svg>
-      </span>
+      <Spot icon={icon} />
       <div>
-        <b className="mb-1 block font-heading text-[20px] text-foreground">{title}</b>
-        <p className="max-w-ch56 text-[16px] text-pretty">{text}</p>
-        {children ? <div className="mt-3.5 flex flex-wrap items-center gap-3.5">{children}</div> : null}
+        <b className="block font-heading text-[22px] text-foreground">{title}</b>
+        {text ? <p className="mx-auto mt-1 max-w-ch56 text-[16px] text-pretty text-ink-2">{text}</p> : null}
       </div>
+      {children ? <div className="flex flex-wrap items-center justify-center gap-3">{children}</div> : null}
     </div>
   )
 }

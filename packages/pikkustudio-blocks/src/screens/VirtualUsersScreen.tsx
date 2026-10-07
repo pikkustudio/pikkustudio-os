@@ -2,6 +2,7 @@ import { useContext, useState } from 'react'
 import { Button } from '../ui/button'
 import { Art } from '../blocks/ExploreHub'
 import { EmptyState } from '../blocks/EmptyState'
+import { Bot } from 'lucide-react'
 import { ErrorState } from '../blocks/ErrorState'
 import { CardsSkeleton, QueryState } from '../blocks/QueryState'
 import { NextCard } from '../blocks/NextCard'
@@ -44,7 +45,7 @@ export function VirtualUsersScreen() {
       <PageHead crumb={app} title="Virtual users" text="AI stand-ins for the people who use your app. Send one on a visit and they tell you where they got stuck." size="lead" />
 
       <QueryState query={meta} skeleton={<CardsSkeleton count={3} />} empty={() => (users.length === 0 ? (
-        <EmptyState title="Let AI stand-ins try your app before your users do" text="A virtual user pretends to be one kind of person who uses your app: a busy admin, a first-timer, a customer in a hurry. They try to get something done on your preview site and tell you in plain words where they got stuck. They cannot break anything real.">
+        <EmptyState icon={Bot} title="Let AI stand-ins try your app before your users do" text="A virtual user pretends to be one kind of person who uses your app: a busy admin, a first-timer, a customer in a hurry. They try to get something done on your preview site and tell you in plain words where they got stuck. They cannot break anything real.">
           <Button variant="default" size="page" onClick={() => say('Describe the kinds of people who use my app, so they can visit it as virtual users. File it as a change request and say so.')}>
             Ask Pikku to add some
           </Button>
