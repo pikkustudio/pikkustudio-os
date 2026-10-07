@@ -146,6 +146,11 @@ export class BuilderSession {
     const text = message.trim()
     if (!text) throw new Error('Say what you want built first')
     const state = await this.state(key)
+    const logDir = process.env.PIKKU_BUILDER_RUN_LOG
+    if (logDir) {
+      await mkdir(logDir, { recursive: true })
+      await writeFile(join(logDir, `${key}-prompt-${mode}-${Date.now()}.log`), `label=prompt-${mode} key=${key} start=${Date.now()}\n`).catch(() => undefined)
+    }
     state.items.push({ kind: 'user', text, at: Date.now() })
     const request = context ? `${text}\n\n<context>${context}</context>` : text
     if (this.turns.has(key)) {
@@ -252,7 +257,8 @@ export class BuilderSession {
     return this.roleTurn(key, message, 'explore', 'Say what you want explored first')
   }
 
-  private async runOnce(key: string, prompt: string, timeoutMs: number, role: 'explore' | 'inspect' = 'explore'): Promise<{ ok: boolean; output: string }> {
+  private async runOnce(key: string, prompt: string, timeoutMs: number, role: 'explore' | 'inspect' = 'explore', label: string = role): Promise<{ ok: boolean; output: string }> {
+    const startedAt = Date.now()
     const { cwd, ai, env = {}, launch = spawnPi } = await this.resolve(key)
     const skills = await writeSkills(this.home)
     const child = launch(process.execPath, [resolvePi(), '-p', ...piArgs({ ai, skills, role, session: `pikku-${role}-${key}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}` }), prompt], {
@@ -260,15 +266,32 @@ export class BuilderSession {
       env: { ...process.env, ...env, ...piEnv(ai) },
     })
     let output = ''
-    child.stdout?.on('data', (chunk) => (output = (output + chunk).slice(-20_000)))
-    child.stderr?.on('data', (chunk) => (output = (output + chunk).slice(-20_000)))
+    let full = ''
+    const logDir = process.env.PIKKU_BUILDER_RUN_LOG
+    child.stdout?.on('data', (chunk) => {
+      output = (output + chunk).slice(-20_000)
+      if (logDir) full += `[out] ${chunk}`
+    })
+    child.stderr?.on('data', (chunk) => {
+      output = (output + chunk).slice(-20_000)
+      if (logDir) full += `[err] ${chunk}`
+    })
     child.stdin?.end()
-    const timer = setTimeout(() => child.kill(), timeoutMs)
-    const code = await new Promise<number | null>((resolve) => {
-      child.once('error', () => resolve(1))
-      child.once('exit', resolve)
+    let timedOut = false
+    const timer = setTimeout(() => {
+      timedOut = true
+      child.kill()
+    }, timeoutMs)
+    const result = await new Promise<{ code: number | null; signal: NodeJS.Signals | null; error?: string }>((resolve) => {
+      child.once('error', (error) => resolve({ code: 1, signal: null, error: error.message }))
+      child.once('exit', (code, signal) => resolve({ code, signal }))
     })
     clearTimeout(timer)
+    const code = result.code
+    if (logDir) {
+      await mkdir(logDir, { recursive: true })
+      await writeFile(join(logDir, `${key}-${label}-${startedAt}.log`), `label=${label} key=${key} start=${startedAt} ms=${Date.now() - startedAt} code=${code} signal=${result.signal} timedOut=${timedOut} error=${result.error ?? ''}\n${full}`).catch(() => undefined)
+    }
     return { ok: code === 0, output }
   }
 
@@ -287,9 +310,9 @@ export class BuilderSession {
     state.busy = true
     try {
       const full = context ? `${text}\n\n${context}` : text
-      const planned = await this.runOnce(key, PLAN_PROMPT(count, full), 3 * 60_000)
+      const planned = await this.runOnce(key, PLAN_PROMPT(count, full), 3 * 60_000, 'explore', 'plan')
       const briefs = (planned.ok ? parseBriefs(planned.output, count) : null) ?? FALLBACK_BRIEFS.slice(0, count)
-      const made = await Promise.all(briefs.map((brief, i) => this.runOnce(key, DIRECTION_PROMPT(i + 1, count, full, brief), 10 * 60_000)))
+      const made = await this.makeDirections(key, briefs, count, full)
       const ok = made.filter((r) => r.ok).length
       if (!ok) throw new Error(made[0]?.output.trim().split('\n').slice(-4).join('\n') || 'The builder could not make any directions.')
       return ok
@@ -300,6 +323,24 @@ export class BuilderSession {
       state.busy = false
       await this.save(key)
     }
+  }
+
+  private async makeDirections(key: string, briefs: string[], count: number, full: string) {
+    const modeFile = process.env.PIKKU_DIRECTIONS_MODE_FILE
+    const how = (modeFile && existsSync(modeFile) ? (await readFile(modeFile, 'utf8')).trim() : process.env.PIKKU_DIRECTIONS_MODE) || 'parallel'
+    const one = (i: number) => this.runOnce(key, DIRECTION_PROMPT(i + 1, count, full, briefs[i]), 10 * 60_000, 'explore', `direction-${i + 1}`)
+    if (how === 'sequential') {
+      const made: { ok: boolean; output: string }[] = []
+      for (let i = 0; i < briefs.length; i++) made.push(await one(i))
+      return made
+    }
+    if (how === 'staggered') return Promise.all(briefs.map(async (_, i) => (await new Promise((r) => setTimeout(r, i * 10_000)), one(i))))
+    if (how === 'single') {
+      const list = briefs.map((brief, i) => `Direction ${i + 1}: ${brief}`).join('\n')
+      const prompt = `${full}\n\nMake ${count} design directions, one after the other, each strictly with its own brief:\n${list}\n\nFor each direction n write only artifacts/direction-n/index.html, one self-contained page (inline CSS, no scripts, no external files), and artifacts/direction-n/artifact.json as {"kind":"Design","title":"a short name for the direction","summary":"one plain sentence an owner would use about what makes it different","exploration":"first","mode":"extreme"}. Write the files straight away. Do not change the app.`
+      return [await this.runOnce(key, prompt, 20 * 60_000, 'explore', 'single')]
+    }
+    return Promise.all(briefs.map((_, i) => one(i)))
   }
 
   async heal(key: string, problem: string, timeoutMs = 5 * 60_000): Promise<{ ok: boolean; summary: string }> {
