@@ -149,7 +149,9 @@ export async function ensureWorktree(
   }
   if (!existsSync(path)) {
     await mkdir(join(studioHome, 'worktrees'), { recursive: true })
-    await git(repo, 'worktree', 'add', '-q', '-B', branch, path, 'HEAD')
+    // After a wake re-cloned the repo, what the builder had pushed is on the remote: carry on from it.
+    const pushed = await tryGit(repo, 'rev-parse', '--verify', '-q', `refs/remotes/origin/${branch}`)
+    await git(repo, 'worktree', 'add', '-q', '-B', branch, path, pushed.ok ? `origin/${branch}` : 'HEAD')
   }
   const common = await git(path, 'rev-parse', '--git-common-dir')
   return {
@@ -266,6 +268,37 @@ export async function keepChanges(repo: string, worktree: StudioWorktree, env: R
     return { ok: false, reason: 'edited', files }
   }
   return { ok: true, kept }
+}
+
+export type SavedWorktree = { branch: string; committed: boolean; pushed: boolean; error?: string }
+
+/**
+ * Commit what the builder has in each worktree and push its branch. A sandbox that wakes re-clones
+ * the repo, so a branch that only exists here is gone; one that is on the remote is picked up again
+ * by `ensureWorktree`. Never throws: a worktree that cannot be saved is reported, not fatal.
+ */
+export async function saveWorktrees(studioHome: string): Promise<SavedWorktree[]> {
+  const root = join(studioHome, 'worktrees')
+  if (!existsSync(root)) return []
+  const saved: SavedWorktree[] = []
+  for (const name of (await readdir(root)).filter((n) => !n.includes('.stale-'))) {
+    const path = join(root, name)
+    const branch = await tryGit(path, 'symbolic-ref', '--short', '-q', 'HEAD')
+    if (!branch.ok || !branch.output) continue
+    await trackLargeFiles(path).catch(() => [])
+    await tryGit(path, 'add', '-A', ...SCRATCH)
+    const dirty = !(await tryGit(path, 'diff', '--cached', '--quiet')).ok
+    if (dirty) {
+      const done = await tryGit(path, ...IDENTITY, 'commit', '-q', '--no-verify', '-m', 'Save builder work')
+      if (!done.ok) {
+        saved.push({ branch: branch.output, committed: false, pushed: false, error: done.output })
+        continue
+      }
+    }
+    const pushed = await tryGit(path, 'push', '-q', 'origin', branch.output)
+    saved.push({ branch: branch.output, committed: dirty, pushed: pushed.ok, ...(pushed.ok ? {} : { error: pushed.output }) })
+  }
+  return saved
 }
 
 export type VersionCommit = { sha: string; title: string; summary: string; by: string; at: number }

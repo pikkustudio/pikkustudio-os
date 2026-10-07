@@ -10,7 +10,7 @@ import { basename, dirname, join, resolve, sep } from 'node:path'
 import { randomBytes, randomUUID } from 'node:crypto'
 import { ConflictError } from '@pikku/core/errors'
 import { generatedSource, projectSource, resolveEffective, setMany, toEnv, type ScopedSource } from '../lib/sources/index.js'
-import { DEVELOP, MAIN, addWorktree, listWorktrees, layoutRoot, sessionKey, splitSessionKey, cloneLayout, commitPaths, createLayout, ensureWorktree, keepChanges, mainEnv, keepStatus, listVersions, listThemes, type ProjectTheme, type VersionCommit, worktreeConfinement, type KeepResult, type KeepStatus, type StudioWorktree } from './worktree.js'
+import { DEVELOP, MAIN, addWorktree, listWorktrees, layoutRoot, sessionKey, splitSessionKey, cloneLayout, commitPaths, createLayout, ensureWorktree, saveWorktrees, keepChanges, mainEnv, keepStatus, listVersions, listThemes, type ProjectTheme, type VersionCommit, worktreeConfinement, type KeepResult, type KeepStatus, type StudioWorktree } from './worktree.js'
 import { canConfine, confinedSpawn, type Confinement } from './confine.js'
 import { diskUsage } from './disk.js'
 import { previewViteConfig } from './vite-preview.js'
@@ -881,6 +881,11 @@ export class StudioProjectsService {
     if (!root) throw new Error('This project has no worktrees')
     await addWorktree(root, name)
     return listWorktrees(root)
+  /** Commit and push the builder's work so a re-clone on wake does not lose it. */
+  saveWork() {
+    return saveWorktrees(this.home)
+  }
+
   }
 
   async createSession(key: string, name = `s-${randomBytes(2).toString('hex')}`): Promise<string> {

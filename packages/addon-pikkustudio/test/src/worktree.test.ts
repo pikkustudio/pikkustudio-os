@@ -4,7 +4,7 @@ import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSy
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, test } from 'node:test'
-import { ensureWorktree, keepChanges, keepStatus } from '../../src/services/worktree.js'
+import { ensureWorktree, keepChanges, keepStatus, saveWorktrees } from '../../src/services/worktree.js'
 
 const setup = async () => {
   const repo = mkdtempSync(join(tmpdir(), 'studio-keep-'))
@@ -80,5 +80,54 @@ describe('ensureWorktree after the checkout was replaced', () => {
     const kept = readdirSync(join(home, 'worktrees')).filter((n) => n.startsWith('k1.stale-'))
     assert.equal(kept.length, 1)
     assert.equal(readFileSync(join(home, 'worktrees', kept[0], 'draft.ts'), 'utf8'), 'unsaved\n')
+  })
+})
+
+describe('builder work across a wake', () => {
+  test('saved work is pushed, and a re-cloned repo carries on from it', async () => {
+    const sh = (cwd: string, ...args: string[]) => execFileSync('git', args, { cwd, encoding: 'utf8' }).trim()
+    const id = ['-c', 'user.name=t', '-c', 'user.email=t@t']
+    const remote = mkdtempSync(join(tmpdir(), 'studio-remote-'))
+    sh(remote, 'init', '-q', '--bare', '-b', 'main')
+    const seed = mkdtempSync(join(tmpdir(), 'studio-seed-'))
+    sh(seed, 'init', '-q', '-b', 'main')
+    writeFileSync(join(seed, 'app.ts'), 'one\n')
+    sh(seed, 'add', '-A')
+    sh(seed, ...id, 'commit', '-q', '-m', 'start')
+    sh(seed, 'remote', 'add', 'origin', remote)
+    sh(seed, 'push', '-q', 'origin', 'main')
+
+    const home = mkdtempSync(join(tmpdir(), 'studio-home-'))
+    const clone = (dir: string) => execFileSync('git', ['clone', '-q', remote, dir])
+    const first = join(mkdtempSync(join(tmpdir(), 'studio-clone-')), 'repo')
+    clone(first)
+    const worktree = await ensureWorktree(first, home, 'k1')
+    writeFileSync(join(worktree.path, 'orders.ts'), 'orders\n')
+    const saved = await saveWorktrees(home)
+    assert.deepEqual(saved.map((s) => [s.branch, s.committed, s.pushed]), [['studio/k1', true, true]])
+    assert.match(sh(remote, 'branch', '--list', 'studio/k1'), /studio\/k1/)
+
+    // The sandbox wakes: the repo is cloned afresh and the worktree folder is left over from before.
+    const second = join(mkdtempSync(join(tmpdir(), 'studio-clone-')), 'repo')
+    clone(second)
+    const again = await ensureWorktree(second, home, 'k1')
+    assert.equal(readFileSync(join(again.path, 'orders.ts'), 'utf8'), 'orders\n')
+    assert.equal(readFileSync(join(again.path, 'app.ts'), 'utf8'), 'one\n')
+  })
+
+  test('a worktree that cannot be pushed is reported, not thrown', async () => {
+    const repo = mkdtempSync(join(tmpdir(), 'studio-nopush-'))
+    const home = mkdtempSync(join(tmpdir(), 'studio-home-'))
+    const sh = (cwd: string, ...args: string[]) => execFileSync('git', args, { cwd, encoding: 'utf8' }).trim()
+    sh(repo, 'init', '-q', '-b', 'main')
+    writeFileSync(join(repo, 'app.ts'), 'one\n')
+    sh(repo, 'add', '-A')
+    sh(repo, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'start')
+    const worktree = await ensureWorktree(repo, home, 'k1')
+    writeFileSync(join(worktree.path, 'draft.ts'), 'x\n')
+    const [result] = await saveWorktrees(home)
+    assert.equal(result.committed, true)
+    assert.equal(result.pushed, false)
+    assert.ok(result.error)
   })
 })
