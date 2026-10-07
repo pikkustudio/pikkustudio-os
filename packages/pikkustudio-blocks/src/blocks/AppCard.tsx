@@ -54,9 +54,9 @@ export function AppCard({ item }: { item: AppItem }) {
         <span className="text-[14px] text-muted-foreground">{m.app_card__last_worked_on({ when: item.when })}</span>
         <div className="mt-auto flex flex-wrap items-center gap-2 pt-2">
           <Button asChild variant="default" size="compact">
-            <Link {...keep} to="/build">
+            <Link {...keep} to="/design">
               
-              {m.app_card__open_in_build()}
+              {m.app_card__open_in_design()}
               <ArrowRight className="size-4.5" />
             </Link>
           </Button>

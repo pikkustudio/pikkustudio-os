@@ -1,11 +1,12 @@
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { DesignWorkbench } from '../blocks/DesignWorkbench'
+import { MockStatusBar } from '../blocks/MockStatusBar'
 import { sample } from '../mocks/designSample'
 import { useProjectThemes } from '../lib/themes'
 import type { Device, Mode } from '../types/designTypes'
 
 
-export function BuildScreen() {
+export function DesignScreen() {
   const q = useSearch({ strict: false }) as { mode?: Mode; screen?: 'tablet' | 'phone'; app?: 'staff'; pg?: string }
   const navigate = useNavigate()
   const set = (patch: Record<string, unknown>) => navigate({ to: '.', search: ((prev: object) => ({ ...prev, ...patch })) as never, replace: true })
@@ -15,15 +16,20 @@ export function BuildScreen() {
   }
   const app = q.app === 'staff' ? 'staff' : 'pub'
   return (
-    <DesignWorkbench
-      key={themes ? current : 'sample'}
-      mode={q.mode ?? 'theme'}
-      device={q.screen ?? 'computer'}
-      app={app}
-      page={app === 'staff' ? 'staff' : (q.pg ?? 'home')}
-      onMode={(m: Mode) => set({ mode: m === 'theme' ? undefined : m })}
-      onDevice={(d: Device) => set({ screen: d === 'computer' ? undefined : d })}
-      onOpen={(a: 'pub' | 'staff', p: string) => set({ app: a === 'staff' ? 'staff' : undefined, pg: a === 'staff' || p === 'home' ? undefined : p })}
-    />
+    <div className="flex h-full flex-col gap-3">
+      <MockStatusBar />
+      <div className="min-h-0 flex-1">
+      <DesignWorkbench
+        key={themes ? current : 'sample'}
+        mode={q.mode ?? 'theme'}
+        device={q.screen ?? 'computer'}
+        app={app}
+        page={app === 'staff' ? 'staff' : (q.pg ?? 'home')}
+        onMode={(m: Mode) => set({ mode: m === 'theme' ? undefined : m })}
+        onDevice={(d: Device) => set({ screen: d === 'computer' ? undefined : d })}
+        onOpen={(a: 'pub' | 'staff', p: string) => set({ app: a === 'staff' ? 'staff' : undefined, pg: a === 'staff' || p === 'home' ? undefined : p })}
+      />
+      </div>
+    </div>
   )
 }

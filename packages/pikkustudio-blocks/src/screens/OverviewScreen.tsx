@@ -94,7 +94,7 @@ export function OverviewScreen() {
                   See all updates
                 </Button>
                 <Button asChild variant="heroGhost" size="pageLg">
-                  <a href="/prototype/build" target="_blank" rel="noreferrer">
+                  <a href="/prototype" target="_blank" rel="noreferrer">
                     <ExternalLink className="size-4.5" />
                     Open your app
                   </a>
@@ -120,7 +120,7 @@ export function OverviewScreen() {
                   Describe what you want
                 </Button>
                 <Button asChild variant="heroGhost" size="pageLg">
-                  <a href="/prototype/build" target="_blank" rel="noreferrer">
+                  <a href="/prototype" target="_blank" rel="noreferrer">
                     <ExternalLink className="size-4.5" />
                     Open your app
                   </a>

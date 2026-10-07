@@ -8,6 +8,7 @@ import { useAddonNav } from '../lib/addon-nav'
 import { usePikkuChat } from '../lib/chat'
 import { LocalAccountName, LocalShellAccount, LocalWorkspaceAbout, SignOutSection } from '../blocks/ShellAccount'
 import { useSlots } from '../lib/slots'
+import { SCREEN_NAME, agentName } from '../lib/screen-names'
 import { modeForPath, useBuilderChat } from '../lib/builder-chat'
 import { useProjectQuery } from '../lib/projectRpc'
 import { MOVABLE, usePins, type Movable } from '../lib/pins'
@@ -19,7 +20,7 @@ import { AiSpinner } from '../blocks/Spinner'
 import { Button } from '../ui/button'
 import { QuickFind } from '../blocks/QuickFind'
 import { Toaster } from '../blocks/Toaster'
-import { GitPullRequest, type LucideIcon, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, Hammer, Home, Info, Compass, KeyRound, Search, Laptop, LayoutGrid, Mail, MessageCircle, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, User, UserRoundCheck, Wrench, X } from 'lucide-react'
+import { GitPullRequest, type LucideIcon, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, Home, Info, Compass, KeyRound, Search, Laptop, LayoutGrid, Mail, MessageCircle, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, User, UserRoundCheck, Wrench, X } from 'lucide-react'
 
 // The app shell: rail, preview drawer (right edge), Pikku button + bubble, side panels.
 // Every screen route is a child of this layout. Page content lives in the route files.
@@ -162,7 +163,7 @@ export function ShellLayout() {
     setPanel('chat')
   }
   const detach = (label: string) => setAttached((a) => a.filter((x) => x !== label))
-  const fill = useLocation({ select: (l) => /\/(build|artifacts\/[^/]+|routines\/[^/]+)$/.test(l.pathname) || (l.pathname.endsWith('/emails') && !!(l.search as { email?: string }).email) })
+  const fill = useLocation({ select: (l) => /\/(design|artifacts\/[^/]+|routines\/[^/]+)$/.test(l.pathname) || (l.pathname.endsWith('/emails') && !!(l.search as { email?: string }).email) })
   const onArtifacts = useLocation({ select: (l) => l.pathname.endsWith('/artifacts') })
   const onKnowledge = useLocation({ select: (l) => l.pathname.endsWith('/knowledge') })
   const knowledge = useProjectQuery<KnowledgeBundle | null>(projectKey, 'console:getKnowledge', {}, { enabled: onKnowledge, refetchInterval: 5000 })
@@ -200,8 +201,7 @@ export function ShellLayout() {
   const bubbleIsOpen = bubbleOpen ?? false
   const unread = needsPerson && isDismissed
 
-  const agentName = { artifacts: 'Pikku Designer', build: 'Pikku Builder', frontend: 'Pikku Frontend', knowledge: 'Pikku Librarian', emails: 'Pikku Mailer' }
-  const panelTitle = { chat: changeChat.change ? 'This change' : workMode ? agentName[workMode] : 'Talk to Pikku', updates: 'Updates', changes: 'Changes', workspace: 'Your workspace', account: 'Your account' }
+  const panelTitle = { chat: changeChat.change ? 'This change' : workMode ? agentName(workMode) : 'Talk to Pikku', updates: 'Updates', changes: 'Changes', workspace: 'Your workspace', account: 'Your account' }
   const tabs = panel === 'chat' || panel === 'updates' || panel === 'changes'
   const tab =
     '-mb-px inline-flex h-11.5 items-center gap-2 rounded-t-[10px] border-b-3 px-3.5 text-[15px] font-bold transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'
@@ -285,9 +285,9 @@ export function ShellLayout() {
                 <GitPullRequest className="size-5" />
                 Changes
               </Link>
-              <Link {...keep} to="/build" className={navItem}>
-                <Hammer className="size-5" />
-                Build
+              <Link {...keep} to="/design" className={navItem}>
+                <Palette className="size-5" />
+                {SCREEN_NAME.frontend}
               </Link>
               {MOVABLE.filter((id) => pins.includes(id)).map((id) => {
                 const Icon = PIN_ICON[id]
@@ -300,11 +300,11 @@ export function ShellLayout() {
               })}
               <Link {...keep} to="/emails" className={navItem}>
                 <Mail className="size-5" />
-                Emails
+                {SCREEN_NAME.emails}
               </Link>
               <Link {...keep} to="/knowledge" className={navItem}>
                 <BookOpen className="size-5" />
-                Knowledge
+                {SCREEN_NAME.knowledge}
               </Link>
               <Link {...keep} to="/publish" className={navItem}>
                 <Upload className="size-5" />

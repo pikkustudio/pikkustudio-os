@@ -8,7 +8,7 @@ export type WorkMode = 'build' | 'frontend' | 'artifacts' | 'knowledge' | 'email
 
 export const modeForPath = (path: string): WorkMode | null => {
   if (/\/artifacts(\/|$)/.test(path)) return 'artifacts'
-  if (/\/build$/.test(path)) return 'frontend'
+  if (/\/design$/.test(path)) return 'frontend'
   if (/\/knowledge$/.test(path)) return 'knowledge'
   if (/\/emails$/.test(path)) return 'emails'
   return null

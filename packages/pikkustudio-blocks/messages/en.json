@@ -162,7 +162,7 @@
   "preview_bar__reload_preview": "Reload preview",
   "preview_bar__open_in_a_new": "Open in a new tab",
   "preview_bar__what_to_do_on": "What to do on the preview",
-  "app_card__open_in_build": "Open in Build",
+  "app_card__open_in_design": "Open in Design",
   "app_card__change_it": "Change it",
   "app_card__get_the_files": "Get the files",
   "knowledge_browser__nothing_is_written_down": "Nothing is written down yet.",
@@ -455,7 +455,7 @@
   "quick_find__secrets": "Secrets",
   "quick_find__explore": "Explore",
   "quick_find__overview": "Overview",
-  "quick_find__build": "Build",
+  "quick_find__design": "Design",
   "quick_find__translations": "Translations",
   "quick_find__artifacts": "Artifacts",
   "quick_find__knowledge": "Knowledge",
@@ -579,5 +579,11 @@
   "content_tree__selected": "{count} selected",
   "content_tree__clear": "Clear",
   "content_tree__remove_selected": "Remove {count} for good",
-  "content_tree__remove_selected_ask": "Remove selected"
+  "content_tree__remove_selected_ask": "Remove selected",
+  "mock_status__one": "1 screen uses sample data",
+  "mock_status__many": "{count} screens use sample data",
+  "mock_status__make_it_real": "Make it real",
+  "mock_status__coming_next": "Coming next",
+  "mock_status__failed": "We could not check which screens use sample data.",
+  "mock_status__retry": "Try again"
 }
