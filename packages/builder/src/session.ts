@@ -208,12 +208,14 @@ export class BuilderSession {
     child.stderr?.on('data', (chunk) => (stderr = (stderr + chunk).slice(-4000)))
     createInterface({ input: child.stdout! }).on('line', (line) => this.onEvent(key, line))
     child.once('error', (error) => this.push(key, `The builder could not start: ${error.message}`))
-    child.once('exit', (code) => {
+    child.once('exit', (code, signal) => {
       if (this.turns.get(key) === turn) this.turns.delete(key)
       state.busy = false
       if (code && state.items.at(-1)?.kind !== 'error') {
         const lines = stderr.trim().split('\n')
-        this.push(key, (lines.length > 8 ? [...lines.slice(0, 3), '...', ...lines.slice(-4)] : lines).join('\n') || `The builder stopped (${code})`)
+        const text = (lines.length > 8 ? [...lines.slice(0, 3), '...', ...lines.slice(-4)] : lines).join('\n')
+        console.error(`[builder] ${key} exited code=${code} signal=${signal ?? ''}: ${stderr.trim().slice(-500)}`)
+        this.push(key, `${text ? `${text}\n` : ''}The builder stopped (exit ${code}).`)
       }
       for (const item of state.items) if (item.kind === 'tool' && item.status === 'running') item.status = 'error'
       const drive = this.drive(key)
