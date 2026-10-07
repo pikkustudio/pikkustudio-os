@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
-import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, test } from 'node:test'
@@ -57,5 +57,28 @@ describe('keepChanges', () => {
     writeFileSync(join(worktree.path, 'app.ts'), 'two\n')
     assert.deepEqual(await keepChanges(repo, worktree), { ok: false, reason: 'edited', files: ['app.ts'] })
     assert.equal(readFileSync(join(repo, 'app.ts'), 'utf8'), 'editing\n')
+  })
+})
+
+describe('ensureWorktree after the checkout was replaced', () => {
+  test('sets a worktree folder whose git directory is gone aside and makes a fresh one', async () => {
+    const repo = mkdtempSync(join(tmpdir(), 'studio-wake-'))
+    const home = mkdtempSync(join(tmpdir(), 'studio-home-'))
+    const sh = (cwd: string, ...args: string[]) => execFileSync('git', args, { cwd, encoding: 'utf8' }).trim()
+    sh(repo, 'init', '-q', '-b', 'main')
+    writeFileSync(join(repo, 'app.ts'), 'one\n')
+    sh(repo, 'add', '-A')
+    sh(repo, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'start')
+    const first = await ensureWorktree(repo, home, 'k1')
+    writeFileSync(join(first.path, 'draft.ts'), 'unsaved\n')
+    // A wake re-clones the repo: the worktree's admin directory goes, its folder stays.
+    rmSync(join(repo, '.git', 'worktrees'), { recursive: true, force: true })
+    const again = await ensureWorktree(repo, home, 'k1')
+    assert.equal(again.path, first.path)
+    assert.equal(readFileSync(join(again.path, 'app.ts'), 'utf8'), 'one\n')
+    assert.equal(existsSync(join(again.path, 'draft.ts')), false)
+    const kept = readdirSync(join(home, 'worktrees')).filter((n) => n.startsWith('k1.stale-'))
+    assert.equal(kept.length, 1)
+    assert.equal(readFileSync(join(home, 'worktrees', kept[0], 'draft.ts'), 'utf8'), 'unsaved\n')
   })
 })

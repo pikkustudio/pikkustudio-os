@@ -1,6 +1,6 @@
 import { execFile } from 'node:child_process'
 import { existsSync } from 'node:fs'
-import { chmod, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { chmod, mkdir, readdir, readFile, rename, rm, writeFile } from 'node:fs/promises'
 import { randomBytes } from 'node:crypto'
 import { basename, dirname, isAbsolute, join, resolve } from 'node:path'
 import { promisify } from 'node:util'
@@ -140,6 +140,13 @@ export async function ensureWorktree(
   const prefix = await git(repo, 'rev-parse', '--show-prefix')
   const path = join(studioHome, 'worktrees', id)
   const branch = `studio/${id}`
+  // The studio home outlives the checkout: a sandbox that wakes re-clones the repo, and the worktree
+  // folder left behind then names a git directory that is gone. Set the folder aside (it may hold
+  // work) and make a fresh worktree instead of failing every build on it.
+  if (existsSync(path) && !(await git(path, 'rev-parse', '--git-common-dir').then(() => true, () => false))) {
+    await rename(path, `${path}.stale-${Date.now()}`)
+    await git(repo, 'worktree', 'prune')
+  }
   if (!existsSync(path)) {
     await mkdir(join(studioHome, 'worktrees'), { recursive: true })
     await git(repo, 'worktree', 'add', '-q', '-B', branch, path, 'HEAD')
