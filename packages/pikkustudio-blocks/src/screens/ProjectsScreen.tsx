@@ -13,6 +13,8 @@ import { CardsSkeleton, QueryState } from '../blocks/QueryState'
 import { keep } from '../lib/links'
 import { useTeamProjects, type ListedProject } from '../blocks/TeamProjects'
 import { useAccount } from '../lib/onboarding'
+import { useSlots } from '../lib/slots'
+import { LOCAL_TEAM, useTeamSlug } from '../lib/team'
 
 const looks = ['bakery', 'kiln', 'garden', 'dog'] as const
 
@@ -20,15 +22,19 @@ const toCard = (p: ListedProject): Project => ({
   id: p.key,
   slug: p.slug,
   name: p.name,
-  summary: p.location === 'cloud' ? 'In Fabric' : 'On this computer',
+  summary: '',
   look: looks[[...p.key].reduce((n, c) => n + c.charCodeAt(0), 0) % looks.length],
   state: (p.missing || p.location === 'cloud' ? 'sketch' : p.busy ? 'progress' : p.open ? 'running' : 'paused') satisfies ProjectState,
 })
+
+const TeamSlug = () => <>{useTeamSlug()}</>
 
 export function ProjectsScreen() {
   const team = useTeamProjects()
   const projects = { ...team, data: team.data?.map(toCard) } as UseQueryResult<Project[]>
   const signedIn = !!useAccount().data?.signIn
+  const local = useTeamSlug() === LOCAL_TEAM
+  const TeamName = useSlots().TeamName ?? TeamSlug
   const navigate = useNavigate()
   useEffect(() => {
     if (signedIn && projects.isSuccess && projects.data.length === 0) navigate({ to: '/new-project', search: ((prev: object) => prev) as never, replace: true })
@@ -37,7 +43,12 @@ export function ProjectsScreen() {
 
   return (
     <Page gap="snug">
-      <PageHead crumb="On this computer" title="Projects" text="Everything you are making, kept on this computer. Open one to carry on where you stopped." size="lead">
+      <PageHead
+        crumb={local ? 'On this computer' : <>In <TeamName /></>}
+        title="Projects"
+        text={local ? 'Everything you are making, kept on this computer. Open one to carry on where you stopped.' : <>Everything <TeamName /> is making, running on your computer or in the cloud. Open one to carry on where you stopped.</>}
+        size="lead"
+      >
         <Button asChild variant="default" size="page">
           <Link {...keep} to="/new-project">
             <Plus className="size-4.5" />

@@ -17,7 +17,7 @@ const lead = cva('text-pretty text-ink-2', {
   defaultVariants: { size: 'default' },
 })
 
-export function PageHead({ crumb, title, text, children, size, width, ...v }: { crumb: string; title: string; text?: string; children?: ReactNode } & VariantProps<typeof head> & VariantProps<typeof lead> & VariantProps<typeof body>) {
+export function PageHead({ crumb, title, text, children, size, width, ...v }: { crumb: ReactNode; title: string; text?: ReactNode; children?: ReactNode } & VariantProps<typeof head> & VariantProps<typeof lead> & VariantProps<typeof body>) {
   return (
     <div className={head(v)}>
       <div className={body({ width })}>

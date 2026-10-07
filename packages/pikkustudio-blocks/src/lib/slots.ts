@@ -15,6 +15,7 @@ export type Slots = {
   ShellAccount?: ComponentType<{ expanded: boolean; onOpen: () => void; onAccount: () => void }>
   WorkspaceAbout?: ComponentType<WorkspaceAboutProps>
   AccountName?: ComponentType
+  TeamName?: ComponentType
   TeamScope?: ComponentType<TeamScopeProps>
 }
 
