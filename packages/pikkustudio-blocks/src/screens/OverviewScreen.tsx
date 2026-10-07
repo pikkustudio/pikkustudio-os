@@ -1,10 +1,11 @@
 import { PinButton } from '../blocks/PinButton'
+import { EmptyState } from '../blocks/EmptyState'
 import { Link } from '@tanstack/react-router'
 import { useContext, useState } from 'react'
 import { useProjectKey, useProjectName } from '../lib/project'
 import { useProjectQuery } from '../lib/projectRpc'
 import { Button } from '../ui/button'
-import { Check, ChevronRight, CircleAlert, ExternalLink, Info, MessageCircle, RotateCw } from 'lucide-react'
+import { Check, ChevronRight, CircleAlert, ExternalLink, Info, MessageCircle, RotateCw, Blocks } from 'lucide-react'
 import { ShellCtx } from '../lib/shell'
 import { keep } from '../lib/links'
 
@@ -237,21 +238,7 @@ export function OverviewScreen() {
       <section className="flex flex-col gap-3.5" aria-label="What your app is made of">
         <h2 className="text-[24px] leading-[1.2] font-bold tracking-[-0.012em] text-balance">What your app is made of</h2>
         {!Object.values(counts).some(Boolean) ? (
-          <div className="flex items-center gap-5 rounded-[22px] border-2 border-dashed border-input p-7 text-ink-2">
-            <span className="size-21 shrink-0 overflow-hidden rounded-card">
-              <svg viewBox="0 0 40 40" className="block size-full" aria-hidden="true">
-                <rect width="40" height="40" className="fill-art-1" />
-                <circle cx="34" cy="6" r="22" className="fill-art-2" />
-                <circle cx="20" cy="20" r="8" fill="none" className="stroke-white" strokeWidth="2" strokeDasharray="2 4" strokeLinecap="round" />
-              </svg>
-            </span>
-            <div>
-              <b className="mb-1 block font-heading text-[20px] text-foreground">No parts yet.</b>
-              <p className="max-w-ch56 text-[16px] text-pretty">
-                Once Pikku starts building, you will see how many pages, emails, timed jobs and more your app has, and you can open each list.
-              </p>
-            </div>
-          </div>
+          <EmptyState icon={Blocks} title="No parts yet." text="Once Pikku starts building, you will see how many pages, emails, timed jobs and more your app has, and you can open each list." />
         ) : (
           <>
             <p className="-mt-2 text-[15px] text-muted-foreground text-pretty">

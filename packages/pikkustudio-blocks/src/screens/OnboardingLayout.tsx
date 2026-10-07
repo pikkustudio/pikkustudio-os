@@ -1,4 +1,5 @@
 import { Link, Outlet, useLocation, useNavigate, useSearch } from '@tanstack/react-router'
+import { EmptyState } from '../blocks/EmptyState'
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import type { UseQueryResult } from '@tanstack/react-query'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
@@ -8,7 +9,7 @@ import { AiLitellmPanel, AiProviderPanel, providers } from '../blocks/AiConnectP
 import { useSlots } from '../lib/slots'
 import { PanelRow } from '../blocks/ShellAccount'
 import { useAccount, useProjectRun, useRecentProjects, useStartProjectRun, useAttachFile, newProjectName, type ProjectRun } from '../lib/onboarding'
-import { ArrowRight, Bell, Check, CircleAlert, FolderOpen, Laptop, MessageCircle, Pin, ShieldCheck, User, X } from 'lucide-react'
+import { ArrowRight, Bell, Check, CircleAlert, FolderOpen, Laptop, MessageCircle, Pin, ShieldCheck, User, X, CheckCheck } from 'lucide-react'
 
 // The onboarding layout: setup rail (Getting set up), Pikku button + bubble, side panels.
 // Sign in, Choose AI and New project are children of this layout. Page content lives in the route files.
@@ -593,19 +594,7 @@ export function OnboardingLayout() {
                     </div>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-start gap-5 rounded-empty border-2 border-dashed border-input p-7 text-ink-2">
-                    <span className="block size-21 shrink-0 overflow-hidden rounded-art">
-                      <svg viewBox="0 0 40 40" className="block size-full" aria-hidden="true">
-                        <rect width="40" height="40" fill="#D5E8EB" />
-                        <circle cx="34" cy="6" r="22" fill="#BCD6DA" />
-                        <circle cx="20" cy="20" r="8" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeDasharray="2 4" strokeLinecap="round" />
-                      </svg>
-                    </span>
-                    <div>
-                      <b className="mb-1 block font-heading text-[20px] text-foreground">You are all caught up.</b>
-                      <p className="max-w-ch56 text-[16px] text-pretty">Nothing needs you right now. If something does, I will put it here and tell you in plain words.</p>
-                    </div>
-                  </div>
+                  <EmptyState icon={CheckCheck} title="You are all caught up." text="Nothing needs you right now. If something does, I will put it here and tell you in plain words." />
                 )}
               </div>
             ) : null}

@@ -1,10 +1,11 @@
 import { AiSpinner } from '../blocks/Spinner'
+import { EmptyState } from '../blocks/EmptyState'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { Button } from '../ui/button'
 import { Textarea } from '../ui/textarea'
 import { Input } from '../ui/input'
-import { ArrowRight, Check, CircleAlert, Sparkles } from 'lucide-react'
+import { ArrowRight, Check, CircleAlert, Sparkles, Lightbulb } from 'lucide-react'
 import { OnbCtx } from './OnboardingLayout'
 import { NewProjectForm } from './NewProjectForm'
 import { useImportProject, type ProjectRun } from '../lib/onboarding'
@@ -277,21 +278,7 @@ export function NewProjectScreen() {
             {empty ? null : <p className="text-[15px] text-muted-foreground text-pretty">Pick one and I will write the first sentence for you.</p>}
           </div>
           {empty ? (
-            <div className="flex items-center gap-5 rounded-empty border-2 border-dashed border-input p-7 text-ink-2">
-              <span className="block size-21 shrink-0 overflow-hidden rounded-art">
-                <svg viewBox="0 0 40 40" className="block size-full" aria-hidden="true">
-                  <rect width="40" height="40" fill="#D5E8EB" />
-                  <circle cx="34" cy="6" r="22" fill="#BCD6DA" />
-                  <circle cx="20" cy="20" r="8" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeDasharray="2 4" strokeLinecap="round" />
-                </svg>
-              </span>
-              <div>
-                <b className="mb-1 block font-heading text-[20px] text-foreground">No ideas to show right now.</b>
-                <p className="max-w-ch56 text-[16px] text-pretty">
-                  Ideas will appear here as I learn what you like to make. For now, describe it in your own words above, and I will take it from there.
-                </p>
-              </div>
-            </div>
+            <EmptyState icon={Lightbulb} title="No ideas to show right now." text="Ideas will appear here as I learn what you like to make. For now, describe it in your own words above, and I will take it from there." />
           ) : (
             <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-x-5 gap-y-6">
               {sample.ideas.map((t, i) => (

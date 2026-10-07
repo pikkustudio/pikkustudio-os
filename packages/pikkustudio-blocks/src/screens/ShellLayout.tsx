@@ -1,4 +1,5 @@
 import { ChangesPanel } from '../directions-changes/ChangesPanel'
+import { EmptyState } from '../blocks/EmptyState'
 import { useChangeChat } from '../directions-changes/useChangeChat'
 import { Link, Outlet, useLocation, useNavigate, useSearch } from '@tanstack/react-router'
 import { useContext, useEffect, useMemo, useState, type ComponentType, type ReactNode } from 'react'
@@ -20,7 +21,7 @@ import { AiSpinner } from '../blocks/Spinner'
 import { Button } from '../ui/button'
 import { QuickFind } from '../blocks/QuickFind'
 import { Toaster } from '../blocks/Toaster'
-import { GitPullRequest, type LucideIcon, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, Home, Info, Compass, KeyRound, Search, Laptop, LayoutGrid, Mail, MessageCircle, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, User, UserRoundCheck, Wrench, X } from 'lucide-react'
+import { GitPullRequest, type LucideIcon, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, Home, Info, Compass, KeyRound, Search, Laptop, LayoutGrid, Mail, MessageCircle, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, User, UserRoundCheck, Wrench, X, CheckCheck } from 'lucide-react'
 
 // The app shell: rail, preview drawer (right edge), Pikku button + bubble, side panels.
 // Every screen route is a child of this layout. Page content lives in the route files.
@@ -124,7 +125,7 @@ export function ShellLayout() {
   const q = useSearch({ strict: false }) as { view?: View; look?: 'light' | 'dark'; panel?: PanelId; show?: 'done'; project?: string; change?: string }
   const path = useLocation({ select: (l) => l.pathname })
   const project = useLocation({ select: (l) => (l.search as { project?: string }).project })
-  const needsProject = !project && !/\/(projects|secrets|studio-metrics|new-project|sign-in|your-name|choose-ai)$/.test(path)
+  const needsProject = !project && !/\/(projects|secrets|account|studio-metrics|new-project|sign-in|your-name|choose-ai)$/.test(path)
   useEffect(() => {
     if (needsProject) navigate({ to: '/projects', search: ((prev: object) => prev) as never, replace: true })
   }, [needsProject])
@@ -313,7 +314,7 @@ export function ShellLayout() {
             </div>
             )}
             <div className="mt-auto flex flex-col gap-2.5">
-              <Account expanded={panel === 'workspace'} onOpen={() => setPanel('workspace')} onAccount={() => setPanel('account')} />
+              <Account expanded={panel === 'workspace'} onOpen={() => setPanel('workspace')} onAccount={() => navigate({ to: '/account', search: ((prev: object) => ({ ...prev, panel: undefined })) as never })} />
             </div>
           </aside>
 
@@ -412,12 +413,7 @@ export function ShellLayout() {
                     ))}
                   </div>
                 {!pending.length && !pub ? (
-                  <div className="flex flex-col items-start gap-5 rounded-[22px] border-2 border-dashed border-input p-7 text-ink-2">
-                    <div>
-                      <b className="mb-1 block font-heading text-[20px] text-foreground">You are all caught up.</b>
-                      <p className="max-w-ch56 text-[16px] text-pretty">Nothing needs you right now. If something does, I will put it here and tell you in plain words.</p>
-                    </div>
-                  </div>
+                  <EmptyState icon={CheckCheck} title="You are all caught up." text="Nothing needs you right now. If something does, I will put it here and tell you in plain words." />
                 ) : null}
               </div>
             ) : null}
