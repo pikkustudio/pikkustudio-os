@@ -2,7 +2,7 @@ import type { UseQueryResult } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { Plus } from 'lucide-react'
-import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
+import { usePikkuMutation } from '@project/functions-sdk/pikku/api.gen'
 import { Button } from '../ui/button'
 import { Page } from '../blocks/Page'
 import { PageHead } from '../blocks/PageHead'
@@ -11,27 +11,29 @@ import { ProjectsGrid } from '../blocks/ProjectsGrid'
 import type { Project, ProjectState } from '../blocks/ProjectCard'
 import { CardsSkeleton, QueryState } from '../blocks/QueryState'
 import { keep } from '../lib/links'
+import { useTeamProjects, type ListedProject } from '../blocks/TeamProjects'
 import { useAccount } from '../lib/onboarding'
 
 const looks = ['bakery', 'kiln', 'garden', 'dog'] as const
 
-const toCard = (p: { key: string; slug: string; owner?: string; name: string; location: string; open: boolean; missing: boolean }): Project => ({
+const toCard = (p: ListedProject): Project => ({
   id: p.key,
   slug: p.slug,
   name: p.name,
   summary: p.location === 'cloud' ? 'In Fabric' : 'On this computer',
   look: looks[[...p.key].reduce((n, c) => n + c.charCodeAt(0), 0) % looks.length],
-  state: (p.missing ? 'paused' : p.open ? 'running' : 'sketch') satisfies ProjectState,
+  state: (p.missing || p.location === 'cloud' ? 'sketch' : p.busy ? 'progress' : p.open ? 'running' : 'paused') satisfies ProjectState,
 })
 
 export function ProjectsScreen() {
-  const projects = usePikkuQuery('studio:listProjects', {}, { select: (d: { projects: Parameters<typeof toCard>[0][] }) => d.projects.map(toCard) } as never) as unknown as UseQueryResult<Project[]>
+  const team = useTeamProjects()
+  const projects = { ...team, data: team.data?.map(toCard) } as UseQueryResult<Project[]>
   const signedIn = !!useAccount().data?.signIn
   const navigate = useNavigate()
   useEffect(() => {
     if (signedIn && projects.isSuccess && projects.data.length === 0) navigate({ to: '/new-project', search: ((prev: object) => prev) as never, replace: true })
   }, [signedIn, projects.isSuccess, projects.data?.length])
-  const reopen = usePikkuMutation('studio:openProject', { onSuccess: () => projects.refetch() })
+  const reopen = usePikkuMutation('studio:openProject', { onSuccess: () => team.refetch() })
 
   return (
     <Page gap="snug">

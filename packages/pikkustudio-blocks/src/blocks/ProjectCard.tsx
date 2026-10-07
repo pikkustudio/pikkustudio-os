@@ -7,7 +7,7 @@ import { keep } from '../lib/links'
 import { ProjectActions } from './ProjectActions'
 import { ProjectThumb, type ProjectLook } from './ProjectThumb'
 
-export type ProjectState = 'running' | 'live' | 'sketch' | 'paused'
+export type ProjectState = 'running' | 'progress' | 'live' | 'sketch' | 'paused'
 
 export type Project = {
   id: string
@@ -23,6 +23,7 @@ export type Project = {
 
 export const chips = (): Record<ProjectState, { text: string; icon: typeof Check; variant: 'pillOk' | 'pillInfo' | 'pillMute' }> => ({
   running: { text: m.project_card__running_well(), icon: Check, variant: 'pillOk' },
+  progress: { text: 'Pikku is working', icon: Sparkles, variant: 'pillInfo' },
   live: { text: m.project_card__live(), icon: Check, variant: 'pillOk' },
   sketch: { text: m.project_card__in_the_sketch_stage(), icon: Sparkles, variant: 'pillInfo' },
   paused: { text: m.project_card__paused(), icon: Pause, variant: 'pillMute' },
@@ -38,10 +39,12 @@ export function ProjectCard({ item, onRestore }: { item: Project; onRestore: () 
       </div>
       <div className="flex flex-1 flex-col gap-2.5 px-4.5 py-4">
         <div className="flex flex-wrap items-center gap-2">
-          <Badge variant={chip.variant}>
-            <Icon strokeWidth={2.5} />
-            {chip.text}
-          </Badge>
+          {item.state === 'sketch' ? null : (
+            <Badge variant={chip.variant}>
+              <Icon strokeWidth={2.5} />
+              {chip.text}
+            </Badge>
+          )}
           {item.note ? (
             <Badge variant="warn">
               <TriangleAlert strokeWidth={2.5} />

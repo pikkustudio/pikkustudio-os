@@ -16,10 +16,12 @@ export function ProjectRow({ item, onRestore }: { item: Project; onRestore: () =
       <div className="flex min-w-60 flex-1 flex-col">
         <div className="flex flex-wrap items-center gap-2">
           <b className="text-[17px] leading-[1.3]">{item.name}</b>
-          <Badge variant={chip.variant}>
-            <Icon strokeWidth={2.5} />
-            {chip.text}
-          </Badge>
+          {item.state === 'sketch' ? null : (
+            <Badge variant={chip.variant}>
+              <Icon strokeWidth={2.5} />
+              {chip.text}
+            </Badge>
+          )}
           {item.note ? (
             <Badge variant="warn">
               <TriangleAlert strokeWidth={2.5} />

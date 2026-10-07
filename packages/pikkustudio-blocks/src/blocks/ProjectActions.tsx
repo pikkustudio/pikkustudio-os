@@ -5,12 +5,12 @@ import { Button } from '../ui/button'
 import { keep } from '../lib/links'
 import type { Project } from './ProjectCard'
 
-const goesTo = { running: 'Open', live: 'Open', sketch: 'Continue', paused: 'Restore' }
+const goesTo = { running: 'Open', progress: 'Open', live: 'Open', sketch: 'Continue', paused: 'Restore' }
 
 export function ProjectActions({ item, onRestore, className }: { item: Project; onRestore: () => void; className?: string }) {
   return (
     <div className={className}>
-          {item.state === 'running' || item.state === 'live' ? (
+          {item.state === 'running' || item.state === 'progress' || item.state === 'live' ? (
             <Button asChild variant="default" size="compact">
               <Link {...keep} to="/overview" search={((s: object) => ({ ...s, project: item.slug ?? item.id })) as any}>
                 

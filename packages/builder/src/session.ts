@@ -116,6 +116,10 @@ export class BuilderSession {
     return join(this.home, 'transcripts', `${key}.json`)
   }
 
+  isBusy(key: string): boolean {
+    return this.states.get(key)?.busy ?? false
+  }
+
   async state(key: string): Promise<BuilderState> {
     const cached = this.states.get(key)
     if (cached) return cached

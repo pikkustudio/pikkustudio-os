@@ -9,9 +9,9 @@ import { ProjectRow } from './ProjectRow'
 import { Segmented } from './Segmented'
 
 const groups: Record<string, ProjectState[]> = {
-  all: ['running', 'live', 'sketch', 'paused'],
+  all: ['running', 'progress', 'live', 'sketch', 'paused'],
   running: ['running', 'live'],
-  progress: ['sketch'],
+  progress: ['progress'],
   paused: ['paused'],
 }
 
