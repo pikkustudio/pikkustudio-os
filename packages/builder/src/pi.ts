@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { writeDirectionsSkill } from './directions-skill.js'
 
 export interface BuilderAi {
   provider?: string
@@ -67,8 +68,8 @@ const PROVIDERS: Record<string, string> = { gemini: 'google' }
 
 export const EXPLORE_PROMPT = [
   'You are exploring design directions for an app the owner has described.',
-  'Use the impeccable skill for every design decision. Do not read the project or any other files first, except files the owner attached, which the request names.',
-  'Write only the files you are asked to write, and do not change the app.',
+  'Use the directions skill for every design decision. Do not read the project or any other files first, except files the owner attached, which the request names.',
+  'Write the files you are asked to write first, before anything else, and do not change the app. Do not take screenshots, make images or run review commands, and never write outside the project.',
 ].join(' ')
 
 export const INSPECT_PROMPT = [
@@ -82,11 +83,13 @@ export const impeccableSkill = () => {
   return found
 }
 
+export const directionsSkill = () => writeDirectionsSkill(impeccableSkill())
+
 export function piArgs(options: { ai?: BuilderAi; skills: string; mode?: 'rpc'; session?: string; role?: 'explore' | 'inspect'; scope?: BuilderMode }): string[] {
   const args: string[] = []
   if (options.mode) args.push('--mode', options.mode)
   if (options.role === 'inspect') args.push('--approve', '--no-skills', '--no-context-files', '--append-system-prompt', INSPECT_PROMPT)
-  else if (options.role) args.push('--approve', '--no-skills', '--no-context-files', '--skill', impeccableSkill(), '--append-system-prompt', EXPLORE_PROMPT)
+  else if (options.role) args.push('--approve', '--no-skills', '--no-context-files', '--skill', directionsSkill(), '--append-system-prompt', EXPLORE_PROMPT)
   else args.push('--approve', '--skill', options.skills, '--append-system-prompt', options.scope && options.scope !== 'build' ? MODE_PROMPTS[options.scope] : SYSTEM_PROMPT)
   for (const path of extensionPaths()) args.push('-e', path)
   if (options.session) args.push('--session-id', options.session)
