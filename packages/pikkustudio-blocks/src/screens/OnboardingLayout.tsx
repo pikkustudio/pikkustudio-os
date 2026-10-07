@@ -6,6 +6,7 @@ import { ProjectRpcCtx } from '../lib/projectRpc'
 import { Button } from '../ui/button'
 import { AiLitellmPanel, AiProviderPanel, providers } from '../blocks/AiConnectPanels'
 import { useSlots } from '../lib/slots'
+import { PanelRow } from '../blocks/ShellAccount'
 import { useAccount, useProjectRun, useRecentProjects, useStartProjectRun, useAttachFile, newProjectName, type ProjectRun } from '../lib/onboarding'
 import { ArrowRight, Bell, Check, CircleAlert, FolderOpen, Laptop, MessageCircle, Pin, ShieldCheck, User, X } from 'lucide-react'
 
@@ -84,7 +85,7 @@ export function OnboardingLayout() {
   const navigate = useNavigate()
   const q = useSearch({ strict: false }) as { look?: 'light' | 'dark'; panel?: PanelId; show?: string; pitch?: 'a' | 'b'; via?: string; run?: string }
   const panel: PanelId | '' = q.panel ?? ''
-  const { Pitch } = useSlots()
+  const { Pitch, ShellAccount, WorkspaceAbout } = useSlots()
   const path = useLocation({ select: (l) => l.pathname })
   const choose = path === '/choose-ai'
   const proj = path === '/new-project'
@@ -323,6 +324,9 @@ export function OnboardingLayout() {
             </div>}
             {projects.data?.length ? null : <p className="px-3 text-[14px] leading-[1.45] text-ink-2 text-pretty">Build it like a website. Fabric keeps it running, and fixes it when something breaks.</p>}
             <div className="mt-auto flex flex-col gap-2.5">
+              {ShellAccount ? (
+                <ShellAccount expanded onOpen={() => open('workspace')} onAccount={() => open('workspace')} />
+              ) : (
               <button
                 type="button"
                 aria-expanded={panel === 'workspace'}
@@ -335,6 +339,7 @@ export function OnboardingLayout() {
                   <small className="block text-[13px] leading-[1.3] text-muted-foreground">Only you can see your work</small>
                 </span>
               </button>
+              )}
             </div>
           </aside>
 
@@ -605,7 +610,15 @@ export function OnboardingLayout() {
               </div>
             ) : null}
 
-            {panel === 'workspace' ? (
+            {panel === 'workspace' && WorkspaceAbout ? (
+              <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-auto px-6 pt-5 pb-7">
+                <WorkspaceAbout
+                  pikku={<PanelRow icon={<Avatar mood="calm" size="xs" ring={false} />} title="Pikku" text="Only what you ask it to work on. It asks before it changes anything that matters." />}
+                />
+              </div>
+            ) : null}
+
+            {panel === 'workspace' && !WorkspaceAbout ? (
               <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-auto px-6 pt-5 pb-7">
                 <div className="grid grid-cols-[auto_1fr] items-start gap-3 rounded-[18px] bg-secondary p-4">
                   <Avatar mood="calm" size="md" />
