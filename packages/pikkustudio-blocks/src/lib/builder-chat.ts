@@ -4,11 +4,11 @@ import type { ChatItem } from './chat'
 
 export const OFFER_MARKER = '[[offer:changeset]]'
 
-export type WorkMode = 'build' | 'artifacts' | 'knowledge' | 'emails'
+export type WorkMode = 'build' | 'frontend' | 'artifacts' | 'knowledge' | 'emails'
 
 export const modeForPath = (path: string): WorkMode | null => {
   if (/\/artifacts(\/|$)/.test(path)) return 'artifacts'
-  if (/\/build$/.test(path)) return 'build'
+  if (/\/build$/.test(path)) return 'frontend'
   if (/\/knowledge$/.test(path)) return 'knowledge'
   if (/\/emails$/.test(path)) return 'emails'
   return null
