@@ -583,7 +583,6 @@
   "mock_status__one": "1 screen uses sample data",
   "mock_status__many": "{count} screens use sample data",
   "mock_status__make_it_real": "Make it real",
-  "mock_status__coming_next": "Coming next",
   "mock_status__failed": "We could not check which screens use sample data.",
   "mock_status__retry": "Try again",
   "project_ways__title": "Where do you want to work?",
@@ -664,5 +663,16 @@
   "explore_hub__apps_text": "The apps that are part of your project and what each one does.",
   "not_found__title": "We cannot find {what}.",
   "not_found__text": "It may have been renamed or removed, or the address has a typo.",
-  "not_found__projects": "See all projects"
+  "not_found__projects": "See all projects",
+  "mock_plan__title": "Make it real",
+  "mock_plan__sub": "What your app still needs behind it",
+  "mock_plan__note": "This is only a list. Nothing is built until you say so.",
+  "mock_plan__added_title": "Not built yet",
+  "mock_plan__added_line": "Nothing is behind this yet. Your app shows sample data for it: {scenarios}.",
+  "mock_plan__changed_title": "No longer matches",
+  "mock_plan__invalid_title": "Sample data that needs fixing",
+  "mock_plan__empty_title": "Nothing left to make real",
+  "mock_plan__empty_text": "Everything your app shows already comes from real data.",
+  "mock_plan__what": "the list of what is still sample data",
+  "mock_plan__loading": "Checking what your app still needs…"
 }
