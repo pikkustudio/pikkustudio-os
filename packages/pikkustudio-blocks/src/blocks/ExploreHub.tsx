@@ -2,7 +2,7 @@ import { m } from '@/i18n/messages'
 import { useContext } from 'react'
 import { Link } from '@tanstack/react-router'
 import { useProjectName } from '../lib/project'
-import { Bot, ChevronRight, Clock, Database, HeartPulse, KeyRound, Plug, ScrollText, Search, Wallet, type LucideIcon } from 'lucide-react'
+import { AppWindow, Bot, ChevronRight, Clock, Database, FileText, HeartPulse, KeyRound, Languages, Layers, Plug, ScrollText, Search, Users, Wallet, type LucideIcon } from 'lucide-react'
 import { Button } from '../ui/button'
 import { ShellCtx } from '../lib/shell'
 import { keep } from '../lib/links'
@@ -11,7 +11,7 @@ import { NextCard } from './NextCard'
 import { PageHead } from './PageHead'
 import { Section } from './Section'
 import { questions } from './exploreSample'
-import { MOVABLE, usePins } from '../lib/pins'
+import { MOVABLE, usePins, type Movable } from '../lib/pins'
 
 const icons: Record<string, LucideIcon> = { away: ScrollText, secrets: KeyRound, cost: Wallet, who: KeyRound, own: Clock, mem: Database, well: HeartPulse, ai: Bot, plug: Plug }
 
@@ -29,30 +29,44 @@ export function Art() {
 const cls = 'flex w-full items-center gap-4 px-5 py-4 text-left no-underline transition-colors duration-140 hover:bg-secondary'
 const pages: Record<string, string> = { away: '/logs', secrets: '/secrets', well: '/performance' }
 
-function Row({ q }: { q: (typeof questions)[number] }) {
-  const { say } = useContext(ShellCtx)
-  const Icon = icons[q.id]
+type Hue = 'teal' | 'petrol' | 'sea'
+
+function HubRow({ hue, Icon, title, text, aside, to, onPick }: { hue: Hue; Icon: LucideIcon; title: string; text: string; aside?: string; to?: string; onPick?: () => void }) {
   const inner = (
     <>
-      <span data-hue={q.hue} className="grid size-11 shrink-0 place-items-center rounded-xl bg-hero text-hero-ink">
+      <span data-hue={hue} className="grid size-11 shrink-0 place-items-center rounded-xl bg-hero text-hero-ink">
         <Icon className="size-5.5" />
       </span>
       <span className="min-w-0 flex-1">
-        <b className="block text-[17px] leading-[1.3] text-foreground">{q.q}</b>
-        <small className="block text-[14px] text-ink-2">{q.ask[0]}</small>
+        <b className="block text-[17px] leading-[1.3] text-foreground">{title}</b>
+        <small className="block text-[14px] text-ink-2">{text}</small>
       </span>
+      {aside && <span className="shrink-0 text-[13px] text-muted-foreground">{aside}</span>}
       <ChevronRight className="size-5 shrink-0 text-muted-foreground" />
     </>
   )
-  return pages[q.id] ? (
-    <Link {...keep} to={pages[q.id] as never} className={cls}>
+  return to ? (
+    <Link {...keep} to={to as never} className={cls}>
       {inner}
     </Link>
   ) : (
-    <button type="button" onClick={() => say(q.q)} className={cls}>
+    <button type="button" onClick={onPick} className={cls}>
       {inner}
     </button>
   )
+}
+
+function Row({ q }: { q: (typeof questions)[number] }) {
+  const { say } = useContext(ShellCtx)
+  return <HubRow hue={q.hue} Icon={icons[q.id]} title={q.q} text={q.ask[0]} to={pages[q.id]} onPick={() => say(q.q)} />
+}
+
+const movable: Record<Movable, { hue: Hue; Icon: LucideIcon; title: () => string; text: () => string }> = {
+  'virtual-users': { hue: 'teal', Icon: Users, title: () => m.explore_hub__virtual_users_title(), text: () => m.explore_hub__virtual_users_text() },
+  translations: { hue: 'sea', Icon: Languages, title: () => m.explore_hub__translations_title(), text: () => m.explore_hub__translations_text() },
+  artifacts: { hue: 'petrol', Icon: Layers, title: () => m.explore_hub__artifacts_title(), text: () => m.explore_hub__artifacts_text() },
+  content: { hue: 'teal', Icon: FileText, title: () => m.explore_hub__content_title(), text: () => m.explore_hub__content_text() },
+  apps: { hue: 'sea', Icon: AppWindow, title: () => m.explore_hub__apps_title(), text: () => m.explore_hub__apps_text() },
 }
 
 export function ExploreHub() {
@@ -84,14 +98,10 @@ export function ExploreHub() {
         </div>
       </NextCard>
 
-      <Section title="More of your project">
+      <Section title={m.explore_hub__more_of_your_project()}>
         <div className="divide-y divide-border overflow-hidden rounded-[22px] border border-border bg-card">
           {MOVABLE.map((id) => (
-            <Link {...keep} key={id} to={`/${id}` as never} className={cls}>
-              <b className="min-w-0 flex-1 text-[17px] capitalize text-foreground">{id.replace('-', ' ')}</b>
-              <span className="text-[14px] text-ink-2">{pins.includes(id) ? 'Pinned to the sidebar' : 'Open, then pin it'}</span>
-              <ChevronRight className="size-5 shrink-0 text-muted-foreground" />
-            </Link>
+            <HubRow key={id} hue={movable[id].hue} Icon={movable[id].Icon} title={movable[id].title()} text={movable[id].text()} aside={pins.includes(id) ? m.explore_hub__on_your_sidebar() : undefined} to={`/${id}`} />
           ))}
         </div>
       </Section>
