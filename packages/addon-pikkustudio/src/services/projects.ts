@@ -881,11 +881,11 @@ export class StudioProjectsService {
     if (!root) throw new Error('This project has no worktrees')
     await addWorktree(root, name)
     return listWorktrees(root)
+  }
+
   /** Commit and push the builder's work so a re-clone on wake does not lose it. */
   saveWork() {
     return saveWorktrees(this.home)
-  }
-
   }
 
   async createSession(key: string, name = `s-${randomBytes(2).toString('hex')}`): Promise<string> {
