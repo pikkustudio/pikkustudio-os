@@ -117,6 +117,36 @@ describe('builder work across a wake', () => {
     assert.equal(readFileSync(join(again.path, 'app.ts'), 'utf8'), 'one\n')
   })
 
+  test('the change list is carried across a re-clone', async () => {
+    const sh = (cwd: string, ...args: string[]) => execFileSync('git', args, { cwd, encoding: 'utf8' }).trim()
+    const remote = mkdtempSync(join(tmpdir(), 'studio-remote-'))
+    sh(remote, 'init', '-q', '--bare', '-b', 'main')
+    const seed = mkdtempSync(join(tmpdir(), 'studio-seed-'))
+    sh(seed, 'init', '-q', '-b', 'main')
+    writeFileSync(join(seed, 'app.ts'), 'one\n')
+    sh(seed, 'add', '-A')
+    sh(seed, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'start')
+    sh(seed, 'remote', 'add', 'origin', remote)
+    sh(seed, 'push', '-q', 'origin', 'main')
+    const home = mkdtempSync(join(tmpdir(), 'studio-home-'))
+    const clone = (dir: string) => execFileSync('git', ['clone', '-q', '--single-branch', '-b', 'main', remote, dir])
+    const first = join(mkdtempSync(join(tmpdir(), 'studio-clone-')), 'repo')
+    clone(first)
+    const worktree = await ensureWorktree(first, home, 'k1')
+    const list = { nextShortId: 2, changes: [{ shortId: 'c1', title: 'Buttons are green' }], groups: [], messages: [] }
+    writeFileSync(join(first, '.git', 'pikku-changes.json'), JSON.stringify(list))
+    writeFileSync(join(worktree.path, 'orders.ts'), 'orders\n')
+    await saveWorktrees(home)
+
+    rmSync(first, { recursive: true, force: true })
+    const second = join(mkdtempSync(join(tmpdir(), 'studio-clone-')), 'repo')
+    clone(second)
+    // Something read the list before the builder was asked for: the clone has an empty one by now.
+    writeFileSync(join(second, '.git', 'pikku-changes.json'), JSON.stringify({ nextShortId: 1, changes: [], groups: [], messages: [] }))
+    await ensureWorktree(second, home, 'k1')
+    assert.deepEqual(JSON.parse(readFileSync(join(second, '.git', 'pikku-changes.json'), 'utf8')), list)
+  })
+
   test('a worktree that cannot be pushed is reported, not thrown', async () => {
     const repo = mkdtempSync(join(tmpdir(), 'studio-nopush-'))
     const home = mkdtempSync(join(tmpdir(), 'studio-home-'))

@@ -1,6 +1,6 @@
 import { execFile } from 'node:child_process'
 import { existsSync } from 'node:fs'
-import { chmod, mkdir, readdir, readFile, rename, rm, writeFile } from 'node:fs/promises'
+import { chmod, copyFile, mkdir, readdir, readFile, rename, rm, writeFile } from 'node:fs/promises'
 import { randomBytes } from 'node:crypto'
 import { basename, dirname, isAbsolute, join, resolve } from 'node:path'
 import { promisify } from 'node:util'
@@ -137,6 +137,7 @@ export async function ensureWorktree(
     return { path, branch: name, gitDir: join(root, 'repo.git'), projectDir: prefix ? join(path, prefix.replace(/\/$/, '')) : path }
   }
   await ensureRepo(repo)
+  await restoreChanges(repo, studioHome)
   const prefix = await git(repo, 'rev-parse', '--show-prefix')
   const path = join(studioHome, 'worktrees', id)
   const branch = `studio/${id}`
@@ -272,6 +273,40 @@ export async function keepChanges(repo: string, worktree: StudioWorktree, env: R
   return { ok: true, kept }
 }
 
+// `pikku changes` keeps its list inside the repo's .git, which a wake replaces with a fresh clone.
+// A copy lives in the studio home (which survives) and goes back whenever the clone has none of its own.
+const CHANGES_FILE = 'pikku-changes.json'
+
+const hasChanges = async (file: string): Promise<boolean> => {
+  try {
+    const list = JSON.parse(await readFile(file, 'utf8')) as { changes?: unknown[]; groups?: unknown[] }
+    return (list.changes?.length ?? 0) + (list.groups?.length ?? 0) > 0
+  } catch {
+    return false
+  }
+}
+
+const repoChangesFile = async (repo: string) => join(resolve(repo, await git(repo, 'rev-parse', '--git-common-dir')), CHANGES_FILE)
+
+async function restoreChanges(repo: string, studioHome: string): Promise<void> {
+  try {
+    const kept = join(studioHome, CHANGES_FILE)
+    const live = await repoChangesFile(repo)
+    if ((await hasChanges(kept)) && !(await hasChanges(live))) await copyFile(kept, live)
+  } catch {
+    // The change list is a convenience here; building must not wait on it.
+  }
+}
+
+async function rememberChanges(repo: string, studioHome: string): Promise<void> {
+  try {
+    const live = await repoChangesFile(repo)
+    if (await hasChanges(live)) await copyFile(live, join(studioHome, CHANGES_FILE))
+  } catch {
+    // Same: a copy that cannot be made is reported by the changes simply being gone, not by a failed sleep.
+  }
+}
+
 export type SavedWorktree = { branch: string; committed: boolean; pushed: boolean; error?: string }
 
 /**
@@ -299,6 +334,7 @@ export async function saveWorktrees(studioHome: string): Promise<SavedWorktree[]
     }
     const pushed = await tryGit(path, 'push', '-q', 'origin', branch.output)
     saved.push({ branch: branch.output, committed: dirty, pushed: pushed.ok, ...(pushed.ok ? {} : { error: pushed.output }) })
+    await rememberChanges(path, studioHome)
   }
   return saved
 }
