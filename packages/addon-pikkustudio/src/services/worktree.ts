@@ -150,6 +150,8 @@ export async function ensureWorktree(
   if (!existsSync(path)) {
     await mkdir(join(studioHome, 'worktrees'), { recursive: true })
     // After a wake re-cloned the repo, what the builder had pushed is on the remote: carry on from it.
+    // The sandbox's clone follows only its own branch, so ask for the builder's explicitly.
+    await tryGit(repo, 'fetch', '-q', 'origin', `+refs/heads/${branch}:refs/remotes/origin/${branch}`)
     const pushed = await tryGit(repo, 'rev-parse', '--verify', '-q', `refs/remotes/origin/${branch}`)
     await git(repo, 'worktree', 'add', '-q', '-B', branch, path, pushed.ok ? `origin/${branch}` : 'HEAD')
   }

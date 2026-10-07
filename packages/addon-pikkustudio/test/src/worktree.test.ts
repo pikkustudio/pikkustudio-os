@@ -98,7 +98,8 @@ describe('builder work across a wake', () => {
     sh(seed, 'push', '-q', 'origin', 'main')
 
     const home = mkdtempSync(join(tmpdir(), 'studio-home-'))
-    const clone = (dir: string) => execFileSync('git', ['clone', '-q', remote, dir])
+    // Like the sandbox's clone: it follows only the main branch, not the builder's.
+    const clone = (dir: string) => execFileSync('git', ['clone', '-q', '--single-branch', '-b', 'main', remote, dir])
     const first = join(mkdtempSync(join(tmpdir(), 'studio-clone-')), 'repo')
     clone(first)
     const worktree = await ensureWorktree(first, home, 'k1')
