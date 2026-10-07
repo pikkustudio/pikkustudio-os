@@ -18,12 +18,19 @@ import { LOCAL_TEAM, useTeamSlug } from '../lib/team'
 
 const looks = ['bakery', 'kiln', 'garden', 'dog'] as const
 
+const workspacesOf = (p: ListedProject) =>
+  p.workspaces ?? (p.missing ? undefined : { local: p.location === 'cloud' ? 0 : 1, cloud: p.location === 'local' ? 0 : 1 })
+
 const toCard = (p: ListedProject): Project => ({
   id: p.key,
   slug: p.slug,
   name: p.name,
   summary: '',
   look: looks[[...p.key].reduce((n, c) => n + c.charCodeAt(0), 0) % looks.length],
+  workspaces: workspacesOf(p),
+  live: p.live,
+  attention: p.attention,
+  workingNow: p.workingNow,
   state: (p.missing || p.location === 'cloud' ? 'sketch' : p.busy ? 'progress' : p.open ? 'running' : 'paused') satisfies ProjectState,
 })
 

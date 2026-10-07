@@ -12,6 +12,10 @@ export type ListedProject = {
   open: boolean
   busy?: boolean
   missing: boolean
+  workspaces?: { local: number; cloud: number }
+  live?: { places: number } | null
+  attention?: number
+  workingNow?: string[]
 }
 
 // The projects of the team in the URL: Studio lists them by team, so the `local` team is what is

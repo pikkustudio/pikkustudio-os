@@ -3,6 +3,7 @@ import { Lock, TriangleAlert } from 'lucide-react'
 import { Badge } from '../ui/badge'
 import { chips, type Project } from './ProjectCard'
 import { ProjectActions } from './ProjectActions'
+import { ProjectFacts } from './ProjectFacts'
 import { ProjectThumb } from './ProjectThumb'
 
 export function ProjectRow({ item, onRestore }: { item: Project; onRestore: () => void }) {
@@ -29,6 +30,7 @@ export function ProjectRow({ item, onRestore }: { item: Project; onRestore: () =
             </Badge>
           ) : null}
         </div>
+        <ProjectFacts item={item} className="text-px13" />
         <span className="truncate text-px14 text-ink-2">{item.summary}</span>
         <span className="flex items-center gap-3 text-px13 text-muted-foreground">
           {item.when ? `Last worked on ${item.when}` : null}

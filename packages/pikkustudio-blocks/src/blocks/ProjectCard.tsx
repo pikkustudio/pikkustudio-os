@@ -5,6 +5,7 @@ import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { keep } from '../lib/links'
 import { ProjectActions } from './ProjectActions'
+import { ProjectFacts } from './ProjectFacts'
 import { ProjectThumb, type ProjectLook } from './ProjectThumb'
 
 export type ProjectState = 'running' | 'progress' | 'live' | 'sketch' | 'paused'
@@ -19,6 +20,10 @@ export type Project = {
   note?: string
   when?: string
   visitors?: number
+  workspaces?: { local: number; cloud: number }
+  live?: { places: number } | null
+  attention?: number
+  workingNow?: string[]
 }
 
 export const chips = (): Record<ProjectState, { text: string; icon: typeof Check; variant: 'pillOk' | 'pillInfo' | 'pillMute' }> => ({
@@ -53,6 +58,7 @@ export function ProjectCard({ item, onRestore }: { item: Project; onRestore: () 
           ) : null}
         </div>
         <b className="text-[19px] leading-[1.25]">{item.name}</b>
+        <ProjectFacts item={item} className="text-[14px]" />
         <span className="text-ink-2 text-pretty">{item.summary}</span>
         <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[14px] text-muted-foreground">
           {item.when ? <span>{m.project_card__last_worked_on({ when: item.when })}</span> : null}
