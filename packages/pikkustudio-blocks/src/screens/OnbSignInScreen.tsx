@@ -18,7 +18,7 @@ const keep: any = { search: true }
 function SignedInNotice() {
   const user = useAccount().data?.name
   const signOut = useSignOut()
-return (
+  return (
     <div className="mx-auto flex max-w-[1160px] flex-col gap-6 @min-[1700px]/app:max-w-[1380px]">
       <HeroShell hue="teal" art="door">
         <div>
