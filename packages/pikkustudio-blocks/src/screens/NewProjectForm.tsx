@@ -1,32 +1,28 @@
 import { useRef, useState, type ReactNode } from 'react'
-import { ArrowRight, Check, Monitor, Paperclip, Smartphone, Sparkles, X } from 'lucide-react'
+import { ArrowRight, Check, Monitor, Paperclip, Smartphone, Sparkles, Lightbulb, X } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Textarea } from '../ui/textarea'
+import { StatusLine } from '../blocks/StatusLine'
 import type { Uses } from './OnboardingLayout'
 
 const PLATFORMS = [
-  { id: 'browser', name: 'Browser', icon: <Monitor className="size-4.5" /> },
-  { id: 'phones', name: 'Mobile', icon: <Smartphone className="size-4.5" /> },
+  { id: 'browser', name: 'On the web', icon: <Monitor className="size-4.5" /> },
+  { id: 'phones', name: 'On phones', icon: <Smartphone className="size-4.5" /> },
 ]
 
-function Pill({ on, onClick, children }: { on: boolean; onClick: () => void; children: ReactNode }) {
+function Choice({ on, onClick, children }: { on: boolean; onClick: () => void; children: ReactNode }) {
   return (
-    <button
-      type="button"
-      role="checkbox"
-      aria-checked={on}
-      onClick={onClick}
-      className={`flex h-11 items-center gap-2 rounded-full border-2 px-4 text-[15px] font-semibold transition ${on ? 'border-hero-ink bg-hero-ink text-hero' : 'border-hero-ink/35 hover:border-hero-ink/70'}`}
-    >
-      {on ? <Check className="size-4" strokeWidth={3} /> : null}
+    <Button type="button" role="checkbox" aria-checked={on} variant={on ? 'selected' : 'bordered'} size="page" onClick={onClick}>
+      {on ? <Check className="size-4.5" strokeWidth={3} /> : null}
       {children}
-    </button>
+    </Button>
   )
 }
 
 export function NewProjectForm({
   idea,
   setIdea,
+  example,
   uses,
   setUses,
   files,
@@ -36,6 +32,7 @@ export function NewProjectForm({
 }: {
   idea: string
   setIdea: (v: string) => void
+  example: string
   uses: Uses
   setUses: (v: Uses) => void
   files: File[]
@@ -54,71 +51,93 @@ export function NewProjectForm({
     if (picker.current) picker.current.value = ''
   }
   const flip = (id: string) => setUses({ ...uses, devices: uses.devices.includes(id) ? uses.devices.filter((x) => x !== id) : [...uses.devices, id] })
+  const none = uses.devices.length === 0
   return (
-    <div className="flex max-w-[680px] flex-col gap-4">
-      <h1 className="max-w-[20ch] text-[44px] leading-[1.06] font-bold tracking-[-0.02em] text-balance group-data-open/shell:text-[38px] @min-[1700px]/app:text-[52px]">What do you want to make?</h1>
-      <section
-        aria-label="Build an app"
-        className={`flex flex-col gap-3.5 rounded-[22px] transition ${over ? 'outline-2 outline-offset-8 outline-dashed outline-hero-ink' : ''}`}
-        onDragOver={(e) => {
-          if (!e.dataTransfer.types.includes('Files')) return
-          e.preventDefault()
-          setOver(true)
-        }}
-        onDragLeave={(e) => {
-          if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setOver(false)
-        }}
-        onDrop={(e) => {
-          if (!e.dataTransfer.files.length) return
-          e.preventDefault()
-          setOver(false)
-          add(e.dataTransfer.files)
-        }}
-      >
-        <label htmlFor="idea" className="text-[17px] font-bold">
-          Build an app
-        </label>
-        <Textarea id="idea" tone="hero" value={idea} onChange={(e) => setIdea(e.target.value)} placeholder="For example: a booking page for my baking classes, where people can pick a day and pay." />
+    <form
+      aria-label="Start a project"
+      onSubmit={(e) => {
+        e.preventDefault()
+        if (ready) go()
+      }}
+      className={`flex flex-col gap-6 rounded-card border bg-card p-6 shadow-card transition ${over ? 'border-primary' : 'border-border'}`}
+      onDragOver={(e) => {
+        if (!e.dataTransfer.types.includes('Files')) return
+        e.preventDefault()
+        setOver(true)
+      }}
+      onDragLeave={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setOver(false)
+      }}
+      onDrop={(e) => {
+        if (!e.dataTransfer.files.length) return
+        e.preventDefault()
+        setOver(false)
+        add(e.dataTransfer.files)
+      }}
+    >
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
+          <label htmlFor="idea" className="text-px20 leading-[1.2] font-bold">
+            What do you want to make?
+          </label>
+          <Button type="button" variant="quiet" onClick={() => setIdea(example)}>
+            <Lightbulb className="size-4" />
+            Show me an example
+          </Button>
+        </div>
+        <Textarea id="idea" tone="field" rows={4} value={idea} onChange={(e) => setIdea(e.target.value)} placeholder={example} />
+        <p className="text-px14 text-ink-2">A sentence or two is plenty. You can change anything later.</p>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <h2 className="text-px14 font-bold text-muted-foreground" id="uses-label">
+          Where will people use it?
+        </h2>
+        <div role="group" aria-labelledby="uses-label" className="flex flex-wrap items-center gap-2">
+          {PLATFORMS.map((p) => (
+            <Choice key={p.id} on={uses.devices.includes(p.id)} onClick={() => flip(p.id)}>
+              {p.icon}
+              {p.name}
+            </Choice>
+          ))}
+        </div>
+        <p className={`text-px14 ${none ? 'font-semibold text-destructive-foreground' : 'text-ink-2'}`} role={none ? 'alert' : undefined}>
+          {none
+            ? 'Pick at least one: the web, phones, or both.'
+            : uses.devices.includes('phones')
+              ? 'Phones means iPhone and Android. It takes longer to build and publish, so many people start on the web.'
+              : 'Nothing goes online until you say so.'}
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <h2 className="text-px14 font-bold text-muted-foreground">Anything I should read first? (optional)</h2>
         <div className="flex flex-wrap items-center gap-2">
           <input ref={picker} id="attach" type="file" multiple hidden onChange={(e) => add(e.target.files)} />
-          <Button variant="heroGhost" size="page" type="button" onClick={() => picker.current?.click()}>
+          <Button variant="bordered" size="compact" type="button" onClick={() => picker.current?.click()}>
             <Paperclip className="size-4.5" />
             Add files
           </Button>
           {files.map((f) => (
-            <span key={`${f.name}-${f.size}`} className="flex h-10 max-w-64 items-center gap-1.5 rounded-full border border-hero-ink/35 pr-1.5 pl-3.5 text-[14.5px] font-semibold">
+            <span key={`${f.name}-${f.size}`} className="flex h-9.5 max-w-64 items-center gap-1.5 rounded-full border-[1.5px] border-input pr-1.5 pl-3.5 text-px14 font-bold">
               <span className="truncate">{f.name}</span>
-              <button type="button" aria-label={`Remove ${f.name}`} onClick={() => setFiles(files.filter((x) => x !== f))} className="grid size-7 shrink-0 place-items-center rounded-full hover:bg-hero-ink/12">
+              <button type="button" aria-label={`Remove ${f.name}`} onClick={() => setFiles(files.filter((x) => x !== f))} className="grid size-7 shrink-0 place-items-center rounded-full hover:bg-secondary">
                 <X className="size-4" />
               </button>
             </span>
           ))}
-          {files.length === 0 ? <span className="text-[14.5px] text-hero-ink-2">Drop files here, or add them. Pictures, documents or notes Pikku should read first. Optional.</span> : null}
-          {tooBig ? <span role="alert" className="text-[14.5px] font-semibold">A file was left out because it is over 25 MB.</span> : null}
+          {files.length === 0 ? <span className="text-px14 text-ink-2">Pictures, documents or notes. Drop them here or add them.</span> : null}
         </div>
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-3">
-          <div role="group" aria-label="Where people will use it" className="flex items-center gap-2">
-            {PLATFORMS.map((p) => (
-              <Pill key={p.id} on={uses.devices.includes(p.id)} onClick={() => flip(p.id)}>
-                {p.icon}
-                {p.name}
-              </Pill>
-            ))}
-          </div>
-          <Button variant="hero" size="pageLg" type="button" disabled={!ready} onClick={go} className="ml-auto">
-            <Sparkles className="size-5.5" />
-            <span>Start building</span>
-            <ArrowRight className="size-5.5" />
-          </Button>
-        </div>
-        <p className="min-h-5 text-[14.5px] text-hero-ink-2">
-          {uses.devices.length === 0
-            ? 'Pick at least one: browser, mobile, or both.'
-            : uses.devices.includes('phones')
-              ? 'Mobile means iPhone and Android. It takes noticeably longer to build and publish, so many people start with the browser.'
-              : 'Nothing goes online until you say so.'}
-        </p>
-      </section>
-    </div>
+        {tooBig ? <StatusLine tone="bad" text="A file was left out because it is over 25 MB." /> : null}
+      </div>
+
+      <div className="flex flex-wrap items-center justify-end gap-3 border-t border-border pt-5">
+        <Button type="submit" size="pageLg" disabled={!ready}>
+          <Sparkles className="size-5" />
+          Start building
+          <ArrowRight className="size-5" />
+        </Button>
+      </div>
+    </form>
   )
 }
