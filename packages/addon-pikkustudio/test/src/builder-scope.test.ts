@@ -10,7 +10,7 @@ describe('modeScope', () => {
   })
 
   test('frontend writes only the frontends, mocks and generated sdk', () => {
-    assert.deepEqual(modeScope('frontend'), { only: ['apps', '.mocks', '.pikku', 'packages/functions-sdk'] })
+    assert.deepEqual(modeScope('frontend'), { only: ['apps', '.mocks', '.pikku', 'packages/functions-sdk', 'packages/theme'] })
   })
 
   test('build has no extra limits', () => {

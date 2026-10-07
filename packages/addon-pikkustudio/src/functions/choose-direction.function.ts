@@ -6,7 +6,7 @@ import { pikkuSessionlessFunc } from '#pikku/addon/function'
 import { getArtifact } from '../services/artifacts.js'
 
 const BUILD_CHOSEN = (id: string) =>
-  `The owner chose the design direction in artifacts/${id} (read index.html and artifact.json there). Put its home screen into the real app now, in apps/app, so the owner can see it quickly: set the direction's colours, fonts and radius as theme tokens first, then build the page at / from the app's own components, with every string through m.*() and no copied HTML. Run the checks in AGENTS.md before you stop (an unflagged stub is expected).`
+  `The owner chose the design direction in artifacts/${id} (read index.html and artifact.json there). Put its home screen into the real app now, in apps/app, so the owner can see it quickly: set the direction's colours, fonts and radius as theme tokens first with `pikku theme apply` (never by editing theme.css), then build the page at / from the app's own components, with every string through m.*() and no copied HTML. Run the checks in AGENTS.md before you stop (an unflagged stub is expected).`
 
 export const ChooseDirectionInput = z.object({ key: z.string(), artifactId: z.string() })
 
