@@ -5,7 +5,7 @@ import { ArrowRight, Laptop } from 'lucide-react'
 import { Hero as HeroShell, heroH1, heroLead } from '../blocks/OnbHero'
 import { useSlots } from '../lib/slots'
 import { OnbCtx } from './OnboardingLayout'
-import { useAccount, useRecentProjects, useUseLocally } from '../lib/onboarding'
+import { useAccount, useRecentProjects, useSignOut, useUseLocally } from '../lib/onboarding'
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,6 +24,19 @@ export function OnbSignInScreen() {
   const waiting = recent.length === 1 ? 'Your project is' : `Your ${recent.length} projects are`
   const locally = useUseLocally()
   const loading = st === 'loading'
+  const signOut = useSignOut()
+  if (account?.signedIn && account.signIn === 'fabric') {
+    return (
+      <div className="mx-auto flex max-w-[640px] flex-col gap-5">
+        <h1 className="text-[32px] leading-[1.2] font-bold tracking-[-0.012em] text-balance">You are already signed in{user ? ` as ${user}` : ''}.</h1>
+        <p className="text-[17px] text-ink-2 text-pretty">To use a different account, sign out first, then sign in again.</p>
+        <div className="flex flex-wrap gap-2.5">
+          <Button variant="bordered" size="page" disabled={signOut.isPending} onClick={() => signOut.mutate({})}>Sign out</Button>
+          <Button asChild size="page"><Link {...keep} to="/projects">Go to my projects</Link></Button>
+        </div>
+      </div>
+    )
+  }
   const next = (e: React.MouseEvent) => {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return
     e.preventDefault()
