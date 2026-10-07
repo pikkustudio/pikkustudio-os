@@ -109,6 +109,7 @@ describe('builder work across a wake', () => {
     assert.match(sh(remote, 'branch', '--list', 'studio/k1'), /studio\/k1/)
 
     // The sandbox wakes: the repo is cloned afresh and the worktree folder is left over from before.
+    rmSync(first, { recursive: true, force: true })
     const second = join(mkdtempSync(join(tmpdir(), 'studio-clone-')), 'repo')
     clone(second)
     const again = await ensureWorktree(second, home, 'k1')
