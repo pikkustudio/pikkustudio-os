@@ -8,6 +8,7 @@ export function Hero({
   why,
   actions,
   hint,
+  thumb,
   children,
 }: {
   hue: 'teal' | 'petrol' | 'sea'
@@ -16,6 +17,7 @@ export function Hero({
   why: string
   actions?: ReactNode
   hint?: string
+  thumb?: ReactNode
   children?: ReactNode
 }) {
   return (
@@ -37,7 +39,7 @@ export function Hero({
         ) : null}
       </div>
       <div className="relative hidden min-h-55 md:block" aria-hidden="true">
-        <HeroArt art={art} />
+        <HeroArt art={art} thumb={thumb} />
       </div>
     </section>
   )

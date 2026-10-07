@@ -39,10 +39,10 @@ const looks: Record<ProjectLook, { bg: string; shapes: Array<{ cx: number; cy: n
   },
 }
 
-export function ProjectThumb({ look, label }: { look: ProjectLook; label: string }) {
+export function ProjectThumbShapes({ look }: { look: ProjectLook }) {
   const l = looks[look]
   return (
-    <svg viewBox="0 0 320 200" role="img" aria-label={label} className="block size-full" preserveAspectRatio="xMidYMid slice">
+    <>
       <rect width="320" height="200" className={l.bg} />
       {l.shapes.map((s, i) => (
         <circle key={i} cx={s.cx} cy={s.cy} r={s.r} className={s.fill} />
@@ -50,6 +50,14 @@ export function ProjectThumb({ look, label }: { look: ProjectLook; label: string
       <rect x="28" y="30" width="96" height="9" rx="4.5" className={l.bars} opacity="0.75" />
       <rect x="28" y="46" width="60" height="5" rx="2.5" className={l.bars} opacity="0.4" />
       <circle cx="60" cy="150" r="22" fill="none" className="stroke-white" strokeWidth="3" strokeDasharray="3 9" strokeLinecap="round" />
+    </>
+  )
+}
+
+export function ProjectThumb({ look, label }: { look: ProjectLook; label: string }) {
+  return (
+    <svg viewBox="0 0 320 200" role="img" aria-label={label} className="block size-full" preserveAspectRatio="xMidYMid slice">
+      <ProjectThumbShapes look={look} />
     </svg>
   )
 }
