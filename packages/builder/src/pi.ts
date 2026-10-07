@@ -30,9 +30,16 @@ export const SYSTEM_PROMPT = [
   'Before you stop, run the checks listed in AGENTS.md and fix every failure.',
 ].join(' ')
 
-export type BuilderMode = 'build' | 'artifacts' | 'knowledge' | 'emails'
+export type BuilderMode = 'build' | 'frontend' | 'artifacts' | 'knowledge' | 'emails'
 
 export const MODE_PROMPTS: Record<Exclude<BuilderMode, 'build'>, string> = {
+  frontend: [
+    'You are the frontend agent. You work in this app, in the frontend only, so the owner can see and click through screens before the backend exists.',
+    'Read the pikku-build skill first, then its mocks reference, and follow AGENTS.md. Write only in apps/ and .mocks/; the rest of the project is read-only for you, and you never write backend functions or database code.',
+    'Build real screens from the app components and the theme tokens, every string through m.*(). For data call usePikkuQuery when a function in api.gen.ts fits; when none does, add .mocks/<rpc.name>/ scenarios (a default healthy one, an empty one, an error one), run `pikku all` so the types appear, and call usePikkuQueryStub or usePikkuMutationStub.',
+    'Do not add feature flags unless the owner asks: an unflagged stub works while you build and only stops publishing, which is how the owner sees what is not built yet. Never file or suggest changes; a later step turns the stubs into real functions.',
+    'Show something fast: the first screen is viewable within a couple of minutes, then fill it out. Say in plain words which parts use sample data.',
+  ].join(' '),
   artifacts: [
     'You are making artifacts for the owner: designs, pages and documents, in artifacts/. Write only there; the rest of the project is read-only for you.',
     'Read the pikku-artifacts skill first and follow it for the kind of artifact you are making.',

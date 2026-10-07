@@ -6,7 +6,7 @@ const DIRECTIONS = 4
 const DRAFT_TIMEOUT_MS = 15 * 60_000
 const pause = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-export const BuilderPromptInput = z.object({ key: z.string(), message: z.string(), context: z.string().optional(), failOnError: z.boolean().optional(), explore: z.boolean().optional(), mode: z.enum(['build', 'artifacts', 'knowledge', 'emails']).optional(), offer: z.boolean().optional() })
+export const BuilderPromptInput = z.object({ key: z.string(), message: z.string(), context: z.string().optional(), failOnError: z.boolean().optional(), explore: z.boolean().optional(), mode: z.enum(['build', 'frontend', 'artifacts', 'knowledge', 'emails']).optional(), offer: z.boolean().optional() })
 
 export const builderPrompt = pikkuSessionlessFunc({
   expose: true,

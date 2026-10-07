@@ -945,7 +945,7 @@ export class StudioProjectsService {
     }
     const confinement = this.confinement(worktree)
     if (!confinement) return base
-    const scope = modeScope(mode)
+    const scope = modeScope(mode, worktree.projectDir)
     const sandbox: Confinement = {
       ...confinement,
       only: scope.only,
