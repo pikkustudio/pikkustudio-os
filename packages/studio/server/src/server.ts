@@ -97,7 +97,7 @@ export async function startStudioServer(options: StudioServerOptions = {}) {
       return {
         ...launch,
         ai: fabric
-          ? { model: env.PIKKU_STUDIO_MODEL ?? 'gemini-flash-lite-latest', proxy: { url: fabric.proxyUrl, key: fabric.apiKey } }
+          ? { model: env.PIKKU_STUDIO_MODEL ?? 'deepseek-v4.1-flash', proxy: { url: fabric.proxyUrl, key: fabric.apiKey } }
           : { provider: env.PIKKU_STUDIO_AI_PROVIDER, model: env.PIKKU_STUDIO_MODEL },
         env: { ...launch.env, ...env, PIKKU_DEV_LOG: join(home, 'logs', `${key}.log`) },
       }
