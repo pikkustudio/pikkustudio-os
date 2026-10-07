@@ -23,3 +23,12 @@ export const useProjectName = () => {
   } as never)
   return (found.data as string | undefined) || 'Your project'
 }
+
+export const useProjectMissing = () => {
+  const slug = useProjectSlug()
+  const found = usePikkuQuery('studio:listProjects', {}, {
+    enabled: !!slug,
+    select: (d: { projects: { key: string; slug: string; owner?: string }[] }) => d.projects.some((p) => `${p.owner}/${p.slug}` === slug || p.slug === slug || p.key === slug),
+  } as never)
+  return !!slug && found.isSuccess && (found.data as unknown) === false
+}

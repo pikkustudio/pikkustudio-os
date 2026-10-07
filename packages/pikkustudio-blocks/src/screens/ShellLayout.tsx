@@ -4,7 +4,7 @@ import { useChangeChat } from '../directions-changes/useChangeChat'
 import { Link, Outlet, useLocation, useNavigate, useSearch } from '@tanstack/react-router'
 import { useContext, useEffect, useMemo, useState, type ComponentType, type ReactNode } from 'react'
 import { m } from '@/i18n/messages'
-import { useProjectKey, useProjectName, useProjectSlug } from '../lib/project'
+import { useProjectKey, useProjectMissing, useProjectName, useProjectSlug } from '../lib/project'
 import { useAddonNav } from '../lib/addon-nav'
 import { usePikkuChat } from '../lib/chat'
 import { LocalAccountName, LocalShellAccount, LocalWorkspaceAbout, SignOutSection } from '../blocks/ShellAccount'
@@ -21,7 +21,7 @@ import { AiSpinner } from '../blocks/Spinner'
 import { Button } from '../ui/button'
 import { QuickFind } from '../blocks/QuickFind'
 import { Toaster } from '../blocks/Toaster'
-import { GitPullRequest, type LucideIcon, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, Home, Info, Compass, KeyRound, Search, Laptop, LayoutGrid, Mail, MessageCircle, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, User, UserRoundCheck, Wrench, X, CheckCheck } from 'lucide-react'
+import { GitPullRequest, type LucideIcon, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, Home, Info, Compass, KeyRound, Search, Laptop, LayoutGrid, Mail, MessageCircle, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, User, UserRoundCheck, Wrench, X, CheckCheck, SearchX } from 'lucide-react'
 
 // The app shell: rail, preview drawer (right edge), Pikku button + bubble, side panels.
 // Every screen route is a child of this layout. Page content lives in the route files.
@@ -116,6 +116,7 @@ function Note({
 export function ShellLayout() {
   const projectName = useProjectName()
   const projectSlug = useProjectSlug()
+  const projectMissing = useProjectMissing()
   const addonNav = useAddonNav()
   const slots = useSlots()
   const Account = slots.ShellAccount ?? LocalShellAccount
@@ -321,7 +322,19 @@ export function ShellLayout() {
           {/* Page area */}
           <div className="flex min-h-0 min-w-0 flex-1 flex-col pr-0 transition-all duration-420 ease-[cubic-bezier(.16,1,.3,1)] group-data-open/shell:pr-102 @min-[1700px]/app:group-data-open/shell:pr-120">
             <div className={`min-h-0 flex-1 ${fill ? 'overflow-hidden pt-4 pr-6.5 pb-3.5 pl-6' : 'overflow-auto scroll-smooth [scrollbar-width:thin] px-12 pt-9 pb-7 @min-[1700px]/app:px-16 @min-[1700px]/app:pt-11 @min-[1700px]/app:pb-8'}`}>
-              <Outlet />
+              {projectMissing ? (
+                <EmptyState
+                  icon={SearchX}
+                  title="We could not find that project."
+                  text="It may have been renamed or removed, or the address has a typo. Your other projects are all still here."
+                >
+                  <Button asChild variant="bordered" size="page">
+                    <Link {...keep} to="/projects">See all projects</Link>
+                  </Button>
+                </EmptyState>
+              ) : (
+                <Outlet />
+              )}
             </div>
           </div>
 
