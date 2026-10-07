@@ -9,8 +9,8 @@ const fixture = async () => {
   const root = await mkdtemp(join(tmpdir(), 'pikku-dev-link-'))
   const dev = join(root, 'dev')
   const project = join(root, 'project')
-  for (const name of ['cli', 'core']) await mkdir(join(dev, 'packages', name), { recursive: true })
-  for (const name of ['cli', 'core', 'react']) {
+  for (const path of ['packages/cli', 'packages/core', 'packages/addon/pikku-console']) await mkdir(join(dev, path), { recursive: true })
+  for (const name of ['cli', 'core', 'addon-console', 'react']) {
     await mkdir(join(project, 'node_modules', '@pikku', name), { recursive: true })
     await writeFile(join(project, 'node_modules', '@pikku', name, 'package.json'), '{}')
   }
@@ -26,7 +26,8 @@ describe('linkDevPikku', () => {
 
   test('links cli and core, keeps the originals, leaves the rest alone', async () => {
     const { dev, project } = await fixture()
-    assert.deepEqual(await linkDevPikku(project, dev), ['cli', 'core'])
+    assert.deepEqual(await linkDevPikku(project, dev), ['cli', 'core', 'addon-console'])
+    assert.equal(await readlink(join(project, 'node_modules', '@pikku', 'addon-console')), join(dev, 'packages', 'addon', 'pikku-console'))
     assert.equal(await readlink(join(project, 'node_modules', '@pikku', 'cli')), join(dev, 'packages', 'cli'))
     assert.equal(await readlink(join(project, 'node_modules', '@pikku', 'core')), join(dev, 'packages', 'core'))
     assert.equal((await lstat(join(project, 'node_modules', '.orig-pikku', 'cli', 'package.json'))).isFile(), true)

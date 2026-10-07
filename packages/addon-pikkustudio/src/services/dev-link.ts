@@ -2,13 +2,13 @@ import { existsSync, lstatSync, readlinkSync } from 'node:fs'
 import { mkdir, rename, rm, symlink } from 'node:fs/promises'
 import { join } from 'node:path'
 
-const LINKED = ['cli', 'core']
+const LINKED: Record<string, string> = { cli: 'packages/cli', core: 'packages/core', 'addon-console': 'packages/addon/pikku-console' }
 
 export async function linkDevPikku(projectDir: string, devRoot = process.env.PIKKU_DEV_LINK): Promise<string[]> {
   if (!devRoot) return []
   const linked: string[] = []
-  for (const name of LINKED) {
-    const target = join(devRoot, 'packages', name)
+  for (const [name, path] of Object.entries(LINKED)) {
+    const target = join(devRoot, path)
     const link = join(projectDir, 'node_modules', '@pikku', name)
     if (!existsSync(target) || !existsSync(join(projectDir, 'node_modules', '@pikku'))) continue
     const current = lstatSync(link, { throwIfNoEntry: false })
