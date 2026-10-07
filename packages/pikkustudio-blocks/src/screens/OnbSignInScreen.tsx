@@ -15,7 +15,36 @@ const keep: any = { search: true }
 
 
 
+function SignedInNotice() {
+  const user = useAccount().data?.name
+  const signOut = useSignOut()
+return (
+    <div className="mx-auto flex max-w-[1160px] flex-col gap-6 @min-[1700px]/app:max-w-[1380px]">
+      <HeroShell hue="teal" art="door">
+        <div>
+          <h1 className={heroH1}>You are already signed in.</h1>
+          <p className={heroLead}>Your Fabric account is connected. To use a different one, sign out first, then sign in again.</p>
+        </div>
+        <div className="mt-1">
+          <Button asChild variant="hero" size="pageLg"><Link {...keep} to="/projects">Go to my projects<ArrowRight className="size-5.5" /></Link></Button>
+        </div>
+      </HeroShell>
+      <RowStack>
+        <RowCard tile={<User className="size-5" />} on title={user ?? 'Your Fabric account'} caption="Signed in with Fabric">
+          <Button variant="bordered" size="page" disabled={signOut.isPending} onClick={() => signOut.mutate({})}>Sign out</Button>
+        </RowCard>
+      </RowStack>
+    </div>
+  )
+}
+
 export function OnbSignInScreen() {
+  const account = useAccount()
+  if (account.data?.signedIn && account.data.signIn === 'fabric') return <SignedInNotice />
+  return <SignInChoices />
+}
+
+function SignInChoices() {
   const { st, go, retry, open } = useContext(OnbCtx)
   const { SignInOffer: Offer, SignInHero: Hero } = useSlots()
   const account = useAccount().data
@@ -25,27 +54,6 @@ export function OnbSignInScreen() {
   const waiting = recent.length === 1 ? 'Your project is' : `Your ${recent.length} projects are`
   const locally = useUseLocally()
   const loading = st === 'loading'
-  const signOut = useSignOut()
-  if (account?.signedIn && account.signIn === 'fabric') {
-    return (
-      <div className="mx-auto flex max-w-[1160px] flex-col gap-6 @min-[1700px]/app:max-w-[1380px]">
-        <HeroShell hue="teal" art="door">
-          <div>
-            <h1 className={heroH1}>You are already signed in.</h1>
-            <p className={heroLead}>Your Fabric account is connected. To use a different one, sign out first, then sign in again.</p>
-          </div>
-          <div className="mt-1">
-            <Button asChild variant="hero" size="pageLg"><Link {...keep} to="/projects">Go to my projects<ArrowRight className="size-5.5" /></Link></Button>
-          </div>
-        </HeroShell>
-        <RowStack>
-          <RowCard tile={<User className="size-5" />} on title={user ?? 'Your Fabric account'} caption="Signed in with Fabric">
-            <Button variant="bordered" size="page" disabled={signOut.isPending} onClick={() => signOut.mutate({})}>Sign out</Button>
-          </RowCard>
-        </RowStack>
-      </div>
-    )
-  }
   const next = (e: React.MouseEvent) => {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return
     e.preventDefault()
