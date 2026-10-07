@@ -1,9 +1,10 @@
 import { Link } from '@tanstack/react-router'
 import { useContext } from 'react'
 import { Button } from '../ui/button'
-import { ArrowRight, Laptop } from 'lucide-react'
+import { ArrowRight, Laptop, User } from 'lucide-react'
 import { Hero as HeroShell, heroH1, heroLead } from '../blocks/OnbHero'
 import { useSlots } from '../lib/slots'
+import { RowCard, RowStack } from '../blocks/RowCard'
 import { OnbCtx } from './OnboardingLayout'
 import { useAccount, useRecentProjects, useSignOut, useUseLocally } from '../lib/onboarding'
 
@@ -27,13 +28,21 @@ export function OnbSignInScreen() {
   const signOut = useSignOut()
   if (account?.signedIn && account.signIn === 'fabric') {
     return (
-      <div className="mx-auto flex max-w-[640px] flex-col gap-5">
-        <h1 className="text-[32px] leading-[1.2] font-bold tracking-[-0.012em] text-balance">You are already signed in{user ? ` as ${user}` : ''}.</h1>
-        <p className="text-[17px] text-ink-2 text-pretty">To use a different account, sign out first, then sign in again.</p>
-        <div className="flex flex-wrap gap-2.5">
-          <Button variant="bordered" size="page" disabled={signOut.isPending} onClick={() => signOut.mutate({})}>Sign out</Button>
-          <Button asChild size="page"><Link {...keep} to="/projects">Go to my projects</Link></Button>
-        </div>
+      <div className="mx-auto flex max-w-[1160px] flex-col gap-6 @min-[1700px]/app:max-w-[1380px]">
+        <HeroShell hue="teal" art="door">
+          <div>
+            <h1 className={heroH1}>You are already signed in.</h1>
+            <p className={heroLead}>Your Fabric account is connected. To use a different one, sign out first, then sign in again.</p>
+          </div>
+          <div className="mt-1">
+            <Button asChild variant="hero" size="pageLg"><Link {...keep} to="/projects">Go to my projects<ArrowRight className="size-5.5" /></Link></Button>
+          </div>
+        </HeroShell>
+        <RowStack>
+          <RowCard tile={<User className="size-5" />} on title={user ?? 'Your Fabric account'} caption="Signed in with Fabric">
+            <Button variant="bordered" size="page" disabled={signOut.isPending} onClick={() => signOut.mutate({})}>Sign out</Button>
+          </RowCard>
+        </RowStack>
       </div>
     )
   }
