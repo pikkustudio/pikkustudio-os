@@ -27,6 +27,7 @@ export const SYSTEM_PROMPT = [
   'Keep such scripts out of the app source.',
   'Work arrives as changes, grouped into changesets: `pikku changes next` picks the work and the builder hands it to you.',
   'Build one changeset, commit each change on its own, mark it done and stop; the builder merges it and starts the next.',
+  'Before you stop, run the checks listed in AGENTS.md and fix every failure.',
 ].join(' ')
 
 export type BuilderMode = 'build' | 'artifacts' | 'knowledge' | 'emails'
