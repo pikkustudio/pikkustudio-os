@@ -1,5 +1,6 @@
 import { ChangesPanel } from '../directions-changes/ChangesPanel'
 import { EmptyState } from '../blocks/EmptyState'
+import { NotFoundState } from '../blocks/NotFoundState'
 import { useChangeChat } from '../directions-changes/useChangeChat'
 import { Link, Outlet, useLocation, useNavigate, useSearch } from '@tanstack/react-router'
 import { useContext, useEffect, useMemo, useState, type ComponentType, type ReactNode } from 'react'
@@ -21,7 +22,7 @@ import { AiSpinner } from '../blocks/Spinner'
 import { Button } from '../ui/button'
 import { QuickFind } from '../blocks/QuickFind'
 import { Toaster } from '../blocks/Toaster'
-import { GitPullRequest, type LucideIcon, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, Home, Info, Compass, KeyRound, Search, Laptop, LayoutGrid, Mail, MessageCircle, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, User, UserRoundCheck, Wrench, X, CheckCheck, SearchX } from 'lucide-react'
+import { GitPullRequest, type LucideIcon, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, Home, Info, Compass, KeyRound, Search, Laptop, LayoutGrid, Mail, MessageCircle, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, User, UserRoundCheck, Wrench, X, CheckCheck } from 'lucide-react'
 
 // The app shell: rail, preview drawer (right edge), Pikku button + bubble, side panels.
 // Every screen route is a child of this layout. Page content lives in the route files.
@@ -272,7 +273,7 @@ export function ShellLayout() {
                   </Link>
                 ))}
               </div>
-            ) : /\/studio-metrics$/.test(path) || !projectSlug ? null : (
+            ) : /\/studio-metrics$/.test(path) || !projectSlug || projectMissing ? null : (
             <div className="flex flex-col gap-0.5 px-1">
               <div className="mb-1.5 px-3 text-[13px] font-semibold text-muted-foreground">{projectName}</div>
               <Link {...keep} to={'/explore' as never} className={navItem}>
@@ -323,15 +324,11 @@ export function ShellLayout() {
           <div className="flex min-h-0 min-w-0 flex-1 flex-col pr-0 transition-all duration-420 ease-[cubic-bezier(.16,1,.3,1)] group-data-open/shell:pr-102 @min-[1700px]/app:group-data-open/shell:pr-120">
             <div className={`min-h-0 flex-1 ${fill ? 'overflow-hidden pt-4 pr-6.5 pb-3.5 pl-6' : 'overflow-auto scroll-smooth [scrollbar-width:thin] px-12 pt-9 pb-7 @min-[1700px]/app:px-16 @min-[1700px]/app:pt-11 @min-[1700px]/app:pb-8'}`}>
               {projectMissing ? (
-                <EmptyState
-                  icon={SearchX}
-                  title="We could not find that project."
-                  text="It may have been renamed or removed, or the address has a typo. Your other projects are all still here."
-                >
-                  <Button asChild variant="bordered" size="page">
-                    <Link {...keep} to="/projects">See all projects</Link>
+                <NotFoundState what={`the project “${projectSlug}”`}>
+                  <Button asChild variant="hero" size="pageLg">
+                    <Link {...keep} to="/projects">{m.not_found__projects()}</Link>
                   </Button>
-                </EmptyState>
+                </NotFoundState>
               ) : (
                 <Outlet />
               )}

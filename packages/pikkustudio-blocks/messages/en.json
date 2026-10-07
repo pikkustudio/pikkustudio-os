@@ -661,5 +661,8 @@
   "explore_hub__content_title": "Content",
   "explore_hub__content_text": "The texts and pictures your visitors see, ready for you to change.",
   "explore_hub__apps_title": "Apps",
-  "explore_hub__apps_text": "The apps that are part of your project and what each one does."
+  "explore_hub__apps_text": "The apps that are part of your project and what each one does.",
+  "not_found__title": "We cannot find {what}.",
+  "not_found__text": "It may have been renamed or removed, or the address has a typo.",
+  "not_found__projects": "See all projects"
 }
