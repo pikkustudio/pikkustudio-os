@@ -85,7 +85,7 @@ export function OverviewScreen() {
       </div>
 
       {/* What to do next */}
-      <section data-hue="teal" className="relative grid grid-cols-[minmax(0,1.35fr)_minmax(0,0.65fr)] overflow-hidden rounded-next bg-hero text-hero-ink" aria-label={m.overview_screen__what_next()}>
+      <section data-testid="next-card" data-hue="teal" className="relative grid grid-cols-[minmax(0,1.35fr)_minmax(0,0.65fr)] overflow-hidden rounded-next bg-hero text-hero-ink" aria-label={m.overview_screen__what_next()}>
         <div className="relative z-1 flex flex-col justify-center gap-3.5 px-10 pt-8.5 pb-9">
           {pending.length ? (
             <>
@@ -158,7 +158,7 @@ export function OverviewScreen() {
       </section>
 
       {/* How it is going */}
-      <section className="flex flex-col gap-3.5" aria-label={m.overview_screen__how_going()}>
+      <section data-testid="health-row" className="flex flex-col gap-3.5" aria-label={m.overview_screen__how_going()}>
         <h2 className="text-[24px] leading-[1.2] font-bold tracking-[-0.012em] text-balance">{m.overview_screen__how_going_title()}</h2>
         <div className="rounded-card border border-border bg-card shadow-card">
           {pending.map((c) => (

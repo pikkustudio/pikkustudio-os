@@ -19,7 +19,7 @@ const lead = cva('text-pretty text-ink-2', {
 
 export function PageHead({ crumb, title, text, children, size, width, ...v }: { crumb?: I18nNode; title: I18nString; text?: I18nNode; children?: I18nNode } & VariantProps<typeof head> & VariantProps<typeof lead> & VariantProps<typeof body>) {
   return (
-    <div className={head(v)}>
+    <div data-testid="page-head" className={head(v)}>
       <div className={body({ width })}>
         <div className="mb-1 text-[14px] font-semibold text-muted-foreground">{crumb}</div>
         <h1 className="text-[40px] leading-[1.08] font-bold tracking-[-0.012em] text-balance">{title}</h1>
