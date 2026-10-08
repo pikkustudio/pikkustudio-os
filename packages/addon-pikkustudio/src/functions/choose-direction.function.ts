@@ -6,7 +6,7 @@ import { pikkuSessionlessFunc } from '#pikku/addon/function'
 import { getArtifact } from '../services/artifacts.js'
 
 const BUILD_CHOSEN = (id: string) =>
-  `The owner chose the design direction in artifacts/${id}. Step 1: read artifacts/${id}/index.html and artifact.json, then run the impeccable skill's document command on that page to write DESIGN.md at the project root. Step 2: set the colours, fonts and radius from DESIGN.md as theme tokens with 'pikku theme apply' (never by editing theme.css). Step 3: build the page at / in apps/app from that direction, from the app's own components, with every string through m.*() and no copied HTML, so the owner can see it quickly. Run the checks in AGENTS.md before you stop (an unflagged stub is expected). End your last message by asking the owner, in one short question, whether to create more screens, and name the two or three screens this app most likely needs next.`
+  `The owner chose the design direction in artifacts/${id}. Step 1: read artifacts/${id}/index.html and artifact.json, then use the impeccable-document skill on that page to write DESIGN.md at the project root. Step 2: set the colours, fonts and radius from DESIGN.md as theme tokens with 'pikku theme apply' (never by editing theme.css). Step 3: build the page at / in apps/app from that direction, from the app's own components, with every string through m.*() and no copied HTML, so the owner can see it quickly. Run the checks in AGENTS.md before you stop (an unflagged stub is expected). End your last message by asking the owner, in one short question, whether to create more screens, and name the two or three screens this app most likely needs next.`
 
 export const ChooseDirectionInput = z.object({ key: z.string(), artifactId: z.string() })
 
