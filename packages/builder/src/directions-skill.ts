@@ -10,13 +10,12 @@ name: directions
 description: Use when making one design direction for a new app: one self-contained page and a small artifact.json.
 ---
 
-You make one design direction. The whole deliverable is three files, and you write them first:
+You make one design direction. The whole deliverable is two files, and you write them first:
 
 1. artifacts/direction-N/index.html: one self-contained page, inline CSS, no scripts, no external files.
 2. artifacts/direction-N/artifact.json: {"kind":"Design","title":"...","summary":"...","exploration":"first","mode":"extreme"}.
-3. artifacts/direction-N/DESIGN.md: the design language of that page, written from the page you just made, under 2500 characters. It starts with YAML frontmatter holding the tokens: name, description, colors (slug: "#hex"), typography (display, body, and a label style, each with fontFamily, fontSize, fontWeight, lineHeight), rounded, spacing, and components (button-primary, card, tag: backgroundColor, textColor, rounded, padding, using {colors.slug} references). After the frontmatter come short sections in this order: Overview (the world and mood in two sentences), Colors (what each colour is for), Typography, Layout (grid, density, rhythm), Shapes, Components (how buttons, cards and tags look and behave), and Do's and Don'ts (four short rules that keep new screens on-brand).
 
-Write all three files before anything else. After that you may read the page once to check it, and then you stop.
+Write both files before anything else. After that you may read the page once to check it, and then you stop.
 
 Design with commitment: pick a clear world, colour, type and layout from your brief and carry it all the way. Read [reference/craft-floor.md](reference/craft-floor.md) for the quality floor, and [reference/typeset.md](reference/typeset.md), [reference/layout.md](reference/layout.md) and [reference/colorize.md](reference/colorize.md) when you need them.
 

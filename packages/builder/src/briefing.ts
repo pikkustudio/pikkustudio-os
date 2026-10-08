@@ -1,5 +1,5 @@
 import { execFile } from 'node:child_process'
-import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
+import { existsSync, readdirSync, statSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 
@@ -36,27 +36,15 @@ const themes = (cwd: string) =>
     })
   })
 
-export const chosenDirection = (cwd: string): string | undefined => {
-  const dir = join(cwd, 'artifacts')
-  if (!existsSync(dir)) return undefined
-  return readdirSync(dir).find((id) => {
-    const meta = join(dir, id, 'artifact.json')
-    return existsSync(meta) && /"chosen":\s*true/.test(readFileSync(meta, 'utf8'))
-  })
-}
-
-const design = async (cwd: string, direction?: string) => {
-  const language = (await read(cwd, 'DESIGN.md', 4000)) || (direction ? await read(cwd, `artifacts/${direction}/DESIGN.md`, 4000) : '')
-  const page = direction ? `The owner's chosen direction page is artifacts/${direction}/index.html; read it once for the layout when you build the home screen.\n` : ''
-  const fallback = !language && direction ? await read(cwd, `artifacts/${direction}/index.html`, 6000) : ''
-  return `${language ? `The design language of this app:\n${language}` : ''}${fallback}${page}`
+const design = async (cwd: string) => {
+  const language = await read(cwd, 'DESIGN.md', 4000)
+  return language ? `The design language of this app (follow it on every screen):\n${language}` : ''
 }
 
 export async function frontendBriefing(cwd: string): Promise<string> {
-  const direction = chosenDirection(cwd)
   const parts = [
     'PROJECT BRIEFING (already gathered for you, so do not spend turns listing or reading these; read a file again only to edit it):',
-    await design(cwd, direction),
+    await design(cwd),
     `Files under apps/app/src:\n${tree(join(cwd, 'apps/app/src')).join('\n')}\n`,
     await read(cwd, 'apps/app/src/routes/index.tsx', 2000),
     await read(cwd, 'apps/app/src/routes/app.index.tsx', 2000),
