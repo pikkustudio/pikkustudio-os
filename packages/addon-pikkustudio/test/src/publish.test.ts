@@ -66,6 +66,8 @@ const until = async (check: () => boolean) => {
   for (let i = 0; i < 100 && !check(); i++) await new Promise((r) => setTimeout(r, 10))
 }
 
+const noMocks = async () => ''
+
 describe('StudioPublisher', () => {
   test('says what Fabric needs before it can publish', async () => {
     const local = await setup(false, [])
@@ -83,7 +85,7 @@ describe('StudioPublisher', () => {
       assert.match(cwd, /worktrees/)
       if (command === 'npx') onLine('Live at https://shop-main.pikku.app')
     }
-    const publisher = new StudioPublisher(projects, [target], run)
+    const publisher = new StudioPublisher(projects, [target], run, noMocks)
     assert.equal((await publisher.options(key)).targets.fabric, 'ready')
     assert.equal((await publisher.deploy(key, 'fabric')).state, 'running')
     await until(() => publisher.status(key).state !== 'running')
@@ -99,7 +101,7 @@ describe('StudioPublisher', () => {
     const { projects, key } = await setup(true, [shop], 'https://github.com/acme/shop')
     const publisher = new StudioPublisher(projects, [target], async (command) => {
       if (command === 'git') throw new Error('push rejected')
-    })
+    }, noMocks)
     await publisher.deploy(key, 'fabric')
     await until(() => publisher.status(key).state !== 'running')
     projects.closeAll()
@@ -117,6 +119,30 @@ describe('StudioPublisher', () => {
       assert.match(prompt, new RegExp(pkg.replace('/', '\\/')))
       assert.match(prompt, new RegExp(`--provider ${target}`))
       assert.match(prompt, /"Shop"/)
+    }
+  })
+
+  test('stops before pushing while a screen still shows unflagged sample data', async () => {
+    const { projects, key } = await setup(true, [shop], 'https://github.com/acme/shop')
+    const calls: string[] = []
+    const mocks = async () => JSON.stringify({ ok: false, calls: [{ file: 'apps/app/src/routes/app.book.tsx', rpc: 'bookings:list', problem: 'no-flag' }] })
+    const publisher = new StudioPublisher(projects, [target], async (command) => void calls.push(command), mocks)
+    await publisher.deploy(key, 'fabric')
+    await until(() => publisher.status(key).state !== 'running')
+    projects.closeAll()
+    assert.equal(publisher.status(key).state, 'failed')
+    assert.match(publisher.status(key).error ?? '', /app\.book\.tsx/)
+    assert.deepEqual(calls, [])
+  })
+
+  test('publishes when the check passes or cannot run', async () => {
+    for (const out of [JSON.stringify({ ok: true, calls: [] }), 'Usage: pikku <command>']) {
+      const { projects, key } = await setup(true, [shop], 'https://github.com/acme/shop')
+      const publisher = new StudioPublisher(projects, [target], async () => {}, async () => out)
+      await publisher.deploy(key, 'fabric')
+      await until(() => publisher.status(key).state !== 'running')
+      projects.closeAll()
+      assert.equal(publisher.status(key).state, 'done')
     }
   })
 })

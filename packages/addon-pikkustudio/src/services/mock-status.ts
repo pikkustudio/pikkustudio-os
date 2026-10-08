@@ -59,3 +59,13 @@ export async function readMockStatus(cwd: string, runner: MockRunner = runMocks)
     screens: new Set(uses.map((u) => u.file)).size,
   }
 }
+
+type PublishCheck = { ok?: boolean; calls?: { file: string; rpc?: string; problem?: string }[] }
+
+export async function publishBlockers(cwd: string, runner: MockRunner = runMocks): Promise<string | null> {
+  const check = parseMocksOutput<PublishCheck>(await runner(cwd, ['mocks', 'check']))
+  if (!check || !Array.isArray(check.calls) || check.ok !== false) return null
+  const files = [...new Set(check.calls.filter((c) => c.problem).map((c) => c.file))]
+  const where = files.length ? `: ${files.slice(0, 5).join(', ')}${files.length > 5 ? ` and ${files.length - 5} more` : ''}` : ''
+  return `Some screens still show sample data that is not ready to publish${where}. Give each one a feature flag or build what it needs, then publish again.`
+}

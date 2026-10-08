@@ -1,4 +1,5 @@
 import { trackLargeFiles } from './lfs.js'
+import { publishBlockers, runMocks, type MockRunner } from './mock-status.js'
 import { spawn } from 'node:child_process'
 import type { StudioAccount, StudioProject, StudioProjectsService } from './projects.js'
 
@@ -102,7 +103,8 @@ export class StudioPublisher {
   constructor(
     private projects: StudioProjectsService,
     private targets: PublishTarget[] = [],
-    private run: Runner = runner
+    private run: Runner = runner,
+    private mocks: MockRunner = runMocks
   ) {}
 
   async options(key: string) {
@@ -141,6 +143,8 @@ export class StudioPublisher {
     ]
     void (async () => {
       try {
+        const blocked = await publishBlockers(worktree, this.mocks)
+        if (blocked) throw new Error(blocked)
         await trackLargeFiles(worktree).catch(() => [])
         for (const [command, args] of steps) await this.run(command, args, worktree, onLine)
         const main = await this.projects.prepareMain(key)
