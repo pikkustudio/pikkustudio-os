@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { pikkuSessionlessFunc } from '#pikku/addon/function'
 import { toWebRequest } from '@pikku/core/http'
+import { apiPrefixOf, withApiPrefix } from '../lib/api-prefix.js'
 import { getArtifact, listArtifacts } from '../services/artifacts.js'
 
 const STUDIO_HEADER = 'x-pikku-studio'
@@ -29,6 +30,7 @@ export const projectProxy = pikkuSessionlessFunc({
     if (!running) return Response.json({ error: 'That project is not open' }, { status: 404 })
     studioProjects.touch(key)
     url.host = `127.0.0.1:${running.port}`
+    url.pathname = withApiPrefix(url.pathname, apiPrefixOf(running.worktree))
     const headers = new Headers(incoming.headers)
     headers.set('host', `127.0.0.1:${running.port}`)
     headers.set(STUDIO_HEADER, running.token)
