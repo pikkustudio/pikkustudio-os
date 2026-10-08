@@ -87,7 +87,7 @@ export function WeekDayRuler({ items, now }: { items: Version[]; now?: string })
     <div className="px-1 pb-1" aria-hidden="true">
       <div className="relative h-4 border-b border-border">
         {items.map((v) => (
-          <i key={v.id} style={{ left: `${pos(v.time)}%`, transform: 'translateX(-50%)' }} className={`absolute bottom-[-5px] size-2.5 rounded-full ${dot[v.outcome]}`} />{/* physical: the day timeline runs left to right in every language */}
+          <i key={v.id} style={{ left: `${pos(v.time)}%`, transform: 'translateX(-50%)' }} /* physical: the day timeline runs left to right in every language */ className={`absolute bottom-[-5px] size-2.5 rounded-full ${dot[v.outcome]}`} />
         ))}
         {now ? <i style={{ left: `${pos(now)}%`, transform: 'translateX(-50%)' }} className="absolute bottom-[-1px] h-3 w-0.5 rounded-full bg-primary" /> : null}{/* physical: the day timeline runs left to right in every language */}
       </div>
