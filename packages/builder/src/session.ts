@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { createInterface } from 'node:readline'
 import { offerMessage, pikkuNext, routeMessage, writePikkuShim, type CommandRunner } from './changes.js'
+import { frontendBriefing } from './briefing.js'
 import { piArgs, piEnv, resolvePi, type BuilderAi, type BuilderMode } from './pi.js'
 import { builderHome, writeSkills } from './skills.js'
 
@@ -197,7 +198,8 @@ export class BuilderSession {
     const cwd = resolved.cwd
     const skills = await writeSkills(this.home)
     const shims = await writePikkuShim(this.home, queueHome)
-    const child = launch(process.execPath, [resolvePi(), ...piArgs({ ai, skills, mode: 'rpc', session: session ?? state.session, role, scope: mode })], {
+    const briefing = mode === 'frontend' && !role ? await frontendBriefing(cwd).catch(() => '') : undefined
+    const child = launch(process.execPath, [resolvePi(), ...piArgs({ ai, skills, mode: 'rpc', session: session ?? state.session, role, scope: mode, briefing })], {
       cwd,
       env: { ...process.env, ...env, ...piEnv(ai), PATH: `${shims}:${env.PATH ?? process.env.PATH ?? ''}` },
     })
