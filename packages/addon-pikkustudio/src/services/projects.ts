@@ -90,7 +90,8 @@ export type SignInStatus = 'pending' | 'confirmed' | 'expired' | 'rejected'
 
 export interface AccountProvider {
   account(): Promise<StudioAccount>
-  projects(): Promise<CloudProject[]>
+  /** The projects in Fabric: one team's, by its slug, or every team's. */
+  projects(team?: string): Promise<CloudProject[]>
   startSignIn(): Promise<{ code: string; url: string; expiresAt: string }>
   pollSignIn(code: string): Promise<SignInStatus>
   signOut(): Promise<void>
@@ -135,7 +136,7 @@ export const withSlugs = async (entries: RegistryEntry[], owner: string): Promis
     entry.owner ||= owner
     if (entry.slug) continue
     entry.name = existsSync(entry.path) ? await projectName(entry.path) : basename(entry.path)
-    const base = projectSlug(basename(entry.path)) || 'project'
+    const base = projectSlug(entry.name ?? '') || projectSlug(basename(entry.path)) || 'project'
     let slug = base
     for (let n = 2; taken.has(`${entry.owner}/${slug}`); n++) slug = `${base}-${n}`
     taken.add(`${entry.owner}/${slug}`)
@@ -162,6 +163,9 @@ export const fileProjectStore = (home: string): ProjectStore => {
     },
   }
 }
+
+// The team of the work that is only on this computer, and the only team without Fabric.
+export const LOCAL_TEAM = 'local'
 
 export const studioHome = () =>
   process.env.PIKKU_STUDIO_HOME ?? join(homedir(), '.pikkustudio')
@@ -338,14 +342,25 @@ const slugify = (name: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '') || 'app'
 
+async function remoteName(path: string): Promise<string | null> {
+  try {
+    const { stdout } = await promisify(execFile)('git', ['-C', path, 'config', '--get', 'remote.origin.url'])
+    return stdout.trim().replace(/\/+$/, '').replace(/\.git$/, '').split(/[/:]/).pop() || null
+  } catch {
+    return null
+  }
+}
+
 async function projectName(path: string): Promise<string> {
-  for (const file of [join(path, '.studio', 'project.json'), join(path, 'package.json')]) {
+  const named = async (file: string) => {
     try {
       const name = JSON.parse(await readFile(file, 'utf8'))?.name
-      if (typeof name === 'string' && name.trim()) return name.trim()
-    } catch {}
+      return typeof name === 'string' && name.trim() ? name.trim() : null
+    } catch {
+      return null
+    }
   }
-  return basename(path)
+  return (await named(join(path, '.studio', 'project.json'))) ?? (await remoteName(path)) ?? (await named(join(path, 'package.json'))) ?? basename(path)
 }
 
 export interface StudioProjectsOptions {
@@ -496,7 +511,11 @@ export class StudioProjectsService {
     return this.account.signOut()
   }
 
-  async list(): Promise<StudioProject[]> {
+  /**
+   * Every project, or one team's: a Fabric team's projects (the copy on this computer standing in
+   * for its cloud entry), or for the `local` team the projects that are only on this computer.
+   */
+  async list(team?: string): Promise<StudioProject[]> {
     const entries = await this.registry()
     const current = this.options.currentRoot ? resolve(this.options.currentRoot) : null
     if (current && !entries.some((e) => resolve(e.path) === current)) {
@@ -506,7 +525,8 @@ export class StudioProjectsService {
       const pinned = entries.filter((e) => resolve(e.path) === current)
       entries.splice(0, entries.length, ...pinned)
     }
-    const cloud = this.options.pinned ? [] : await this.account.projects().catch(() => [] as CloudProject[])
+    const fabricTeam = team && team !== LOCAL_TEAM ? team : undefined
+    const cloud = this.options.pinned ? [] : await this.account.projects(fabricTeam).catch(() => [] as CloudProject[])
     const claimed = new Set<string>()
     const local = await Promise.all(
       entries.map(async (entry): Promise<StudioProject> => {
@@ -551,9 +571,10 @@ export class StudioProjectsService {
       )
     const owner = await this.owner()
     const taken = new Set(local.map((p) => `${p.owner}/${p.slug}`))
+    const here = team === undefined ? local : local.filter((p) => (fabricTeam ? p.location === 'both' : !p.fabricProjectId))
     return [
-      ...local,
-      ...remote.map((project) => {
+      ...here,
+      ...(team === LOCAL_TEAM ? [] : remote).map((project) => {
         const base = projectSlug(project.name) || 'project'
         let slug = base
         for (let n = 2; taken.has(`${owner}/${slug}`); n++) slug = `${base}-${n}`
@@ -820,6 +841,7 @@ export class StudioProjectsService {
     const main = await ensureWorktree(entry.path, this.home, id, MAIN)
     const install = (this.options.installCommand ?? defaultInstall)(main.projectDir)
     if (install) await run(install.command, install.args, main.projectDir)
+    await linkDevPikku(main.projectDir)
     if (existsSync(join(main.projectDir, 'db', 'sqlite'))) {
       for (const args of [['bootstrap'], ['db', 'codegen'], ['all'], ['db', 'migrate']]) await run('npx', ['pikku', ...args], main.projectDir)
     } else if (existsSync(join(main.projectDir, 'pikku.config.json'))) await run('npx', ['pikku', 'all'], main.projectDir)
@@ -830,7 +852,6 @@ export class StudioProjectsService {
     const { id } = splitSessionKey(key)
     const entry = await this.entry(id)
     const ready = await this.prepareMain(id)
-    await linkDevPikku(main.projectDir)
     if (!ready) throw new Error('Only projects with a main version can be published')
     const main = { projectDir: ready.dir }
     const kept = { kept: ready.kept }
@@ -873,6 +894,11 @@ export class StudioProjectsService {
     return root ? listWorktrees(root).catch(() => []) : []
   }
 
+  /** Commit and push the builder's work so a re-clone on wake does not lose it. */
+  saveWork() {
+    return saveWorktrees(this.home)
+  }
+
   async worktrees(key: string): Promise<string[]> {
     const root = layoutRoot((await this.entry(key)).path)
     return root ? listWorktrees(root) : []
@@ -883,11 +909,6 @@ export class StudioProjectsService {
     if (!root) throw new Error('This project has no worktrees')
     await addWorktree(root, name)
     return listWorktrees(root)
-  /** Commit and push the builder's work so a re-clone on wake does not lose it. */
-  saveWork() {
-    return saveWorktrees(this.home)
-  }
-
   }
 
   async createSession(key: string, name = `s-${randomBytes(2).toString('hex')}`): Promise<string> {
@@ -1065,6 +1086,7 @@ export class StudioProjectsService {
     if (!this.prepared.has(key)) {
       const install = (this.options.installCommand ?? defaultInstall)(worktree.projectDir)
       if (install) await run(install.command, install.args, worktree.projectDir)
+      await linkDevPikku(worktree.projectDir)
       if (existsSync(join(worktree.projectDir, 'db', 'sqlite'))) {
         for (const args of [['bootstrap'], ['db', 'codegen'], ['all'], ['db', 'migrate']]) {
           await run('npx', ['pikku', ...args], worktree.projectDir)
@@ -1075,7 +1097,6 @@ export class StudioProjectsService {
     return { entry, worktree }
   }
 
-      await linkDevPikku(worktree.projectDir)
   async workspaceLink(key: string): Promise<WorkspaceLink> {
     if (!key.startsWith('cloud:')) throw new Error('Only a cloud project has a workspace link')
     if (!this.account.workspaceLink) throw new Error('Cloud workspaces are not part of this edition')
