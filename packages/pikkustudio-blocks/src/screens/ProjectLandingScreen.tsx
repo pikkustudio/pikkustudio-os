@@ -1,5 +1,4 @@
-import type { ReactNode } from 'react'
-import { ArrowRight, Check, CircleAlert, LoaderCircle } from 'lucide-react'
+import { ArrowRight, Check, CircleAlert } from 'lucide-react'
 import { m } from '@/i18n/messages'
 import { Button } from '../ui/button'
 import { Hero } from '../blocks/Hero'
@@ -13,7 +12,7 @@ import { planFor, type ProjectHome, type Way } from '../lib/projectHome'
 const Dot = ({ tone }: { tone: 'ok' | 'warn' | 'quiet' }) =>
   tone === 'ok' ? <Check className="size-5 shrink-0" strokeWidth={3} aria-hidden="true" /> : tone === 'warn' ? <CircleAlert className="size-5 shrink-0" strokeWidth={2.5} aria-hidden="true" /> : <span className="mx-1 size-3 shrink-0 rounded-full bg-hero-ink-2 ring-4 ring-hero-ink/20" aria-hidden="true" />
 
-export function ProjectLandingScreen({ home, onAct, busy, notice }: { home: ProjectHome; onAct: (way: Way) => void; busy?: Way | null; notice?: ReactNode }) {
+export function ProjectLandingScreen({ home, onAct }: { home: ProjectHome; onAct: (way: Way) => void }) {
   const plan = planFor(home)
   const others = home.workspaces.filter((w) => !w.mine)
   const liveSite = home.stages.find((s) => s.kind === 'live')
@@ -32,8 +31,7 @@ export function ProjectLandingScreen({ home, onAct, busy, notice }: { home: Proj
         thumb={<ProjectThumbShapes look={home.look} />}
         title={isLive ? m.project_live__title() : golive ? m.golive__title() : plan.title}
         why={isLive ? m.project_live__why() : golive ? m.golive__why() : plan.why}
-        notice={notice}
-        hint={isLive || golive || !plan.hint ? undefined : plan.hint}
+        hint={isLive || golive ? undefined : plan.hint}
         actions={
           isLive ? (
             <Button variant="hero" size="pageLg" type="button" onClick={() => onAct('look')}>
@@ -41,33 +39,33 @@ export function ProjectLandingScreen({ home, onAct, busy, notice }: { home: Proj
               <ArrowRight className="size-5.5" />
             </Button>
           ) : golive ? undefined : (
-            <Button variant="hero" size="pageLg" type="button" disabled={plan.disabled || !!busy} aria-busy={busy === plan.way} onClick={() => onAct(plan.way)}>
-              {busy === plan.way ? m.action_notice__bringing() : plan.action}
-              {busy === plan.way ? <LoaderCircle className="size-5.5 animate-spin" /> : <ArrowRight className="size-5.5" />}
+            <Button variant="hero" size="pageLg" type="button" disabled={plan.disabled} onClick={() => onAct(plan.way)}>
+              {plan.action}
+              <ArrowRight className="size-5.5" />
             </Button>
           )
         }
       >
         {golive ? (
-          <div className="mb-6"><GoLiveSteps plan={plan} home={home} onAct={onAct} busy={busy} /></div>
+          <div className="mb-6"><GoLiveSteps plan={plan} home={home} onAct={onAct} /></div>
         ) : null}
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-px16 font-bold">
           {!home.online ? (
-            <span className="inline-flex items-center gap-2.5"><Dot tone="quiet" />{m.project_landing__offline()}</span>
+            <span className="inline-flex items-center gap-2.5"><Dot tone="quiet" />Not connected to the internet</span>
           ) : liveSite ? (
             <span className="inline-flex items-center gap-2.5"><Dot tone={liveSite.issues.length ? 'warn' : 'ok'} />{liveSite.issues.length ? 'The live site needs a look' : liveSite.state === 'live' ? 'The live site is running well' : 'The live site is getting ready'}</span>
           ) : (
-            <span className="inline-flex items-center gap-2.5"><Dot tone="quiet" />{m.project_landing__nothing_online()}</span>
+            <span className="inline-flex items-center gap-2.5"><Dot tone="quiet" />Nothing is online yet</span>
           )}
-          {plan.problems.some((s) => s.kind !== 'live') ? <span className="inline-flex items-center gap-2.5"><Dot tone="warn" />{m.project_landing__things_need_look({ count: plan.problems.reduce((n, s) => n + s.issues.length, 0) })}</span> : null}
+          {plan.problems.some((s) => s.kind !== 'live') ? <span className="inline-flex items-center gap-2.5"><Dot tone="warn" />{plan.problems.reduce((n, s) => n + s.issues.length, 0)} things need a look</span> : null}
           {people ? <span className="inline-flex items-center gap-2.5"><Dot tone="quiet" />{people}</span> : null}
         </div>
       </Hero>
       <NeedsALook stages={plan.problems} onLook={() => onAct('look')} />
       {isLive ? (
-        <ProjectWays plan={plan} home={home} onAct={onAct} ways={['cloud', 'local']} busy={busy} title={m.project_ways__live_title()} sub={m.project_ways__live_sub()} look={false} />
+        <ProjectWays plan={plan} home={home} onAct={onAct} ways={['cloud', 'local']} title={m.project_ways__live_title()} sub={m.project_ways__live_sub()} look={false} />
       ) : golive ? null : (
-        <ProjectWays plan={plan} home={home} onAct={onAct} busy={busy} />
+        <ProjectWays plan={plan} home={home} onAct={onAct} />
       )}
       <WorkingNow workspaces={home.workspaces} />
       <WhatIsOnline stages={home.stages} calm={plan.calm} online={home.online} />

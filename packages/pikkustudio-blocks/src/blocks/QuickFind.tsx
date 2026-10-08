@@ -17,7 +17,7 @@ const pages = (): Hit[] => (
     [m.quick_find__translations(), '/translations', Globe],
     [m.quick_find__artifacts(), '/artifacts', FileText],
     [m.quick_find__knowledge(), '/knowledge', BookOpen],
-    [m.quick_find__front_doors(), '/front-doors', Smartphone],
+    [m.quick_find__apps(), '/apps', Smartphone],
     [m.quick_find__publish(), '/publish', Upload],
     [m.quick_find__assistants(), '/assistants', Users],
     ['Virtual users', '/virtual-users', UserRoundCheck],

@@ -21,7 +21,6 @@ import { ChatMarkdown } from '../blocks/ChatMarkdown'
 import { AiSpinner } from '../blocks/Spinner'
 import { Button } from '../ui/button'
 import { QuickFind } from '../blocks/QuickFind'
-import { ProjectRunGate } from '../blocks/ProjectRunGate'
 import { Toaster } from '../blocks/Toaster'
 import { GitPullRequest, type LucideIcon, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, Home, Info, Compass, KeyRound, Search, Laptop, LayoutGrid, Mail, MessageCircle, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, User, UserRoundCheck, Wrench, X, CheckCheck } from 'lucide-react'
 
@@ -38,8 +37,8 @@ const NOT_NOW = 'No problem. I will ask again tomorrow.'
 
 const item =
   'flex w-full items-center gap-3 rounded-lg px-3 text-left font-semibold no-underline transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'
-const PIN_ICON: Record<Movable, LucideIcon> = { 'virtual-users': UserRoundCheck, translations: Globe, artifacts: FileText, content: FolderOpen, 'front-doors': Smartphone }
-const PIN_LABEL: Record<Movable, string> = { 'virtual-users': 'Virtual users', translations: 'Translations', artifacts: SCREEN_NAME.artifacts, content: m.content__title(), 'front-doors': m.front_doors__title() }
+const PIN_ICON: Record<Movable, LucideIcon> = { 'virtual-users': UserRoundCheck, translations: Globe, artifacts: FileText, content: FolderOpen, apps: Smartphone }
+const PIN_LABEL: Record<Movable, string> = { 'virtual-users': 'Virtual users', translations: 'Translations', artifacts: SCREEN_NAME.artifacts, content: m.content__title(), apps: 'Apps' }
 const navItem = `${item} h-9.25 text-[14px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`
 const iconBtn =
   'grid size-11 shrink-0 place-items-center rounded-full text-ink-2 transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'
@@ -168,7 +167,6 @@ export function ShellLayout() {
   }
   const detach = (label: string) => setAttached((a) => a.filter((x) => x !== label))
   const fill = useLocation({ select: (l) => /\/(design|artifacts\/[^/]+|routines\/[^/]+)$/.test(l.pathname) || (l.pathname.endsWith('/emails') && !!(l.search as { email?: string }).email) })
-  const needsApp = useLocation({ select: (l) => /\/(design|knowledge|explore|logs|performance|metrics|front-doors|apps|assistants|virtual-users|routines|emails|translations|artifacts|content|versions|changes-directions|mocks)(\/|$)/.test(l.pathname) })
   const onArtifacts = useLocation({ select: (l) => l.pathname.endsWith('/artifacts') })
   const onKnowledge = useLocation({ select: (l) => l.pathname.endsWith('/knowledge') })
   const knowledge = useProjectQuery<KnowledgeBundle | null>(projectKey, 'console:getKnowledge', {}, { enabled: onKnowledge, refetchInterval: 5000 })
@@ -331,10 +329,6 @@ export function ShellLayout() {
                     <Link {...keep} to="/projects">{m.not_found__projects()}</Link>
                   </Button>
                 </NotFoundState>
-              ) : needsApp ? (
-                <ProjectRunGate>
-                  <Outlet />
-                </ProjectRunGate>
               ) : (
                 <Outlet />
               )}
@@ -429,7 +423,7 @@ export function ShellLayout() {
                     ))}
                   </div>
                 {!pending.length && !pub ? (
-                  <EmptyState icon={CheckCheck} title={m.shell_layout__caught_up_title()} text={m.shell_layout__caught_up_text()} />
+                  <EmptyState icon={CheckCheck} title="You are all caught up." text="Nothing needs you right now. If something does, I will put it here and tell you in plain words." />
                 ) : null}
               </div>
             ) : null}

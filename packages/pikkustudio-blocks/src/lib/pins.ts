@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useLocation } from '@tanstack/react-router'
 import { useProjectSlug } from './project'
 
-export const MOVABLE = ['virtual-users', 'translations', 'artifacts', 'content', 'front-doors'] as const
+export const MOVABLE = ['virtual-users', 'translations', 'artifacts', 'content', 'apps'] as const
 export type Movable = (typeof MOVABLE)[number]
 
 const key = (slug: string) => `studio:pins:${slug}`

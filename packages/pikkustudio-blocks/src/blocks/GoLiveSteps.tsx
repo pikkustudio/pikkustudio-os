@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Cloud, Laptop, LoaderCircle } from 'lucide-react'
+import { ArrowRight, Check, Cloud, Laptop } from 'lucide-react'
 import { m } from '@/i18n/messages'
 import { Button } from '../ui/button'
 import { wordsFor } from './ProjectWays'
@@ -7,7 +7,7 @@ import type { Plan, ProjectHome, Way } from '../lib/projectHome'
 const icons = { cloud: Cloud, local: Laptop } as const
 
 /** The go-live steps, drawn inside the hero in the same style as the project-creation progress list. */
-export function GoLiveSteps({ plan, home, onAct, busy }: { plan: Plan; home: ProjectHome; onAct: (way: Way) => void; busy?: Way | null }) {
+export function GoLiveSteps({ plan, home, onAct }: { plan: Plan; home: ProjectHome; onAct: (way: Way) => void }) {
   const running = home.workspaces.some((w) => w.mine && w.state === 'working')
   const steps = [
     { label: running ? m.golive__step1_done() : m.golive__step1(), state: running ? 'done' : 'now' },
@@ -44,13 +44,12 @@ export function GoLiveSteps({ plan, home, onAct, busy }: { plan: Plan; home: Pro
           (['cloud', 'local'] as const).map((way) => {
             const w = wordsFor(way, plan)
             const Icon = icons[way]
-            const off = (!home.online && (way === 'cloud' || !plan.mineLocal)) || !!busy
-            const working = busy === way
+            const off = !home.online && (way === 'cloud' || !plan.mineLocal)
             return (
               <div key={way} className="flex max-w-72 flex-col gap-2">
-                <Button variant={way === 'cloud' ? 'hero' : 'heroGhost'} size="page" type="button" disabled={off} aria-busy={working} onClick={() => onAct(way)}>
-                  {working ? <LoaderCircle className="size-4.5 animate-spin" /> : <Icon className="size-4.5" />}
-                  {working ? m.action_notice__bringing() : w.action}
+                <Button variant={way === 'cloud' ? 'hero' : 'heroGhost'} size="page" type="button" disabled={off} onClick={() => onAct(way)}>
+                  <Icon className="size-4.5" />
+                  {w.action}
                 </Button>
                 <span className="text-px15 text-hero-ink-2 text-pretty">{w.why}{w.note ? ` ${w.note}` : ''}</span>
               </div>
