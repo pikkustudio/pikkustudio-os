@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
+  "scripts": {
+    "tsc:i18n": "tsc --noEmit -p tsconfig.i18n.json"
+  },
   "license": "BUSL-1.1",
   "repository": {
     "type": "git",

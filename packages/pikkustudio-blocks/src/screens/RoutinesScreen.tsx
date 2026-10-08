@@ -1,5 +1,6 @@
+import { m } from '@/i18n/messages'
 import { useContext, useState } from 'react'
-import { Link } from '@tanstack/react-router'
+import { Link } from '../blocks/Link'
 import { Button } from '../ui/button'
 import { Switch } from '../ui/switch'
 import { Art } from '../blocks/ExploreHub'
@@ -13,10 +14,11 @@ import { Section } from '../blocks/Section'
 import { Page } from '../blocks/Page'
 import { keep } from '../lib/links'
 import { ShellCtx } from '../lib/shell'
+import { asI18n, asI18nStub } from '@pikku/react'
 
 
 const sample = {
-  app: 'Sunrise Bakery Classes',
+  app: asI18nStub('Sunrise Bakery Classes'),
 }
 
 export function RoutinesScreen() {
@@ -28,40 +30,40 @@ export function RoutinesScreen() {
 
   return (
     <Page gap="snug">
-      <PageHead crumb={sample.app} title="Routines" text="Jobs your app does on its own, on a timer or when something happens. Open one to see every step, and every time it ran." size="lead" />
+      <PageHead crumb={sample.app} title={m.routines_screen__title()} text={m.routines_screen__text()} size="lead" />
 
       <NextCard
-        label="Routines"
+        label={m.routines_screen__title()}
         hue="petrol"
         art={<Art />}
-        title={lead ? `${wrong.length === 1 ? 'A routine' : `${wrong.length} routines`} went wrong today` : `${routines.filter((r) => !off[r.id]).length} routines are running well`}
-        why={lead ? `"${lead.name}" ${lead.history[0].note.replace('Went wrong at ', 'stopped at the step ')} (${lead.history[0].when.replace('Today, ', '')}). Pikku already has an idea why.` : 'Everything ran as it should the last time. Pikku tells you if that changes.'}
+        title={lead ? (m.routines_screen__wrong_count({ count: wrong.length })) : m.routines_screen__n_well({ count: routines.filter((r) => !off[r.id]).length })}
+        why={lead ? m.routines_screen__why_stopped({ name: lead.name, step: lead.history[0].wrongAt ?? lead.history[0].note, when: lead.history[0].when }) : m.routines_screen__why_fine()}
       >
         <div className="flex flex-wrap gap-3">
           {lead ? (
             <Button variant="hero" size="page" asChild>
               <Link {...keep} to={'/routines/$id' as never} params={{ id: lead.id } as never}>
-                Look at it
+                {m.routines_screen__look_at_it()}
               </Link>
             </Button>
           ) : null}
-          <Button variant="heroGhost" size="page" onClick={() => say('Add a new routine to my app')}>
-            Ask Pikku for a new one
+          <Button variant="heroGhost" size="page" onClick={() => say(m.routines_screen__add_say())}>
+            {m.assistants_screen__ask_new()}
           </Button>
         </div>
       </NextCard>
 
-      <Section title="Your routines" sub="Each one starts the same way every time. Switch one off and it simply waits.">
+      <Section title={m.routines_screen__your_routines()} sub={m.routines_screen__your_routines_sub()}>
         <RowStack>
           {routines.map((r) => {
             const last = r.history[0]
             return (
-              <RowCard key={r.id} flag={!off[r.id] && !!last && !last.ok} on={!off[r.id]} tile={<Workflow className="size-5" />} title={r.name} caption={r.what} note={r.runs}>
-                {!off[r.id] ? !last ? <Dot tone="quiet">Has not run yet</Dot> : <Dot tone={last.ok ? 'ok' : 'bad'}>{last.ok ? `Ran fine · ${last.when}` : `Went wrong · ${last.when}`}</Dot> : <Dot tone="quiet">Switched off</Dot>}
-                <Switch checked={!off[r.id]} onCheckedChange={(v) => setOff((o) => ({ ...o, [r.id]: !v }))} aria-label={`${r.name} is on`} />
+              <RowCard key={r.id} flag={!off[r.id] && !!last && !last.ok} on={!off[r.id]} tile={<Workflow className="size-5" />} title={asI18n(r.name)} caption={asI18n(r.what)} note={r.runs}>
+                {!off[r.id] ? !last ? <Dot tone="quiet">{m.routines_screen__not_run()}</Dot> : <Dot tone={last.ok ? 'ok' : 'bad'}>{last.ok ? m.routines_screen__ran_fine({ when: last.when }) : m.routines_screen__went_wrong({ when: last.when })}</Dot> : <Dot tone="quiet">{m.routines_screen__switched_off()}</Dot>}
+                <Switch checked={!off[r.id]} onCheckedChange={(v) => setOff((o) => ({ ...o, [r.id]: !v }))} aria-label={m.routines_screen__is_on({ name: r.name })} />
                 <Button variant="bordered" size="compact" asChild>
                   <Link {...keep} to={'/routines/$id' as never} params={{ id: r.id } as never}>
-                    Open
+                    {m.project_actions__open()}
                   </Link>
                 </Button>
               </RowCard>

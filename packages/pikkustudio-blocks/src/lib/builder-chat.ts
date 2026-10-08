@@ -1,3 +1,4 @@
+import { m } from '@/i18n/messages'
 import { useCallback, useMemo, useState } from 'react'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import type { ChatItem } from './chat'
@@ -30,14 +31,14 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
       if (item.kind === 'assistant') {
         return [{ id: `b${index}`, kind: 'pikku', text: item.text }]
       }
-      if (item.kind === 'error') return [{ id: `b${index}`, kind: 'pikku', text: 'Something got in the way. Please try again.' }]
+      if (item.kind === 'error') return [{ id: `b${index}`, kind: 'pikku', text: m.chat__went_wrong() }]
       return []
     })
     const last = (data?.items ?? []).at(-1)
     const offered = !!last?.text && last.kind === 'assistant' && last.text.includes(OFFER_MARKER)
     const clean = said.map((i) => (i.kind === 'pikku' ? { ...i, text: i.text.split(OFFER_MARKER).join('').trim() } : i))
     const card: ChatItem[] = offered
-      ? [{ id: 'offer', kind: 'card', toolCallId: 'offer', runId: 'offer', title: 'This is a bigger job', detail: 'I can add it to the queue and build it as its own changeset, or do it right now in this chat.', state: 'ask', yes: 'Add to queue', no: 'Do it now' }]
+      ? [{ id: 'offer', kind: 'card', toolCallId: 'offer', runId: 'offer', title: m.builder_chat__bigger_title(), detail: m.builder_chat__bigger_detail(), state: 'ask', yes: m.builder_chat__add_to_queue(), no: m.builder_chat__do_it_now() }]
       : []
     return [...clean, ...card, ...local]
   }, [data, local])
@@ -54,7 +55,7 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
         await (prompt.mutateAsync as (input: unknown) => Promise<unknown>)({ key, message: text, mode, offer: mode === 'build' })
         await state.refetch()
       } catch (error) {
-        push({ kind: 'pikku', text: (error as Error)?.message || 'Something got in the way. Please try again.' })
+        push({ kind: 'pikku', text: (error as Error)?.message || m.chat__went_wrong() })
       } finally {
         setSending(false)
       }
@@ -64,7 +65,7 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
 
   const decide = useCallback(
     async (id: string, yes: boolean) => {
-      if (id === 'offer') await send(yes ? 'Add it to the queue.' : 'Do it now, in this session.')
+      if (id === 'offer') await send(yes ? m.builder_chat__say_add_to_queue() : m.builder_chat__say_do_it_now())
     },
     [send],
   )

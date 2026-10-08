@@ -32,6 +32,7 @@ import { FLOW_NODE_WIDTH } from './components/nodes/FlowNode'
 import { GraphScrollbars } from './components/GraphScrollbars'
 import { ElkEdge } from './components/edges/ElkEdge'
 import { useGraphRun } from './context/GraphHostContext'
+import { useGraphM } from './context/MessagesContext'
 import { createWorkflowFlow } from './hooks/create-workflow-flow'
 import { useElkLayout } from './hooks/useElkLayout'
 
@@ -86,11 +87,12 @@ export const WorkflowGraphFlow: React.FC<WorkflowGraphViewProps> = ({
   onPaneClick,
 }) => {
   const { fitView, setViewport } = useReactFlow()
+  const m = useGraphM()
   const frame = React.useRef<HTMLDivElement>(null)
 
   const { nodes: flowNodes, edges: initialEdges } = useMemo(() => {
-    return createWorkflowFlow(workflow)
-  }, [workflow])
+    return createWorkflowFlow(workflow, m)
+  }, [workflow, m])
 
   const layoutResult = useElkLayout(flowNodes, initialEdges, direction)
 
@@ -147,7 +149,7 @@ export const WorkflowGraphFlow: React.FC<WorkflowGraphViewProps> = ({
   }, [layoutResult, setNodes, setEdges, fitView, setViewport])
 
   return (
-    <div ref={frame} className="relative h-full w-full">
+    <div ref={frame} dir="ltr" className="relative h-full w-full">
       <ReactFlow
         nodes={nodes}
         edges={shownEdges}

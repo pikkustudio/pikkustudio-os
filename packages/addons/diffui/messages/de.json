@@ -1,0 +1,11 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "diffui_home__diff_ui": "Diff UI",
+  "diffui_home__no_screenshot_pairs_yet_run_compare": "Noch keine Screenshot-Paare. Starte compare-screen, um welche zu erzeugen.",
+  "diffui_home__original": "Original",
+  "diffui_home__original_alt": "Original",
+  "diffui_home__prototype": "Prototyp",
+  "diffui_home__prototype_alt": "Prototyp",
+  "diffui_home__theme_dark": "dunkel",
+  "diffui_home__theme_light": "hell"
+}

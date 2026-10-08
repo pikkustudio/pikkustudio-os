@@ -32,6 +32,9 @@
   ],
   "exclude": [
     "node_modules",
+    "src/screens/**",
+    "src/screens.ts",
+    ".pikku/addon/screens/**",
     "dist",
     ".pikku/**/*.d.ts"
   ]

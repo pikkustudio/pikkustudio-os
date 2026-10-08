@@ -1,9 +1,11 @@
 import React from 'react'
+import { asI18n, type I18nString } from '@pikku/react'
 import type { Node } from '@xyflow/react'
 import type { GraphNodeProps } from '../../types'
 import { FlowNode } from './FlowNode'
 import { CheckCircle } from 'lucide-react'
 import { useGraphActions } from '../../context/GraphHostContext'
+import { useGraphM } from '../../context/MessagesContext'
 import { useGraphHighlight } from '../../context/GraphHostContext'
 
 interface ArrayPredicateNodeData {
@@ -12,7 +14,7 @@ interface ArrayPredicateNodeData {
   sourceVar?: string
   itemVar?: string
   outputVar?: string
-  stepName?: string
+  stepName?: I18nString
 }
 
 type HighlightType = 'focused' | 'referenced' | null
@@ -22,6 +24,7 @@ export const ArrayPredicateNode: React.FC<
 > = ({ data, id }) => {
   const { openWorkflowStep } = useGraphActions()
   const graphHighlight = useGraphHighlight()
+  const m = useGraphM()
 
   const highlightType: HighlightType = React.useMemo(() => {
     if (!graphHighlight) return null
@@ -35,14 +38,18 @@ export const ArrayPredicateNode: React.FC<
   }, [id, openWorkflowStep])
 
   const label =
-    data.mode === 'some' ? 'Some' : data.mode === 'every' ? 'Every' : 'Check'
+    data.mode === 'some'
+      ? m.node_some()
+      : data.mode === 'every'
+        ? m.node_every()
+        : m.node_check()
 
   return (
     <FlowNode
       icon={CheckCircle}
       tone="decision"
       hasInput={true}
-      outputHandles={[{ id: 'default', label: '' }]}
+      outputHandles={[{ id: 'default' }]}
       label={label}
       subtitle={data.stepName}
       onClick={handleClick}
@@ -67,7 +74,7 @@ export const getArrayPredicateNodeConfig = (
       sourceVar: step.sourceVar,
       itemVar: step.itemVar,
       outputVar: step.outputVar,
-      stepName: step.stepName,
+      stepName: asI18n(step.stepName),
       nodeType: 'flow',
     },
   }

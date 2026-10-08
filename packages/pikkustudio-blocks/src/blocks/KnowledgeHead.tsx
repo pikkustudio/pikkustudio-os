@@ -10,10 +10,10 @@ export function KnowledgeHead({ notes, linkCount }: { notes: Note[]; linkCount: 
       {notes.length ? (
         <div className="flex items-center gap-5 text-[15px] text-ink-2">
           <span>
-            <b className="mr-1 font-heading text-[20px] text-foreground tabular-nums">{notes.length}</b>{m.knowledge_head__notes()}
+            <b className="me-1 font-heading text-[20px] text-foreground tabular-nums">{notes.length}</b>{m.knowledge_head__notes()}
           </span>
           <span>
-            <b className="mr-1 font-heading text-[20px] text-foreground tabular-nums">{linkCount}</b>{m.knowledge_head__links()}
+            <b className="me-1 font-heading text-[20px] text-foreground tabular-nums">{linkCount}</b>{m.knowledge_head__links()}
           </span>
         </div>
       ) : null}

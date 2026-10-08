@@ -15,12 +15,11 @@ const groups: Record<string, ProjectState[]> = {
   paused: ['paused'],
 }
 
-export function ProjectsGrid({ items, onRestore }: { items: Project[]; onRestore: (id: string) => void }) {
+export function ProjectsGrid({ items }: { items: Project[] }) {
   const [filter, setFilter] = useState('all')
   const [query, setQuery] = useState('')
   const [layout, setLayout] = useState('cards')
 
-  const restore = onRestore
   const reset = () => {
     setFilter('all')
     setQuery('')
@@ -33,20 +32,20 @@ export function ProjectsGrid({ items, onRestore }: { items: Project[]; onRestore
     <div className="@container flex flex-col gap-5">
       <div className="flex flex-col gap-3 @min-[620px]:flex-row @min-[620px]:items-center @min-[620px]:justify-between">
         <div className="relative w-full @min-[620px]:max-w-80">
-          <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4.5 -translate-y-1/2 text-muted-foreground" />
-          <Input shape="field" type="search" placeholder={m.projects_grid__search_your_projects()} aria-label={m.projects_grid__search_your_projects()} value={query} onChange={(e) => setQuery(e.target.value)} className="pl-10" />
+          <Search className="pointer-events-none absolute top-1/2 start-3.5 size-4.5 -translate-y-1/2 text-muted-foreground" />
+          <Input shape="field" type="search" placeholder={m.projects_grid__search_your_projects()} aria-label={m.projects_grid__search_your_projects()} value={query} onChange={(e) => setQuery(e.target.value)} className="ps-10" />
         </div>
         <div className="flex items-center gap-2.5 overflow-x-auto">
-          <Segmented label={m.projects_grid__how_to_show_them()} value={layout} onChange={setLayout} options={[['cards', <LayoutGrid key="c" className="size-4" />, false, 'Cards'], ['rows', <List key="r" className="size-4" />, false, 'List']]} />
+          <Segmented label={m.projects_grid__how_to_show_them()} value={layout} onChange={setLayout} options={[['cards', <LayoutGrid key="c" className="size-4" />, false, m.projects_grid__cards()], ['rows', <List key="r" className="size-4" />, false, m.projects_grid__list()]]} />
           <Segmented
             label={m.projects_grid__show()}
             value={filter}
             onChange={setFilter}
             options={[
-              ['all', 'All'],
-              ['running', 'Running'],
+              ['all', m.projects_grid__filter_all()],
+              ['running', m.projects_grid__filter_running()],
               ['progress', m.projects_grid__in_progress()],
-              ['paused', 'Paused'],
+              ['paused', m.projects_grid__filter_paused()],
             ]}
           />
         </div>
@@ -54,13 +53,13 @@ export function ProjectsGrid({ items, onRestore }: { items: Project[]; onRestore
       {shown.length && layout === 'rows' ? (
         <ul className="m-0 flex list-none flex-col gap-2 p-0">
           {shown.map((p) => (
-            <ProjectRow key={p.id} item={p} onRestore={() => restore(p.id)} />
+            <ProjectRow key={p.id} item={p} />
           ))}
         </ul>
       ) : shown.length ? (
         <div className="grid grid-cols-1 gap-5 @min-[640px]:grid-cols-2 @min-[960px]:grid-cols-3">
           {shown.map((p) => (
-            <ProjectCard key={p.id} item={p} onRestore={() => restore(p.id)} />
+            <ProjectCard key={p.id} item={p} />
           ))}
         </div>
       ) : (

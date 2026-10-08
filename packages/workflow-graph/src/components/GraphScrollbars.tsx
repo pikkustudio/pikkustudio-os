@@ -1,12 +1,15 @@
 import React from 'react'
 import { getNodesBounds, useReactFlow, useStore, useViewport } from '@xyflow/react'
 
+import { useGraphM } from '../context/MessagesContext'
+
 const PAD = 48
 
 type Axis = 'x' | 'y'
 
 /** Scrollbars for the canvas: React Flow pans but draws no bars, and a graph at normal size is longer than its frame. */
 export const GraphScrollbars: React.FC = () => {
+  const m = useGraphM()
   const { x, y, zoom } = useViewport()
   const { setViewport, getNodes } = useReactFlow()
   const width = useStore((s) => s.width)
@@ -55,9 +58,9 @@ export const GraphScrollbars: React.FC = () => {
       <div
         role="scrollbar"
         aria-orientation={axis === 'x' ? 'horizontal' : 'vertical'}
-        aria-label={axis === 'x' ? 'Scroll sideways' : 'Scroll up and down'}
+        aria-label={axis === 'x' ? m.scroll_sideways() : m.scroll_vertical()}
         aria-valuenow={Math.round((clamped / Math.max(view - size, 1)) * 100)}
-        className={`nodrag nopan absolute z-10 rounded-full bg-muted/60 ${axis === 'x' ? 'right-4 bottom-1.5 left-4 h-2.5' : 'top-4 right-1.5 bottom-4 w-2.5'}`}
+        className={`nodrag nopan absolute z-10 rounded-full bg-muted/60 ${axis === 'x' ? 'end-4 bottom-1.5 start-4 h-2.5' : 'top-4 end-1.5 bottom-4 w-2.5'}`}
       >
         <div
           onPointerDown={onDown}

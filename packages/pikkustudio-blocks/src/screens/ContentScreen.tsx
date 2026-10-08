@@ -1,5 +1,6 @@
+import type { I18nNode, I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
-import { useState, type ReactNode } from 'react'
+import { useState } from 'react'
 import { FolderOpen, Globe, Lock, Upload } from 'lucide-react'
 import { Button } from '../ui/button'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
@@ -14,7 +15,7 @@ import { ContentUploadForm } from '../blocks/ContentUploadForm'
 
 type Side = 'private' | 'public'
 
-const Group = ({ title, children }: { title: string; children: ReactNode }) => (
+const Group = ({ title, children }: { title: I18nString; children: I18nNode }) => (
   <section className="flex flex-col gap-2" aria-label={title}>
     <h2 className="px-1 pt-2 text-px14 font-bold text-muted-foreground">{title}</h2>
     {children}
@@ -107,7 +108,7 @@ export function ContentScreen() {
       ) : null}
       <Group title={m.content__all_folders()}>
         {root.isError ? (
-          <EmptyState layout="row" title={m.content_tree__failed()} text="">
+          <EmptyState layout="row" title={m.content_tree__failed()}>
             <Button type="button" size="page" onClick={() => root.refetch()}>{m.content_tree__try_again()}</Button>
           </EmptyState>
         ) : !root.data ? (

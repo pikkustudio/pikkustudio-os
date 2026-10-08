@@ -1,15 +1,17 @@
 import React from 'react'
+import { asI18n, type I18nString } from '@pikku/react'
 import type { Node } from '@xyflow/react'
 import type { GraphNodeProps } from '../../types'
 import { FlowNode } from './FlowNode'
 import { Repeat } from 'lucide-react'
 import { useGraphActions } from '../../context/GraphHostContext'
+import { useGraphM } from '../../context/MessagesContext'
 import { useGraphHighlight } from '../../context/GraphHostContext'
 
 interface FanoutNodeData {
   colorKey: string
   childRpc?: string
-  stepName?: string
+  stepName?: I18nString
 }
 
 type HighlightType = 'focused' | 'referenced' | null
@@ -19,6 +21,7 @@ export const FanoutNode: React.FC<GraphNodeProps<FanoutNodeData>> = ({
   id,
 }) => {
   const { openWorkflowStep } = useGraphActions()
+  const m = useGraphM()
   const graphHighlight = useGraphHighlight()
 
   const highlightType: HighlightType = React.useMemo(() => {
@@ -29,8 +32,8 @@ export const FanoutNode: React.FC<GraphNodeProps<FanoutNodeData>> = ({
   }, [graphHighlight, id])
 
   const outputHandles = [
-    { id: 'each', label: 'each' },
-    { id: 'done', label: 'done' },
+    { id: 'each', label: m.handle_each() },
+    { id: 'done', label: m.handle_done() },
   ]
 
   const handleClick = React.useCallback(() => {
@@ -43,7 +46,7 @@ export const FanoutNode: React.FC<GraphNodeProps<FanoutNodeData>> = ({
       tone="decision"
       hasInput={true}
       outputHandles={outputHandles}
-      label="Loop"
+      label={m.node_loop()}
       subtitle={data.stepName}
       onClick={handleClick}
       highlightType={highlightType}
@@ -64,7 +67,7 @@ export const getFanoutNodeConfig = (
     data: {
       colorKey: 'workflow',
       childRpc: step.childRpc || step.eachRpc,
-      stepName: step.stepName,
+      stepName: asI18n(step.stepName),
       nodeType: 'flow',
     },
   }

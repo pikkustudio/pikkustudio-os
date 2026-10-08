@@ -1,3 +1,5 @@
+import type { I18nString } from '@pikku/react'
+import { m } from '@/i18n/messages'
 import type { ProjectLook } from '../blocks/ProjectThumb'
 
 export type Way = 'local' | 'cloud' | 'look'
@@ -18,11 +20,11 @@ export type Stage = {
 export type Workspace = {
   id: string
   where: 'desktop' | 'cloud'
-  who: string
+  who: I18nString
   mine: boolean
   state: 'working' | 'idle' | 'asleep'
   change?: string
-  when: string
+  when: I18nString
 }
 
 export type ProjectHome = {
@@ -35,10 +37,10 @@ export type ProjectHome = {
 
 export type Plan = {
   way: Way
-  title: string
-  why: string
-  action: string
-  hint?: string
+  title: I18nString
+  why: I18nString
+  action: I18nString
+  hint?: I18nString
   disabled?: boolean
   art: 'laptop' | 'cloud' | 'window'
   hue: 'teal' | 'petrol' | 'sea'
@@ -52,7 +54,13 @@ export type Plan = {
 
 const first = (who: string) => who.split(' ')[0]
 
-export const stageLabel = (s: Stage) => (s.kind === 'live' ? 'The live site' : s.kind === 'test' ? 'The practice copy' : `Copy for “${s.name}”`)
+/** The stage's name as a phrase. `inline` is the form used mid-sentence ("the live site"). */
+export const stageLabel = (s: Stage, inline = false): I18nString =>
+  s.kind === 'live'
+    ? inline ? m.project_home__stage_live_inline() : m.project_home__stage_live()
+    : s.kind === 'test'
+      ? inline ? m.project_home__stage_test_inline() : m.project_home__stage_test()
+      : m.project_home__stage_change({ name: s.name })
 
 export function planFor(p: ProjectHome): Plan {
   const mineLocal = p.workspaces.find((w) => w.mine && w.where === 'desktop')
@@ -64,23 +72,23 @@ export function planFor(p: ProjectHome): Plan {
   const rest = (way: Way): Way[] => (['cloud', 'local', 'look'] as Way[]).filter((w) => w !== way)
 
   if (mineLocal && mineLocal.state === 'working') {
-    return { ...base, way: 'local', art: 'laptop', hue: 'teal', others: rest('local'), title: 'Pikku is working on your computer.', why: mineLocal.change ? `It is ${mineLocal.change}. You can watch it happen, or step in whenever you like.` : 'You can watch it happen, or step in whenever you like.', action: 'Go back to it', hint: 'Nothing is lost if you close it.' }
+    return { ...base, way: 'local', art: 'laptop', hue: 'teal', others: rest('local'), title: m.project_home__local_working_title(), why: mineLocal.change ? m.project_home__local_working_why_change({ change: mineLocal.change }) : m.project_home__local_working_why(), action: m.project_home__local_working_action(), hint: m.project_home__local_working_hint() }
   }
   if (mineLocal) {
-    return { ...base, way: 'local', art: 'laptop', hue: 'teal', others: rest('local'), title: 'Carry on where you stopped.', why: `Your copy is on this computer, paused, exactly as you left it ${mineLocal.when}.`, action: 'Carry on', hint: 'Opens straight away.' }
+    return { ...base, way: 'local', art: 'laptop', hue: 'teal', others: rest('local'), title: m.project_home__local_paused_title(), why: m.project_home__local_paused_why({ when: mineLocal.when }), action: m.project_home__local_paused_action(), hint: m.project_home__local_paused_hint() }
   }
   if (mineCloud && mineCloud.state === 'asleep') {
-    return { ...base, way: 'cloud', art: 'cloud', hue: 'petrol', others: rest('cloud'), title: 'Your cloud workspace is asleep.', why: 'It went to sleep when you stopped, so it costs nothing while you are away. Waking it takes about half a minute and everything is just as you left it.', action: 'Wake it up and carry on', hint: p.online ? undefined : 'Needs the internet.', disabled: !p.online }
+    return { ...base, way: 'cloud', art: 'cloud', hue: 'petrol', others: rest('cloud'), title: m.project_home__cloud_asleep_title(), why: m.project_home__cloud_asleep_why(), action: m.project_home__cloud_asleep_action(), hint: p.online ? undefined : m.project_home__cloud_asleep_hint(), disabled: !p.online }
   }
   if (mineCloud) {
-    return { ...base, way: 'cloud', art: 'cloud', hue: 'petrol', others: rest('cloud'), title: 'Carry on in the cloud.', why: 'Your workspace is awake and waiting. Your team can see what you are doing there.', action: 'Carry on', disabled: !p.online }
+    return { ...base, way: 'cloud', art: 'cloud', hue: 'petrol', others: rest('cloud'), title: m.project_home__cloud_awake_title(), why: m.project_home__cloud_awake_why(), action: m.project_home__cloud_awake_action(), disabled: !p.online }
   }
   if (theirCloud && p.online) {
-    const n = first(theirCloud.who)
-    return { ...base, way: 'cloud', art: 'cloud', hue: 'petrol', others: rest('cloud'), title: `${n} is working in the cloud right now.`, why: theirCloud.change ? `${n} is ${theirCloud.change}. You can join them and watch it happen, with nothing to set up.` : `You can join ${n} and watch it happen, with nothing to set up.`, action: `Join ${n}`, hint: 'You will both see the same thing.' }
+    const name = first(theirCloud.who)
+    return { ...base, way: 'cloud', art: 'cloud', hue: 'petrol', others: rest('cloud'), title: m.project_home__cloud_theirs_title({ name }), why: theirCloud.change ? m.project_home__cloud_theirs_why_change({ name, change: theirCloud.change }) : m.project_home__cloud_theirs_why({ name }), action: m.project_home__cloud_theirs_action({ name }), hint: m.project_home__cloud_theirs_hint() }
   }
   if (!p.online) {
-    return { ...base, way: 'local', art: 'laptop', hue: 'teal', others: [], title: 'You are offline right now.', why: 'The first time you open a project, it has to come over the internet. Once you are back online, I will get it ready for you.', action: 'Try again', hint: 'Anything already on this computer still works.' }
+    return { ...base, way: 'local', art: 'laptop', hue: 'teal', others: [], title: m.project_home__offline_title(), why: m.project_home__offline_why(), action: m.project_home__offline_action(), hint: m.project_home__offline_hint() }
   }
-  return { ...base, way: 'cloud', art: 'cloud', hue: 'petrol', others: rest('cloud'), title: 'Start in the cloud.', why: 'It is the easy way in. There is nothing to install, it is ready in about a minute, and your team can see it too. You can bring it to your computer later.', action: 'Start in the cloud', hint: 'Takes about a minute.' }
+  return { ...base, way: 'cloud', art: 'cloud', hue: 'petrol', others: rest('cloud'), title: m.project_home__start_title(), why: m.project_home__start_why(), action: m.project_home__start_action(), hint: m.project_home__start_hint() }
 }

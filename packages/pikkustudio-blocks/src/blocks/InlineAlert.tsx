@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { I18nNode, I18nString } from '@pikku/react'
 import { CircleAlert } from 'lucide-react'
 import { Alert } from '../ui/alert'
 
@@ -7,9 +7,9 @@ export function InlineAlert({
   body,
   action,
 }: {
-  title: string
-  body: string
-  action?: ReactNode
+  title: I18nString
+  body: I18nString
+  action?: I18nNode
 }) {
   return (
     <Alert variant="problem">

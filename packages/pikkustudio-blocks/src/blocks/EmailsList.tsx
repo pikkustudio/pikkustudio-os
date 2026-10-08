@@ -27,8 +27,8 @@ export function EmailsList({ data, onOpen }: { data: EmailsData; onOpen: (id: st
         text={m.emails_list__these_are_the_emails()}
       >
         <div className="relative max-w-105 flex-1">
-          <Search className="absolute top-2.75 left-3.5 size-5 text-muted-foreground" />
-          <Input shape="field" type="search" className="rounded-full pl-10.5" placeholder={m.emails_list__search_emails()} aria-label={m.emails_list__search_emails()} value={q} onChange={(e) => setQ(e.target.value)} />
+          <Search className="absolute top-2.75 start-3.5 size-5 text-muted-foreground" />
+          <Input shape="field" type="search" className="rounded-full ps-10.5" placeholder={m.emails_list__search_emails()} aria-label={m.emails_list__search_emails()} value={q} onChange={(e) => setQ(e.target.value)} />
         </div>
       </PageHead>
       {groups.map((g) => {
@@ -43,7 +43,7 @@ export function EmailsList({ data, onOpen }: { data: EmailsData; onOpen: (id: st
                     key={e.id}
                     type="button"
                     onClick={() => onOpen(e.id)}
-                    className="grid w-full grid-cols-[44px_minmax(0,1.3fr)_minmax(0,1.2fr)_auto_22px] items-center gap-4 rounded-2xl border border-border bg-card px-4.5 py-3.5 text-left transition-all duration-140 hover:-translate-y-px hover:border-primary hover:shadow-lift"
+                    className="grid w-full grid-cols-[44px_minmax(0,1.3fr)_minmax(0,1.2fr)_auto_22px] items-center gap-4 rounded-2xl border border-border bg-card px-4.5 py-3.5 text-start transition-all duration-140 hover:-translate-y-px hover:border-primary hover:shadow-lift"
                   >
                     <span className="grid size-11 place-items-center rounded-lg bg-accent text-accent-foreground">
                       <Mail className="size-6" />
@@ -65,7 +65,7 @@ export function EmailsList({ data, onOpen }: { data: EmailsData; onOpen: (id: st
                         </Badge>
                       ))}
                     </span>
-                    <ArrowRight className="size-5.5 text-muted-foreground" />
+                    <ArrowRight className="rtl:-scale-x-100 size-5.5 text-muted-foreground" />
                   </button>
                 ))
               ) : (

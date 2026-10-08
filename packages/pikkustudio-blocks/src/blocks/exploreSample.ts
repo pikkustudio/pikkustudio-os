@@ -1,13 +1,16 @@
-export type Question = { id: string; q: string; hue: 'teal' | 'petrol' | 'sea'; ask: string[] }
+import type { I18nString } from '@pikku/react'
+import { m } from '@/i18n/messages'
 
-export const questions: Question[] = [
-  { id: 'away', q: 'What happened while I was away?', hue: 'teal', ask: ['Show me what went wrong last night', 'Anything odd this week?'] },
-  { id: 'secrets', q: 'Where are my passwords kept?', hue: 'sea', ask: ['Add a password or key', 'Who used them?'] },
-  { id: 'cost', q: 'How much has this cost?', hue: 'petrol', ask: ['How much did the AI cost this week?', 'Can I lower it?'] },
-  { id: 'who', q: 'Who is allowed in?', hue: 'sea', ask: ['Invite my sister to help', 'Who can edit this?'] },
-  { id: 'own', q: 'What runs by itself?', hue: 'petrol', ask: ['Send a reminder every Monday', 'What runs at night?'] },
-  { id: 'mem', q: 'What does it remember?', hue: 'teal', ask: ['What do you remember about my customers?', 'Where are the bookings?'] },
-  { id: 'well', q: 'Is everything healthy?', hue: 'sea', ask: ['Is everything working?', 'Tell me if something breaks'] },
-  { id: 'ai', q: 'Who is the assistant?', hue: 'teal', ask: ['What can the assistant do?', 'Let me try it'] },
-  { id: 'plug', q: 'What is plugged in?', hue: 'petrol', ask: ['Connect card payments', 'What is plugged in?'] },
+export type Question = { id: string; q: I18nString; hue: 'teal' | 'petrol' | 'sea'; ask: I18nString[] }
+
+export const questions = (): Question[] => [
+  { id: 'away', q: m.explore_sample__away_q(), hue: 'teal', ask: [m.explore_sample__away_ask_1(), m.explore_sample__away_ask_2()] },
+  { id: 'secrets', q: m.explore_sample__secrets_q(), hue: 'sea', ask: [m.explore_sample__secrets_ask_1(), m.explore_sample__secrets_ask_2()] },
+  { id: 'cost', q: m.explore_sample__cost_q(), hue: 'petrol', ask: [m.explore_sample__cost_ask_1(), m.explore_sample__cost_ask_2()] },
+  { id: 'who', q: m.explore_sample__who_q(), hue: 'sea', ask: [m.explore_sample__who_ask_1(), m.explore_sample__who_ask_2()] },
+  { id: 'own', q: m.explore_sample__own_q(), hue: 'petrol', ask: [m.explore_sample__own_ask_1(), m.explore_sample__own_ask_2()] },
+  { id: 'mem', q: m.explore_sample__mem_q(), hue: 'teal', ask: [m.explore_sample__mem_ask_1(), m.explore_sample__mem_ask_2()] },
+  { id: 'well', q: m.explore_sample__well_q(), hue: 'sea', ask: [m.explore_sample__well_ask_1(), m.explore_sample__well_ask_2()] },
+  { id: 'ai', q: m.explore_sample__ai_q(), hue: 'teal', ask: [m.explore_sample__ai_ask_1(), m.explore_sample__ai_ask_2()] },
+  { id: 'plug', q: m.explore_sample__plug_q(), hue: 'petrol', ask: [m.explore_sample__plug_ask_1(), m.explore_sample__plug_ask_2()] },
 ]

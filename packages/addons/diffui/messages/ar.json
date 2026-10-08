@@ -1,0 +1,11 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "diffui_home__diff_ui": "Diff UI",
+  "diffui_home__no_screenshot_pairs_yet_run_compare": "لا توجد أزواج لقطات شاشة بعد. شغلوا compare-screen لإنشاء بعضها.",
+  "diffui_home__original": "الأصل",
+  "diffui_home__original_alt": "الأصل",
+  "diffui_home__prototype": "النموذج الأولي",
+  "diffui_home__prototype_alt": "النموذج الأولي",
+  "diffui_home__theme_dark": "داكن",
+  "diffui_home__theme_light": "فاتح"
+}

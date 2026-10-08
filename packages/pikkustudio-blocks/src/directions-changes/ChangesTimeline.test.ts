@@ -15,7 +15,7 @@ test('time reads as a plain phrase', () => {
   const now = Date.parse('2026-10-06T12:00:00Z')
   assert.equal(ago('2026-10-06T11:48:00Z', now), '12 minutes ago')
   assert.equal(ago('2026-10-04T12:00:00Z', now), '2 days ago')
-  assert.equal(ago(null, now), '')
+  assert.equal(ago(null, now), undefined)
 })
 
 test('the author is the name, else where it was filed from', () => {

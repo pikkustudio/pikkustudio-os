@@ -1,3 +1,4 @@
+import { m } from '@/i18n/messages'
 import { useCallback, useEffect, useState } from 'react'
 import { Folders } from 'lucide-react'
 import { Page } from '@pikku/pikkustudio-blocks/blocks/Page'
@@ -9,6 +10,7 @@ import { StatusLine } from '@pikku/pikkustudio-blocks/blocks/StatusLine'
 import { Button } from '@pikku/pikkustudio-blocks/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@pikku/pikkustudio-blocks/ui/select'
 import { useRpc, useBusy, kindOf, stateOf, type Asset, type ScreenProps } from './shared.js'
+import { asI18n } from '@pikku/react'
 
 type Held = Asset & { source: string; reason: string | null }
 type Detail = { kb: { kb_id: string; name: string; description: string }; assets: Held[] }
@@ -31,47 +33,47 @@ export default function Collection({ params, navigate }: ScreenProps) {
     void load()
   }, [load])
   const { busy, error, run } = useBusy(load)
-  if (!detail) return <div className="p-8">{error ? <InlineAlert title="That did not work" body={error} /> : null}</div>
+  if (!detail) return <div className="p-8">{error ? <InlineAlert title={m.spindle_collection__that_did_not_work()} body={asI18n(error)} /> : null}</div>
 
   return (
     <div className="p-8">
       <Page gap="list">
-        <PageHead crumb="Collections" title={detail.kb.name} text={detail.kb.description || undefined}>
+        <PageHead crumb={m.spindle_collection__collections()} title={asI18n(detail.kb.name)} text={detail.kb.description ? asI18n(detail.kb.description) : undefined}>
           {sure ? (
             <div className="flex gap-2">
-              <Button size="page" variant="destructive" disabled={busy !== null} onClick={() => void run('Deleting', async () => { await rpc.invoke('spindle:spindleDeleteKnowledgeBase', { kbId }); navigate('/collections') })}>
-                Yes, delete it
+              <Button size="page" variant="destructive" disabled={busy !== null} onClick={() => void run(m.spindle_shared__busy_deleting(), async () => { await rpc.invoke('spindle:spindleDeleteKnowledgeBase', { kbId }); navigate('/collections') })}>
+                {m.spindle_collection__yes_delete_it()}
               </Button>
               <Button size="page" variant="bordered" onClick={() => setSure(false)}>
-                Keep it
+                {m.spindle_collection__keep_it()}
               </Button>
             </div>
           ) : (
             <Button size="page" variant="bordered" onClick={() => setSure(true)}>
-              Delete collection
+              {m.spindle_collection__delete_collection()}
             </Button>
           )}
         </PageHead>
-        {sure ? <p className="text-px15 text-ink-2">Your files stay in the library. Only the group is removed.</p> : null}
-        {error ? <InlineAlert title="That did not work" body={error} /> : null}
-        {busy ? <StatusLine tone="wait" text={`${busy}…`} /> : null}
+        {sure ? <p className="text-px15 text-ink-2">{m.spindle_collection__your_files_stay_in_the_library()}</p> : null}
+        {error ? <InlineAlert title={m.spindle_collection__that_did_not_work()} body={asI18n(error)} /> : null}
+        {busy ? <StatusLine tone="wait" text={m.asset__text({ busy })} /> : null}
 
-        <Section title="Files in this collection">
+        <Section title={m.spindle_collection__files_in_this_collection()}>
           {detail.assets.length === 0 ? (
-            <p className="text-ink-2">Nothing here yet. Add a file below.</p>
+            <p className="text-ink-2">{m.spindle_collection__nothing_here_yet_add_a_file()}</p>
           ) : (
             <RowStack>
               {detail.assets.map((a) => {
                 const Icon = kindOf(a.kind).icon
                 const state = stateOf(a.status)
                 return (
-                  <RowCard key={a.asset_id} on tile={<Icon className="size-5" />} title={a.title} caption={a.source === 'workflow' && a.reason ? a.reason : kindOf(a.kind).label}>
-                    <Dot tone={state.tone}>{state.label}</Dot>
+                  <RowCard key={a.asset_id} on tile={<Icon className="size-5" />} title={asI18n(a.title)} caption={a.source === 'workflow' && a.reason ? asI18n(a.reason) : kindOf(a.kind).label()}>
+                    <Dot tone={state.tone}>{state.label()}</Dot>
                     <Button size="compact" variant="bordered" onClick={() => navigate(`/files/${a.asset_id}`)}>
-                      Open
+                      {m.spindle_collection__open()}
                     </Button>
-                    <Button size="compact" variant="ghost" disabled={busy !== null} onClick={() => void run('Taking it out', async () => void (await rpc.invoke('spindle:spindlePlaceAsset', { kbId, assetId: a.asset_id, state: 'removed' })))}>
-                      Take out
+                    <Button size="compact" variant="ghost" disabled={busy !== null} onClick={() => void run(m.spindle_shared__busy_taking_out(), async () => void (await rpc.invoke('spindle:spindlePlaceAsset', { kbId, assetId: a.asset_id, state: 'removed' })))}>
+                      {m.spindle_collection__take_out()}
                     </Button>
                   </RowCard>
                 )
@@ -81,22 +83,22 @@ export default function Collection({ params, navigate }: ScreenProps) {
         </Section>
 
         {others.length > 0 ? (
-          <Section title="Add a file">
+          <Section title={m.spindle_collection__add_a_file()}>
             <div className="flex flex-wrap items-center gap-3">
               <Select value={pick} onValueChange={setPick}>
                 <SelectTrigger className="h-11 min-w-72 rounded-xl">
-                  <SelectValue placeholder="Choose a file" />
+                  <SelectValue placeholder={m.spindle_collection__choose_a_file()} />
                 </SelectTrigger>
                 <SelectContent>
                   {others.map((a) => (
                     <SelectItem key={a.asset_id} value={a.asset_id}>
-                      {a.title}
+                      {asI18n(a.title)}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              <Button size="page" disabled={!pick || busy !== null} onClick={() => void run('Adding', async () => void (await rpc.invoke('spindle:spindlePlaceAsset', { kbId, assetId: pick, state: 'placed' })))}>
-                <Folders /> Add to collection
+              <Button size="page" disabled={!pick || busy !== null} onClick={() => void run(m.spindle_shared__busy_adding(), async () => void (await rpc.invoke('spindle:spindlePlaceAsset', { kbId, assetId: pick, state: 'placed' })))}>
+                <Folders />{m.spindle_collection__add_to_collection()}
               </Button>
             </div>
           </Section>

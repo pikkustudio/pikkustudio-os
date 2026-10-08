@@ -1,3 +1,5 @@
+import { asI18n } from '@pikku/react'
+import { m } from '@/i18n/messages'
 import { useContext, useEffect, useState } from 'react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { Check, ChevronLeft, ChevronRight, Shuffle, SlidersHorizontal, Sparkles } from 'lucide-react'
@@ -44,7 +46,7 @@ function Directions({ directions, exploration }: { directions: Artifact[]; explo
       <PreviewBar
         app="directions"
         page={all ? 'all' : dir.id}
-        groups={[{ app: 'directions', label: 'Directions', pages: [{ id: 'all', name: 'All ideas', text: 'Side by side' }, ...directions.map((d) => ({ id: d.id, name: d.title, text: d.summary }))] }]}
+        groups={[{ app: 'directions', label: m.artifacts_explore__directions(), pages: [{ id: 'all', name: m.artifacts_explore__all_ideas(), text: m.artifacts_explore__side_by_side() }, ...directions.map((d) => ({ id: d.id, name: asI18n(d.title), text: asI18n(d.summary) }))] }]}
         device={device}
         tools={[]}
         tool=""
@@ -56,25 +58,25 @@ function Directions({ directions, exploration }: { directions: Artifact[]; explo
           all ? (
             <>
               <Button variant="bordered" size="compact" type="button" onClick={() => say(moreIdeasMessage('controlled', exploration))}>
-                <Sparkles /> More like these
+                <Sparkles />{m.artifacts_explore__more_like_these()}
               </Button>
               <Button variant="bordered" size="compact" type="button" onClick={() => say(moreIdeasMessage('extreme', exploration))}>
-                <Shuffle /> Something different
+                <Shuffle />{m.artifacts_explore__something_different()}
               </Button>
             </>
           ) : (
             <>
-              <Button variant="bordered" size="compact" type="button" aria-label="Previous idea" onClick={() => step(-1)}>
-                <ChevronLeft />
+              <Button variant="bordered" size="compact" type="button" aria-label={m.artifacts_explore__previous_idea()} onClick={() => step(-1)}>
+                <ChevronLeft className="rtl:-scale-x-100" />
               </Button>
-              <Button variant="bordered" size="compact" type="button" aria-label="Next idea" onClick={() => step(1)}>
-                <ChevronRight />
+              <Button variant="bordered" size="compact" type="button" aria-label={m.artifacts_explore__next_idea()} onClick={() => step(1)}>
+                <ChevronRight className="rtl:-scale-x-100" />
               </Button>
-              <Button variant="bordered" size="compact" type="button" onClick={() => say(`Change something in "${dir.title}": `)}>
-                <SlidersHorizontal /> Change something
+              <Button variant="bordered" size="compact" type="button" onClick={() => say(m.artifacts_explore__change_say({ title: dir.title }))}>
+                <SlidersHorizontal />{m.artifacts_explore__change_something()}
               </Button>
               <Button size="compact" type="button" onClick={() => choose(dir)}>
-                <Check /> Use this one
+                <Check />{m.artifacts_explore__use_this_one()}
               </Button>
             </>
           )
@@ -101,7 +103,7 @@ function Explorations({ designs }: { designs: Artifact[] }) {
         <div className="flex flex-wrap gap-2">
           {rounds.map(([k, list], i) => (
             <Button key={k} variant={k === id ? 'default' : 'bordered'} size="compact" type="button" onClick={() => setPicked(k)}>
-              {i === 0 ? 'Latest' : `Round ${rounds.length - i}`} · {list[0]?.mode === 'controlled' ? 'similar' : 'different'}
+              {m.artifacts_explore__round_mode({ round: i === 0 ? m.artifacts_explore__latest() : m.artifacts_explore__round({ n: rounds.length - i }), mode: list[0]?.mode === 'controlled' ? m.artifacts_explore__similar() : m.artifacts_explore__different() })}
             </Button>
           ))}
         </div>
@@ -122,7 +124,7 @@ export function ArtifactsExploreScreen() {
       skeleton={<CardsSkeleton count={3} />}
       empty={(data) =>
         data.artifacts.some((a) => a.kind === 'Design') ? null : (
-          <EmptyState layout="row" icon={Sparkles} title="No ideas yet" text="The directions show up here as soon as they are ready." />
+          <EmptyState layout="row" icon={Sparkles} title={m.artifacts_explore__no_ideas_title()} text={m.artifacts_explore__no_ideas_text()} />
         )
       }
     >

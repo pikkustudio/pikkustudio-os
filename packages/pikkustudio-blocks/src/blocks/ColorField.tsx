@@ -1,7 +1,9 @@
+import type { I18nString } from '@pikku/react'
+import { m } from '@/i18n/messages'
 import { useState } from 'react'
 import { Input } from '../ui/input'
 
-export function ColorField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+export function ColorField({ label, value, onChange }: { label: I18nString; value: string; onChange: (v: string) => void }) {
   const [draft, setDraft] = useState<string | null>(null)
   return (
     <div className="flex flex-col gap-1.5">
@@ -20,7 +22,8 @@ export function ColorField({ label, value, onChange }: { label: string; value: s
         <Input
           shape="field"
           value={draft ?? value}
-          aria-label={`${label} code`}
+          aria-label={m.color_field__code_label({ label })}
+          dir="ltr"
           className="h-10 font-mono text-px14 md:text-px14"
           onChange={(e) => {
             setDraft(e.target.value)

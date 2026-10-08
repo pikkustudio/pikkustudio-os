@@ -1,3 +1,4 @@
+import type { I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useContext, useState } from 'react'
 import { Copy } from 'lucide-react'
@@ -17,8 +18,7 @@ const sample = () => ({
   steps: [m.publish_hosts__add_what_your_app(), m.publish_hosts__ask_you_for_any(), m.publish_hosts__check_the_app_still(), m.publish_hosts__tell_you_how_to()],
 })
 
-const prompt = (what: string) =>
-  `Please get my app ready to run ${what}. Add whatever it needs for that. Before you use any account or password, ask me for it, and tell me about anything I have to do myself.`
+const prompt = (what: I18nString): I18nString => m.publish_hosts__prompt({ what })
 
 function Host({ title, text, what, picked, onPick }: ReturnType<typeof sample>['hosts'][number] & { picked: boolean; onPick: () => void }) {
   const { say } = useContext(ShellCtx)
@@ -36,13 +36,13 @@ function Host({ title, text, what, picked, onPick }: ReturnType<typeof sample>['
         </span>
       </button>
       {picked ? (
-        <div className="flex flex-col gap-3 pb-1 pl-9.5">
+        <div className="flex flex-col gap-3 pb-1 ps-9.5">
           {open ? (
             <div className="flex flex-col gap-2.5 rounded-dev bg-secondary px-4 py-3.5 text-px15 text-foreground">
               <b>{m.publish_hosts__what_you_give_to()}</b>
-              <blockquote className="text-px15 font-semibold">“{prompt(what)}”</blockquote>
+              <blockquote className="text-px15 font-semibold">{m.publish_hosts__quoted({ text: prompt(what) })}</blockquote>
               <b>{m.publish_hosts__what_pikku_will_do()}</b>
-              <ol className="flex list-decimal flex-col gap-1 pl-5 text-ink-2">
+              <ol className="flex list-decimal flex-col gap-1 ps-5 text-ink-2">
                 {sample().steps.map((s) => (
                   <li key={s}>{s}</li>
                 ))}

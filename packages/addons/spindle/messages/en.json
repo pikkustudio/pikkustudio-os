@@ -1,0 +1,217 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "asset__text": "{busy}…",
+  "library__adding": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Adding {name}",
+        "countPlural=other": "Adding {count} files"
+      }
+    }
+  ],
+  "spindle_asset__add": "Add",
+  "spindle_asset__add_to_a_collection": "Add to a collection",
+  "spindle_asset__added_by_you": "Added by you",
+  "spindle_asset__collections": "Collections",
+  "spindle_asset__collections_that_hold_this_file": "Collections that hold this file.",
+  "spindle_asset__facts": "{kind} · {file} · {size}",
+  "spindle_asset__how_spindle_read_it": "How Spindle read it",
+  "spindle_asset__it_is_not_in_any_collection": "It is not in any collection yet.",
+  "spindle_asset__library": "Library",
+  "spindle_asset__not_read_yet": "Not read yet.",
+  "spindle_asset__nothing_yet_once_the_file_is": "Nothing yet. Once the file is read, its text appears here.",
+  "spindle_asset__open": "Open",
+  "spindle_asset__passage_count": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} passage, in the order they appear.",
+        "countPlural=other": "{count} passages, in the order they appear."
+      }
+    }
+  ],
+  "spindle_asset__read_it_again": "Read it again",
+  "spindle_asset__show_all_count": "Show all {count}",
+  "spindle_asset__step_done": "Done",
+  "spindle_asset__step_failed": "Did not work",
+  "spindle_asset__step_running": "Working",
+  "spindle_asset__take_out": "Take out",
+  "spindle_asset__that_did_not_work": "That did not work",
+  "spindle_asset__what_spindle_found": "What Spindle found",
+  "spindle_collection__add_a_file": "Add a file",
+  "spindle_collection__add_to_collection": "Add to collection",
+  "spindle_collection__choose_a_file": "Choose a file",
+  "spindle_collection__collections": "Collections",
+  "spindle_collection__delete_collection": "Delete collection",
+  "spindle_collection__files_in_this_collection": "Files in this collection",
+  "spindle_collection__keep_it": "Keep it",
+  "spindle_collection__nothing_here_yet_add_a_file": "Nothing here yet. Add a file below.",
+  "spindle_collection__open": "Open",
+  "spindle_collection__take_out": "Take out",
+  "spindle_collection__that_did_not_work": "That did not work",
+  "spindle_collection__yes_delete_it": "Yes, delete it",
+  "spindle_collection__your_files_stay_in_the_library": "Your files stay in the library. Only the group is removed.",
+  "spindle_collections__collections": "Collections",
+  "spindle_collections__file_count": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} file",
+        "countPlural=other": "{count} files"
+      }
+    }
+  ],
+  "spindle_collections__groups_of_files_that_belong_together": "Groups of files that belong together. Searching inside one keeps answers on topic.",
+  "spindle_collections__make_one_yourself_or_let_spindle": "Make one yourself, or let Spindle suggest groups from the files you have added.",
+  "spindle_collections__new_collection": "New collection",
+  "spindle_collections__no_collections_yet": "No collections yet",
+  "spindle_collections__open": "Open",
+  "spindle_collections__spindle": "Spindle",
+  "spindle_collections__suggest_collections": "Suggest collections",
+  "spindle_collections__that_did_not_work": "That did not work",
+  "spindle_library__add_files": "Add files",
+  "spindle_library__all_files": "All files",
+  "spindle_library__choose_files": "Choose files",
+  "spindle_library__drop_documents_recordings_videos_or_images": "Drop documents, recordings, videos or images here, or choose them from your computer.",
+  "spindle_library__every_file_is_already_in_a": "Every file is already in a collection.",
+  "spindle_library__every_file_you_have_added_spindle": "Every file you have added. Spindle reads each one so you can search across all of them.",
+  "spindle_library__install_with": "Install with: {command}",
+  "spindle_library__library": "Library",
+  "spindle_library__needs_tools": "It needs {tools} on this computer. {installs}",
+  "spindle_library__not_in_a_collection": "Not in a collection",
+  "spindle_library__open": "Open",
+  "spindle_library__read_it": "Read it",
+  "spindle_library__review_them_and_decide_which_collections": "Review them and decide which collections to make.",
+  "spindle_library__see_suggestions": "See suggestions",
+  "spindle_library__spindle": "Spindle",
+  "spindle_library__spindle_cannot_read_some_files_yet": "Spindle cannot read some files yet",
+  "spindle_library__start_by_adding_your_files": "Start by adding your files",
+  "spindle_library__suggestion_count": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Spindle has {count} suggestion for grouping your files",
+        "countPlural=other": "Spindle has {count} suggestions for grouping your files"
+      }
+    }
+  ],
+  "spindle_library__that_did_not_work": "That did not work",
+  "spindle_library__try_again": "Try again",
+  "spindle_newcollection__booking_cancellation_and_opening_hours": "Booking, cancellation and opening hours",
+  "spindle_newcollection__cancel": "Cancel",
+  "spindle_newcollection__collections": "Collections",
+  "spindle_newcollection__create_collection": "Create collection",
+  "spindle_newcollection__give_it_a_name_you_can": "Give it a name. You can add files to it afterwards from any file.",
+  "spindle_newcollection__name": "Name",
+  "spindle_newcollection__new_collection": "New collection",
+  "spindle_newcollection__that_did_not_work": "That did not work",
+  "spindle_newcollection__visitor_policies": "Visitor policies",
+  "spindle_newcollection__what_belongs_in_it": "What belongs in it",
+  "spindle_search__answer": "Answer",
+  "spindle_search__ask": "Ask",
+  "spindle_search__ask_a_question_and_get_an": "Ask a question and get an answer with the page it came from, or search for a word.",
+  "spindle_search__ask_a_question_or_search_for": "Ask a question, or search for a word",
+  "spindle_search__citation": "{title}, {where}",
+  "spindle_search__everything": "Everything",
+  "spindle_search__found_by": "{where} · found by {matchedBy}",
+  "spindle_search__just_search": "Just search",
+  "spindle_search__not_in_your_files": "Not in your files",
+  "spindle_search__nothing_matched": "Nothing matched",
+  "spindle_search__nothing_you_have_added_says_this": "Nothing you have added says this, so Spindle will not guess.",
+  "spindle_search__open": "Open",
+  "spindle_search__open_file": "Open file",
+  "spindle_search__place_count": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} place found",
+        "countPlural=other": "{count} places found"
+      }
+    }
+  ],
+  "spindle_search__search": "Search",
+  "spindle_search__spindle": "Spindle",
+  "spindle_search__that_did_not_work": "That did not work",
+  "spindle_shared__busy_adding": "Adding",
+  "spindle_shared__busy_adding_files": "Adding the files",
+  "spindle_shared__busy_creating": "Creating",
+  "spindle_shared__busy_creating_collection": "Creating the collection",
+  "spindle_shared__busy_deleting": "Deleting",
+  "spindle_shared__busy_dismissing": "Dismissing",
+  "spindle_shared__busy_looking_groups": "Looking for groups",
+  "spindle_shared__busy_reading_again": "Reading the file again",
+  "spindle_shared__busy_reading_answer": "Reading your files for an answer",
+  "spindle_shared__busy_reading_file": "Reading the file",
+  "spindle_shared__busy_searching": "Searching",
+  "spindle_shared__busy_taking_out": "Taking it out",
+  "spindle_shared__kind_audio": "Recording",
+  "spindle_shared__kind_document": "Document",
+  "spindle_shared__kind_image": "Image",
+  "spindle_shared__kind_text": "Text",
+  "spindle_shared__kind_video": "Video",
+  "spindle_shared__state_extracted": "Ready to search",
+  "spindle_shared__state_extracting": "Reading it now",
+  "spindle_shared__state_failed": "Could not be read",
+  "spindle_shared__state_uploaded": "Waiting to be read",
+  "spindle_shared__step_categorise": "Described the pictures",
+  "spindle_shared__step_extract": "Read the text",
+  "spindle_shared__step_keyframes": "Picked out key frames",
+  "spindle_shared__step_place": "Chose collections",
+  "spindle_shared__step_probe": "Looked at the recording",
+  "spindle_shared__step_summarise": "Wrote a short summary",
+  "spindle_shared__step_transcribe": "Wrote down what was said",
+  "spindle_shared__where_frame": "frame at {seconds}s",
+  "spindle_shared__where_page": "page {page}",
+  "spindle_shared__where_speech": "{seconds}s in",
+  "spindle_shared__where_summary": "summary",
+  "spindle_suggestions__a_file": "A file",
+  "spindle_suggestions__add_them": "Add them",
+  "spindle_suggestions__choose_a_collection": "Choose a collection",
+  "spindle_suggestions__collection_name": "Collection name",
+  "spindle_suggestions__every_file_is_in_a_collection": "Every file is in a collection, or Spindle has no new groups to suggest. Add more files and look again.",
+  "spindle_suggestions__files_that_fit_no_collection_yet": "Files that fit no collection yet. Spindle groups the ones that belong together and you decide.",
+  "spindle_suggestions__fit_clear": "Clearly belongs",
+  "spindle_suggestions__fit_maybe": "Might belong",
+  "spindle_suggestions__fit_probable": "Probably belongs",
+  "spindle_suggestions__look_again": "Look again",
+  "spindle_suggestions__make_this_collection": "Make this collection",
+  "spindle_suggestions__not_now": "Not now",
+  "spindle_suggestions__nothing_to_decide": "Nothing to decide",
+  "spindle_suggestions__or_add_them_to_one_you": "Or add them to one you already have",
+  "spindle_suggestions__see_collections": "See collections",
+  "spindle_suggestions__spindle": "Spindle",
+  "spindle_suggestions__spindle_suggests_a_collection": "Spindle suggests a collection",
+  "spindle_suggestions__suggestions": "Suggestions",
+  "spindle_suggestions__that_did_not_work": "That did not work"
+}

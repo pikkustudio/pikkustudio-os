@@ -1,3 +1,4 @@
+import { asI18n, type I18nString } from '@pikku/react'
 export type Artifact = {
   id: string
   kind: 'Design' | 'Page' | 'Document'
@@ -12,5 +13,7 @@ export type Artifact = {
   text?: string
 }
 
-export const artifactWhen = (at: number) =>
-  new Date(at).toLocaleString(undefined, { weekday: 'short', hour: 'numeric', minute: '2-digit' })
+export const artifactWhen = (at: number): I18nString => {
+  const when = new Date(at).toLocaleString(undefined, { weekday: 'short', hour: 'numeric', minute: '2-digit' })
+  return asI18n(when)
+}

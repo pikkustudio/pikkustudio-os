@@ -25,7 +25,7 @@ export function MockStatusBar() {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
       <span className="text-px145 text-ink-2" role="status">
-        {data.screens === 1 ? m.mock_status__one() : m.mock_status__many({ count: data.screens })}
+        {m.mock_status__sample_data({ count: data.screens })}
       </span>
       <Button variant="default" size="compact" type="button" data-testid="make-it-real" aria-haspopup="dialog" onClick={() => setOpen(true)}>
         <Sparkles className="size-4.5" />

@@ -1,5 +1,6 @@
-import { useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
-import { Link } from '@tanstack/react-router'
+import { m } from '@/i18n/messages'
+import { useContext, useEffect, useMemo, useState } from 'react'
+import { Link } from '../blocks/Link'
 import { Check, Search, Pencil } from 'lucide-react'
 import { Button, buttonVariants } from '../ui/button'
 import { Input } from '../ui/input'
@@ -16,11 +17,12 @@ import { canGoBack, failWords, shelfPart, shelfTone, shelfWords, when, who } fro
 import { steps, useVersions, type Head, type Version } from '../lib/versions'
 import { keep } from '../lib/links'
 import { ShellCtx } from '../lib/shell'
+import { asI18nStub, type I18nNode, type I18nString } from '@pikku/react'
 
-const sample = { app: 'Sunrise Bakery Classes', url: 'https://sunrise.bakeryclasses.example' }
+const sample = { app: asI18nStub('Sunrise Bakery Classes'), url: 'https://sunrise.bakeryclasses.example' }
 
 const blurb = (v: Version) =>
-  v.outcome === 'failed' ? `${failWords[v.failedAt ?? 'build']}. Your live app stayed up.` : v.outcome === 'cancelled' ? 'A newer version replaced it before it went live.' : v.outcome === 'waiting' ? 'Built and checked. It needs a few things from you first.' : v.outcome === 'working' ? `${steps[v.phase ?? 0][0]}, step ${(v.phase ?? 0) + 1} of ${steps.length}. Your live app is not touched yet.` : v.summary
+  v.outcome === 'failed' ? m.versions_screen__blurb_failed({ reason: failWords[v.failedAt ?? 'build']() }) : v.outcome === 'cancelled' ? m.versions_screen__blurb_cancelled() : v.outcome === 'waiting' ? m.versions_screen__blurb_waiting() : v.outcome === 'working' ? m.versions_screen__blurb_working({ step: steps[v.phase ?? 0][0], n: (v.phase ?? 0) + 1, total: steps.length }) : v.summary
 
 export function VersionsScreen() {
   const { say } = useContext(ShellCtx)
@@ -41,30 +43,30 @@ export function VersionsScreen() {
   const missed = useMemo(() => versions.filter((v) => (v.outcome === 'failed' || v.outcome === 'cancelled') && match(v)), [q, versions])
   const showWent = filter !== 'not'
   const showMissed = filter !== 'live'
-  const open = (id: string, text: string) => (
+  const open = (id: string, text: I18nString) => (
     <Link {...keep} to={'/versions/$id' as never} params={{ id } as never} className="rounded-sm text-foreground no-underline hover:underline focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none">
       {text}
     </Link>
   )
-  const openBtn = (id: string, text: string) => (
+  const openBtn = (id: string, text: I18nString) => (
     <Link {...keep} to={'/versions/$id' as never} params={{ id } as never} className={buttonVariants({ variant: 'bordered', size: 'compact' })}>
       {text}
     </Link>
   )
-  const grid = (items: ReactNode[]) => (view === 'rows' ? <RowStack>{items}</RowStack> : <div className="grid grid-cols-3 gap-3.5">{items}</div>)
-  const tile = (v: Version, action: ReactNode) => {
+  const grid = (items: I18nNode[]) => (view === 'rows' ? <RowStack>{items}</RowStack> : <div className="grid grid-cols-3 gap-3.5">{items}</div>)
+  const tile = (v: Version, action: I18nNode) => {
     if (view === 'rows') {
       const p = shelfPart(v)
       return (
-        <RowCard key={v.id} flag={v.outcome === 'waiting'} tile={<p.icon className="size-5" />} title={open(v.id, v.title)} caption={blurb(v)} note={`${who(v)} · ${when(v)}`}>
-          <Dot tone={shelfTone[v.outcome]}>{shelfWords[v.outcome]}</Dot>
+        <RowCard key={v.id} flag={v.outcome === 'waiting'} tile={<p.icon className="size-5" />} title={open(v.id, v.title)} caption={blurb(v)} note={m.versions_screen__by_when({ by: who(v), when: when(v) })}>
+          <Dot tone={shelfTone[v.outcome]}>{shelfWords[v.outcome]()}</Dot>
           {action}
         </RowCard>
       )
     }
     const p = shelfPart(v)
     return (
-      <ShelfTile key={v.id} hue={p.hue} icon={p.icon} flag={v.outcome === 'waiting'} safe={canGoBack(v.outcome)} title={open(v.id, v.title)} text={blurb(v)} status={shelfWords[v.outcome]} tone={shelfTone[v.outcome]} meta={`${who(v)} · ${when(v)}`}>
+      <ShelfTile key={v.id} hue={p.hue} icon={p.icon} flag={v.outcome === 'waiting'} safe={canGoBack(v.outcome)} title={open(v.id, v.title)} text={blurb(v)} status={shelfWords[v.outcome]()} tone={shelfTone[v.outcome]} meta={m.version_screen__meta({ who: who(v), when: when(v) })}>
         {action}
       </ShelfTile>
     )
@@ -72,94 +74,94 @@ export function VersionsScreen() {
 
   return (
     <Page gap="snug">
-      <PageHead crumb={sample.app} title="Versions" text="Your app's saved snapshots. One is live; the rest are on the shelf." size="lead">
-        <Segmented label="How to show versions" value={view} options={[['cards', 'Cards'], ['rows', 'Rows']]} onChange={setView} />
+      <PageHead crumb={sample.app} title={m.versions_screen__title()} text={m.versions_screen__intro()} size="lead">
+        <Segmented label={m.versions_screen__how_show()} value={view} options={[['cards', m.versions_screen__view_cards()], ['rows', m.versions_screen__view_rows()]]} onChange={setView} />
       </PageHead>
 
       <NextCard
-        label="What matters now"
+        label={m.versions_screen__what_matters()}
         hue="teal"
         art={<Art />}
-        title={waiting ? 'One needs you' : working ? 'One is on its way' : 'You are live'}
+        title={waiting ? m.versions_screen__one_needs_you() : working ? m.versions_screen__one_on_way() : m.versions_screen__you_are_live()}
         why={
           waiting
-            ? `“${waiting.title}” is built and checked. It goes live when you say so, and nothing changes for your visitors until then.`
+            ? m.versions_screen__why_waiting({ title: waiting.title })
             : working
-              ? `“${working.title}” is being put together. Your live app is not touched until the last step.`
-              : `“${live?.title}” is what people see. Anything you publish next replaces it, and you can always go back.`
+              ? m.versions_screen__why_working({ title: working.title })
+              : m.versions_screen__why_live({ title: live?.title ?? '' })
         }
       >
         <div className="flex flex-wrap gap-3">
           {waiting || working ? (
             <Link {...keep} to={'/versions/$id' as never} params={{ id: (waiting ?? working)!.id } as never} className={buttonVariants({ variant: 'hero', size: 'page' })}>
-              {waiting ? 'Review it' : 'Follow it'}
+              {waiting ? m.versions_screen__review_it() : m.versions_screen__follow_it()}
             </Link>
           ) : (
             <a href={sample.url} target="_blank" rel="noreferrer" className={buttonVariants({ variant: 'hero', size: 'page' })}>
-              Open your app
+              {m.version_screen__open_app()}
             </a>
           )}
           {(waiting || working) && (
             <a href={sample.url} target="_blank" rel="noreferrer" className={buttonVariants({ variant: 'heroGhost', size: 'page' })}>
-              Open your app
+              {m.version_screen__open_app()}
             </a>
           )}
         </div>
       </NextCard>
 
       {live && (
-        <Section title="What people see now">
-          <ShelfTile wide hue="sea" icon={shelfPart(live).icon} title={open(live.id, live.title)} text={live.summary} status="Live" tone="ok" meta={`Live since ${live.liveSince?.toLowerCase()} · ${who(live)} · ${live.visits} people visited in the last day`}>
-            {openBtn(live.id, 'What is in it')}
+        <Section title={m.versions_screen__what_people_see()}>
+          <ShelfTile wide hue="sea" icon={shelfPart(live).icon} title={open(live.id, live.title)} text={live.summary} status={m.shelf_meta__live()} tone="ok" meta={m.versions_screen__live_meta({ since: live.liveSince?.toLowerCase() ?? '', who: who(live), visits: live.visits ?? 0 })}>
+            {openBtn(live.id, m.versions_screen__whats_in_it())}
           </ShelfTile>
         </Section>
       )}
 
-      <Section title="Not live yet" sub={heads.length ? `You are ${heads.length === 1 ? 'one change' : `${heads.length} changes`} ahead of what people see. Publishing takes all of them together.` : undefined}>
+      <Section title={m.versions_screen__not_live()} sub={heads.length ? (m.versions_screen__ahead({ count: heads.length })) : undefined}>
         {heads.length === 0 ? (
-          <RowCard on tile={<Check className="size-5" />} title="You are up to date" caption="Everything you have saved is what people see now." />
+          <RowCard on tile={<Check className="size-5" />} title={m.versions_screen__up_to_date()} caption={m.versions_screen__up_to_date_text()} />
         ) : (
           <>
             {grid(
               (more ? heads : heads.slice(0, 3)).map((h) =>
                 view === 'rows' ? (
-                  <RowCard key={h.sha} tile={<Pencil className="size-5" />} title={h.title} caption={`${h.by} · ${h.when}`}>
-                    <Dot tone="quiet">Not published</Dot>
+                  <RowCard key={h.sha} tile={<Pencil className="size-5" />} title={h.title} caption={m.versions_screen__by_when({ by: h.by, when: h.when })}>
+                    <Dot tone="quiet">{m.versions_screen__not_published()}</Dot>
                   </RowCard>
                 ) : (
-                  <ShelfTile key={h.sha} dashed hue="grey" icon={Pencil} title={h.title} text="Saved, not published yet." status="Not published" meta={`${h.by} · ${h.when}`} />
+                  <ShelfTile key={h.sha} dashed hue="grey" icon={Pencil} title={h.title} text={m.versions_screen__saved_not_published()} status={m.versions_screen__not_published()} meta={m.versions_screen__by_when({ by: h.by, when: h.when })} />
                 ),
               ),
             )}
             <div className="flex flex-wrap gap-3">
               {heads.length > 3 && (
                 <Button variant="ghost" size="page" onClick={() => setMore(!more)}>
-                  {more ? 'Show fewer' : `See ${heads.length - 3} more`}
+                  {more ? m.versions_screen__show_fewer() : m.versions_screen__see_more({ n: heads.length - 3 })}
                 </Button>
               )}
             <Button variant="bordered" size="page" className="self-start" onClick={() => setPanel({ kind: 'publish' })}>
-              {heads.length === 1 ? 'Publish this change' : `Publish all ${heads.length} changes`}
+              {m.versions_screen__publish({ n: heads.length })}
             </Button>
             </div>
           </>
         )}
       </Section>
 
-      <Section title="On the shelf" sub="Every one that went live is safe to go back to. Newest first.">
+      <Section title={m.versions_screen__on_shelf()} sub={m.versions_screen__on_shelf_sub()}>
         <div className="flex flex-wrap items-center gap-3">
           <Segmented
-            label="Which versions"
+            label={m.versions_screen__which()}
             value={filter}
             options={[
-              ['all', 'All'],
-              ['live', 'Went live'],
-              ['not', "Didn't go live"],
+              ['all', m.versions_screen__filter_all()],
+              ['live', m.versions_screen__filter_live()],
+              ['not', m.versions_screen__filter_not()],
             ]}
             onChange={setFilter}
           />
           <span className="relative min-w-0 flex-1 basis-56">
-            <Search className="pointer-events-none absolute top-1/2 left-4 size-4.5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-            <Input shape="pill" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Find a version" aria-label="Find a version" className="h-12 border-[1.5px] border-input bg-card pl-11 text-[16px]" />
+            <Search className="pointer-events-none absolute top-1/2 start-4 size-4.5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+            <Input shape="pill" value={q} onChange={(e) => setQ(e.target.value)} placeholder={m.versions_screen__find()} aria-label={m.versions_screen__find()} className="h-12 border-[1.5px] border-input bg-card ps-11 text-[16px]" />
           </span>
         </div>
         {showWent && shelf.length > 0 && (
@@ -169,10 +171,10 @@ export function VersionsScreen() {
                 v,
                 canGoBack(v.outcome) ? (
                   <Button variant="bordered" size="compact" onClick={() => setPanel({ kind: 'back', v })}>
-                    Go back to this
+                    {m.versions_screen__go_back_to_this()}
                   </Button>
                 ) : (
-                  openBtn(v.id, 'Open')
+                  openBtn(v.id, m.versions_screen__open())
                 ),
               ),
             ),
@@ -180,60 +182,60 @@ export function VersionsScreen() {
         )}
         {showMissed && missed.length > 0 && (
           <>
-            <h3 className="text-[14px] font-bold text-muted-foreground">Didn&apos;t go live</h3>
+            <h3 className="text-[14px] font-bold text-muted-foreground">{m.version_screen__did_not_go_live()}</h3>
             {grid(
               missed.map((v) =>
                 tile(
                   v,
                   v.outcome === 'failed' ? (
-                    <Button variant="bordered" size="compact" onClick={() => say(`Try “${v.title}” again`)}>
-                      Try again
+                    <Button variant="bordered" size="compact" onClick={() => say(m.versions_screen__try_again_say({ title: v.title }))}>
+                      {m.signin__retry()}
                     </Button>
                   ) : (
-                    openBtn(v.id, 'Open')
+                    openBtn(v.id, m.versions_screen__open())
                   ),
                 ),
               ),
             )}
           </>
         )}
-        {(!showWent || shelf.length === 0) && (!showMissed || missed.length === 0) && <p className="text-[14px] text-ink-2">No version matches.</p>}
+        {(!showWent || shelf.length === 0) && (!showMissed || missed.length === 0) && <p className="text-[14px] text-ink-2">{m.versions_screen__no_match()}</p>}
       </Section>
 
       {panel?.kind === 'back' && (
-        <SidePanel title="Go back to this version?" sub="What people see now is replaced. You can switch again any time." onClose={() => setPanel(null)}>
+        <SidePanel title={m.versions_screen__go_back_title()} sub={m.versions_screen__go_back_sub()} onClose={() => setPanel(null)}>
           <p className="text-[16px] text-ink-2">
-            Your visitors get “{panel.v.title}” within a minute. “{live?.title}” goes back on the shelf. Nothing is deleted.
+            {m.version_screen__go_back_detail({ title: panel.v.title, liveTitle: live?.title ?? '' })}
           </p>
           <div className="flex gap-3">
-            <Button variant="default" size="page" onClick={() => (setPanel(null), say(`Go back to “${panel.v.title}”`))}>
-              Yes, go back
+            <Button variant="default" size="page" onClick={() => (setPanel(null), say(m.versions_screen__go_back_say({ title: panel.v.title })))}>
+              {m.version_screen__yes_go_back()}
             </Button>
             <Button variant="bordered" size="page" onClick={() => setPanel(null)}>
-              Keep what is live
+              {m.version_screen__keep_live()}
             </Button>
           </div>
         </SidePanel>
       )}
-      {panel?.kind === 'publish' && <PublishPanel heads={heads} onClose={() => setPanel(null)} onGo={(t) => (setPanel(null), setHeads([]), say(`Get ${t} ready to publish`))} />}
+      {panel?.kind === 'publish' && <PublishPanel heads={heads} onClose={() => setPanel(null)} onGo={(t) => (setPanel(null), setHeads([]), say(m.versions_screen__publish_say({ title: t })))} />}
     </Page>
   )
 }
 
 function PublishPanel({ heads, onClose, onGo }: { heads: Head[]; onClose: () => void; onGo: (title: string) => void }) {
   return (
-    <SidePanel title={`Publish ${heads.length} changes`} sub="They go out together. I check them first, then ask you before anything goes live." onClose={onClose}>
+    <SidePanel title={m.versions_screen__publish_title({ count: heads.length })} sub={m.versions_screen__publish_sub()} onClose={onClose}>
       <RowStack>
         {heads.map((h) => (
-          <RowCard key={h.sha} tile={<Pencil className="size-5" />} title={h.title} caption={`${h.by} · ${h.when}`} />
+          <RowCard key={h.sha} tile={<Pencil className="size-5" />} title={h.title} caption={m.versions_screen__by_when({ by: h.by, when: h.when })} />
         ))}
       </RowStack>
       <div className="flex gap-3">
         <Button variant="default" size="page" onClick={() => onGo(`${heads.length} changes`)}>
-          Check them
+          {m.versions_screen__check_them()}
         </Button>
         <Button variant="bordered" size="page" onClick={onClose}>
-          Cancel
+          {m.secret_form__cancel()}
         </Button>
       </div>
     </SidePanel>

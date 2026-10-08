@@ -1,3 +1,4 @@
+import type { I18nString } from '@pikku/react'
 import { ArrowRight } from 'lucide-react'
 import type { ComponentType } from 'react'
 import { Button } from '../ui/button'
@@ -14,9 +15,9 @@ import { WaySection } from '../blocks/WaySection'
 export interface SignInOption {
   id: string
   Icon: ComponentType<{ className?: string }>
-  title: string
-  body: string
-  action: string
+  title: I18nString
+  body: I18nString
+  action: I18nString
   run: () => Promise<unknown>
 }
 
@@ -52,7 +53,7 @@ export function SignInScreen({ options, status, returning, recent, onChoose }: S
           <Button variant="hero" size="pageLg" aria-busy={busy} disabled={busy} onClick={() => onChoose(primary)}>
             {busy ? <Spinner /> : null}
             {busy ? m.signin__opening() : primary.action}
-            {busy ? null : <ArrowRight className="size-5.5" />}
+            {busy ? null : <ArrowRight className="rtl:-scale-x-100 size-5.5" />}
           </Button>
         }
       >

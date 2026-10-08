@@ -1,4 +1,5 @@
 import React from 'react'
+import { asI18n } from '@pikku/react'
 import { BaseEdge, EdgeLabelRenderer, type EdgeProps } from '@xyflow/react'
 
 export const ElkEdge: React.FC<EdgeProps> = ({
@@ -14,6 +15,8 @@ export const ElkEdge: React.FC<EdgeProps> = ({
   style,
   markerEnd,
 }) => {
+  // xyflow types an edge label as any ReactNode, so the brand cannot ride along; ours are always text from createEdge.
+  const labelText = typeof label === 'string' ? asI18n(label) : undefined
   const bendPoints = (data?.bendPoints ?? []) as { x: number; y: number }[]
 
   const points = [
@@ -33,7 +36,7 @@ export const ElkEdge: React.FC<EdgeProps> = ({
   return (
     <>
       <BaseEdge id={id} path={path} style={style} markerEnd={markerEnd} />
-      {label && (
+      {labelText && (
         <EdgeLabelRenderer>
           <div
             className="pointer-events-auto absolute rounded-lg bg-card px-1.5 py-0.5 font-mono text-[11px] text-ink-2"
@@ -42,7 +45,7 @@ export const ElkEdge: React.FC<EdgeProps> = ({
               ...labelStyle,
             }}
           >
-            {label}
+            {labelText}
           </div>
         </EdgeLabelRenderer>
       )}

@@ -6,6 +6,10 @@ import { PreviewProvider } from '@/lib/PreviewProvider'
 import { PreviewSurface } from '@/lib/PreviewSurface'
 import { m } from '@/lib/i18n'
 
+/** File patterns, not copy. */
+const APP_STORIES_GLOB = '*.app.stories.tsx'
+const COMPONENTS_DIR = 'apps/*/src/components/'
+
 type PreviewProps = {
   previewCss: string
   colorScheme: 'light' | 'dark'
@@ -99,8 +103,8 @@ export function AppView({
     return (
       <div ref={containerRef} className="flex flex-col items-center py-8">
         <p className="text-sm text-[var(--app-text-faint)]">
-          {m.view_no_widgets()} <code>*.app.stories.tsx</code> {m.view_files_to()}{' '}
-          <code>apps/*/src/components/</code>.
+          {m.view_no_widgets()} <code>{APP_STORIES_GLOB}</code> {m.view_files_to()}{' '}
+          <code>{COMPONENTS_DIR}</code>.
         </p>
       </div>
     )

@@ -1,13 +1,15 @@
 import React from 'react'
+import { asI18n, type I18nString } from '@pikku/react'
 import type { Node } from '@xyflow/react'
 import type { GraphNodeProps } from '../../types'
 import { FlowNode } from './FlowNode'
 import { XCircle } from 'lucide-react'
 import { useGraphActions } from '../../context/GraphHostContext'
+import { useGraphM } from '../../context/MessagesContext'
 
 interface CancelNodeData {
   colorKey: string
-  stepName?: string
+  stepName?: I18nString
 }
 
 export const CancelNode: React.FC<GraphNodeProps<CancelNodeData>> = ({
@@ -15,6 +17,7 @@ export const CancelNode: React.FC<GraphNodeProps<CancelNodeData>> = ({
   id,
 }) => {
   const { openWorkflowStep } = useGraphActions()
+  const m = useGraphM()
 
   const handleClick = React.useCallback(() => {
     openWorkflowStep(id, 'cancel')
@@ -26,7 +29,7 @@ export const CancelNode: React.FC<GraphNodeProps<CancelNodeData>> = ({
       tone="failure"
       hasInput={true}
       outputHandles={[]}
-      label="Cancel"
+      label={m.node_cancel()}
       subtitle={data.stepName}
       onClick={handleClick}
       nodeId={id}
@@ -45,7 +48,7 @@ export const getCancelNodeConfig = (
     position,
     data: {
       colorKey: 'workflow',
-      stepName: step.stepName,
+      stepName: asI18n(step.stepName),
       nodeType: 'flow',
     },
   }

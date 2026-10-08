@@ -1,6 +1,7 @@
 import { m } from '@/i18n/messages'
 import { KeyRound, Package } from 'lucide-react'
 import { RowCard, RowStack } from './RowCard'
+import { asI18n } from '@pikku/react'
 
 export type ContentAccessItem = {
   addon: string
@@ -17,7 +18,7 @@ export function ContentAccess({ items }: { items: ContentAccessItem[] }) {
           key={item.addon}
           tile={item.wholeStore ? <KeyRound className="size-5" /> : <Package className="size-5" />}
           flag={!!item.wholeStore}
-          title={item.addon}
+          title={asI18n(item.addon)}
           caption={item.wholeStore ? m.content_access__whole_store({ reason: item.wholeStore }) : m.content_access__keeps_in({ folder: item.folder })}
           below={
             item.grants.length ? (

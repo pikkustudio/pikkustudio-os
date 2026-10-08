@@ -1,14 +1,16 @@
 import React from 'react'
+import { asI18n, type I18nString } from '@pikku/react'
 import type { Node } from '@xyflow/react'
 import type { GraphNodeProps } from '../../types'
 import { FlowNode } from './FlowNode'
 import { Reply } from 'lucide-react'
 import { useGraphActions } from '../../context/GraphHostContext'
+import { useGraphM } from '../../context/MessagesContext'
 import { useGraphHighlight } from '../../context/GraphHostContext'
 
 interface ReturnNodeData {
   colorKey: string
-  stepName?: string
+  stepName?: I18nString
 }
 
 type HighlightType = 'focused' | 'referenced' | null
@@ -18,6 +20,7 @@ export const ReturnNode: React.FC<GraphNodeProps<ReturnNodeData>> = ({
   id,
 }) => {
   const { openWorkflowStep } = useGraphActions()
+  const m = useGraphM()
   const graphHighlight = useGraphHighlight()
 
   const highlightType: HighlightType = React.useMemo(() => {
@@ -37,7 +40,7 @@ export const ReturnNode: React.FC<GraphNodeProps<ReturnNodeData>> = ({
       tone="done"
       hasInput={true}
       outputHandles={[]}
-      label="Return"
+      label={m.node_return()}
       subtitle={data.stepName}
       onClick={handleClick}
       highlightType={highlightType}
@@ -57,7 +60,7 @@ export const getReturnNodeConfig = (
     position,
     data: {
       colorKey: 'workflow',
-      stepName: step.stepName,
+      stepName: asI18n(step.stepName),
       nodeType: 'flow',
     },
   }

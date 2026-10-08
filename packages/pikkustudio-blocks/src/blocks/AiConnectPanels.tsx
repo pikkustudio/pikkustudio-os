@@ -1,3 +1,4 @@
+import { asI18n, sep, type I18nNode } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { ArrowUpRight } from 'lucide-react'
 import { useState } from 'react'
@@ -7,20 +8,22 @@ import { useSetAi } from '../lib/onboarding'
 
 const field = 'font-heading text-[16px] font-semibold'
 
-export const providers = [
-  ['OpenAI', 'openai'],
-  ['Claude', 'anthropic'],
-  ['Gemini', 'gemini'],
-  ['Grok', 'xai'],
-  ['Mistral', 'mistral'],
-  ['DeepSeek', 'deepseek'],
-  ['Groq', 'groq'],
-  ['OpenRouter', 'openrouter'],
+/** A function, not a constant: the names follow the language the person switches to. */
+export const providers = () => [
+  [m.ai_connect_panels__provider_openai(), 'openai'],
+  [m.ai_connect_panels__provider_claude(), 'anthropic'],
+  [m.ai_connect_panels__provider_gemini(), 'gemini'],
+  [m.ai_connect_panels__provider_grok(), 'xai'],
+  [m.ai_connect_panels__provider_mistral(), 'mistral'],
+  [m.ai_connect_panels__provider_deepseek(), 'deepseek'],
+  [m.ai_connect_panels__provider_groq(), 'groq'],
+  [m.ai_connect_panels__provider_openrouter(), 'openrouter'],
 ] as const
 
 const LITELLM_COMMAND = 'litellm --model'
 
-export function AiLitellmPanel({ intro, via, onDone, onBack }: { intro: React.ReactNode; via?: string; onDone: () => void; onBack: () => void }) {
+export function AiLitellmPanel({ intro, via, onDone, onBack }: { intro: I18nNode; via?: string; onDone: () => void; onBack: () => void }) {
+  const litellmLine = `${LITELLM_COMMAND} ${via ? `${via}/…` : m.ai_connect_panels__openai_gpt_4_1()}`
   const save = useSetAi()
   const [baseUrl, setBaseUrl] = useState('http://localhost:4000')
   const [apiKey, setApiKey] = useState('')
@@ -39,18 +42,18 @@ export function AiLitellmPanel({ intro, via, onDone, onBack }: { intro: React.Re
       </div>
       <div className="flex shrink-0 flex-col gap-2 rounded-[18px] border border-border p-4">
         <b className="text-[16px]">{m.ai_connect_panels__do_not_have_it()}</b>
-        <code className="rounded-lg bg-secondary px-3 py-2 text-[14px] break-all">{m.ai_connect_panels__pip_install_litellm_proxy()}</code>
-        <code className="rounded-lg bg-secondary px-3 py-2 text-[14px] break-all">{LITELLM_COMMAND} {via ? `${via}/…` : m.ai_connect_panels__openai_gpt_4_1()}</code>
+        <code dir="ltr" className="rounded-lg bg-secondary px-3 py-2 text-[14px] break-all">{m.ai_connect_panels__pip_install_litellm_proxy()}</code>
+        <code dir="ltr" className="rounded-lg bg-secondary px-3 py-2 text-[14px] break-all">{asI18n(litellmLine)}</code>
         <a className="inline-flex items-center gap-1 text-[14px] font-semibold text-accent-foreground underline" href="https://docs.litellm.ai/docs/simple_proxy" target="_blank" rel="noreferrer">
           
-          {m.ai_connect_panels__read_the_lite_llm_guide()} <ArrowUpRight className="size-4" />
+          {m.ai_connect_panels__read_the_lite_llm_guide()}{sep(' ')}<ArrowUpRight className="rtl:-scale-x-100 size-4" />
         </a>
       </div>
       <label htmlFor="ll-url" className={field}>{m.ai_connect_panels__its_address()}</label>
       <Input id="ll-url" value={baseUrl} onChange={(e) => setBaseUrl(e.target.value)} inputMode="url" />
       <label htmlFor="ll-key" className={field}>
         
-        {m.ai_connect_panels__its_key()} <span className="font-normal text-muted-foreground">{m.ai_connect_panels__optional()}</span>
+        {m.ai_connect_panels__its_key()}{sep(' ')}<span className="font-normal text-muted-foreground">{m.ai_connect_panels__optional()}</span>
       </label>
       <Input id="ll-key" type="password" autoComplete="off" value={apiKey} onChange={(e) => setApiKey(e.target.value)} />
       {save.isError ? (
@@ -79,11 +82,11 @@ export function AiProviderPanel({ provider, onDone, onBack }: { provider: string
         if (ready) save.mutate({ kind: 'key', provider, apiKey: apiKey.trim() }, { onSuccess: onDone })
       }}
     >
-      <label htmlFor="pv-key" className={field}>Token or secret</label>
+      <label htmlFor="pv-key" className={field}>{m.ai_connect_panels__token_label()}</label>
       <Input id="pv-key" type="password" autoComplete="off" value={apiKey} onChange={(e) => setApiKey(e.target.value)} />
       {save.isError ? <p role="alert" className="text-[15px] font-semibold">{m.ai_connect_panels__that_could_not_be()}</p> : null}
       <Button variant="default" size="pageLg" type="submit" disabled={!ready}>
-        {save.isPending ? m.ai_connect_panels__saving() : 'Use this provider'}
+        {save.isPending ? m.ai_connect_panels__saving() : m.ai_connect_panels__use_provider()}
       </Button>
       <Button variant="ghost" size="page" type="button" onClick={onBack}>{m.ai_connect_panels__back()}</Button>
     </form>

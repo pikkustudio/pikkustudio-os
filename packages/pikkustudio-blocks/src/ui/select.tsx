@@ -1,3 +1,4 @@
+import type { I18nProps } from '../lib/i18n-props'
 import * as React from 'react'
 import * as SelectPrimitive from '@radix-ui/react-select'
 import { cva, type VariantProps } from 'class-variance-authority'
@@ -19,7 +20,7 @@ const selectTriggerVariants = cva(
 
 const Select = SelectPrimitive.Root
 
-function SelectTrigger({ className, shape, children, ...props }: React.ComponentProps<typeof SelectPrimitive.Trigger> & VariantProps<typeof selectTriggerVariants>) {
+function SelectTrigger({ className, shape, children, ...props }: I18nProps<React.ComponentProps<typeof SelectPrimitive.Trigger>> & VariantProps<typeof selectTriggerVariants>) {
   return (
     <SelectPrimitive.Trigger data-slot="select-trigger" className={cn(selectTriggerVariants({ shape }), className)} {...props}>
       {children}
@@ -30,11 +31,11 @@ function SelectTrigger({ className, shape, children, ...props }: React.Component
   )
 }
 
-function SelectValue(props: React.ComponentProps<typeof SelectPrimitive.Value>) {
+function SelectValue(props: I18nProps<React.ComponentProps<typeof SelectPrimitive.Value>>) {
   return <SelectPrimitive.Value data-slot="select-value" {...props} />
 }
 
-function SelectContent({ className, children, position = 'popper', ...props }: React.ComponentProps<typeof SelectPrimitive.Content>) {
+function SelectContent({ className, children, position = 'popper', ...props }: I18nProps<React.ComponentProps<typeof SelectPrimitive.Content>>) {
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
@@ -50,15 +51,15 @@ function SelectContent({ className, children, position = 'popper', ...props }: R
   )
 }
 
-function SelectItem({ className, children, ...props }: React.ComponentProps<typeof SelectPrimitive.Item>) {
+function SelectItem({ className, children, ...props }: I18nProps<React.ComponentProps<typeof SelectPrimitive.Item>>) {
   return (
     <SelectPrimitive.Item
       data-slot="select-item"
-      className={cn('relative flex cursor-pointer items-center rounded-lg py-2 pr-8 pl-3 text-px15 outline-none select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-[state=checked]:font-bold', className)}
+      className={cn('relative flex cursor-pointer items-center rounded-lg py-2 pe-8 ps-3 text-px15 outline-none select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-[state=checked]:font-bold', className)}
       {...props}
     >
       <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
-      <SelectPrimitive.ItemIndicator className="absolute right-2.5 inline-flex">
+      <SelectPrimitive.ItemIndicator className="absolute end-2.5 inline-flex">
         <Check className="size-4" />
       </SelectPrimitive.ItemIndicator>
     </SelectPrimitive.Item>

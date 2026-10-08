@@ -1,13 +1,17 @@
+import type { I18nNode } from '@pikku/react'
+import { m } from '@/i18n/messages'
 import { Cloud, Globe, Monitor, TriangleAlert, Users } from 'lucide-react'
 import { cn } from '../lib/utils'
 import type { Project } from './ProjectCard'
 
-const many = (n: number, one: string, more: string) => (n === 1 ? one : more.replace('#', String(n)))
-
 const names = (who: string[]) =>
-  who.length === 1 ? `${who[0]} is working in it` : who.length === 2 ? `${who[0]} and ${who[1]} are working in it` : `${who.length} people are working in it`
+  who.length === 1
+    ? m.project_facts__working_one({ name: who[0] ?? '' })
+    : who.length === 2
+      ? m.project_facts__working_two({ first: who[0] ?? '', second: who[1] ?? '' })
+      : m.project_facts__working_count({ count: who.length })
 
-const Fact = ({ icon: Icon, className, children }: { icon: typeof Cloud; className?: string; children: React.ReactNode }) => (
+const Fact = ({ icon: Icon, className, children }: { icon: typeof Cloud; className?: string; children: I18nNode }) => (
   <span className={cn('inline-flex items-center gap-1', className)}>
     <Icon className="size-3.5 shrink-0" strokeWidth={2.5} />
     {children}
@@ -23,14 +27,14 @@ export function ProjectFacts({ item, className }: { item: Project; className?: s
   return (
     <span data-testid="project_facts" className={cn('flex flex-wrap items-center gap-x-3 gap-y-1 text-muted-foreground', className)}>
       {empty ? (
-        <span>Nothing here yet. Open it to make a start.</span>
+        <span>{m.project_facts__nothing_yet()}</span>
       ) : (
         <>
-          {attention ? <Fact icon={TriangleAlert} className="font-bold text-warning-foreground">{many(attention, '1 thing to look at', '# things to look at')}</Fact> : null}
+          {attention ? <Fact icon={TriangleAlert} className="font-bold text-warning-foreground">{m.project_facts__attention({ count: attention })}</Fact> : null}
           {workingNow?.length ? <Fact icon={Users}>{names(workingNow)}</Fact> : null}
-          {workspaces?.local ? <Fact icon={Monitor}>{workspaces.local} on your computer</Fact> : null}
-          {workspaces?.cloud ? <Fact icon={Cloud}>{workspaces.cloud} in the cloud</Fact> : null}
-          {live ? <Fact icon={Globe} className="text-success-foreground">{many(live.places, 'Live', 'Live in # places')}</Fact> : live === null ? <span>Not live yet</span> : null}
+          {workspaces?.local ? <Fact icon={Monitor}>{m.project_facts__local({ count: workspaces.local })}</Fact> : null}
+          {workspaces?.cloud ? <Fact icon={Cloud}>{m.project_facts__cloud({ count: workspaces.cloud })}</Fact> : null}
+          {live ? <Fact icon={Globe} className="text-success-foreground">{m.project_facts__live({ count: live.places })}</Fact> : live === null ? <span>{m.project_facts__not_live()}</span> : null}
         </>
       )}
     </span>

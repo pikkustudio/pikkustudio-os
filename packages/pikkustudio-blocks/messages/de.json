@@ -1,0 +1,3080 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "account_hero__label": "Dein Konto",
+  "account_hero__title": "Hallo, das ist deine Ecke",
+  "account_hero__title_named": "Hallo {name}, das ist deine Ecke",
+  "account_hero__why": "Das ist dein eigener Bereich. Hier lernt Pikku, wer du bist und wie du angesprochen werden möchtest.",
+  "account_screen__language": "Sprache",
+  "account_screen__language_text": "Pikku spricht mit dir in der Sprache, die du auswählst.",
+  "account_screen__lead": "Deine Ecke in Studio, so eingerichtet, wie du es magst.",
+  "account_screen__looks": "Aussehen",
+  "account_screen__looks_text": "Bald kannst du zwischen hell und dunkel wählen, je nachdem, was deinen Augen besser tut.",
+  "account_screen__name": "Dein Name und dein Foto",
+  "account_screen__name_unset": "Wir kennen deinen Namen noch nicht",
+  "account_screen__notify": "Sag mir Bescheid, wenn",
+  "account_screen__notify_text": "Bald kann Pikku dich anstupsen, wenn es dich braucht oder etwas schiefgeht.",
+  "account_screen__on_this_computer": "Auf diesem Computer",
+  "account_screen__settings": "Einstellungen",
+  "account_screen__sign_out": "Abmelden",
+  "account_screen__sign_out_failed": "Entschuldige, das hat nicht geklappt. Du bist weiterhin angemeldet. Bitte versuche es noch einmal.",
+  "account_screen__sign_out_text": "Deine Arbeit bleibt hier sicher. Komm jederzeit wieder.",
+  "account_screen__signed_in": "Angemeldet",
+  "account_screen__soon": "Daran arbeiten wir noch",
+  "account_screen__title": "Dein Konto",
+  "action_notice__bringing": "Wird auf diesen Computer geholt…",
+  "action_notice__copied": "Kopiert",
+  "action_notice__copy": "Details kopieren",
+  "action_notice__denied_access": "Dieser Computer durfte {what} nicht kopieren. Bitte einen Team-Admin, dir Zugriff zu geben, und versuche es dann noch einmal.",
+  "action_notice__generic": "{what} konnte nicht kopiert werden. Es wurde nichts geändert.",
+  "action_notice__hide": "Ausblenden",
+  "action_notice__ours": "Das liegt auf Pikkus Seite, nicht in deinem Projekt. Das Kopieren von {what} wurde nicht abgeschlossen, und es wurde nichts geändert.",
+  "action_notice__retrying": "Neuer Versuch…",
+  "action_notice__tell_us": "Soll Pikku von solchen Fehlern erfahren?",
+  "action_notice__title": "Das hat nicht geklappt.",
+  "action_notice__told": "Wir haben das an das Pikku-Team weitergegeben.",
+  "action_notice__what_happened": "Was ist passiert?",
+  "ai_connect_panels__back": "Zurück",
+  "ai_connect_panels__do_not_have_it": "Hast du es noch nicht?",
+  "ai_connect_panels__its_address": "Seine Adresse",
+  "ai_connect_panels__its_key": "Sein Schlüssel",
+  "ai_connect_panels__lite_llm_is_a_small": "LiteLLM ist ein kleiner Open-Source-Server, der mit jeder KI spricht. Du betreibst ihn selbst und behältst deine Schlüssel.",
+  "ai_connect_panels__openai_gpt_4_1": "openai/gpt-4.1",
+  "ai_connect_panels__optional": "Optional",
+  "ai_connect_panels__pip_install_litellm_proxy": "pip install 'litellm[proxy]'",
+  "ai_connect_panels__provider_claude": "Claude",
+  "ai_connect_panels__provider_deepseek": "DeepSeek",
+  "ai_connect_panels__provider_gemini": "Gemini",
+  "ai_connect_panels__provider_grok": "Grok",
+  "ai_connect_panels__provider_groq": "Groq",
+  "ai_connect_panels__provider_mistral": "Mistral",
+  "ai_connect_panels__provider_openai": "OpenAI",
+  "ai_connect_panels__provider_openrouter": "OpenRouter",
+  "ai_connect_panels__read_the_lite_llm_guide": "LiteLLM-Anleitung lesen",
+  "ai_connect_panels__saving": "Wird gespeichert",
+  "ai_connect_panels__that_could_not_be": "Das konnte nicht gespeichert werden. Prüfe die Adresse und versuche es noch einmal.",
+  "ai_connect_panels__token_label": "Token oder Geheimnis",
+  "ai_connect_panels__use_my_lite_llm": "Mein LiteLLM nutzen",
+  "ai_connect_panels__use_provider": "Diesen Anbieter nutzen",
+  "app_card__about": "Zu „{name}“: ",
+  "app_card__being_made": "In Arbeit",
+  "app_card__change_it": "Ändern",
+  "app_card__get_the_files": "Dateien holen",
+  "app_card__last_worked_on": "Zuletzt bearbeitet: {when}",
+  "app_card__local": "Lokal",
+  "app_card__not_started": "Nicht gestartet",
+  "app_card__nothing_to_get_yet": "Noch nichts zum Holen",
+  "app_card__open_in_design": "In Design öffnen",
+  "app_card__ready": "Bereit",
+  "app_card__remote": "Online",
+  "app_kind_list__a_program_people_install": "Ein Programm, das man auf einem Mac- oder Windows-Computer installiert.",
+  "app_kind_list__a_program_you_run": "Ein Programm, das du in einem Terminal startest, für Entwickler und Skripte.",
+  "app_kind_list__a_real_app_in": "Eine echte App im App Store.",
+  "app_kind_list__a_real_app_in_2": "Eine echte App in Google Play.",
+  "app_kind_list__ai_assistant_tool_mcp": "Werkzeug für KI-Assistenten (MCP)",
+  "app_kind_list__android": "Android",
+  "app_kind_list__android_app": "Android-App",
+  "app_kind_list__assistant_tool": "Assistenten-Werkzeug",
+  "app_kind_list__command_line": "Befehlszeile",
+  "app_kind_list__command_line_tool": "Befehlszeilen-Werkzeug",
+  "app_kind_list__computer": "Computer",
+  "app_kind_list__computer_app": "Computer-App",
+  "app_kind_list__i_phone": "iPhone",
+  "app_kind_list__i_phone_and_i_pad_app": "iPhone- und iPad-App",
+  "app_kind_list__lets_ai_assistants_like": "Lässt KI-Assistenten wie Claude deine App nutzen, zum Beispiel um einen Kurs zu buchen.",
+  "app_kind_list__made_today": "Heute erstellt",
+  "app_kind_list__not_started": "Nicht gestartet",
+  "app_kind_list__people_open_it_in": "Man öffnet es im Browser, auf dem Handy oder am Computer.",
+  "app_kind_list__website": "Website",
+  "app_kind_list__website_or_web_app": "Website oder Web-App",
+  "app_not_running__failed_explain": "{name} wurde beim Öffnen beendet, deshalb gibt es noch nichts zu sehen. Beim erneuten Versuch startet es von vorn. Wenn es wieder stoppt, sag Pikku im Chat, was du gerade gemacht hast.",
+  "app_not_running__failed_text": "Etwas hat das Öffnen gestoppt. Ein neuer Versuch hilft oft. Wenn es so bleibt, bitte Pikku im Chat, sich das anzusehen.",
+  "app_not_running__failed_title": "{name} wurde nicht gestartet",
+  "app_not_running__hide": "Ausblenden",
+  "app_not_running__off_text": "Starte es, um {what} hier genau so zu sehen, wie andere es sehen werden.",
+  "app_not_running__off_title": "{name} läuft noch nicht",
+  "app_not_running__start": "Meine App starten",
+  "app_not_running__starting_button": "Wird gestartet…",
+  "app_not_running__starting_text": "Pikku macht {what} bereit zum Ansehen. Das dauert meist weniger als eine Minute, und es erscheint hier von selbst.",
+  "app_not_running__starting_title": "{name} wird vorbereitet…",
+  "app_not_running__try_again": "Noch einmal versuchen",
+  "app_not_running__what_default": "deine echte App",
+  "app_not_running__what_happened": "Was ist passiert?",
+  "app_not_running__your_app": "Deine App",
+  "apps_view__a_website_this_project": "Eine Website, die dieses Projekt bereitstellt.",
+  "apps_view__everything_you_are_making": "Alles, was du erstellst. Ein Projekt kann eine Website, eine Handy-App und mehr sein, und du kannst von jedem mehrere haben.",
+  "apps_view__idea_1": "Auf einem Computer laufen lassen",
+  "apps_view__idea_2": "Eine Android-Version erstellen",
+  "apps_view__idea_3": "Eine App für mein Team hinzufügen",
+  "apps_view__idea_4": "Ein Befehlszeilen-Werkzeug hinzufügen",
+  "apps_view__idea_5": "KI-Assistenten Kurse buchen lassen",
+  "apps_view__ideas": "Ideen",
+  "apps_view__new_app": "Neue App",
+  "apps_view__new_kind": "Neu: {kind}",
+  "apps_view__pikku_will_set_this": "Pikku richtet das ein, wenn du es öffnest.",
+  "apps_view__send": "Senden",
+  "apps_view__tell_pikku_what_to": "Sag Pikku, was geändert werden soll",
+  "apps_view__tell_pikku_what_to_2": "Sag Pikku, was geändert werden soll, zum Beispiel „Zeige die Team-Ansicht auf einem Computer“",
+  "apps_view__what_kind_of_app": "Welche Art von App",
+  "apps_view__what_kind_of_app_2": "Welche Art von App?",
+  "artifact_open__all_artifacts": "Alle Artefakte",
+  "artifact_open__designs": "Designs",
+  "artifact_open__documents": "Dokumente",
+  "artifact_open__it_may_have_been": "Es wurde vielleicht entfernt. Geh zurück zu den Artefakten, um alles zu sehen, was erstellt wurde.",
+  "artifact_open__pages": "Seiten",
+  "artifact_open__see_all_artifacts": "Alle Artefakte ansehen",
+  "artifact_open__we_could_not_find": "Wir konnten dieses nicht finden.",
+  "artifact_row__design": "Design",
+  "artifact_row__document": "Dokument",
+  "artifact_row__page": "Seite",
+  "artifacts_explore__all_ideas": "Alle Ideen",
+  "artifacts_explore__change_say": "Etwas an „{title}“ ändern: ",
+  "artifacts_explore__change_something": "Etwas ändern",
+  "artifacts_explore__different": "anders",
+  "artifacts_explore__directions": "Richtungen",
+  "artifacts_explore__latest": "Neueste",
+  "artifacts_explore__more_like_these": "Mehr davon",
+  "artifacts_explore__next_idea": "Nächste Idee",
+  "artifacts_explore__no_ideas_text": "Die Richtungen erscheinen hier, sobald sie fertig sind.",
+  "artifacts_explore__no_ideas_title": "Noch keine Ideen",
+  "artifacts_explore__previous_idea": "Vorherige Idee",
+  "artifacts_explore__round": "Runde {n}",
+  "artifacts_explore__round_mode": "{round} · {mode}",
+  "artifacts_explore__side_by_side": "Nebeneinander",
+  "artifacts_explore__similar": "ähnlich",
+  "artifacts_explore__something_different": "Etwas anderes",
+  "artifacts_explore__use_this_one": "Diese nehmen",
+  "artifacts_gallery__all_artifacts": "Alle Artefakte",
+  "artifacts_gallery__ask_pikku_to_make": "Pikku bitten, etwas zu erstellen",
+  "artifacts_gallery__designs": "Designs",
+  "artifacts_gallery__designs_pages_and_documents": "Designs, Seiten und Dokumente, die Pikku für dich erstellt, werden hier aufbewahrt.",
+  "artifacts_gallery__documents": "Dokumente",
+  "artifacts_gallery__found": "{count} gefunden",
+  "artifacts_gallery__kind": "Art",
+  "artifacts_gallery__nothing_has_been_made": "Es wurde noch nichts erstellt.",
+  "artifacts_gallery__nothing_matches_try_another": "Nichts passt. Versuche ein anderes Wort.",
+  "artifacts_gallery__pages": "Seiten",
+  "artifacts_gallery__poster_request": "Bitte erstelle ein Plakat für meine Brotbackkurse im Frühling.",
+  "artifacts_gallery__search_the_artifacts": "Artefakte durchsuchen",
+  "artifacts_screen__text": "Die Designs, Seiten und Dokumente, die beim Bauen deiner App entstanden sind.",
+  "artifacts_screen__title": "Artefakte",
+  "assistant_drawer__a_visitor": "Ein Besucher",
+  "assistant_drawer__all_chats": "Alle Chats",
+  "assistant_drawer__back_to_pikku": "Zurück zu Pikku",
+  "assistant_drawer__chat_label": "Chat mit {name}",
+  "assistant_drawer__check_this_one": "Diesen prüfen",
+  "assistant_drawer__close": "Schließen",
+  "assistant_drawer__could_not_reach": "Dieser Assistent ist nicht erreichbar",
+  "assistant_drawer__fix_prompt": "{name} hat sich im Chat mit {who} ({when}) geirrt. Bitte sieh dir das an und behebe es.",
+  "assistant_drawer__hello_fallback": "Hallo, ich bin {name}.",
+  "assistant_drawer__is_thinking": "{name} denkt nach…",
+  "assistant_drawer__it_got_this_wrong": "Hier hat er sich geirrt",
+  "assistant_drawer__looked_something_up": "Hat etwas nachgeschlagen",
+  "assistant_drawer__message_label": "Nachricht an {name}",
+  "assistant_drawer__no_chats_yet": "Noch keine Chats. Wenn jemand mit {name} spricht, erscheinen die Gespräche hier.",
+  "assistant_drawer__no_quality_check_yet": "Noch keine Qualitätsprüfung",
+  "assistant_drawer__opening": "{hello} Tu so, als wärst du ein Besucher, und frag mich etwas.",
+  "assistant_drawer__opening_sleepy": "Oh! Hallo. Tu so, als wärst du ein Besucher, und frag mich etwas.",
+  "assistant_drawer__past_chat": "Früherer Chat",
+  "assistant_drawer__pretend_you_are_a": "Tu so, als wärst du ein Besucher.",
+  "assistant_drawer__quality_check": "Qualitätsprüfung: {verdict}.",
+  "assistant_drawer__quality_check_line": "Qualitätsprüfung: {check}",
+  "assistant_drawer__send": "Senden",
+  "assistant_drawer__something_got_in_the_way": "Etwas ist dazwischengekommen",
+  "assistant_drawer__tab_chat": "Chat",
+  "assistant_drawer__tab_history": "Verlauf ({n})",
+  "assistant_drawer__write_as_a_visitor": "Als Besucher schreiben",
+  "assistant_drawer__you_are_talking_to": "Du sprichst mit {name}, nicht mit Pikku.",
+  "assistants_screen__add_say": "Füge meiner App einen neuen Assistenten hinzu",
+  "assistants_screen__ask_new": "Pikku um einen neuen bitten",
+  "assistants_screen__chat_with_me": "Chatte mit mir",
+  "assistants_screen__chats_month": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Chat diesen Monat",
+        "countPlural=other": "{count} Chats diesen Monat"
+      }
+    }
+  ],
+  "assistants_screen__check_suffix": "· {check}",
+  "assistants_screen__each_one_talks_to_people": [
+    {
+      "declarations": [
+        "input total",
+        "local totalPlural = total: plural"
+      ],
+      "selectors": [
+        "totalPlural"
+      ],
+      "match": {
+        "totalPlural=one": "Jeder spricht in einfacher Sprache mit Leuten und kann Dinge für sie erledigen, zum Beispiel einen Kurs prüfen oder einen Platz buchen. Zusammen können sie {total} Ding tun.",
+        "totalPlural=other": "Jeder spricht in einfacher Sprache mit Leuten und kann Dinge für sie erledigen, zum Beispiel einen Kurs prüfen oder einen Platz buchen. Zusammen können sie {total} Dinge tun."
+      }
+    }
+  ],
+  "assistants_screen__hands_off": "Wenn es nicht mein Gebiet ist, verweise ich die Leute an {list}.",
+  "assistants_screen__i_can": "Ich kann {list}.",
+  "assistants_screen__idle_text": "Bisher hat noch niemand mit {name} gesprochen. Ich kann einen Testbesucher zu ihm schicken, damit du siehst, was er sagt.",
+  "assistants_screen__meet_sub": "Chatte mit einem von ihnen wie ein Besucher, oder lies nach, was er echten Leuten gesagt hat.",
+  "assistants_screen__meet_title": "Lerne das Team kennen",
+  "assistants_screen__n_work": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Assistent arbeitet in deiner App",
+        "countPlural=other": "{count} Assistenten arbeiten in deiner App"
+      }
+    }
+  ],
+  "assistants_screen__no_actions": "Beantwortet Fragen, führt keine Aktionen aus.",
+  "assistants_screen__no_check_suffix": "· keine Qualitätsprüfung",
+  "assistants_screen__not_used": "Noch nicht genutzt",
+  "assistants_screen__past_chats": "Frühere Chats",
+  "assistants_screen__suggests": "Pikku schlägt vor",
+  "assistants_screen__text": "Die KI-Helfer in deiner App. Sie sprechen für dich mit deinen Besuchern, und jeder kann nur das tun, was hier aufgelistet ist.",
+  "assistants_screen__title": "Assistenten",
+  "assistants_screen__try_it_for_me": "Für mich ausprobieren",
+  "assistants_screen__try_one": "Einen ausprobieren",
+  "assistants_screen__try_say": "Probiere den Buchungs-Helfer aus, wie es ein Besucher tun würde",
+  "assistants_screen__your_assistants": "Deine Assistenten",
+  "builder_chat__add_to_queue": "In die Warteschlange",
+  "builder_chat__bigger_detail": "Ich kann es in die Warteschlange stellen und als eigene Änderung bauen oder es gleich hier im Chat erledigen.",
+  "builder_chat__bigger_title": "Das ist eine größere Aufgabe",
+  "builder_chat__do_it_now": "Jetzt erledigen",
+  "builder_chat__say_add_to_queue": "Stell es in die Warteschlange.",
+  "builder_chat__say_do_it_now": "Erledige es jetzt, in dieser Sitzung.",
+  "changes_b__earlier": "Früher",
+  "changes_b__no_set": "Keine Gruppe",
+  "changes_b__part_of": "Teil von: {set}",
+  "changes_b__progress": "Fortschritt",
+  "changes_b__step_changed": "Auf einer Kopie geändert",
+  "changes_b__step_of": "Schritt {step} von {total} · {name}",
+  "changes_b__step_ready": "Bereit für dich",
+  "changes_b__step_tested": "Getestet",
+  "changes_b__step_understood": "Verstanden",
+  "changes_b__today": "Heute",
+  "changes_b__waiting_count": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Änderung",
+        "countPlural=other": "{count} Änderungen"
+      }
+    }
+  ],
+  "changes_b__waiting_tail": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "wartet auf dich.",
+        "countPlural=other": "warten auf dich."
+      }
+    }
+  ],
+  "changes_b__working_on": "Pikku arbeitet an",
+  "changes_b__yesterday": "Gestern",
+  "changes_data__state_aside": "Zur Seite gelegt",
+  "changes_data__state_done": "Erledigt",
+  "changes_data__state_needs": "Braucht dich",
+  "changes_data__state_waiting": "Wartet, bis es dran ist",
+  "changes_data__state_working": "Pikku ist dran",
+  "changes_directions__text": "Alles, was Pikku in deiner App ändert, gruppiert nach Zweck.",
+  "changes_directions__title": "Änderungen",
+  "changes_timeline__days_ago": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "vor {count} Tag",
+        "countPlural=other": "vor {count} Tagen"
+      }
+    }
+  ],
+  "changes_timeline__empty": "Noch keine Änderungen. Sag Pikku, was geändert werden soll, und es erscheint hier.",
+  "changes_timeline__error": "Deine Änderungen konnten nicht geladen werden. Versuche es gleich noch einmal.",
+  "changes_timeline__found_automatically": "Automatisch gefunden",
+  "changes_timeline__from_app": "Aus der App",
+  "changes_timeline__from_console": "Aus der Konsole",
+  "changes_timeline__hours_ago": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "vor {count} Stunde",
+        "countPlural=other": "vor {count} Stunden"
+      }
+    }
+  ],
+  "changes_timeline__just_now": "gerade eben",
+  "changes_timeline__loading": "Deine Änderungen werden geladen...",
+  "changes_timeline__minutes_ago": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "vor {count} Minute",
+        "countPlural=other": "vor {count} Minuten"
+      }
+    }
+  ],
+  "changes_timeline__waiting_its_turn": "Wartet, bis es dran ist",
+  "chat__a_change": "Eine Änderung",
+  "chat__cannot_chat_yet": "Ich kann noch nicht chatten. Dein Abo reicht zum Bauen, aber zum Chatten braucht es eine KI mit eigenem Schlüssel. Öffne „Eine KI wählen“, füge eine hinzu und frag mich dann noch einmal.",
+  "chat__unreachable": "Ich konnte Pikku gerade nicht erreichen. Bitte versuche es noch einmal.",
+  "chat__wants_to_do_something": "Pikku möchte etwas tun",
+  "chat__went_wrong": "Etwas ist dazwischengekommen. Bitte versuche es noch einmal.",
+  "chat_select_panel__attached_to_your_chat": "An deinen Chat angehängt",
+  "chat_select_panel__click_anything_in_the": "Klicke auf etwas in der Vorschau. Es wird an deinen Chat mit Pikku angehängt, damit du sagen kannst: „Mach das größer“.",
+  "choose_ai_screen__change_later": "Du kannst das jederzeit in den Einstellungen ändern. Ich wechsle nie, ohne zu fragen.",
+  "choose_ai_screen__connect": "Mein LiteLLM verbinden",
+  "choose_ai_screen__error_title": "Die Auswahl konnte nicht geladen werden.",
+  "choose_ai_screen__getting_ready": "Die Auswahl wird vorbereitet",
+  "choose_ai_screen__lead": "Studio baut mit deinem eigenen LiteLLM, einem kleinen Open-Source-Server, der mit jedem Modell spricht. Du behältst deine Schlüssel und wählst das Modell.",
+  "choose_ai_screen__loading_title": "Die Auswahl wird vorbereitet.",
+  "choose_ai_screen__other_choices": "Weitere Möglichkeiten",
+  "choose_ai_screen__other_ways": "Andere Wege zur Verbindung",
+  "choose_ai_screen__providers_text": "Wähle einen aus, dann frage ich nach seinem Token. Er bleibt auf diesem Computer.",
+  "choose_ai_screen__providers_title": "Beliebte KI-Anbieter",
+  "choose_ai_screen__title": "Bring deine eigene KI mit.",
+  "choose_direction__save_failed": "Ich konnte diese Auswahl nicht speichern. {reason}",
+  "color_field__code_label": "{label}-Code",
+  "common__about_seconds": "Etwa {secs} Sekunden",
+  "content__add_a_file": "Datei hinzufügen",
+  "content__all_folders": "Alle Ordner",
+  "content__anyone_with_link": "Öffentlich",
+  "content__back": "Zurück",
+  "content__cannot_list_text": "Deine Dateien sind sicher. Aktualisiere Studio, dann erscheinen sie hier.",
+  "content__cannot_list_title": "Diese Version von Studio kann deine Dateien noch nicht anzeigen.",
+  "content__crumb": "Auf diesem Computer",
+  "content__did_not_work": "Das hat nicht geklappt. Es wurde nichts geändert.",
+  "content__download_failed": "Diese Datei konnte nicht heruntergeladen werden. Versuche es gleich noch einmal.",
+  "content__extra_access": "Wer auf andere Ordner zugreifen darf",
+  "content__folder_empty": "Nichts in diesem Ordner.",
+  "content__intro": "Die Bilder, Dokumente und Uploads, die dein Projekt aufbewahrt. Behalte eine Datei für dich oder teile sie mit einem Link, den jeder öffnen kann.",
+  "content__kept_by_addon": "Aufbewahrt von {addon}",
+  "content__kept_by_project": "Von deinem Projekt aufbewahrt",
+  "content__nothing_private_title": "Noch nichts ist privat.",
+  "content__nothing_public_title": "Noch nichts ist geteilt.",
+  "content__nothing_text": "Füge eine Datei hinzu, dann erscheint sie hier.",
+  "content__only_you": "Privat",
+  "content__private_explained": "Nur du und die Addons, denen du Zugriff gegeben hast. Links, die du erstellst, laufen nach einer Stunde ab.",
+  "content__public_explained": "Jeder, der die Adresse hat, kann diese Dateien ohne Anmeldung öffnen, und die Adresse läuft nie ab.",
+  "content__title": "Inhalte",
+  "content__who_can_open": "Wer diese Dateien öffnen darf",
+  "content_access__can_change": "Kann {path} lesen und ändern",
+  "content_access__can_read": "Kann {path} lesen",
+  "content_access__keeps_in": "Bewahrt seine Dateien in {folder} auf",
+  "content_access__whole_store": "Kann auf jede Datei zugreifen. Angegebener Grund: {reason}",
+  "content_file__copy_link": "Link kopieren",
+  "content_file__data": "Datendatei",
+  "content_file__document": "Dokument",
+  "content_file__download": "Herunterladen",
+  "content_file__file": "Datei",
+  "content_file__keep_it": "Behalten",
+  "content_file__link_copied": "Link kopiert",
+  "content_file__picture": "Bild",
+  "content_file__remove": "Entfernen",
+  "content_file__remove_it_for_good": "Endgültig entfernen",
+  "content_file__sound": "Ton",
+  "content_file__video": "Video",
+  "content_folder__files": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Datei",
+        "countPlural=other": "{count} Dateien"
+      }
+    }
+  ],
+  "content_folder__keep_them": "Behalten",
+  "content_folder__one_file": "1 Datei",
+  "content_folder__open": "Öffnen",
+  "content_folder__remove": "Entfernen",
+  "content_folder__remove_all": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Datei endgültig entfernen",
+        "countPlural=other": "{count} Dateien endgültig entfernen"
+      }
+    }
+  ],
+  "content_tree__before_tracking": "Bevor wir mitgezählt haben",
+  "content_tree__by": "Hinzugefügt von",
+  "content_tree__changed": "Zuletzt geändert",
+  "content_tree__clear": "Leeren",
+  "content_tree__collapse": "{name} schließen",
+  "content_tree__empty_folder": "Noch nichts in diesem Ordner.",
+  "content_tree__expand": "{name} öffnen",
+  "content_tree__failed": "Dieser Ordner konnte nicht gelesen werden. Versuche es gleich noch einmal.",
+  "content_tree__file_count": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "1 Datei",
+        "countPlural=other": "{count} Dateien"
+      }
+    }
+  ],
+  "content_tree__just_now": "Gerade eben",
+  "content_tree__loading": "Wird geladen",
+  "content_tree__more": "Mehr anzeigen",
+  "content_tree__name": "Name",
+  "content_tree__remove_selected": "{count} endgültig entfernen",
+  "content_tree__remove_selected_ask": "Auswahl entfernen",
+  "content_tree__select": "{name} auswählen",
+  "content_tree__select_all": "Alles Angezeigte auswählen",
+  "content_tree__selected": "{count} ausgewählt",
+  "content_tree__share": "{share} des Speicherplatzes",
+  "content_tree__size": "Belegter Speicher",
+  "content_tree__someone": "Jemand",
+  "content_tree__total": "Alles hier belegt {size}",
+  "content_tree__try_again": "Noch einmal versuchen",
+  "content_tree__you": "Du",
+  "content_upload__add_a_file": "Datei hinzufügen",
+  "content_upload__add_file": "Datei hinzufügen",
+  "content_upload__adding": "Wird hinzugefügt",
+  "content_upload__anyone_with_link": "Öffentlich: Jeder mit der Adresse kann sie öffnen",
+  "content_upload__cancel": "Abbrechen",
+  "content_upload__close": "Schließen",
+  "content_upload__folder": "Ordner",
+  "content_upload__folder_example": "photos/2026",
+  "content_upload__folder_help": "Der erste Name ist der Ordner. Alles nach einem Schrägstrich ist ein Ordner darin.",
+  "content_upload__only_you": "Privat: nur du und die Addons, die du erlaubst",
+  "content_upload__private_note": "Diese Datei bleibt privat. Du öffnest sie mit einem Link, der abläuft.",
+  "content_upload__public_note": "Diese Datei kann jeder öffnen, der ihren Link hat.",
+  "content_upload__that_could_not_be": "Das konnte nicht hinzugefügt werden. Vielleicht ist es zu groß oder keine erlaubte Dateiart.",
+  "content_upload__the_file": "Die Datei",
+  "copy__account_fallback": "Dein Konto",
+  "copy__bubble_ai_down": "Ich konnte die KI nicht erreichen.",
+  "copy__bubble_ai_pick": "Die erste auf der Liste ist der schnellste Start, und du kannst es dir jederzeit anders überlegen.",
+  "copy__chat_choose_ai": "In diesem Schritt wählst du die KI, die das Bauen übernimmt. Du entscheidest.",
+  "copy__diff_local": "Deine Projekte liegen hier, und es funktioniert auch ohne Internet.",
+  "copy__nobody_else_text": "Niemand sonst, außer du entscheidest dich, etwas zu teilen.",
+  "copy__opened_history": "Du hast Studio geöffnet.",
+  "copy__publish_failed_text": "An deiner Live-Seite wurde nichts geändert. Versuche es noch einmal, oder ich sehe es mir an.",
+  "copy__publish_failed_title": "Das Veröffentlichen wurde nicht abgeschlossen",
+  "copy__publish_sign_in_button": "Anmelden",
+  "copy__publish_sign_in_text": "Ich kann deine App erst online stellen, wenn du angemeldet bist. Das dauert eine Minute.",
+  "copy__publish_sign_in_title": "Zum Veröffentlichen anmelden",
+  "copy__rail_pitch": "Bau es wie eine Website. Sag mir, was geändert werden soll, und ich erledige es.",
+  "copy__signed_in_caption": "Angemeldet",
+  "copy__signed_in_lead": "Dein Konto ist verbunden. Um ein anderes zu nutzen, melde dich erst ab und dann wieder an.",
+  "copy__start_lead": "Das ist unsere Empfehlung für den ersten Besuch. Deine Arbeit bleibt hier bei dir, und du musst dich nirgends registrieren.",
+  "copy__step_sign_in_hint": "Wähle, wie du Studio nutzen möchtest.",
+  "copy__use_here_note": "Kein Konto, keine Registrierung.",
+  "copy__why_no_bill_text": "Solange du hier arbeitest, gibt es nichts zu bezahlen.",
+  "design_inspector__close_panel": "Bereich schließen",
+  "design_inspector__design_controls": "Design-Einstellungen",
+  "design_inspector__design_mode": "Design-Modus",
+  "design_inspector__mode_component": "Baustein",
+  "design_inspector__mode_element": "Element",
+  "design_inspector__mode_theme": "Thema",
+  "design_live__apps": "Deine Apps",
+  "design_live__chat_text": "Auf einen Teil deiner echten App zu zeigen, um darüber zu sprechen, geht noch nicht. Beschreibe den Teil vorerst im Chat, dann findet Pikku ihn.",
+  "design_live__chat_title": "Für den Chat auswählen",
+  "design_live__frame": "{name}, so wie andere es sehen",
+  "design_live__look_text": "Farben und Schriften hier zu ändern, geht bei deiner echten App noch nicht. Bitte Pikku vorerst im Chat, sie für dich zu ändern.",
+  "design_live__look_title": "Aussehen",
+  "design_live__running": "Läuft",
+  "design_live__starting_short": "Startet",
+  "design_live__words_text": "Texte direkt in deiner echten App zu bearbeiten, geht noch nicht. Bitte Pikku vorerst im Chat, Texte zu ändern oder eine Sprache hinzuzufügen.",
+  "design_live__words_title": "Übersetzungen",
+  "design_workbench__click_any_underlined_wording": "Klicke in der Vorschau auf einen unterstrichenen Text, um ihn in allen Sprachen zu bearbeiten.",
+  "design_workbench__click_anything_in_the": "Klicke in der Vorschau auf etwas, zum Beispiel einen Button, um alle von dieser Art zu ändern.",
+  "design_workbench__click_one_thing_in": "Klicke in der Vorschau auf eine Sache, um nur sie zu ändern.",
+  "design_workbench__select_for_chat": "Für den Chat auswählen",
+  "element_panel__alignment": "Ausrichtung",
+  "element_panel__all_buttons": "Buttons",
+  "element_panel__all_cards": "Karten",
+  "element_panel__all_headings": "Überschriften",
+  "element_panel__all_texts": "Fließtexte",
+  "element_panel__bold": "Fett",
+  "element_panel__border_colour": "Rahmenfarbe",
+  "element_panel__border_thickness": "Rahmenstärke",
+  "element_panel__centre": "Zentriert",
+  "element_panel__changes_all": "Ändert alle {things} in deiner App. {note}",
+  "element_panel__corner_roundness": "Eckenrundung",
+  "element_panel__fill_colour": "Füllfarbe",
+  "element_panel__fit": "Anpassen",
+  "element_panel__full_width": "Volle Breite",
+  "element_panel__left": "Links",
+  "element_panel__light": "Leicht",
+  "element_panel__medium": "Mittel",
+  "element_panel__n_button": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Button",
+        "countPlural=other": "{count} Buttons"
+      }
+    }
+  ],
+  "element_panel__n_card": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Karte",
+        "countPlural=other": "{count} Karten"
+      }
+    }
+  ],
+  "element_panel__n_heading": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Überschrift",
+        "countPlural=other": "{count} Überschriften"
+      }
+    }
+  ],
+  "element_panel__n_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Fließtext",
+        "countPlural=other": "{count} Fließtexte"
+      }
+    }
+  ],
+  "element_panel__only_this": "Nur dieser Teil ({kind}) ändert sich. Er behält diese Einstellungen, auch wenn du die Standardwerte für alle ({kinds}) änderst.",
+  "element_panel__own_settings_kept": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} mit eigenen Einstellungen behält diese.",
+        "countPlural=other": "{count} mit eigenen Einstellungen behalten diese."
+      }
+    }
+  ],
+  "element_panel__right": "Rechts",
+  "element_panel__single_one_wins": "Was du bei einem einzelnen Teil festlegst, hat immer Vorrang.",
+  "element_panel__size": "Größe",
+  "element_panel__space_inside": "Innenabstand",
+  "element_panel__text_colour": "Textfarbe",
+  "element_panel__text_size": "Textgröße",
+  "element_panel__this_button": "Button",
+  "element_panel__this_card": "Karte",
+  "element_panel__this_heading": "Überschrift",
+  "element_panel__this_text": "Fließtext",
+  "element_panel__undo_changes_to_all": "Änderungen an allen rückgängig machen",
+  "element_panel__undo_changes_to_this": "Änderungen an diesem rückgängig machen",
+  "element_panel__weight": "Stärke",
+  "element_panel__wide": "Breit",
+  "email_bar__all_emails": "Alle E-Mails",
+  "email_bar__back_to_all_emails": "Zurück zu allen E-Mails",
+  "email_bar__computer": "Computer",
+  "email_bar__email_preview_controls": "Einstellungen der E-Mail-Vorschau",
+  "email_bar__emails": "E-Mails",
+  "email_bar__language": "Sprache",
+  "email_bar__phone": "Handy",
+  "email_bar__plain_text": "Nur Text",
+  "email_bar__reload_preview": "Vorschau neu laden",
+  "email_bar__send_me_a_test": "Test an mich senden",
+  "email_bar__show_as": "Anzeigen als",
+  "email_panel__a_sample_with_made_up": "Ein Beispiel mit ausgedachten Angaben. Es wird nichts gesendet.",
+  "email_panel__account_email": "Konto-E-Mail",
+  "email_panel__button_wording": "Button-Text",
+  "email_panel__details_that_change_for": "Angaben, die sich für jede Person ändern",
+  "email_panel__email_controls": "E-Mail-Einstellungen",
+  "email_panel__other_email": "Andere E-Mail",
+  "email_panel__paragraph": "Absatz {n}",
+  "email_panel__reset": "Zurücksetzen",
+  "email_panel__sample_details": "Beispielangaben",
+  "email_panel__sent": "Gesendet",
+  "email_panel__subject_line": "Betreff",
+  "email_panel__what_it_says": "Was diese E-Mail sagt · {lang}",
+  "email_panel__when_it_is_sent": "Wann sie gesendet wird",
+  "email_panel__who_gets_it": "Wer sie bekommt",
+  "emails__filled_in": "Für jede Person ausgefüllt",
+  "emails_list__account_emails": "Konto-E-Mails",
+  "emails_list__emails": "E-Mails",
+  "emails_list__goes_to": "Geht an",
+  "emails_list__no_email_matches_that": "Keine E-Mail passt zu dieser Suche.",
+  "emails_list__nothing_here_matches": "Nichts passt hierzu.",
+  "emails_list__other_emails": "Andere E-Mails",
+  "emails_list__search_emails": "E-Mails durchsuchen",
+  "emails_list__sent_on_account": "Wird gesendet, wenn sich jemand registriert, anmeldet oder deinem Team beitritt.",
+  "emails_list__sent_to_visitors": "Wird gesendet, wenn Besucher deine Seite nutzen.",
+  "emails_list__these_are_the_emails": "Das sind die E-Mails, die deine Buchungsseite von selbst versendet. Sieh dir an, wie jede in jeder Sprache klingt, bevor sie echte Leute erreicht. Auf dieser Seite wird nichts gesendet.",
+  "error_report_drawer__aria": "Fehlerberichte",
+  "error_report_drawer__change_mind": "Du kannst es dir später anders überlegen.",
+  "error_report_drawer__close": "Schließen",
+  "error_report_drawer__intro": "Wenn auf Pikkus Seite etwas kaputtgeht, können wir dem Pikku-Team eine kurze Nachricht schicken, damit es das behebt.",
+  "error_report_drawer__never_text": "Der Name deines Projekts, sein Inhalt, seine Dateien oder deine Leute.",
+  "error_report_drawer__never_title": "Was nie gesendet wird",
+  "error_report_drawer__sent_text": "Nur die Art des Fehlers, eine Referenznummer und die Uhrzeit. Es sieht aus, als käme es von einer beliebigen App.",
+  "error_report_drawer__sent_title": "Was gesendet wird",
+  "error_report_drawer__title": "Pikku von solchen Fehlern berichten?",
+  "error_report_drawer__turn_on": "Fehlerberichte einschalten",
+  "error_state__fix_ask": "Etwas wurde nicht geladen. Bitte finde heraus, warum, und reiche eine Änderungsanfrage (change request) ein, um es zu beheben. Schreib „change request“ in deine Antwort und sag mir dann in einfachen Worten, was du geändert hast.\n\n{details}",
+  "error_state__fix_ask_what": "Etwas wurde nicht geladen ({what}). Bitte finde heraus, warum, und reiche eine Änderungsanfrage (change request) ein, um es zu beheben. Schreib „change request“ in deine Antwort und sag mir dann in einfachen Worten, was du geändert hast.\n\n{details}",
+  "error_state__hide_details": "Details ausblenden",
+  "error_state__ours_note": "Das liegt auf Pikkus Seite, nicht in deinem Projekt. An deinem Projekt wurde nichts geändert.",
+  "error_state__show_details": "Details anzeigen",
+  "explore_directions__idea": "Idee {n}",
+  "explore_directions__look_closer": "Genauer ansehen",
+  "explore_directions__more_controlled": "Erkunde als neue Erkundung ein paar weitere Optionen, die nah an der aktuellen Richtung bleiben. Nutze Tailwind und, falls vorhanden, den Design-Leitfaden des Projekts, und variiere die Details. Schreibe jede nach artifacts/<id> mit einer artifact.json, die \"exploration\":\"<a new short id>\",\"mode\":\"controlled\" enthält, und füge sie nacheinander hinzu. Frühere Erkundung: {exploration}.",
+  "explore_directions__more_extreme": "Erkunde als neue Erkundung ein paar völlig andere Richtungen und ignoriere dabei das Designsystem. Eigenständiges HTML mit Inline-CSS und ohne Skripte. Schreibe jede nach artifacts/<id> mit einer artifact.json, die \"exploration\":\"<a new short id>\",\"mode\":\"extreme\" enthält, und füge sie nacheinander hinzu. Frühere Erkundung: {exploration}.",
+  "explore_directions__open": "{title} öffnen",
+  "explore_directions__use_this_one": "Diese nehmen",
+  "explore_hub__artifacts_text": "Die Seiten und Dateien, die Pikku für dich erstellt hat, alle an einem Ort.",
+  "explore_hub__artifacts_title": "Artefakte",
+  "explore_hub__ask_pikku": "Pikku fragen",
+  "explore_hub__ask_pikku_in_your": "Frag Pikku in deinen eigenen Worten. Es sagt dir, was es findet, oder bringt dich an die richtige Stelle.",
+  "explore_hub__content_text": "Die Texte und Bilder, die deine Besucher sehen, bereit zum Ändern.",
+  "explore_hub__content_title": "Inhalte",
+  "explore_hub__explore": "Erkunden",
+  "explore_hub__front_doors_text": "Alle Wege, auf denen Leute und Programme in dein Projekt kommen.",
+  "explore_hub__front_doors_title": "Eingangstüren",
+  "explore_hub__jump_to_a_page": "Zu einer Seite springen",
+  "explore_hub__k": "⌘K",
+  "explore_hub__more_of_your_project": "Mehr von deinem Projekt",
+  "explore_hub__not_sure_where_to": "Unsicher, wo du suchen sollst?",
+  "explore_hub__nothing_here_you_have": "Hier musst du nichts tun. Such dir aus, was dich neugierig macht.",
+  "explore_hub__on_your_sidebar": "In deiner Seitenleiste",
+  "explore_hub__press_k_from_any": "Drücke ⌘K auf jedem Bildschirm, um zu einer Seite zu springen.",
+  "explore_hub__things_to_look_into": "Dinge zum Entdecken",
+  "explore_hub__translations_text": "Jedes Wort, das Leute lesen, und die Sprachen, in denen du es anbietest.",
+  "explore_hub__translations_title": "Übersetzungen",
+  "explore_hub__virtual_users_text": "Testbesucher, die deine App ausprobieren, damit du siehst, wie sie sich für sie anfühlt.",
+  "explore_hub__virtual_users_title": "Virtuelle Nutzer",
+  "explore_hub__what_should_i_look_at_today": "Was soll ich mir heute ansehen?",
+  "explore_sample__ai_ask_1": "Was kann der Assistent?",
+  "explore_sample__ai_ask_2": "Lass mich es ausprobieren",
+  "explore_sample__ai_q": "Wer ist der Assistent?",
+  "explore_sample__away_ask_1": "Zeig mir, was letzte Nacht schiefgelaufen ist",
+  "explore_sample__away_ask_2": "Etwas Merkwürdiges diese Woche?",
+  "explore_sample__away_q": "Was ist passiert, während ich weg war?",
+  "explore_sample__cost_ask_1": "Wie viel hat die KI diese Woche gekostet?",
+  "explore_sample__cost_ask_2": "Kann ich es senken?",
+  "explore_sample__cost_q": "Wie viel hat das gekostet?",
+  "explore_sample__mem_ask_1": "Was weißt du über meine Kunden?",
+  "explore_sample__mem_ask_2": "Wo sind die Buchungen?",
+  "explore_sample__mem_q": "Woran erinnert es sich?",
+  "explore_sample__own_ask_1": "Schick jeden Montag eine Erinnerung",
+  "explore_sample__own_ask_2": "Was läuft nachts?",
+  "explore_sample__own_q": "Was läuft von selbst?",
+  "explore_sample__plug_ask_1": "Kartenzahlungen verbinden",
+  "explore_sample__plug_ask_2": "Was ist angeschlossen?",
+  "explore_sample__plug_q": "Was ist angeschlossen?",
+  "explore_sample__secrets_ask_1": "Ein Passwort oder einen Schlüssel hinzufügen",
+  "explore_sample__secrets_ask_2": "Wer hat sie benutzt?",
+  "explore_sample__secrets_q": "Wo werden meine Passwörter aufbewahrt?",
+  "explore_sample__well_ask_1": "Funktioniert alles?",
+  "explore_sample__well_ask_2": "Sag mir Bescheid, wenn etwas kaputtgeht",
+  "explore_sample__well_q": "Ist alles gesund?",
+  "explore_sample__who_ask_1": "Meine Schwester zum Helfen einladen",
+  "explore_sample__who_ask_2": "Wer darf das bearbeiten?",
+  "explore_sample__who_q": "Wer darf rein?",
+  "explore_setups_screen__change_ready": "Eine Änderung namens \"{title}\" ist bereit zur Prüfung.",
+  "explore_setups_screen__create_the_change": "Änderung erstellen",
+  "explore_setups_screen__saved_to_your_wishlist_from": "Aus {name} auf deine Wunschliste gelegt. Du kannst daraus später eine Änderung machen.",
+  "explore_setups_screen__set_up_as": "Als {name} einrichten",
+  "explore_setups_screen__text": "{idea} {who}. Jede Variante ist ein vollständiger Weg, wie das Geschäft laufen könnte. Vergleiche sie und wähle eine aus, oder speichere die Teile, die dir gefallen.",
+  "explore_setups_screen__this_creates_one_change_with": "Damit entsteht eine Änderung mit allem, was unten steht. Du kannst sie prüfen, bevor etwas online geht.",
+  "explore_setups_screen__title": "Drei Wege, es zu betreiben",
+  "fabric_pitch__a_stripe_sandbox_to": "Eine Stripe-Sandbox zum Ausprobieren",
+  "fabric_pitch__ai_keeps_an_eye": "Die KI behält deine laufende App im Blick und repariert sie, wenn etwas kaputtgeht, oft schon bevor es jemand merkt.",
+  "fabric_pitch__cheap_hosting": "Günstiges Hosting",
+  "fabric_pitch__everything_after_the_build": "Alles nach dem Bauen wird für dich erledigt.",
+  "fabric_pitch__fabric_is_where_your": "Bei Fabric geht deine App online.",
+  "fabric_pitch__not_now": "Nicht jetzt",
+  "fabric_pitch__pick_the_ai_that": "Wähle die KI, die baut",
+  "fabric_pitch__put_your_app_online": "Bring deine App mit einem Klick online, zu einem Preis, der zu einem ersten Projekt passt.",
+  "fabric_pitch__see_what_fabric_costs": "Preise von Fabric ansehen",
+  "fabric_pitch__studio_is_all_you": "Studio reicht zum Bauen völlig aus. Fabric kommt dazu, wenn du live gehen willst.",
+  "fabric_pitch__switch_between_the_best": "Wechsle jederzeit zwischen den besten Modellen. Keine Schlüssel suchen, keine Konten verwalten.",
+  "fabric_pitch__take_pretend_payments_while": "Nimm beim Bauen Test-Zahlungen an, damit die Kasse funktioniert, bevor echtes Geld im Spiel ist.",
+  "fabric_pitch__watching_and_self_healing": "Überwachung und Selbstheilung",
+  "fabric_pitch__what_fabric_adds": "Was Fabric dazugibt",
+  "fabric_pitch__what_fabric_is": "Was Fabric ist",
+  "front_doors__add_say": "Ich hätte gern einen weiteren Zugang zu diesem Projekt. Bitte frag mich, welchen: eine Website, einen Befehl, ein KI-Assistenten-Werkzeug oder eine Chat-App.",
+  "front_doors__cli_caption": "Diese Befehle tippt man in ein Terminal, um deine App zu benutzen.",
+  "front_doors__copy": "Ersten Befehl kopieren",
+  "front_doors__docs_ask": "Pikku bitten, es zu schreiben",
+  "front_doors__docs_loading": "Suche die Referenz…",
+  "front_doors__docs_missing": "Die Referenz wurde noch nicht geschrieben.",
+  "front_doors__docs_open": "Referenz öffnen",
+  "front_doors__docs_say": "Bitte schreib die Referenz für die Webadressen dieses Projekts, damit andere Programme wissen, wie sie sie benutzen.",
+  "front_doors__empty_hidden": "Hier gibt es nur Türen für andere Programme. Schalte sie ein, um sie zu sehen.",
+  "front_doors__empty_show": "Anzeigen",
+  "front_doors__empty_text": "Noch kann niemand in dieses Projekt hinein. Sag Pikku, welche Tür du zuerst willst, zum Beispiel eine Website oder eine Chat-App.",
+  "front_doors__empty_title": "Noch keine Eingangstüren",
+  "front_doors__fix_ask": "Pikku bitten, es zu reparieren",
+  "front_doors__fix_say": "Die App {name} ist nicht gestartet. Bitte finde heraus, warum, und repariere es.",
+  "front_doors__gateway_caption": "Deine App wartet hier auf Nachrichten. Wege dorthin: {count}.",
+  "front_doors__group_api": "Für andere Programme",
+  "front_doors__group_api_text": "So spricht andere Software mit deiner App. Die meisten brauchen das nie.",
+  "front_doors__group_cli": "Befehlszeile",
+  "front_doors__group_cli_text": "Wird im Terminal getippt, von dir, einem Entwickler oder einem Skript.",
+  "front_doors__group_gateway": "Chat-Apps",
+  "front_doors__group_gateway_text": "Messenger-Apps, in denen Leute mit deiner App sprechen können.",
+  "front_doors__group_mcp": "KI-Assistenten",
+  "front_doors__group_mcp_text": "Dinge, die ein KI-Assistent wie Claude für deine App tun darf.",
+  "front_doors__group_web": "Websites und Apps",
+  "front_doors__group_web_text": "Was Leute im Browser öffnen.",
+  "front_doors__hero_ask": "Pikku bitten, einen hinzuzufügen",
+  "front_doors__hero_loading": "Suche die Türen…",
+  "front_doors__hero_none": "Noch kein Zugang",
+  "front_doors__hero_open": "Deine App öffnen",
+  "front_doors__hero_ways": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Ein Zugang",
+        "countPlural=other": "{count} Zugänge"
+      }
+    }
+  ],
+  "front_doors__hero_why": "So können Leute und Programme in {name} hineinkommen. Hier ändert sich nichts an deiner App; es zeigt nur, wo die Türen sind.",
+  "front_doors__hero_why_none": "Noch kommt niemand hinein. Sag Pikku, welche Tür du zuerst willst, zum Beispiel eine Website oder eine Chat-App.",
+  "front_doors__how_listener": "Wartet auf neue Nachrichten",
+  "front_doors__how_webhook": "Bekommt Nachrichten zugeschickt",
+  "front_doors__how_websocket": "Bleibt live verbunden",
+  "front_doors__http_caption": "Adressen, die andere Programme aufrufen können: {count}.",
+  "front_doors__http_title": "Webadressen",
+  "front_doors__kind_cli": "Befehlszeile",
+  "front_doors__kind_gateway": "Chat-App",
+  "front_doors__kind_http": "Webadressen",
+  "front_doors__kind_live": "Live-Verbindung",
+  "front_doors__kind_mcp": "KI-Assistent",
+  "front_doors__kind_web": "Website",
+  "front_doors__lead": "Alle Wege, wie jemand in {name} hineinkommt: eine Website, ein Befehl, ein KI-Assistent, eine Chat-App.",
+  "front_doors__live_caption": "Diese bleiben offen, damit sich eine Seite aktualisiert, während Leute zusehen.",
+  "front_doors__live_title": "Live-Verbindungen",
+  "front_doors__mcp_caption": "Dinge, die ein KI-Assistent für deine App tun kann: {count}.",
+  "front_doors__mcp_no_tools": "Noch keine Werkzeuge. Ein KI-Assistent kann sich verbinden, hat aber nichts zu tun.",
+  "front_doors__mcp_title": "Werkzeuge für KI-Assistenten",
+  "front_doors__more": "und {count} weitere",
+  "front_doors__no_shot": "Noch kein Bild",
+  "front_doors__no_shot_text": "Pikku macht ein Bild von deiner App, sobald sie eine Seite gebaut hat.",
+  "front_doors__open_app": "Öffnen",
+  "front_doors__shot_alt": "Ein Bild von {name}",
+  "front_doors__state_failed": "Nicht gestartet",
+  "front_doors__state_ready": "Läuft gut",
+  "front_doors__state_starting": "Startet…",
+  "front_doors__title": "Eingangstüren",
+  "front_doors__toggle": "Auch die Türen für andere Programme zeigen",
+  "front_doors__web_caption": "Leute öffnen das im Browser, auf dem Handy oder am Computer.",
+  "golive__aria": "Schritte, um online zu gehen",
+  "golive__done": "Erledigt",
+  "golive__step1": "Einen Arbeitsbereich starten",
+  "golive__step1_done": "Dein Arbeitsbereich läuft",
+  "golive__step1_sub": "Such dir aus, wo du arbeiten willst.",
+  "golive__step2": "Änderungen vornehmen",
+  "golive__step2_action": "Zu meinem Arbeitsbereich",
+  "golive__step2_sub": "Arbeite in deinem Arbeitsbereich oder bitte Pikku, es für dich zu tun.",
+  "golive__step3": "Veröffentlichen",
+  "golive__step3_sub": "Geh online, wenn du zufrieden bist.",
+  "golive__title": "Bringen wir es online.",
+  "golive__why": "Drei kurze Schritte. Du bist beim ersten.",
+  "knowledge__answer_prompt": "Lass uns diese offene Frage aus der Wissensbasis beantworten: \"{title}\" ({path}). Frag mich, was du wissen musst, eine Frage nach der anderen. Wenn ich geantwortet habe, schreib die Antwort in diese Notiz, markiere sie als beantwortet und füge neue Funktionen hinzu, die sich daraus ergeben.",
+  "knowledge__issue_missing": "“{title}” verweist auf “{target}”, das noch nicht geschrieben wurde.",
+  "knowledge__issue_unlinked": "Auf “{title}” verweist keine andere Notiz, deshalb findet sie beim Stöbern niemand.",
+  "knowledge__q_for_ask": "Frag mich, für wen diese App ist und was die Leute von ihr brauchen, eine Frage nach der anderen, und schreib die Antworten ins Wissen.",
+  "knowledge__q_for_label": "Für wen ist das?",
+  "knowledge__q_missing_ask": "Sieh dir die Wissensbasis an und stell mir die eine Frage, deren Antwort am meisten dazu beitragen würde, was diese App kann. Schreib dann meine Antwort ins Wissen.",
+  "knowledge__q_missing_label": "Was fehlt noch?",
+  "knowledge__q_visitors_ask": "Befrage mich dazu, was Besucher in dieser App tun können. Stell eine Frage nach der anderen und schreib jede Antwort ins Wissen.",
+  "knowledge__q_visitors_label": "Frag mich, was Besucher tun können",
+  "knowledge_browser__ask_pikku_to_write": "Pikku bitten, die erste Notiz zu schreiben",
+  "knowledge_browser__nothing_is_written_down": "Noch ist nichts aufgeschrieben.",
+  "knowledge_browser__please_write_the_first": "Bitte schreib die erste Notiz über meine App: wofür sie da ist, wer sie benutzt und welche wichtigen Entscheidungen bisher getroffen wurden.",
+  "knowledge_browser__whenever_you_and_pikku": "Immer wenn du und Pikku etwas über deine App entscheidet, schreibt Pikku hier eine kurze Notiz dazu, damit der Grund nie verloren geht.",
+  "knowledge_head__a_written_record_of": "Eine schriftliche Aufzeichnung der Entscheidungen hinter deiner App, in einfachen Worten. Pikku liest sie, bevor es etwas ändert, und du kannst es auch.",
+  "knowledge_head__links": "Verweise",
+  "knowledge_head__notes": "Notizen",
+  "knowledge_head__why_your_app_is": "Warum deine App so gebaut ist",
+  "knowledge_index_view__all_notes": "Alle Notizen",
+  "knowledge_index_view__ask_pikku_to_fix": "Pikku bitten, das zu beheben",
+  "knowledge_index_view__done_of_total": "{done} von {total} erledigt",
+  "knowledge_index_view__fix_prompt": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Deine Notizen haben {count} Problem: {problems} Kannst du es beheben?",
+        "countPlural=other": "Deine Notizen haben {count} Probleme: {problems} Kannst du sie beheben?"
+      }
+    }
+  ],
+  "knowledge_index_view__folder": "Ordner",
+  "knowledge_index_view__found": "{count} gefunden",
+  "knowledge_index_view__no_notes_match_try": "Keine Notiz passt. Versuch ein anderes Wort.",
+  "knowledge_index_view__nobody_links_to_these": "Auf diese verweist noch niemand, deshalb sind sie schwer zu finden.",
+  "knowledge_index_view__notes_need_a_look": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Notiz braucht einen Blick",
+        "countPlural=other": "{count} Notizen brauchen einen Blick"
+      }
+    }
+  ],
+  "knowledge_index_view__open": "Öffnen",
+  "knowledge_index_view__search_the_notes": "Notizen durchsuchen",
+  "knowledge_index_view__start": "Start",
+  "knowledge_note__all_notes": "Alle Notizen",
+  "knowledge_note__ask_pikku_to_change": "Pikku bitten, sie zu ändern",
+  "knowledge_note__built_of_total": "{done} von {total} gebaut",
+  "knowledge_note__i_read_the_note_i": "Ich habe die Notiz “{t}” gelesen. Ich möchte sie ändern. Das möchte ich sagen: ",
+  "knowledge_note__no_other_note_points": "Noch verweist keine andere Notiz hierher.",
+  "knowledge_note__nobody_has_written_this": "Diese Notiz hat noch niemand geschrieben",
+  "knowledge_note__not_written_yet": "Noch nicht geschrieben",
+  "knowledge_note__notes_are_read_only": "Notizen sind hier nur zum Lesen.",
+  "knowledge_note__nothing_it_stands_on": "Nichts. Sie steht für sich allein.",
+  "knowledge_note__see_the_build_plan": "Bauplan ansehen",
+  "knowledge_note__step_of_plan": "Schritt {step} des Bauplans",
+  "knowledge_note__these_notes_point_here": "Diese Notizen verweisen hierher",
+  "knowledge_note__this_note_points_to": "Diese Notiz verweist auf",
+  "logs_screen__ask_pikku_fix": "Pikku zum Beheben bitten",
+  "logs_screen__clear_filters": "Filter zurücksetzen",
+  "logs_screen__columns": "Spalten",
+  "logs_screen__copy": "Kopieren",
+  "logs_screen__copy_line": "Zeile kopieren",
+  "logs_screen__copy_trace_id": "Trace-ID kopieren",
+  "logs_screen__crumb": "Beim Bauen",
+  "logs_screen__download_say": "Diese Zeilen als Datei herunterladen",
+  "logs_screen__duration": "Dauer",
+  "logs_screen__empty_no_match": "Keine Zeilen passen. Wähle einen größeren Zeitraum oder setze die Filter zurück.",
+  "logs_screen__empty_none_yet": "Noch keine Nachrichten. Die Nachrichten deiner App erscheinen, sobald sie läuft.",
+  "logs_screen__fix_say": "Bitte behebe dieses Problem: {text}",
+  "logs_screen__function": "Funktion",
+  "logs_screen__hide_line": "Diese Zeile ausblenden",
+  "logs_screen__level": "Stufe",
+  "logs_screen__level_all": "Alle",
+  "logs_screen__level_count": "{level} {count}",
+  "logs_screen__level_errors": "Fehler",
+  "logs_screen__level_info": "Info",
+  "logs_screen__level_warnings": "Warnungen",
+  "logs_screen__line": "Zeile",
+  "logs_screen__line_number": "#{id}",
+  "logs_screen__lines_range": [
+    {
+      "declarations": [
+        "input total",
+        "local totalPlural = total: plural"
+      ],
+      "selectors": [
+        "totalPlural"
+      ],
+      "match": {
+        "totalPlural=one": "{from} bis {to} von {total} Zeile",
+        "totalPlural=other": "{from} bis {to} von {total} Zeilen"
+      }
+    }
+  ],
+  "logs_screen__live_switch": "Live",
+  "logs_screen__message": "Nachricht",
+  "logs_screen__ms": "{ms} ms",
+  "logs_screen__name_error": "Fehler",
+  "logs_screen__name_info": "Info",
+  "logs_screen__name_warn": "Warnung",
+  "logs_screen__next": "Weiter",
+  "logs_screen__no_lines": "0 Zeilen",
+  "logs_screen__page_of": "Seite {page} von {pages}",
+  "logs_screen__previous": "Zurück",
+  "logs_screen__range_1440": "24 Stunden",
+  "logs_screen__range_15": "15 Min.",
+  "logs_screen__range_60": "1 Stunde",
+  "logs_screen__search": "Nachrichten, Funktionen und Trace-IDs durchsuchen",
+  "logs_screen__show_all": "Alle anzeigen",
+  "logs_screen__show_columns": "Spalten anzeigen",
+  "logs_screen__show_line": "Diese Zeile anzeigen",
+  "logs_screen__source": "Quelle",
+  "logs_screen__source_all": "Überall",
+  "logs_screen__source_server": "Server",
+  "logs_screen__source_website": "Website",
+  "logs_screen__text": "Was deine App sagt, während du sie baust. Klicke auf eine Zeile, um sie ganz zu sehen.",
+  "logs_screen__time_range": "Zeitraum",
+  "logs_screen__title": "Bauprotokoll",
+  "logs_screen__trace_chip": "Trace {id} ✕",
+  "logs_screen__trace_id": "Trace-ID",
+  "logs_screen__type": "Typ",
+  "logs_screen__when": "Wann",
+  "logs_screen__when_value": "4. Okt. 2026, {time}",
+  "logs_screen__whole_trace": "Alles in diesem Trace",
+  "machine_opening__cancel": "Abbrechen",
+  "machine_opening__our_recommendation": "Unsere Empfehlung",
+  "metrics_screen__assistant_note": "Der Assistent sieht sich das an und sagt dir, was er getan hat.",
+  "metrics_screen__crumb_app": "Im Betrieb",
+  "metrics_screen__crumb_studio": "Pikku Studio",
+  "metrics_screen__detail_failed": "{howMany} sind in diesem Zeitraum fehlgeschlagen.",
+  "metrics_screen__detail_failed_why": "{howMany} sind in diesem Zeitraum fehlgeschlagen. {why}",
+  "metrics_screen__detail_ok": "Nichts ist fehlgeschlagen und die Antworten kommen schnell zurück.",
+  "metrics_screen__detail_slow": "Manches braucht eine Weile zum Antworten. Die langsamsten stehen unten.",
+  "metrics_screen__empty_text": "Sobald deine App läuft und jemand sie benutzt, siehst du, wie schnell sie antwortet und was schiefgelaufen ist. Läuft sie schon, versuch einen längeren Zeitraum.",
+  "metrics_screen__empty_title": "An deine App wurde noch nichts gerichtet",
+  "metrics_screen__failed_times_with_please_find": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{name} ist einmal fehlgeschlagen mit: {why}. Bitte finde heraus, warum, und behebe es. Sag mir dann in einfachen Worten, was du geändert hast.",
+        "countPlural=other": "{name} ist {count}-mal fehlgeschlagen mit: {why}. Bitte finde heraus, warum, und behebe es. Sag mir dann in einfachen Worten, was du geändert hast."
+      }
+    }
+  ],
+  "metrics_screen__fix_it": "Für mich beheben",
+  "metrics_screen__fix_problem": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{name} ist einmal fehlgeschlagen mit: {why}.",
+        "countPlural=other": "{name} ist {count}-mal fehlgeschlagen mit: {why}."
+      }
+    }
+  ],
+  "metrics_screen__fix_prompt": "Etwas läuft schief {where}. {howMany} sind zuletzt fehlgeschlagen. {problems} Bitte finde heraus, warum, und behebe es. Sag mir dann in einfachen Worten, was du geändert hast.",
+  "metrics_screen__fix_this": "Beheben",
+  "metrics_screen__fix_where_project": "in meinem Projekt",
+  "metrics_screen__fix_where_studio": "in Pikku Studio",
+  "metrics_screen__happened": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Einmal passiert",
+        "countPlural=other": "{count}-mal passiert"
+      }
+    }
+  ],
+  "metrics_screen__how_answering": "Wie die App antwortet",
+  "metrics_screen__how_fast": "Wie schnell sie antwortet",
+  "metrics_screen__how_many": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Eine Sache",
+        "countPlural=other": "{count} Dinge"
+      }
+    }
+  ],
+  "metrics_screen__how_many_limit": "Mehr als {limit} Dinge",
+  "metrics_screen__in_this_time": "In diesem Zeitraum",
+  "metrics_screen__it_said": "Sie sagte: {why}",
+  "metrics_screen__longest_sub": "Durchschnittliche Antwortzeit, die langsamsten zuerst.",
+  "metrics_screen__longest_title": "Was am längsten dauert",
+  "metrics_screen__none_app": "An deine App wurde in diesem Zeitraum nichts gerichtet.",
+  "metrics_screen__none_studio": "An Studio wurde in diesem Zeitraum nichts gerichtet.",
+  "metrics_screen__nothing_wrong": "In diesem Zeitraum ist nichts schiefgelaufen. Schön.",
+  "metrics_screen__nothing_yet": "Noch nichts",
+  "metrics_screen__on_average": "Im Durchschnitt",
+  "metrics_screen__show_fewer": "Weniger anzeigen",
+  "metrics_screen__show_more": "{count} weitere anzeigen",
+  "metrics_screen__slowest": "Langsamste Antwort",
+  "metrics_screen__studio_failed": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{name} ist einmal in Pikku Studio fehlgeschlagen mit: {why}",
+        "countPlural=other": "{name} ist {count}-mal in Pikku Studio fehlgeschlagen mit: {why}"
+      }
+    }
+  ],
+  "metrics_screen__studio_note": "Hier geht es um Studio selbst, nicht um dein Projekt. Kopiere das, um es mit dem Pikku-Team zu teilen.",
+  "metrics_screen__text_app": "Was von deiner App verlangt wurde, wie schnell sie geantwortet hat und was schiefgelaufen ist.",
+  "metrics_screen__text_studio": "Wie es Pikku Studio selbst geht. Es geht um das Werkzeug, nicht um ein bestimmtes Projekt.",
+  "metrics_screen__the_longest_it_took": "Die längste Dauer",
+  "metrics_screen__things_asked": "Anfragen an die App",
+  "metrics_screen__time_range": "Zeitraum",
+  "metrics_screen__times_last": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Einmal, zuletzt um {time}",
+        "countPlural=other": "{count}-mal, zuletzt um {time}"
+      }
+    }
+  ],
+  "metrics_screen__title_app": "App-Kennzahlen",
+  "metrics_screen__title_studio": "Studio-Kennzahlen",
+  "metrics_screen__verdict_failed": "Einiges ist schiefgelaufen",
+  "metrics_screen__verdict_ok": "Antwortet gut",
+  "metrics_screen__verdict_slow": "Antwortet etwas langsam",
+  "metrics_screen__wrong_sub": "Die neuesten zuerst. Wiederholungen sind zusammengefasst.",
+  "metrics_screen__wrong_title": "Was schiefgelaufen ist",
+  "metrics_shared__a_little_slow": "Etwas langsam",
+  "metrics_shared__bars_aria": "{title} im Zeitverlauf. Gerade jetzt {now}.",
+  "metrics_shared__busy": "Ausgelastet",
+  "metrics_shared__explain_denied": "Das war nicht erlaubt.",
+  "metrics_shared__explain_missing": "Etwas hat eine Seite oder einen Eintrag verlangt, die es nicht gibt.",
+  "metrics_shared__explain_other": "Deine App ist auf ein unerwartetes Problem gestoßen.",
+  "metrics_shared__explain_signed_out": "Etwas hat das ohne Anmeldung verlangt und wurde deshalb abgewiesen.",
+  "metrics_shared__explain_slow": "Die Antwort dauerte zu lange, deshalb wurde abgebrochen.",
+  "metrics_shared__explain_start": "Dein Projekt konnte nicht starten und ist deshalb nie hochgekommen.",
+  "metrics_shared__fast": "Schnell",
+  "metrics_shared__flat_out": "Auf Hochtouren",
+  "metrics_shared__home_page": "Startseite",
+  "metrics_shared__last_5_minutes": "Letzte 5 Minuten",
+  "metrics_shared__last_day": "Letzter Tag",
+  "metrics_shared__last_hour": "Letzte Stunde",
+  "metrics_shared__ms": "{n} ms",
+  "metrics_shared__no_reason": "Es hat aufgehört, ohne zu sagen, warum",
+  "metrics_shared__not_enough": "Noch nicht genug. Das füllt sich, während deine App weiterläuft.",
+  "metrics_shared__now": "Jetzt",
+  "metrics_shared__relaxed": "Entspannt",
+  "metrics_shared__right_now": "Gerade jetzt: {value}",
+  "metrics_shared__seconds": "{n} Sekunden",
+  "metrics_shared__slow": "Langsam",
+  "metrics_shared__steady": "Arbeitet gleichmäßig",
+  "mock_plan__added_line": "Dahinter steckt noch nichts. Deine App zeigt dafür Beispieldaten: {scenarios}.",
+  "mock_plan__added_title": "Noch nicht gebaut",
+  "mock_plan__changed_title": "Passt nicht mehr",
+  "mock_plan__empty_text": "Alles, was deine App zeigt, kommt schon aus echten Daten.",
+  "mock_plan__empty_title": "Nichts mehr zu verwirklichen",
+  "mock_plan__invalid_title": "Beispieldaten, die repariert werden müssen",
+  "mock_plan__loading": "Prüfe, was deine App noch braucht…",
+  "mock_plan__note": "Das ist nur eine Liste. Nichts wird gebaut, bevor du es sagst.",
+  "mock_plan__sub": "Was deine App im Hintergrund noch braucht",
+  "mock_plan__title": "Echt machen",
+  "mock_plan__what": "die Liste dessen, was noch Beispieldaten sind",
+  "mock_status__failed": "Wir konnten nicht prüfen, welche Bildschirme Beispieldaten nutzen.",
+  "mock_status__make_it_real": "Echt machen",
+  "mock_status__retry": "Erneut versuchen",
+  "mock_status__sample_data": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "1 Bildschirm nutzt Beispieldaten",
+        "countPlural=other": "{count} Bildschirme nutzen Beispieldaten"
+      }
+    }
+  ],
+  "new_project__folder_say": "Ich habe auf diesem Computer einen Ordner mit Dateien und frage mich, ob daraus eine App werden könnte. Bitte erkläre, was möglich ist, und frag mich, was im Ordner ist und was ich mir davon wünsche.",
+  "new_project__folder_text": "Notizen, Listen, Dokumente. Zeig mir, was du hast, und ich sage dir, was daraus werden könnte.",
+  "new_project__folder_title": "Aus einem Ordner voller Dateien eine App machen",
+  "new_project__ideas_title": "Beispielideen ansehen",
+  "new_project__import_say": "Ich habe schon ein Pikku-Projekt in einem Git-Repository und möchte es hierher holen. Bitte frag mich nach seiner Adresse (git@github.com:your-team/your-project.git oder https://github.com/your-team/your-project.git funktionieren beide), kopiere es dann auf diesen Computer und halte es mit dem Original synchron.",
+  "new_project__import_text": "Gib mir die Git-Adresse, dann hole ich eine Kopie hierher und halte sie mit dem Original synchron.",
+  "new_project__import_title": "Ein vorhandenes Pikku-Projekt öffnen",
+  "new_project__more_label": "Andere Wege zu starten",
+  "new_project__more_lead": "Du musst nicht bei null anfangen. Such dir etwas aus, dann besprechen wir es zusammen.",
+  "new_project__more_title": "Schon etwas da? Bring es mit.",
+  "new_project__sheets_say": "Ich möchte herausfinden, welche Apps ich aus meinen Tabellen bauen könnte. Bitte frag mich, ob sie in Google Sheets liegen (damit kann ich mich verbinden) oder als Dateien auf diesem Computer, und schlag mir, sobald du sie sehen kannst, ein paar passende Apps vor.",
+  "new_project__sheets_text": "Sag mir, wo deine Tabellen liegen, und ich schlage Apps vor, die sich daraus lohnen.",
+  "new_project__sheets_title": "Sehen, was aus meinen Tabellen werden könnte",
+  "new_project__site_say": "Ich habe schon eine Website online und möchte sie als Pikku-Projekt neu aufbauen. Bitte erkläre, was möglich ist und was ich dir geben müsste, und frag mich nach der Adresse der Seite.",
+  "new_project__site_text": "Gib mir die Adresse, dann sage ich dir, was ich nachbauen kann.",
+  "new_project__site_title": "Eine bestehende Website neu aufbauen",
+  "new_project__vibe_say": "Ich habe ein Projekt mit einem KI-Programmierwerkzeug gemacht und möchte daraus ein Pikku-Projekt machen. Bitte erkläre in einfachen Worten, was dazu nötig ist und was sich ändern könnte, und frag mich dann, wo das Projekt liegt.",
+  "new_project__vibe_text": "Ein Projekt mit einem KI-Programmierwerkzeug gemacht? Ich helfe, daraus ein richtiges Pikku-Projekt zu machen.",
+  "new_project__vibe_title": "Etwas retten, das ein KI-Werkzeug gebaut hat",
+  "new_project_form__add_files": "Dateien hinzufügen",
+  "new_project_form__build_an_app": "Eine App bauen",
+  "new_project_form__drop_hint": "Zieh Dateien hierher oder füge sie hinzu. Bilder, Dokumente oder Notizen, die Pikku zuerst lesen soll. Optional.",
+  "new_project_form__idea_placeholder": "Zum Beispiel: eine Buchungsseite für meine Backkurse, auf der Leute einen Tag wählen und bezahlen können.",
+  "new_project_form__label": "Eine App bauen",
+  "new_project_form__mobile_note": "Mobil heißt iPhone und Android. Das dauert beim Bauen und Veröffentlichen spürbar länger, deshalb starten viele mit dem Browser.",
+  "new_project_form__nothing_online": "Nichts geht online, bevor du es sagst.",
+  "new_project_form__pick_one": "Wähle mindestens eins: Browser, Mobil oder beides.",
+  "new_project_form__remove": "{name} entfernen",
+  "new_project_form__start": "Mit dem Bauen starten",
+  "new_project_form__title": "Was möchtest du machen?",
+  "new_project_form__too_big": "Eine Datei wurde weggelassen, weil sie größer als 25 MB ist.",
+  "new_project_form__where_label": "Wo Leute es nutzen werden",
+  "new_project_screen__choose_your_ai": "Wähle deine KI",
+  "new_project_screen__error_needs_ai_text": "Dein Projekt ist angelegt, aber es ist noch keine KI gewählt. Wähle eine und versuch es dann noch einmal. Deine Worte sind noch da.",
+  "new_project_screen__error_needs_ai_title": "Ich brauche eine KI, um Richtungen zu erkunden.",
+  "new_project_screen__error_text": "Ich habe versucht, es selbst zu beheben, und es nicht geschafft. Deine Worte sind noch da, und beim nächsten Versuch mache ich dort weiter, wo ich aufgehört habe.",
+  "new_project_screen__error_title": "Ich konnte das Einrichten nicht abschließen.",
+  "new_project_screen__exploring_some_directions": "Ich erkunde ein paar Richtungen.",
+  "new_project_screen__idea1_blurb": "Sag, wer du bist, was du anbietest und wie man dich erreicht.",
+  "new_project_screen__idea1_text": "Eine Website für mein Geschäft. Sie sagt, wer ich bin, was ich anbiete und wie man mich erreicht.",
+  "new_project_screen__idea1_title": "Eine Seite für mein Geschäft",
+  "new_project_screen__idea2_blurb": "Leute wählen eine Zeit. Du bekommst eine Nachricht. Kein Hin und Her.",
+  "new_project_screen__idea2_text": "Eine Buchungsseite, auf der Leute eine Zeit wählen können und ich eine Nachricht bekomme, wenn sie es tun.",
+  "new_project_screen__idea2_title": "Eine Buchungsseite",
+  "new_project_screen__idea3_blurb": "Zeig, was du verkaufst, und nimm einfach Zahlungen an.",
+  "new_project_screen__idea3_text": "Ein kleiner Shop, der zeigt, was ich verkaufe, und Zahlungen annimmt.",
+  "new_project_screen__idea3_title": "Ein kleiner Shop",
+  "new_project_screen__idea4_blurb": "Neuigkeiten, Termine und Mitglieder an einem Ort.",
+  "new_project_screen__idea4_text": "Ein Zuhause für meinen Verein mit Neuigkeiten, Terminen und einer Mitgliederliste.",
+  "new_project_screen__idea4_title": "Ein Verein oder eine Gemeinschaft",
+  "new_project_screen__idea5_blurb": "Behalte Aufträge, Leute oder Bestand im Blick, ohne Tabelle.",
+  "new_project_screen__idea5_text": "Ein Tracker für mein Team, der zeigt, welche Aufträge es gibt und wer was macht.",
+  "new_project_screen__idea5_title": "Ein Tracker für mein Team",
+  "new_project_screen__idea6_blurb": "Etwas, das Leute auf dem Startbildschirm behalten.",
+  "new_project_screen__idea6_text": "Eine App, die Leute auf dem Startbildschirm ihres Handys behalten können.",
+  "new_project_screen__idea6_title": "Eine App fürs Handy",
+  "new_project_screen__ideas_hint": "Such dir eine aus, dann schreibe ich dir den ersten Satz.",
+  "new_project_screen__ideas_label": "Ideen zum Starten",
+  "new_project_screen__no_ideas_text": "Hier erscheinen Ideen, sobald ich weiß, was du gern machst. Beschreib es bis dahin oben in eigenen Worten, dann übernehme ich.",
+  "new_project_screen__no_ideas_title": "Gerade keine Ideen zu zeigen.",
+  "new_project_screen__step_ask_for_a_first_draft": "Ich erkunde ein paar Richtungen",
+  "new_project_screen__step_fix_what_stopped_it": "Etwas kam dazwischen, ich behebe es",
+  "new_project_screen__step_fix_what_stopped_it_starting": "Ich behebe, was den Start verhindert hat",
+  "new_project_screen__step_look_through_your_files": "Ich lese deine Dateien durch",
+  "new_project_screen__step_make_the_project": "Ich lege dein Projekt an",
+  "new_project_screen__step_set_up_its_database": "Ich bereite vor, wo deine Daten liegen",
+  "new_project_screen__step_set_up_its_database_again": "Ich versuche die Dateneinrichtung nochmal",
+  "new_project_screen__step_set_up_its_workspace": "Ich richte deinen Arbeitsbereich ein",
+  "new_project_screen__step_start_it": "Ich starte es",
+  "new_project_screen__step_start_it_again": "Ich versuche den Start nochmal",
+  "new_project_screen__this_usually_takes_about_two": "Das dauert meist etwa zwei Minuten. Du kannst dich in der Zwischenzeit umsehen, und ich sage dir sofort Bescheid, wenn es fertig ist.",
+  "new_project_screen__what_went_wrong": "Was schiefgelaufen ist",
+  "not_found__projects": "Alle Projekte ansehen",
+  "not_found__text": "Vielleicht wurde es umbenannt oder entfernt, oder in der Adresse steckt ein Tippfehler.",
+  "not_found__title": "Wir finden {what} nicht.",
+  "onb_hero__recommendation": "Unsere Empfehlung",
+  "onb_name_screen__about_label": "Was machst du beruflich?",
+  "onb_name_screen__about_placeholder": "Zum Beispiel: Ich gebe Backkurse in Leeds und kenne mich mit Technik nicht aus.",
+  "onb_name_screen__about_you": "Über dich",
+  "onb_name_screen__change_later": "Das kannst du jederzeit in deinem Konto ändern.",
+  "onb_name_screen__continue": "Weiter",
+  "onb_name_screen__error_text": "Nichts wurde geändert. Versuch es gleich noch einmal.",
+  "onb_name_screen__lead": "Ein Vorname reicht völlig. Ich nutze ihn, wenn ich mit dir spreche, und alles, was du mir über deine Arbeit erzählst, hilft mir, passender zu antworten.",
+  "onb_name_screen__loading_text": "Ich mache alles bereit.",
+  "onb_name_screen__loading_title": "Einen Moment.",
+  "onb_name_screen__name_label": "Dein Name",
+  "onb_name_screen__name_placeholder": "Maya",
+  "onb_name_screen__save_error": "Das konnte nicht gespeichert werden. Versuch es noch einmal.",
+  "onb_name_screen__title": "Wie soll ich dich nennen?",
+  "onb_sign_in_screen__already_signed_in": "Du bist schon angemeldet.",
+  "onb_sign_in_screen__did_not_load": "Etwas wurde nicht geladen, deshalb ist das der Weg, der gerade funktioniert. Alles, was du machst, bleibt hier sicher.",
+  "onb_sign_in_screen__five_seconds": "Dauert etwa fünf Sekunden.",
+  "onb_sign_in_screen__go_to_projects": "Zu meinen Projekten",
+  "onb_sign_in_screen__moment": "Einen Moment. Ich mache alles bereit.",
+  "onb_sign_in_screen__never_read": "Wir lesen nie, was du auf diesem Computer baust.",
+  "onb_sign_in_screen__open_straight_away": "Deine Projekte öffnen sich sofort.",
+  "onb_sign_in_screen__opening": "Öffne",
+  "onb_sign_in_screen__opening_workspace": "Dein Arbeitsbereich wird geöffnet.",
+  "onb_sign_in_screen__other_way": "Der andere Weg",
+  "onb_sign_in_screen__pick_up": "Mach da weiter, wo du aufgehört hast.",
+  "onb_sign_in_screen__pure_oss": "Willst du reines OSS nutzen?",
+  "onb_sign_in_screen__start_for_now": "Fang erstmal auf diesem Computer an.",
+  "onb_sign_in_screen__start_here": "Fang auf diesem Computer an.",
+  "onb_sign_in_screen__stays_here": "Alles bleibt auf diesem Computer.",
+  "onb_sign_in_screen__use_here": "Auf diesem Computer nutzen",
+  "onb_sign_in_screen__use_it_here": "Auf diesem Computer nutzen",
+  "onb_sign_in_screen__waiting": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Dein Projekt wartet auf diesem Computer, genau so, wie du es verlassen hast.",
+        "countPlural=other": "Deine {count} Projekte warten auf diesem Computer, genau so, wie du sie verlassen hast."
+      }
+    }
+  ],
+  "onboarding__example": "Eine Buchungsseite für meine Backkurse, auf der Leute einen Tag wählen und bezahlen.",
+  "onboarding_layout__a_provider": "ein Anbieter",
+  "onboarding_layout__about_choosing": "Deine KI wählen",
+  "onboarding_layout__about_project": "Dein neues Projekt",
+  "onboarding_layout__about_signing": "Anmelden",
+  "onboarding_layout__ask_build": "Was kann ich hier bauen?",
+  "onboarding_layout__ask_draft_time": "Wie lange dauert ein erster Entwurf?",
+  "onboarding_layout__ask_key_private": "Bleibt mein Schlüssel privat?",
+  "onboarding_layout__ask_pick": "Welche soll ich nehmen?",
+  "onboarding_layout__ask_switch": "Kann ich später wechseln?",
+  "onboarding_layout__b_as_left": "Alles auf diesem Computer ist so, wie du es verlassen hast.",
+  "onboarding_layout__b_did_not_load": "Etwas wurde nicht geladen.",
+  "onboarding_layout__b_did_not_work": "Das hat nicht geklappt, und",
+  "onboarding_layout__b_getting_ready": "Einen Moment. Ich mache deinen Arbeitsbereich bereit.",
+  "onboarding_layout__b_go_back": "Du kannst zum ersten Schritt zurückgehen.",
+  "onboarding_layout__b_good_one": "und es ist ein gutes.",
+  "onboarding_layout__b_hi_i_am": "Hallo, ich bin",
+  "onboarding_layout__b_looking": "Ich sehe mir deinen Computer an. Einen Moment.",
+  "onboarding_layout__b_no_ideas": "Noch keine Ideen für dich, also",
+  "onboarding_layout__b_not_built": "noch nicht gebaut.",
+  "onboarding_layout__b_nothing_changed": "nichts wurde geändert.",
+  "onboarding_layout__b_only_one": "Vorerst nur eine Wahl",
+  "onboarding_layout__b_own_words": "sag es mir in eigenen Worten.",
+  "onboarding_layout__b_picturing": "Sag mir, was du dir vorstellst.",
+  "onboarding_layout__b_ready": "Ich sage dir sofort Bescheid, wenn es fertig ist.",
+  "onboarding_layout__b_rough": "Grob reicht völlig.",
+  "onboarding_layout__b_sketching": "Ich skizziere deinen ersten Entwurf.",
+  "onboarding_layout__b_this_step": "Dieser Schritt ist",
+  "onboarding_layout__b_try_again": "Soll ich es noch einmal versuchen?",
+  "onboarding_layout__b_welcome": "Willkommen zurück, Maya.",
+  "onboarding_layout__b_whole_way": "Ich bin die ganze Zeit da und frage immer, bevor ich etwas ändere, das wichtig ist.",
+  "onboarding_layout__b_words_safe": "Deine Worte sind sicher. Soll ich es noch einmal versuchen?",
+  "onboarding_layout__b_work_safe": "Deine Arbeit ist sicher",
+  "onboarding_layout__b_works_fine": "und dieser Computer funktioniert auch ohne sie gut.",
+  "onboarding_layout__chat_ask": "Frag mich alles zur Anmeldung oder dazu, was als Nächstes passiert.",
+  "onboarding_layout__chat_hi": "Hallo, ich bin Pikku. Ich bin die ganze Zeit da und frage immer, bevor ich etwas ändere, das wichtig ist.",
+  "onboarding_layout__chat_proj": "Sag mir, was du machen möchtest, dann beginne ich einen ersten Entwurf. Nichts geht online, bevor du es sagst.",
+  "onboarding_layout__connect_account": "Ein Konto verbinden",
+  "onboarding_layout__connect_litellm": "Dein LiteLLM verbinden",
+  "onboarding_layout__connect_my_litellm": "Mein LiteLLM verbinden",
+  "onboarding_layout__connect_provider": "{provider} verbinden",
+  "onboarding_layout__could_not_load": "Ich konnte deine Neuigkeiten nicht laden.",
+  "onboarding_layout__could_not_send": "Ich konnte das nicht senden.",
+  "onboarding_layout__diff_intro": "Ich würde auf diesem Computer anfangen. Du verlierst nichts, wenn du später wechselst.",
+  "onboarding_layout__getting_set_up": "Wird eingerichtet",
+  "onboarding_layout__good_question": "Gute Frage. Ich sehe mir das an und sage dir, was ich finde. Ich ändere nichts, bevor du es sagst.",
+  "onboarding_layout__got_it": "Verstanden",
+  "onboarding_layout__keep_open": "Dieses Fenster offen lassen",
+  "onboarding_layout__loading_updates": "Neuigkeiten werden geladen",
+  "onboarding_layout__nobody": "Sonst niemand",
+  "onboarding_layout__nothing_lost_msg": "Nichts ging verloren. Deine Nachricht ist noch da.",
+  "onboarding_layout__nothing_lost_updates": "Nichts geht verloren. Wenn etwas Dringendes passiert, sage ich es dir trotzdem.",
+  "onboarding_layout__okay_got_it": "Okay, verstanden",
+  "onboarding_layout__on_this_computer": "Auf diesem Computer",
+  "onboarding_layout__only_what_you_ask_it": "Nur das, woran du sie arbeiten lässt. Sie fragt nach, bevor sie etwas Wichtiges ändert.",
+  "onboarding_layout__only_you": "Nur du siehst deine Arbeit",
+  "onboarding_layout__pikku": "Pikku",
+  "onboarding_layout__set_up_here": "Auf diesem Computer einrichten",
+  "onboarding_layout__step_about_you": "Über dich",
+  "onboarding_layout__step_about_you_hint": "Damit ich weiß, wie ich dich nennen soll.",
+  "onboarding_layout__step_choose_ai": "Deine KI wählen",
+  "onboarding_layout__step_choose_ai_hint": "Der Helfer, der das Bauen übernimmt.",
+  "onboarding_layout__step_sign_in": "Anmelden",
+  "onboarding_layout__step_start": "Ein Projekt starten",
+  "onboarding_layout__step_start_hint": "Sag, was du machen möchtest.",
+  "onboarding_layout__stored_here": "Deine Arbeit liegt hier und funktioniert ohne Internet. Sie ist nirgendwo sonst gesichert.",
+  "onboarding_layout__the_difference": "Der Unterschied",
+  "onboarding_layout__this_computer": "Dieser Computer",
+  "onboarding_layout__this_workspace": "Dieser Arbeitsbereich",
+  "onboarding_layout__today": "Heute",
+  "onboarding_layout__typing": "Pikku tippt",
+  "onboarding_layout__unpin": "Lösen, damit sich dieses Fenster schließen kann",
+  "onboarding_layout__use_it": "Nutzen",
+  "onboarding_layout__use_on_computer": "Auf diesem Computer nutzen",
+  "onboarding_layout__use_own_key": "Eigenen Schlüssel nutzen",
+  "onboarding_layout__use_this_computer": "Diesen Computer nutzen",
+  "onboarding_layout__where_it_runs": "Wo es läuft",
+  "onboarding_layout__who_sees": "Wer was sehen kann",
+  "onboarding_layout__why_intro": "Hier ist meine Überlegung, in einfachen Worten.",
+  "onboarding_layout__why_no_bill": "Keine zusätzliche Rechnung",
+  "onboarding_layout__why_nothing": "Nichts einzurichten",
+  "onboarding_layout__why_nothing_text": "Kein Download und kein zusätzliches Konto.",
+  "onboarding_layout__why_private": "Die Variante auf diesem Computer ist privater, aber du wartest länger auf jede Antwort. Wenn dir Privatsphäre am wichtigsten ist, sag es, dann ändere ich meine Wahl.",
+  "onboarding_layout__why_quick": "Es ist schnell",
+  "onboarding_layout__why_quick_text": "Antworten kommen in wenigen Sekunden.",
+  "onboarding_layout__why_this_one": "Warum dieses",
+  "onboarding_layout__you": "Du",
+  "onboarding_layout__you_text": "Alles, und du kannst jedes Detail ändern.",
+  "overview_screen__area_agents_detail": "KI-Helfer, die Besuchern antworten oder für dich aufräumen.",
+  "overview_screen__area_agents_name": "Assistenten",
+  "overview_screen__area_agents_title": "Helfer",
+  "overview_screen__area_channels_detail": "Halte eine Seite aktuell, während Leute zusehen, zum Beispiel die freien Plätze in einem Kurs.",
+  "overview_screen__area_channels_name": "Live-Kanäle",
+  "overview_screen__area_channels_title": "Live-Verbindungen",
+  "overview_screen__area_clicommands_detail": "Kurzbefehle, die du oder Pikku tippen können, um die App zu pflegen.",
+  "overview_screen__area_clicommands_name": "Befehlszeilen-Befehle",
+  "overview_screen__area_clicommands_title": "Befehle",
+  "overview_screen__area_emails_detail": "Die Nachrichten, die deine App verschickt, etwa Buchungsbestätigungen.",
+  "overview_screen__area_emails_name": "E-Mails",
+  "overview_screen__area_emails_title": "E-Mails",
+  "overview_screen__area_functions_detail": "Jede ist eine kleine Aufgabe, etwa einen Kurs buchen oder eine Quittung senden.",
+  "overview_screen__area_functions_name": "Funktionen",
+  "overview_screen__area_functions_title": "Was die App kann",
+  "overview_screen__area_gateways_detail": "Verbinde deine App mit einer Messenger-App.",
+  "overview_screen__area_gateways_name": "Gateways",
+  "overview_screen__area_gateways_title": "Chat-App-Verbindungen",
+  "overview_screen__area_httproutes_detail": "Die Seiten und Links, die Leute öffnen, um deine App zu nutzen.",
+  "overview_screen__area_httproutes_name": "Webadressen",
+  "overview_screen__area_httproutes_title": "Webadressen",
+  "overview_screen__area_mcptools_detail": "Die Dinge, die ein KI-Helfer benutzen darf.",
+  "overview_screen__area_mcptools_name": "Assistenten-Werkzeuge",
+  "overview_screen__area_mcptools_title": "Werkzeuge für Helfer",
+  "overview_screen__area_msg": "“{name}” hat eine eigene Liste in der vollen Konsole. Sie gehört noch nicht zu diesem Entwurf.",
+  "overview_screen__area_queues_detail": "Aufgaben stellen sich an, damit bei viel Betrieb nichts verloren geht.",
+  "overview_screen__area_queues_name": "Warteschlangen",
+  "overview_screen__area_queues_title": "Wartelisten",
+  "overview_screen__area_schedulers_detail": "Dinge, die von allein laufen, etwa eine Erinnerung jeden Morgen.",
+  "overview_screen__area_schedulers_name": "Zeitpläne",
+  "overview_screen__area_schedulers_title": "Zeitgesteuerte Aufgaben",
+  "overview_screen__area_workflows_detail": "Längere Aufgaben, die warten, prüfen und weitermachen, etwa eine Buchung von der Anfrage bis zur Erinnerung.",
+  "overview_screen__area_workflows_name": "Abläufe",
+  "overview_screen__area_workflows_title": "Schritt-für-Schritt-Aufgaben",
+  "overview_screen__ask_about_it": "Pikku danach fragen",
+  "overview_screen__check_again": "Nochmal prüfen",
+  "overview_screen__checked_none": "Gerade geprüft. Nichts braucht dich.",
+  "overview_screen__checked_waiting": "Gerade geprüft. {count} warten auf dich.",
+  "overview_screen__counts_line": "{agents}, {workflows} und {emails}.",
+  "overview_screen__describe_what_you_want": "Beschreibe, was du willst",
+  "overview_screen__front_doors_text": "Alle Wege, wie jemand in deine App kommt, etwa eine Website, ein Befehl oder eine Chat-App.",
+  "overview_screen__got_it_hide_this": "Verstanden, ausblenden",
+  "overview_screen__has_things": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{name} kann {count} Ding tun. Sag Pikku, was als Nächstes kommen soll.",
+        "countPlural=other": "{name} kann {count} Dinge tun. Sag Pikku, was als Nächstes kommen soll."
+      }
+    }
+  ],
+  "overview_screen__how_going": "Wie es läuft",
+  "overview_screen__how_going_title": "Wie es läuft",
+  "overview_screen__intro_close": "Das ist die ganze Idee. Du kannst das schließen, sobald es klar ist.",
+  "overview_screen__look_into_it": "Pikku kann sich das ansehen und dir sagen, was es ändert, bevor etwas gebaut wird.",
+  "overview_screen__look_say": "Bitte sieh dir diese Änderungsanfrage (change request) an: {title}",
+  "overview_screen__looking_again": "Ich sehe mir deine App nochmal an…",
+  "overview_screen__made_of": "Woraus dein Projekt besteht",
+  "overview_screen__made_of_hint": "Du brauchst diese nicht, um deine App zu betreiben. Sie sind für Neugierige da, und jede öffnet ihre eigene Liste.",
+  "overview_screen__made_of_title": "Woraus deine App besteht",
+  "overview_screen__n_assistants": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Assistent",
+        "countPlural=other": "{count} Assistenten"
+      }
+    }
+  ],
+  "overview_screen__n_emails": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} E-Mail",
+        "countPlural=other": "{count} E-Mails"
+      }
+    }
+  ],
+  "overview_screen__n_workflows": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Schritt-für-Schritt-Aufgabe",
+        "countPlural=other": "{count} Schritt-für-Schritt-Aufgaben"
+      }
+    }
+  ],
+  "overview_screen__need_look": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Eine Sache braucht einen Blick.",
+        "countPlural=other": "{count} Dinge brauchen einen Blick."
+      }
+    }
+  ],
+  "overview_screen__new_here": "Neu hier? Drei Schritte.",
+  "overview_screen__new_here_title": "Neu hier? Drei Schritte.",
+  "overview_screen__no_parts": "Noch keine Teile.",
+  "overview_screen__no_parts_text": "Sobald Pikku mit dem Bauen beginnt, siehst du, wie viele Seiten, E-Mails, zeitgesteuerte Aufgaben und mehr deine App hat. Und du kannst jede Liste öffnen.",
+  "overview_screen__nothing_needs_you": "Im Moment braucht dich nichts.",
+  "overview_screen__open_your_app": "Deine App öffnen",
+  "overview_screen__see_all_updates": "Alle Neuigkeiten ansehen",
+  "overview_screen__see_updates": "Neuigkeiten ansehen",
+  "overview_screen__show_intro_again": "Einführung noch einmal zeigen",
+  "overview_screen__step1_text": "Sag in deinen eigenen Worten, was du möchtest. Grob reicht völlig.",
+  "overview_screen__step1_title": "Sag es Pikku",
+  "overview_screen__step2_text": "Pikku arbeitet Schritt für Schritt und sagt dir, was es gerade tut.",
+  "overview_screen__step2_title": "Zuschauen, wie es entsteht",
+  "overview_screen__step3_after": ", damit andere es nutzen können.",
+  "overview_screen__step3_before": "Wenn du zufrieden bist, kannst du es",
+  "overview_screen__step3_link": "veröffentlichen",
+  "overview_screen__step3_title": "Online stellen",
+  "overview_screen__tell_text": "Beschreibe es so, wie du es einem Freund erzählen würdest. Pikku fragt nach, bevor es etwas Größeres baut. Nichts geht online, bevor du es sagst.",
+  "overview_screen__tell_title": "Sag Pikku, was du machen möchtest",
+  "overview_screen__things_can_do": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Ding, das deine App kann",
+        "countPlural=other": "{count} Dinge, die deine App kann"
+      }
+    }
+  ],
+  "overview_screen__waiting": "Wartet auf dich.",
+  "overview_screen__what_next": "Was als Nächstes?",
+  "page_breadcrumb__browse_app": "Apps durchsuchen",
+  "page_breadcrumb__browse_artifact": "Artefakte durchsuchen",
+  "page_breadcrumb__browse_email": "E-Mails durchsuchen",
+  "page_breadcrumb__browse_page": "Seiten durchsuchen",
+  "page_breadcrumb__menu_app": "Apps",
+  "page_breadcrumb__menu_artifact": "Artefakte",
+  "page_breadcrumb__menu_email": "E-Mails",
+  "page_breadcrumb__menu_page": "Seiten",
+  "page_breadcrumb__trigger_app": "App: {name}. Apps durchsuchen",
+  "page_breadcrumb__trigger_artifact": "Artefakt: {name}. Artefakte durchsuchen",
+  "page_breadcrumb__trigger_email": "E-Mail: {name}. E-Mails durchsuchen",
+  "page_breadcrumb__trigger_page": "Seite: {name}. Seiten durchsuchen",
+  "part_card__last_changes": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Letzte Änderung: {outcomes}",
+        "countPlural=other": "Letzte {count} Änderungen: {outcomes}"
+      }
+    }
+  ],
+  "part_card__page": "Eine Seite",
+  "part_card__pip_cancelled": "abgebrochen",
+  "part_card__pip_failed": "nicht live gegangen",
+  "part_card__pip_live": "live",
+  "part_card__pip_rolled_back": "zurückgesetzt",
+  "part_card__pip_title": "{title}: {outcome}",
+  "part_card__pip_waiting": "wartet",
+  "part_card__pip_was_live": "war live",
+  "part_card__pip_working": "wird veröffentlicht",
+  "part_card__routine": "Eine Routine",
+  "part_card__secret_code": "Ein Geheimcode",
+  "part_card__setting": "Eine Einstellung",
+  "part_steps__building": "Wird gebaut",
+  "part_steps__built": "Gebaut",
+  "part_steps__checked": "Geprüft",
+  "part_steps__checking": "Wird geprüft",
+  "part_steps__done": "Fertig",
+  "part_steps__fetched": "Geholt",
+  "part_steps__fetching": "Deine Arbeit wird geholt",
+  "part_steps__going_live": "Geht live",
+  "part_steps__how_far_it_got": "Wie weit es kam",
+  "part_steps__live": "Online",
+  "part_steps__not_yet_live": "Noch nicht live",
+  "part_steps__progress": "Schritt {step} von {total}, {what}. Läuft seit {time}. Deine Live-App bleibt bis zum letzten Schritt unberührt.",
+  "part_steps__stopped_here": "Hier gestoppt",
+  "part_steps__tested": "Getestet",
+  "part_steps__testing": "Wird getestet",
+  "part_steps__waits_for_you": "Wartet auf dich",
+  "part_steps__working_on_it_now": "Arbeitet gerade daran",
+  "parts__answer_pikku": "Pikku antworten…",
+  "parts__approve_and_keep_it": "Genehmigen und behalten",
+  "parts__ask_pikku": "Pikku fragen…",
+  "parts__bring_it_back": "Zurückholen",
+  "parts__conversation": "Unterhaltung",
+  "parts__here_whenever": "Ich bin da, wann immer du etwas ändern möchtest. Sag es einfach in deinen eigenen Worten.",
+  "parts__hide_details": "Details ausblenden",
+  "parts__nothing_said": "Noch nichts gesagt. Schreib hier, wenn es anders gemacht werden soll.",
+  "parts__pick_answer": "Wähle eine Antwort",
+  "parts__pikku": "Pikku",
+  "parts__pikku_is_asking": "Pikku fragt",
+  "parts__proposed_sidebar": "Vorgeschlagene Seitenleiste",
+  "parts__send": "Senden",
+  "parts__set_aside": "Beiseitelegen",
+  "parts__show_details": "Details anzeigen",
+  "parts__sidebar_label": "Pikku-Seitenleiste, wie vorgeschlagen",
+  "parts__take_it_back": "Zurücknehmen",
+  "parts__talk_to_pikku": "Mit Pikku sprechen",
+  "parts__what_changed": "Was sich geändert hat",
+  "parts__what_will_differ": "Was anders sein wird",
+  "parts__write_about": "Pikku dazu schreiben",
+  "parts__write_placeholder": "Schreib Pikku dazu…",
+  "parts__you": "Du",
+  "performance_screen__busy_title": "Wie viel los war",
+  "performance_screen__crumb": "Während es läuft",
+  "performance_screen__detail_heavy": "Deine App belegt sehr viel Speicher. Ein Neustart behebt das meistens.",
+  "performance_screen__detail_hot": "Deine App nutzt gerade fast alles, was sie kann. Sie fühlt sich vielleicht langsam an, bis sich das beruhigt.",
+  "performance_screen__detail_ok": "Deine App hat reichlich Luft.",
+  "performance_screen__empty_text": "Sobald deine App läuft, siehst du, wie stark sie arbeitet und wie viel Speicher sie braucht. Läuft sie schon, probiere einen längeren Zeitraum.",
+  "performance_screen__empty_title": "Starte dein Projekt, um zu sehen, wie es läuft",
+  "performance_screen__how_busy": "Wie ausgelastet es ist",
+  "performance_screen__how_doing": "Wie es der App geht",
+  "performance_screen__measure_failed": "Dieses Projekt ließ sich gerade nicht messen. Versuche es gleich noch einmal.",
+  "performance_screen__measuring": "Dein Projekt wird gemessen…",
+  "performance_screen__memory_in_use": "Genutzter Speicher",
+  "performance_screen__memory_share": "{memory} · {percent}%",
+  "performance_screen__no_reading": "Noch kein Messwert",
+  "performance_screen__note_cpu": "Etwa {percent}% von dem, was möglich ist. Spitze: {peak}%",
+  "performance_screen__note_free": "{memory} sind auf diesem Computer noch frei",
+  "performance_screen__note_moment": "Das dauert einen Moment",
+  "performance_screen__note_peak": "Höchster Verbrauch: {memory}",
+  "performance_screen__note_waiting": "Wartet auf einen Messwert",
+  "performance_screen__over_time": "Im Zeitverlauf",
+  "performance_screen__over_time_sub": "Höhere Balken bedeuten mehr. Der rechte Rand ist jetzt.",
+  "performance_screen__part_code": "Dein Code",
+  "performance_screen__part_code_note": "Was du und der Assistent geschrieben habt.",
+  "performance_screen__part_media": "Bilder und Dateien",
+  "performance_screen__part_media_note": "Bilder, Videos, Schriften und anderes, das kein Code ist.",
+  "performance_screen__part_other": "Verlauf und Baudateien",
+  "performance_screen__part_other_note": "Gespeicherte Versionen und Dinge, die beim Bauen entstehen.",
+  "performance_screen__part_packages": "Installierte Pakete",
+  "performance_screen__part_packages_note": "Werkzeuge, die deine App von anderen leiht. Sicher neu installierbar.",
+  "performance_screen__skipped": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "Ein Ordner war zu groß, um schnell gemessen zu werden, und ist hier nicht mitgezählt. Die tatsächliche Summe ist größer.",
+        "nPlural=other": "{n} Ordner waren zu groß, um schnell gemessen zu werden, und sind hier nicht mitgezählt. Die tatsächliche Summe ist größer."
+      }
+    }
+  ],
+  "performance_screen__space_aria": "Belegter Platz: {parts}",
+  "performance_screen__space_goes": "Wohin der Platz geht",
+  "performance_screen__space_goes_sub": "Was dieses Projekt auf deinem Computer belegt.",
+  "performance_screen__space_used": "Belegter Platz",
+  "performance_screen__text": "Wie stark deine App arbeitet und wie viel von deinem Computer sie nutzt.",
+  "performance_screen__time_range": "Zeitraum",
+  "performance_screen__title": "Leistung",
+  "performance_screen__verdict_heavy": "Hoher Speicherverbrauch",
+  "performance_screen__verdict_hot": "Arbeitet auf Hochtouren",
+  "performance_screen__verdict_ok": "Läuft entspannt",
+  "pikku_suggests__do_it_for_me": "Mach das für mich",
+  "pikku_suggests__not_now": "Jetzt nicht",
+  "pin_button__always": "Immer in der Seitenleiste",
+  "pin_button__pin": "Anheften",
+  "pin_button__pin_label": "An die Seitenleiste anheften",
+  "pin_button__pinned": "Angeheftet",
+  "pin_button__unpin_label": "Von der Seitenleiste lösen",
+  "preview_bar__computer": "Computer",
+  "preview_bar__design": "Design",
+  "preview_bar__none": "Keine",
+  "preview_bar__none_close": "Keine (Seitenfenster schließen)",
+  "preview_bar__open_in_a_new": "In neuem Tab öffnen",
+  "preview_bar__phone": "Handy",
+  "preview_bar__preview_controls": "Vorschau-Steuerung",
+  "preview_bar__reload_preview": "Vorschau neu laden",
+  "preview_bar__screen_size": "Bildschirmgröße",
+  "preview_bar__select_for_chat": "Für den Chat auswählen",
+  "preview_bar__tablet": "Tablet",
+  "preview_bar__translations": "Übersetzungen",
+  "preview_bar__what_to_do_on": "Was in der Vorschau passieren soll",
+  "project__name_fallback": "Dein Projekt",
+  "project_actions__open": "Öffnen",
+  "project_actions__rename": "Umbenennen",
+  "project_actions__resume": "Fortsetzen",
+  "project_card__in_the_sketch_stage": "Noch im Entwurf",
+  "project_card__last_worked_on": "Zuletzt bearbeitet {when}",
+  "project_card__live": "Online",
+  "project_card__only_you_can_see": "Nur du kannst es sehen",
+  "project_card__paused": "Pausiert",
+  "project_card__pikku_working": "Pikku arbeitet",
+  "project_card__running_well": "Läuft gut",
+  "project_card__visitors_this_week": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Besucher diese Woche",
+        "countPlural=other": "{count} Besucher diese Woche"
+      }
+    }
+  ],
+  "project_cards_mock__crumb": "Muster",
+  "project_cards_mock__text": "Alle Zustände, die eine Projektkarte zeigen kann.",
+  "project_cards_mock__title": "Projekte",
+  "project_facts__attention": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "1 Sache zum Anschauen",
+        "countPlural=other": "{count} Dinge zum Anschauen"
+      }
+    }
+  ],
+  "project_facts__cloud": "{count} in der Cloud",
+  "project_facts__live": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Online",
+        "countPlural=other": "An {count} Orten online"
+      }
+    }
+  ],
+  "project_facts__local": "{count} auf deinem Computer",
+  "project_facts__not_live": "Noch nicht live",
+  "project_facts__nothing_yet": "Hier ist noch nichts. Öffne es, um anzufangen.",
+  "project_facts__working_count": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Person arbeitet daran",
+        "countPlural=other": "{count} Leute arbeiten daran"
+      }
+    }
+  ],
+  "project_facts__working_one": "{name} arbeitet daran",
+  "project_facts__working_two": "{first} und {second} arbeiten daran",
+  "project_home__cloud_asleep_action": "Aufwecken und weitermachen",
+  "project_home__cloud_asleep_hint": "Braucht Internet.",
+  "project_home__cloud_asleep_title": "Dein Cloud-Arbeitsbereich schläft.",
+  "project_home__cloud_asleep_why": "Er ist eingeschlafen, als du aufgehört hast, damit er nichts kostet, solange du weg bist. Das Aufwecken dauert etwa eine halbe Minute, und alles ist so, wie du es verlassen hast.",
+  "project_home__cloud_awake_action": "Weitermachen",
+  "project_home__cloud_awake_title": "Mach in der Cloud weiter.",
+  "project_home__cloud_awake_why": "Dein Arbeitsbereich ist wach und wartet. Dein Team sieht dort, was du tust.",
+  "project_home__cloud_theirs_action": "{name} beitreten",
+  "project_home__cloud_theirs_hint": "Ihr seht beide dasselbe.",
+  "project_home__cloud_theirs_title": "{name} arbeitet gerade in der Cloud.",
+  "project_home__cloud_theirs_why": "Du kannst {name} beitreten und zuschauen, ohne etwas einzurichten.",
+  "project_home__cloud_theirs_why_change": "{name} ist dabei: {change}. Du kannst beitreten und zuschauen, ohne etwas einzurichten.",
+  "project_home__local_paused_action": "Weitermachen",
+  "project_home__local_paused_hint": "Öffnet sofort.",
+  "project_home__local_paused_title": "Mach dort weiter, wo du aufgehört hast.",
+  "project_home__local_paused_why": "Deine Kopie liegt auf diesem Computer, pausiert, genau so, wie du sie {when} verlassen hast.",
+  "project_home__local_working_action": "Zurück dazu",
+  "project_home__local_working_hint": "Nichts geht verloren, wenn du es schließt.",
+  "project_home__local_working_title": "Pikku arbeitet auf deinem Computer.",
+  "project_home__local_working_why": "Du kannst zuschauen oder jederzeit selbst eingreifen.",
+  "project_home__local_working_why_change": "Es ist dabei: {change}. Du kannst zuschauen oder jederzeit selbst eingreifen.",
+  "project_home__offline_action": "Erneut versuchen",
+  "project_home__offline_hint": "Alles, was schon auf diesem Computer ist, funktioniert weiter.",
+  "project_home__offline_title": "Du bist gerade offline.",
+  "project_home__offline_why": "Beim ersten Öffnen muss ein Projekt über das Internet kommen. Sobald du wieder online bist, mache ich es für dich bereit.",
+  "project_home__stage_change": "Kopie für „{name}“",
+  "project_home__stage_live": "Die Live-Seite",
+  "project_home__stage_live_inline": "die Live-Seite",
+  "project_home__stage_test": "Die Übungskopie",
+  "project_home__stage_test_inline": "die Übungskopie",
+  "project_home__start_action": "In der Cloud starten",
+  "project_home__start_hint": "Dauert etwa eine Minute.",
+  "project_home__start_title": "Starte in der Cloud.",
+  "project_home__start_why": "Das ist der einfachste Einstieg. Du musst nichts installieren, es ist in etwa einer Minute bereit, und dein Team kann es auch sehen. Später kannst du es auf deinen Computer holen.",
+  "project_home_gate__the_project": "das Projekt",
+  "project_landing__live_getting_ready": "Die Live-Seite wird vorbereitet",
+  "project_landing__live_needs_look": "Die Live-Seite braucht einen Blick",
+  "project_landing__live_running_well": "Die Live-Seite läuft gut",
+  "project_landing__nothing_online": "Noch ist nichts online",
+  "project_landing__offline": "Nicht mit dem Internet verbunden",
+  "project_landing__people_many_cloud": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{who} und {count} weitere sind auch in der Cloud",
+        "countPlural=other": "{who} und {count} weitere sind auch in der Cloud"
+      }
+    }
+  ],
+  "project_landing__people_many_project": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{who} und {count} weitere sind auch im Projekt",
+        "countPlural=other": "{who} und {count} weitere sind auch im Projekt"
+      }
+    }
+  ],
+  "project_landing__people_one_cloud": "{who} ist auch in der Cloud",
+  "project_landing__people_one_project": "{who} ist auch im Projekt",
+  "project_landing__things_need_look": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Ding braucht einen Blick",
+        "countPlural=other": "{count} Dinge brauchen einen Blick"
+      }
+    }
+  ],
+  "project_landing_mock__preview_when": "Seite in der Vorschau zeigen, wenn",
+  "project_landing_mock__said_cloud": "Würde den Cloud-Arbeitsbereich öffnen, aufwecken oder ihm beitreten.",
+  "project_landing_mock__said_local": "Würde das Projekt auf diesem Computer öffnen.",
+  "project_landing_mock__said_look": "Würde zeigen, was online ist, ohne einen Arbeitsbereich zu öffnen.",
+  "project_landing_mock__state": "Zustand",
+  "project_live__action": "Ansehen",
+  "project_live__needs": "Die Live-Seite braucht einen Blick",
+  "project_live__title": "Deine Seite ist online.",
+  "project_live__well": "Die Live-Seite läuft gut",
+  "project_live__why": "Sie ist online und Leute können sie besuchen. Schau nach, wie es ihr geht.",
+  "project_now__all_well": "Alles, was online ist, läuft gut.",
+  "project_now__asleep": "Schläft",
+  "project_now__checked": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{names} wurde {checked} geprüft.",
+        "countPlural=other": "{names} wurden {checked} geprüft."
+      }
+    }
+  ],
+  "project_now__else_well": "Alles andere läuft gut.",
+  "project_now__getting_ready": "Wird vorbereitet",
+  "project_now__in_cloud": "In der Cloud",
+  "project_now__last_online": "So sah es aus, als du zuletzt online warst.",
+  "project_now__live": "Online",
+  "project_now__need_look": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Eine Sache braucht in {stage} einen Blick",
+        "countPlural=other": "{count} Dinge brauchen in {stage} einen Blick"
+      }
+    }
+  ],
+  "project_now__nobody": "Im Moment arbeitet niemand daran.",
+  "project_now__not_online": "Nicht online",
+  "project_now__nothing_online": "Noch ist nichts online.",
+  "project_now__nothing_online_text": "Sobald du dieses Projekt ins Internet stellst, siehst du hier, wie es läuft.",
+  "project_now__on_computer": "Auf diesem Computer",
+  "project_now__pikku_working": "Pikku arbeitet",
+  "project_now__rest_quiet": "Der Rest ist ruhig.",
+  "project_now__resting": "Ruht",
+  "project_now__see_whats_wrong": "Ansehen, was nicht stimmt",
+  "project_now__stage_state": "{stage}: {state}",
+  "project_now__state_checked": "{state}, geprüft {checked}.",
+  "project_now__what_is_online": "Was online ist",
+  "project_now__working_now": "Arbeitet gerade",
+  "project_now__you": "Du",
+  "project_row__last_worked_on": "Zuletzt bearbeitet {when}",
+  "project_row__only_you_can_see": "Nur du kannst es sehen",
+  "project_ways__cloud_action": "In der Cloud öffnen",
+  "project_ways__cloud_asleep": "Schläft und ist in etwa einer halben Minute wieder wach.",
+  "project_ways__cloud_awake": "Wach, und dein Team kann es sehen.",
+  "project_ways__cloud_carry_on": "Dort weitermachen",
+  "project_ways__cloud_join": "Beitreten",
+  "project_ways__cloud_join_title": "{name} in der Cloud beitreten",
+  "project_ways__cloud_join_why": "Derselbe Arbeitsbereich, nichts einzurichten. Du siehst live, was die anderen sehen.",
+  "project_ways__cloud_mine_title": "Dein Cloud-Arbeitsbereich",
+  "project_ways__cloud_note": "Braucht Internet.",
+  "project_ways__cloud_title": "In der Cloud arbeiten",
+  "project_ways__cloud_wake": "Aufwecken",
+  "project_ways__cloud_why": "Wir betreiben es für dich. Du musst nichts installieren, und dein Team kann es sehen.",
+  "project_ways__live_sub": "Öffne einen Arbeitsbereich, um daran zu arbeiten. Deine Live-Seite bleibt, wie sie ist, bis du veröffentlichst.",
+  "project_ways__live_title": "Möchtest du etwas ändern?",
+  "project_ways__local_action": "Auf meinem Computer arbeiten",
+  "project_ways__local_carry_on": "Hier weitermachen",
+  "project_ways__local_mine_title": "Deine Kopie auf diesem Computer",
+  "project_ways__local_mine_why": "Pausiert, so wie du es {when} verlassen hast. Deine Dateien sind hier; die KI braucht weiterhin Internet, außer du nutzt ein Modell auf diesem Computer.",
+  "project_ways__local_note": "Beim ersten Mal dauert es ein paar Minuten.",
+  "project_ways__local_offline": "Braucht beim ersten Mal Internet.",
+  "project_ways__local_title": "Auf diesem Computer arbeiten",
+  "project_ways__local_why": "Das Projekt wird hierher kopiert und deine Dateien bleiben bei dir. Die KI von Pikku braucht weiterhin Internet, außer du nutzt ein Modell auf diesem Computer.",
+  "project_ways__look_action": "Nur ansehen",
+  "project_ways__look_why": "Sieh, was online ist und wie es läuft, ohne etwas zu öffnen.",
+  "project_ways__sub": "Wähle eine Möglichkeit. Du kannst später wechseln, und nichts geht verloren.",
+  "project_ways__title": "Wo möchtest du arbeiten?",
+  "projects_grid__all": "Alle",
+  "projects_grid__cards": "Karten",
+  "projects_grid__filter_all": "Alle",
+  "projects_grid__filter_paused": "Pausiert",
+  "projects_grid__filter_running": "Laufend",
+  "projects_grid__how_to_show_them": "Wie sie angezeigt werden",
+  "projects_grid__in_progress": "In Arbeit",
+  "projects_grid__list": "Liste",
+  "projects_grid__no_projects_match_that": "Dazu passt kein Projekt.",
+  "projects_grid__paused": "Pausiert",
+  "projects_grid__running": "Laufend",
+  "projects_grid__search_your_projects": "Deine Projekte durchsuchen",
+  "projects_grid__show": "Anzeigen",
+  "projects_grid__show_all_projects": "Alle Projekte anzeigen",
+  "projects_grid__try_a_different_word": "Versuche ein anderes Wort oder zeige wieder alles an.",
+  "projects_screen__in_team": "In {team}",
+  "projects_screen__lead_local": "Alles, was du machst, auf diesem Computer gespeichert. Öffne ein Projekt, um dort weiterzumachen, wo du aufgehört hast.",
+  "projects_screen__lead_team": "Alles, was {team} macht, auf deinem Computer oder in der Cloud. Öffne ein Projekt, um dort weiterzumachen, wo du aufgehört hast.",
+  "projects_screen__new_project": "Neues Projekt",
+  "projects_screen__none_text": "Starte eines, dann erscheint es hier.",
+  "projects_screen__none_title": "Du hast noch keine Projekte.",
+  "projects_screen__open_failed": "Dieses Projekt konnte nicht geöffnet werden. Versuche es noch einmal.",
+  "projects_screen__title": "Projekte",
+  "publish_hosts__a_fast_host_with": "Ein schneller Anbieter mit kostenlosem Einstiegstarif. Du brauchst ein Cloudflare-Konto.",
+  "publish_hosts__add_what_your_app": "Ergänzt, was deine App dort zum Laufen braucht.",
+  "publish_hosts__amazon_aws": "Amazon (AWS)",
+  "publish_hosts__ask_pikku_to_do": "Pikku bitten, es zu tun",
+  "publish_hosts__ask_you_for_any": "Fragt dich nach allen Konten oder Passwörtern, die nötig sind.",
+  "publish_hosts__azure": "azure",
+  "publish_hosts__check_the_app_still": "Prüft, ob die App noch funktioniert.",
+  "publish_hosts__cloudflare": "cloudflare",
+  "publish_hosts__cloudflare_2": "Cloudflare",
+  "publish_hosts__copied_you_can_paste": "Kopiert. Du kannst es jetzt einfügen.",
+  "publish_hosts__copy_the_steps": "Schritte kopieren",
+  "publish_hosts__hide_the_steps": "Schritte ausblenden",
+  "publish_hosts__microsoft_azure": "Microsoft Azure",
+  "publish_hosts__microsoft_s_cloud_a_good": "Die Cloud von Microsoft. Eine gute Wahl, wenn deine Firma sie schon nutzt. Du brauchst ein Azure-Konto.",
+  "publish_hosts__on_amazon_web_services": "auf Amazon Web Services als Serverless-Funktionen",
+  "publish_hosts__on_cloudflare": "auf Cloudflare",
+  "publish_hosts__on_microsoft_azure": "auf Microsoft Azure",
+  "publish_hosts__on_my_own_computer": "Auf meinem eigenen Computer oder Server",
+  "publish_hosts__on_my_own_computer_2": "auf meinem eigenen Computer oder Server",
+  "publish_hosts__or_put_it_somewhere": "Oder woanders veröffentlichen",
+  "publish_hosts__prefer_a_different_home": "Du möchtest deiner App ein anderes Zuhause geben? Wähle eines, und Pikku richtet es ein. Pikku ergänzt, was deine App dafür braucht, und fragt dich nach Konten oder Passwörtern.",
+  "publish_hosts__prompt": "Bitte mache meine App bereit, damit sie {what} läuft. Ergänze alles, was dafür nötig ist. Bevor du ein Konto oder Passwort verwendest, frag mich danach, und sag mir, was ich selbst tun muss.",
+  "publish_hosts__quoted": "„{text}“",
+  "publish_hosts__serverless": "serverless",
+  "publish_hosts__show_the_steps": "Schritte anzeigen",
+  "publish_hosts__tell_you_how_to": "Sagt dir, wie du den Rest erledigst.",
+  "publish_hosts__what_pikku_will_do": "Was Pikku tut",
+  "publish_hosts__what_you_give_to": "Was du Pikku gibst",
+  "publish_hosts__where_to_run_your": "Wo deine App laufen soll",
+  "publish_hosts__your_app_only_runs": "Deine App läuft nur, wenn jemand sie besucht, und du zahlst nur für die Nutzung. Du brauchst ein AWS-Konto.",
+  "publish_hosts__your_app_runs_as": "Deine App läuft als ein Programm, das du selbst startest. Eine gute Wahl, wenn du einen eigenen Computer oder Server hast.",
+  "publish_screen__describe_app": "Beschreibe deine App",
+  "publish_screen__empty_text": "Deine App hat noch keine Seiten. Sag Pikku, was du machen möchtest, und sobald etwas gebaut ist, kannst du es von hier aus online stellen.",
+  "publish_screen__empty_title": "Es gibt noch nichts zu veröffentlichen.",
+  "publish_screen__text": "Mit dem Veröffentlichen ist deine App online verfügbar, damit andere sie nutzen können. Im Moment kannst nur du sie sehen.",
+  "publish_screen__title": "Stelle deine App ins Internet",
+  "query_state__something_went_wrong_on": "Bei uns ist etwas schiefgelaufen. Es wurde nichts geändert.",
+  "query_state__that_did_not_load": "Das hat sich nicht geladen.",
+  "query_state__try_again": "Erneut versuchen",
+  "quick_find__artifacts": "Artefakte",
+  "quick_find__ask_in_your_own_words": "Frag in deinen eigenen Worten",
+  "quick_find__ask_pikku": "Pikku fragen",
+  "quick_find__assistants": "Assistenten",
+  "quick_find__building_logs": "Bauprotokolle",
+  "quick_find__design": "Design",
+  "quick_find__esc": "Esc",
+  "quick_find__explore": "Erkunden",
+  "quick_find__front_doors": "Eingangstüren",
+  "quick_find__how_its_running": "Wie es läuft",
+  "quick_find__jump_to_a_page": "Zu einer Seite springen",
+  "quick_find__knowledge": "Wissen",
+  "quick_find__metrics": "Anfragen und Tempo",
+  "quick_find__nothing_matches": "Nichts passt zu „{q}“.",
+  "quick_find__overview": "Übersicht",
+  "quick_find__projects": "Projekte",
+  "quick_find__publish": "Veröffentlichen",
+  "quick_find__results": "Ergebnisse",
+  "quick_find__routines": "Routinen",
+  "quick_find__secrets": "Geheimnisse",
+  "quick_find__translations": "Übersetzungen",
+  "quick_find__versions": "Versionen",
+  "quick_find__virtual_users": "Virtuelle Nutzer",
+  "resume__back": "Zurück zu deinen Projekten",
+  "resume__failed_lead": "Es wurde nichts geändert. Ein neuer Versuch hilft oft. Wenn es weiter passiert, bitte Pikku im Chat, nachzuschauen.",
+  "resume__failed_title": "Diesmal hat es sich nicht geöffnet.",
+  "resume__lead": "Dein Projekt hat geruht. Ich wecke es jetzt auf, und es öffnet sich, sobald es bereit ist.",
+  "resume__step_ready": "Wird für dich vorbereitet",
+  "resume__step_start": "Wird gestartet",
+  "resume__step_workspace": "Dein Arbeitsbereich wird geweckt",
+  "resume__title": "{name} wird geöffnet.",
+  "resume__try_again": "Erneut versuchen",
+  "road_spine__about_secs": "etwa {secs} s",
+  "road_spine__step_of": "Schritt {step} von {total}",
+  "routine_screen__a_few_seconds": "ein paar Sekunden",
+  "routine_screen__all_routines": "Alle Routinen",
+  "routine_screen__ask_pikku_change": "Pikku bitten, das zu ändern",
+  "routine_screen__back_step": "Einen Schritt zurück",
+  "routine_screen__change_step_say": "Ändere den Schritt „{step}“ in „{name}“",
+  "routine_screen__done_by": "Erledigt von: {by}",
+  "routine_screen__each_try": "Jeder Versuch",
+  "routine_screen__ended": "Beendet",
+  "routine_screen__event_after": "{event} nach {time}",
+  "routine_screen__event_at": "{event}, nach {time}",
+  "routine_screen__finished": "Abgeschlossen",
+  "routine_screen__fix_it": "Für mich beheben",
+  "routine_screen__fix_say": "Behebe das: {name} {note}",
+  "routine_screen__follow_live": "Live verfolgen",
+  "routine_screen__forward_step": "Einen Schritt vor",
+  "routine_screen__gave_back": "Was es zurückgegeben hat",
+  "routine_screen__given": "Was es bekommen hat",
+  "routine_screen__happening_now": "Passiert gerade",
+  "routine_screen__hide_timeline": "Zeitleiste ausblenden",
+  "routine_screen__if_not": "Wenn nicht: {ifNot}.",
+  "routine_screen__just_now": "Gerade eben",
+  "routine_screen__just_routine": "Nur die Routine",
+  "routine_screen__missing": "Diese Routine gibt es nicht mehr. Vielleicht wurde sie entfernt.",
+  "routine_screen__move_run": "Durch den Ablauf gehen",
+  "routine_screen__no_run": "Kein Ablauf, nur die Schritte",
+  "routine_screen__no_run_picked": "Nur die Routine, kein Ablauf ausgewählt.",
+  "routine_screen__older_notice": "So sah die Routine damals aus. Seitdem hat sie sich geändert.",
+  "routine_screen__past_runs": "Frühere Abläufe",
+  "routine_screen__past_runs_sub": "Wähle einen aus, um Schritt für Schritt zu sehen, wie er lief.",
+  "routine_screen__pick_a_run": "Wähle oben einen Ablauf, um zu sehen, was hier passiert ist.",
+  "routine_screen__run_now": "Jetzt ausführen",
+  "routine_screen__run_summary": ". {note}. Dauerte {took}.",
+  "routine_screen__running_now": "Läuft gerade",
+  "routine_screen__seconds": "{n} Sekunden",
+  "routine_screen__show_history": "Verlauf anzeigen",
+  "routine_screen__show_it": "Anzeigen",
+  "routine_screen__show_it_now": "Jetzt anzeigen",
+  "routine_screen__show_timeline": "Zeitleiste anzeigen",
+  "routine_screen__show_whole_run": "Ganzen Ablauf anzeigen",
+  "routine_screen__showing": "Angezeigt",
+  "routine_screen__started": "Gestartet",
+  "routine_screen__state_done": "Erledigt",
+  "routine_screen__state_failed": "Schiefgelaufen",
+  "routine_screen__state_running": "Wird bearbeitet",
+  "routine_screen__state_skipped": "Übersprungen",
+  "routine_screen__state_waiting": "Nicht erreicht",
+  "routine_screen__step_of": "Schritt {step} von {total}",
+  "routine_screen__time_in": "nach {time}",
+  "routine_screen__timeline": "Zeitleiste",
+  "routine_screen__timeline_aria": "Zeitleiste dieses Ablaufs",
+  "routine_screen__took": "Dauer",
+  "routine_screen__took_line": "Dauerte {took}",
+  "routine_screen__tried_again": "Erneut versucht",
+  "routine_screen__tries": "Versuche",
+  "routine_screen__went_wrong": "Schiefgelaufen",
+  "routine_screen__what_happened": "Was passiert ist",
+  "routine_screen__what_runs": "{what} {runs}.",
+  "routine_screen__what_went_wrong": "Was schiefgelaufen ist",
+  "routine_screen__whole_run": "Der ganze Ablauf",
+  "routine_screen__worked": "Hat geklappt",
+  "routines__every": "Jeweils {cron}",
+  "routines__on_a_schedule": "Nach Zeitplan: {cron}",
+  "routines__quiet_moment": "ein ruhiger Moment",
+  "routines__ran_fine": "Lief gut",
+  "routines__stops_here": "Hört hier auf",
+  "routines__took_seconds": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Sekunde",
+        "countPlural=other": "{count} Sekunden"
+      }
+    }
+  ],
+  "routines__went_wrong_at": "Schiefgelaufen bei {step}",
+  "routines__what_starts_it": "Das ist es, was es startet.",
+  "routines__when_asked": "Wenn es zum Ausführen aufgefordert wird",
+  "routines__when_asked_to_run": "Bei Aufforderung zum Ausführen",
+  "routines__yes": "Ja",
+  "routines__your_app": "Deine App",
+  "routines_screen__add_say": "Füge meiner App eine neue Routine hinzu",
+  "routines_screen__is_on": "{name} ist an",
+  "routines_screen__look_at_it": "Ansehen",
+  "routines_screen__n_well": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Routine läuft gut",
+        "countPlural=other": "{count} Routinen laufen gut"
+      }
+    }
+  ],
+  "routines_screen__not_run": "Noch nicht gelaufen",
+  "routines_screen__ran_fine": "Lief gut · {when}",
+  "routines_screen__switched_off": "Ausgeschaltet",
+  "routines_screen__text": "Aufgaben, die deine App von selbst erledigt, nach Zeitplan oder wenn etwas passiert. Öffne eine, um jeden Schritt und jeden Durchlauf zu sehen.",
+  "routines_screen__title": "Routinen",
+  "routines_screen__went_wrong": "Schiefgelaufen · {when}",
+  "routines_screen__why_fine": "Beim letzten Mal lief alles, wie es sollte. Pikku sagt dir Bescheid, wenn sich das ändert.",
+  "routines_screen__why_stopped": "„{name}“ ist bei Schritt {step} stehen geblieben ({when}). Pikku hat schon eine Idee, woran es liegt.",
+  "routines_screen__wrong_count": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Eine Routine ist heute schiefgelaufen",
+        "countPlural=other": "{count} Routinen sind heute schiefgelaufen"
+      }
+    }
+  ],
+  "routines_screen__your_routines": "Deine Routinen",
+  "routines_screen__your_routines_sub": "Jede startet jedes Mal auf dieselbe Weise. Schalte eine aus, und sie wartet einfach.",
+  "screen_names__agent_artifacts": "Pikku-Artefakt-Agent",
+  "screen_names__agent_build": "Pikku-Build-Agent",
+  "screen_names__agent_emails": "Pikku-E-Mail-Agent",
+  "screen_names__agent_frontend": "Pikku-Design-Agent",
+  "screen_names__agent_knowledge": "Pikku-Wissens-Agent",
+  "screen_names__artifacts": "Artefakte",
+  "screen_names__build": "Bauen",
+  "screen_names__emails": "E-Mails",
+  "screen_names__frontend": "Design",
+  "screen_names__knowledge": "Wissen",
+  "secret_activity__could_not_save": "konnte nicht gespeichert werden",
+  "secret_activity__given_access": "bekam Zugriff für",
+  "secret_activity__h_ago": "vor {n} Std.",
+  "secret_activity__just_now": "gerade eben",
+  "secret_activity__min_ago": "vor {n} Min.",
+  "secret_activity__nothing_yet_each_time": "Noch nichts. Jedes Mal, wenn ein Geheimnis gespeichert oder benutzt wird, erscheint es hier.",
+  "secret_activity__project": "Projekt {name}",
+  "secret_activity__refused": "wurde abgelehnt",
+  "secret_activity__removed": "entfernt",
+  "secret_activity__saved": "gespeichert",
+  "secret_activity__studio": "Studio",
+  "secret_activity__this_record_has_been": "Dieser Eintrag wurde verändert. Vertraue ihm nicht.",
+  "secret_activity__this_record_has_not": "Dieser Eintrag wurde nicht verändert",
+  "secret_activity__used": "benutzt",
+  "secret_form__a_password_or_key": "Ein Passwort oder Schlüssel, den deine Projekte brauchen.",
+  "secret_form__add_a_secret": "Geheimnis hinzufügen",
+  "secret_form__cancel": "Abbrechen",
+  "secret_form__change_a_secret": "Geheimnis ändern",
+  "secret_form__close": "Schließen",
+  "secret_form__letters_numbers_and_underscores": "Buchstaben, Zahlen und Unterstriche, keine Leerzeichen. Dein Projekt fragt unter diesem Namen danach.",
+  "secret_form__locked_in_this_browser": "Wird in diesem Browser gesperrt, bevor es gesendet wird. Studio sieht nie, was du eingibst.",
+  "secret_form__name": "Name",
+  "secret_form__save_secret": "Geheimnis speichern",
+  "secret_form__saving": "Wird gespeichert",
+  "secret_form__saving_replaces_what_was": "Beim Speichern wird ersetzt, was dort war.",
+  "secret_form__stripe_key": "STRIPE_KEY",
+  "secret_form__that_could_not_be": "Das konnte nicht gespeichert werden. Es wurde nichts geändert. Versuche es noch einmal.",
+  "secret_form__the_secret": "Das Geheimnis",
+  "secrets_hero__add_a_password_or": "Füge ein Passwort oder einen Schlüssel einmal hinzu. Es wird in diesem Browser gesperrt, bevor es gespeichert wird, und deine Projekte fragen nur danach, wenn sie laufen.",
+  "secrets_hero__add_a_secret": "Geheimnis hinzufügen",
+  "secrets_hero__keep_your_passwords_in": "Bewahre deine Passwörter an einem sicheren Ort auf.",
+  "secrets_hero__saved": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "1 Geheimnis gespeichert",
+        "countPlural=other": "{count} Geheimnisse gespeichert"
+      }
+    }
+  ],
+  "secrets_hero__secrets": "Geheimnisse",
+  "secrets_hero__they_were_locked_in": "Sie wurden in diesem Browser gesperrt, bevor sie gespeichert wurden. Studio kann sie nicht zurücklesen, und jede Nutzung wird unten festgehalten.",
+  "secrets_hero__your_secrets_are_locked": "Deine Geheimnisse sind weggeschlossen.",
+  "secrets_list__change": "Ändern",
+  "secrets_list__keep_it": "Behalten",
+  "secrets_list__locked_only_your_projects": "Gesperrt. Nur deine Projekte können es öffnen.",
+  "secrets_list__remove": "Entfernen",
+  "secrets_list__remove_it_for_good": "Endgültig entfernen",
+  "secrets_list__secret": "Geheimnis",
+  "secrets_screen__add_secret": "Geheimnis hinzufügen",
+  "secrets_screen__crumb": "Auf diesem Computer",
+  "secrets_screen__nothing_saved": "Noch nichts gespeichert.",
+  "secrets_screen__nothing_saved_text": "Füge ein Geheimnis hinzu, dann können deine Projekte es nutzen.",
+  "secrets_screen__remove_failed": "Das konnte nicht entfernt werden. Es wurde nichts geändert.",
+  "secrets_screen__saved": "Gespeicherte Geheimnisse",
+  "secrets_screen__text": "Passwörter und Schlüssel, die deine Projekte brauchen. Sie werden in deinem Browser gesperrt, bevor sie gespeichert werden, sodass hier niemand sie zurücklesen kann. Projekte fragen danach, wenn sie laufen.",
+  "secrets_screen__title": "Geheimnisse",
+  "secrets_screen__who_used": "Wer sie benutzt hat",
+  "segmented__not_written_yet": "Noch nicht geschrieben",
+  "setups_compare__add_wishlist": "Zur Wunschliste hinzufügen",
+  "setups_compare__different_here": "Hier anders",
+  "setups_compare__do_this": "Mach das",
+  "setups_compare__on_wishlist": "Auf deiner Wunschliste",
+  "shelf_art__safe_to_go_back": "Sicher zum Zurückgehen",
+  "shelf_meta__cancelled": "Abgebrochen",
+  "shelf_meta__fail_build": "Es konnte nicht gebaut werden",
+  "shelf_meta__fail_data": "Deine Daten konnten nicht aktualisiert werden",
+  "shelf_meta__fail_publish": "Es konnte nicht veröffentlicht werden",
+  "shelf_meta__fail_start": "Es wurde gebaut, startet aber nicht",
+  "shelf_meta__failed": "Nicht live gegangen",
+  "shelf_meta__live": "Online",
+  "shelf_meta__rolled_back": "Davon zurückgegangen",
+  "shelf_meta__saved_from_github": "Von GitHub gesichert",
+  "shelf_meta__waiting": "Wartet auf dich",
+  "shelf_meta__was_live": "War live",
+  "shelf_meta__working": "Wird veröffentlicht",
+  "shelf_strip__done": "Fertig",
+  "shelf_strip__progress": "Schritt {step} von {total}, {what}. Läuft seit {time}. Deine Live-App bleibt bis zum letzten Schritt unberührt.",
+  "shelf_strip__waiting": "Wartet",
+  "shelf_strip__working_on_it_now": "Ich arbeite gerade daran",
+  "shell_account__everything_and_you_can_change": "Alles, und du kannst alles ändern.",
+  "shell_account__nobody_else": "Niemand sonst",
+  "shell_account__sign_out": "Abmelden",
+  "shell_account__this_computer": "Dieser Computer",
+  "shell_account__where_it_runs": "Wo es läuft",
+  "shell_account__who_can_see_what": "Wer was sehen kann",
+  "shell_account__your_work_is_stored_here": "Deine Arbeit wird hier gespeichert und funktioniert ohne Internet. Sie wird nirgendwo sonst gesichert.",
+  "shell_layout__about": "Info",
+  "shell_layout__an_open_question_in_your": "Eine offene Frage in deinem Wissen",
+  "shell_layout__approve": "Freigeben",
+  "shell_layout__ask_anything": "Frag, was du willst",
+  "shell_layout__ask_or_tell": "Frag Pikku oder sag etwas",
+  "shell_layout__ask_pikku_about_it": "Pikku dazu fragen",
+  "shell_layout__back_to": "Zurück zu {project}",
+  "shell_layout__bubble_ask_first": "und ich frage nach, bevor ich etwas baue.",
+  "shell_layout__bubble_ask_first_build": "Ich frage nach, bevor ich etwas baue.",
+  "shell_layout__bubble_nothing": "Gerade braucht nichts dich.",
+  "shell_layout__bubble_tell_me": "Sag mir, was du machen möchtest",
+  "shell_layout__caught_up_text": "Gerade braucht nichts dich. Wenn doch, lege ich es hier hin und sage es dir in einfachen Worten.",
+  "shell_layout__caught_up_title": "Du bist auf dem neuesten Stand.",
+  "shell_layout__changes": "Änderungen",
+  "shell_layout__chat": "Chat",
+  "shell_layout__close_panel": "Bereich schließen",
+  "shell_layout__describe_my_app": "Meine App beschreiben",
+  "shell_layout__dismiss": "Schließen",
+  "shell_layout__done": "Fertig",
+  "shell_layout__explore": "Erkunden",
+  "shell_layout__find_a_page": "Seite finden",
+  "shell_layout__find_shortcut": "⌘K",
+  "shell_layout__give_me_an_example": "Gib mir ein Beispiel",
+  "shell_layout__give_me_an_example_of": "Gib mir ein Beispiel, was ich hier bauen könnte.",
+  "shell_layout__good_to_know": "Gut zu wissen",
+  "shell_layout__home": "Start",
+  "shell_layout__just_now": "Gerade eben",
+  "shell_layout__language": "Sprache",
+  "shell_layout__left_alone": "Unberührt gelassen",
+  "shell_layout__looks": "Aussehen",
+  "shell_layout__main": "Hauptbereich",
+  "shell_layout__match_this_computer": "Wie dieser Computer",
+  "shell_layout__message_pikku": "Nachricht an Pikku",
+  "shell_layout__needs_you": "Braucht dich",
+  "shell_layout__new_project": "Neues Projekt",
+  "shell_layout__no_details": "Noch keine Details.",
+  "shell_layout__not_now": "Jetzt nicht",
+  "shell_layout__not_now_reply": "Kein Problem. Ich frage morgen noch einmal.",
+  "shell_layout__overview": "Überblick",
+  "shell_layout__people_can_now_open_and": "Jetzt können Leute {url} öffnen und einen Kurs buchen. Du musst nichts weiter tun.",
+  "shell_layout__pikku_is_on_it": "Pikku kümmert sich darum",
+  "shell_layout__pikku_scope": "Nur das, worum du es bittest. Pikku fragt nach, bevor es etwas Wichtiges ändert.",
+  "shell_layout__publish": "Veröffentlichen",
+  "shell_layout__remove_from_chat": "Aus dem Chat entfernen",
+  "shell_layout__say_what_to_change": "Sag, was sich ändern soll, zum Beispiel: mach das größer",
+  "shell_layout__settings": "Einstellungen",
+  "shell_layout__studio": "Pikku Studio",
+  "shell_layout__studio_metrics": "Studio-Kennzahlen",
+  "shell_layout__tell_me_more": "Erzähl mir mehr",
+  "shell_layout__tell_me_when": "Sag mir Bescheid, wenn",
+  "shell_layout__tell_me_when_text": "Pikku dich braucht oder etwas schiefgeht",
+  "shell_layout__the_project": "das Projekt „{projectSlug}“",
+  "shell_layout__thinking": "Pikku denkt nach…",
+  "shell_layout__this_change": "Diese Änderung",
+  "shell_layout__updates": "Neuigkeiten",
+  "shell_layout__waiting": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Eine Sache wartet:",
+        "countPlural=other": "{count} Dinge warten."
+      }
+    }
+  ],
+  "shell_layout__what_has_happened": "Was passiert ist",
+  "shell_layout__where_work_lives": "Hier siehst du, wo deine Arbeit liegt, wer sie sehen kann und was passiert ist. Nichts ist versteckt.",
+  "shell_layout__working_on_it": "In Arbeit",
+  "shell_layout__your_account": "Dein Konto",
+  "shell_layout__your_app_is_live": "Deine App ist live",
+  "shell_layout__your_helper": "Pikku, dein Helfer",
+  "shell_layout__your_name_and_photo": "Dein Name und Foto",
+  "shell_layout__your_workspace": "Dein Arbeitsbereich",
+  "side_panel__close_panel": "Bereich schließen",
+  "signin__back_title": "Mach da weiter, wo du aufgehört hast.",
+  "signin__back_why": "Deine Projekte warten auf diesem Computer, genau so, wie du sie verlassen hast.",
+  "signin__busy_title": "Dein Arbeitsbereich wird geöffnet.",
+  "signin__busy_why": "Einen Moment. Ich mache alles bereit.",
+  "signin__failed_body": "Auf diesem Computer ist etwas schiefgegangen. Nichts ist verloren, versuche es gleich noch einmal.",
+  "signin__failed_title": "Wir konnten deinen Arbeitsbereich nicht öffnen.",
+  "signin__hint": "Dauert etwa fünf Sekunden.",
+  "signin__hint_back": "Deine Projekte öffnen sich sofort.",
+  "signin__legal": "Wir lesen nie, was du auf diesem Computer baust.",
+  "signin__local_title": "Starte auf diesem Computer.",
+  "signin__local_why": "Das empfehlen wir für den ersten Besuch. Deine Arbeit bleibt hier, und du musst dich nirgends registrieren.",
+  "signin__opening": "Wird geöffnet",
+  "signin__others_title": "Andere Wege hinein",
+  "signin__retry": "Noch einmal versuchen",
+  "signin__use_pc": "Auf diesem Computer nutzen",
+  "site_preview__book_sourdough_basics": "Sauerteig-Grundkurs buchen",
+  "site_preview__bookings": "Buchungen",
+  "site_preview__export_list": "Liste exportieren",
+  "site_preview__pick_a_day": "Tag auswählen",
+  "site_preview__this_week_s_bookings": "Buchungen dieser Woche",
+  "site_preview__your_name": "Dein Name",
+  "theme_panel__automatic": "Automatisch",
+  "theme_panel__automatic_follows_each_visitor_s": "Automatisch folgt der Bildschirmeinstellung jedes Besuchers.",
+  "theme_panel__background_blend": "Hintergrundmischung",
+  "theme_panel__body_text": "Fließtext",
+  "theme_panel__brand_colours": "Markenfarben",
+  "theme_panel__contrast_note": "Text auf deiner Hauptakzentfarbe wechselt von selbst zwischen hell und dunkel. Der Text auf Buttons hat jetzt einen Kontrast von",
+  "theme_panel__corner_roundness": "Eckenrundung",
+  "theme_panel__create": "Erstellen",
+  "theme_panel__dark": "Dunkel",
+  "theme_panel__depth": "Tiefe",
+  "theme_panel__easy_to_read": "Gut lesbar",
+  "theme_panel__fonts": "Schriften",
+  "theme_panel__headings": "Überschriften",
+  "theme_panel__highlight_price_tags_badges": "Hervorhebung (Preisschilder, Abzeichen)",
+  "theme_panel__keep_text_easy_to": "Text gut lesbar halten",
+  "theme_panel__light": "Hell",
+  "theme_panel__light_or_dark": "Hell oder dunkel",
+  "theme_panel__main_accent_buttons_links": "Hauptakzent (Buttons, Links)",
+  "theme_panel__my_theme": "Mein Design",
+  "theme_panel__name_a_new_theme": "Neuem Design einen Namen geben",
+  "theme_panel__new_theme_name": "Name des neuen Designs",
+  "theme_panel__none": "Keine",
+  "theme_panel__page_colour_light_mode": "Seitenfarbe (heller Modus)",
+  "theme_panel__shade_strength": "Schattenstärke",
+  "theme_panel__shadows": "Schatten",
+  "theme_panel__shape_and_mood": "Form und Stimmung",
+  "theme_panel__soft": "Weich",
+  "theme_panel__strong": "Stark",
+  "theme_panel__text_colour_light_mode": "Textfarbe (heller Modus)",
+  "theme_panel__theme_changes_apply_to": "Designänderungen gelten für jede Seite deiner App.",
+  "theme_panel__use": "{name} verwenden",
+  "theme_panel__your_themes": "Deine Designs",
+  "toast__failed": "Das hat nicht geklappt. Bitte versuche es noch einmal.",
+  "toast__not_allowed": "Das darfst du nicht tun.",
+  "toast__sign_in_again": "Melde dich erneut an, um weiterzumachen.",
+  "toaster__dismiss": "Schließen",
+  "trans_rows__add_a_language": "Sprache hinzufügen",
+  "trans_rows__all_pages": "Alle Seiten",
+  "trans_rows__ask_pikku_to_translate": "Pikku bitten, alles zu übersetzen",
+  "trans_rows__everything": "Alles",
+  "trans_rows__everything_is_translated": "Alles ist übersetzt",
+  "trans_rows__found": "{count} gefunden",
+  "trans_rows__i_would_like_to": "Ich möchte dieser App eine weitere Sprache hinzufügen. Welche soll es sein? Nenne mir die Sprache, dann finde ich die passende Ländereinstellung heraus und übersetze alles.",
+  "trans_rows__languages": "Sprachen",
+  "trans_rows__languages_to_show": "Anzuzeigende Sprachen",
+  "trans_rows__left": "{count} übrig",
+  "trans_rows__left_of": "{left} von {total} übrig",
+  "trans_rows__name_percent": " · {percent}%",
+  "trans_rows__nothing_here_everything_is": "Hier ist nichts. Alles ist übersetzt.",
+  "trans_rows__only_missing": "Nur fehlende",
+  "trans_rows__original": "Original",
+  "trans_rows__page": "Seite",
+  "trans_rows__page_option": "{page} · {left}",
+  "trans_rows__pick_at_least_one": "Wähle oben mindestens eine Sprache aus, um mit dem Übersetzen zu beginnen.",
+  "trans_rows__search_the_wording": "Texte durchsuchen",
+  "trans_rows__show": "Anzeigen",
+  "trans_rows__show_more": "{shown} weitere von {rest} anzeigen",
+  "trans_rows__showing_the_first_40": "Die ersten 40 werden angezeigt. Grenze die Suche ein, um den Rest zu sehen.",
+  "trans_rows__still_needed": "Noch nötig",
+  "trans_rows__text": "…",
+  "trans_rows__text_in_language": "{text} auf {language}",
+  "trans_rows__three_languages_at_most": "Höchstens drei Sprachen, Englisch eingeschlossen. Schalte eine aus, um eine andere hinzuzufügen.",
+  "trans_rows__translate_prompt": "Bitte übersetze jeden fehlenden Text in {languages} und zeig mir dann, was du geschrieben hast, damit ich es prüfen kann.",
+  "translation_panel__needs_translating": "· muss übersetzt werden",
+  "translation_panel__see_all_wording": "Alle Texte ansehen",
+  "translation_panel__you_are_editing_wording": "Du bearbeitest Texte, die in der App erscheinen. Jede Sprache wird gespeichert, sobald du weitergehst.",
+  "translations_screen__add_language": "Sprache hinzufügen",
+  "translations_screen__i_would_like_to_add": "Ich möchte dieser App eine weitere Sprache hinzufügen. Welche soll es sein? Nenne mir die Sprache, dann finde ich die passende Ländereinstellung heraus und übersetze alles.",
+  "translations_screen__nothing": "Noch nichts zu übersetzen.",
+  "translations_screen__nothing_text": "Sobald deine App Bildschirme mit Texten hat, erscheinen sie hier.",
+  "translations_screen__old_pikku": "Diese App läuft mit einer älteren Pikku-Version, die ihre Übersetzungen noch nicht auflisten kann.",
+  "translations_screen__old_pikku_ask": "Pikku dieser App auf den neuesten Stand bringen",
+  "translations_screen__old_pikku_message": "Diese App läuft mit einer älteren Pikku-Version und kann ihre Übersetzungen noch nicht anzeigen. Bitte bringe ihr Pikku auf den neuesten Stand.",
+  "translations_screen__one_language": "Bisher nur eine Sprache.",
+  "translations_screen__one_language_text": "Bitte Pikku, eine weitere Sprache hinzuzufügen und alles für dich zu übersetzen.",
+  "translations_screen__text": "Alle Texte, die deine App zeigt, in jeder Sprache. Ergänze, was fehlt, und es wird beim Tippen gespeichert.",
+  "translations_screen__title": "Übersetzungen",
+  "version_screen__all_passed": "Alles bestanden",
+  "version_screen__all_versions": "Alle Versionen",
+  "version_screen__before_it_goes_live": "Bevor sie live geht",
+  "version_screen__before_this_one": "Vor dieser",
+  "version_screen__byline": "{who}, {when}. {summary}",
+  "version_screen__change": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Änderung",
+        "countPlural=other": "{count} Änderungen"
+      }
+    }
+  ],
+  "version_screen__check_safe": "Ist sie sicher?",
+  "version_screen__check_works": "Funktioniert sie?",
+  "version_screen__checks": "Prüfungen",
+  "version_screen__compare": "Vergleichen",
+  "version_screen__compared_title": "Verglichen mit der Version davor",
+  "version_screen__compared_with_what_people_see": "Verglichen mit dem, was Leute jetzt sehen.",
+  "version_screen__did_not_go_live": "Nicht live gegangen",
+  "version_screen__did_not_run": "Nicht ausgeführt",
+  "version_screen__discard": "Verwerfen",
+  "version_screen__discard_this_version": "Diese Version verwerfen?",
+  "version_screen__do_these_and_the_publish": "Erledige diese Dinge, dann wird der Veröffentlichen-Button aktiv.",
+  "version_screen__fill_in": "Ausfüllen",
+  "version_screen__fill_it_in": "Ausfüllen",
+  "version_screen__flag_breaking": "Etwas wird nicht mehr funktionieren",
+  "version_screen__flag_failed": "Eine Prüfung ist fehlgeschlagen",
+  "version_screen__flag_security": "Eine Sicherheitswarnung",
+  "version_screen__go_back": "Zu dieser Version zurückgehen",
+  "version_screen__go_back_detail": "Deine Besucher bekommen „{title}“ innerhalb einer Minute. „{liveTitle}“ kommt zurück ins Regal. Nichts wird gelöscht.",
+  "version_screen__group_in_version": "{label} in dieser Version",
+  "version_screen__have_read": "Ich habe das gelesen",
+  "version_screen__hero_cancelled_title": "Sie wurde abgebrochen",
+  "version_screen__hero_failed_why": "{reason} Deine Live-App blieb genau so, wie sie war, niemand hat etwas bemerkt.",
+  "version_screen__hero_live_title": "Das sehen die Leute",
+  "version_screen__hero_live_why": [
+    {
+      "declarations": [
+        "input visits",
+        "local visitsPlural = visits: plural"
+      ],
+      "selectors": [
+        "visitsPlural"
+      ],
+      "match": {
+        "visitsPlural=one": "Alle, die deine App öffnen, bekommen diese Version. Sie ist live seit {since}, mit {visits} Besucher in den letzten 24 Stunden.",
+        "visitsPlural=other": "Alle, die deine App öffnen, bekommen diese Version. Sie ist live seit {since}, mit {visits} Besuchern in den letzten 24 Stunden."
+      }
+    }
+  ],
+  "version_screen__hero_ready_title": "Bereit, wenn du es bist",
+  "version_screen__hero_ready_why": "Du hast alles erledigt, was nötig war. Für deine Besucher ändert sich nichts, bis du den Button drückst.",
+  "version_screen__hero_rolled_back_title": "Du bist davon zurückgegangen",
+  "version_screen__hero_rolled_back_why": "Sie ging live, dann hast du die Version davor gewählt. Nichts ist verloren.",
+  "version_screen__hero_waiting_title": "Erst ein paar Dinge",
+  "version_screen__hero_waiting_why": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Sie ist gebaut und geprüft. 1 Sache braucht dich, bevor sie live gehen kann.",
+        "countPlural=other": "Sie ist gebaut und geprüft. {count} Dinge brauchen dich, bevor sie live gehen kann."
+      }
+    }
+  ],
+  "version_screen__hero_was_live_title": "Diese war live",
+  "version_screen__hero_was_live_why": "Eine neuere Version hat sie ersetzt. Du kannst sie jederzeit zurückholen.",
+  "version_screen__hero_working_title": "Wird veröffentlicht…",
+  "version_screen__hero_working_why": "Du kannst diese Seite verlassen. Deine Live-App bleibt bis zum letzten Schritt unberührt.",
+  "version_screen__i_can_read_what_happened": "Ich kann nachlesen, was passiert ist, das Foto reparieren und es noch einmal versuchen. Nichts geht live, bevor du es sagst.",
+  "version_screen__if_you_switched_this_would": "Wenn du wechselst, würde sich das ändern",
+  "version_screen__it_leaves_your_history_the": "Sie verschwindet aus deinem Verlauf. Die Live-App bleibt unberührt.",
+  "version_screen__keep_live": "Behalten, was live ist",
+  "version_screen__line_changed": "Geändert",
+  "version_screen__line_new": "Neu",
+  "version_screen__line_removed": "Entfernt",
+  "version_screen__live_is_fine": "Deine Live-App ist in Ordnung",
+  "version_screen__live_since": "Live seit {when}",
+  "version_screen__meta": "{who} · {when}",
+  "version_screen__meta_took": "{who} · {when} · dauerte {took}",
+  "version_screen__needs_look": "Sieh es dir an",
+  "version_screen__no_reason": "Es wurde kein Grund genannt.",
+  "version_screen__not_checked": "Nicht geprüft",
+  "version_screen__not_checked_line": "Nicht geprüft.",
+  "version_screen__not_found_text": "Vielleicht wurde sie verworfen.",
+  "version_screen__not_found_title": "Wir konnten diese Version nicht finden",
+  "version_screen__nothing_found": "Nichts gefunden",
+  "version_screen__nothing_risky": "Nichts Riskantes gefunden.",
+  "version_screen__open_app": "Deine App öffnen",
+  "version_screen__publish": "Auf deiner Live-Seite veröffentlichen",
+  "version_screen__read": "Gelesen",
+  "version_screen__read_it": "Lesen",
+  "version_screen__read_log": "Nachlesen, was passiert ist",
+  "version_screen__save": "Speichern",
+  "version_screen__saved": "Gespeichert",
+  "version_screen__say_cancel": "Veröffentlichung dieser Version abbrechen",
+  "version_screen__say_discard": "„{title}“ verwerfen",
+  "version_screen__say_fix": "Repariere „{title}“ für mich",
+  "version_screen__say_go_back": "Zu „{title}“ zurückgehen",
+  "version_screen__say_publish": "„{title}“ auf meiner Live-Seite veröffentlichen",
+  "version_screen__say_retry": "„{title}“ noch einmal versuchen",
+  "version_screen__still_live": "Weiterhin live",
+  "version_screen__still_what_people_see": "„{title}“ ist weiterhin das, was Leute sehen.",
+  "version_screen__tests_failed": ", {n} fehlgeschlagen",
+  "version_screen__tests_line": [
+    {
+      "declarations": [
+        "input passed",
+        "local passedPlural = passed: plural"
+      ],
+      "selectors": [
+        "passedPlural"
+      ],
+      "match": {
+        "passedPlural=one": "{passed} Prüfung bestanden{failed}{skipped}. Dauerte {secs} Sekunden.",
+        "passedPlural=other": "{passed} Prüfungen bestanden{failed}{skipped}. Dauerte {secs} Sekunden."
+      }
+    }
+  ],
+  "version_screen__tests_not_run": "Die Prüfungen wurden nicht ausgeführt.",
+  "version_screen__tests_not_run_build": "Die Prüfungen wurden nicht ausgeführt, weil sie nicht gebaut werden konnte.",
+  "version_screen__tests_skipped": ", {n} übersprungen",
+  "version_screen__the_record_from_building_and": "Das Protokoll vom Bauen und Veröffentlichen dieser Version.",
+  "version_screen__the_version_that_was_live": "Die Version, die live war, bis diese erschien.",
+  "version_screen__things": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Sache zum Lesen, bevor sie live geht.",
+        "countPlural=other": "{count} Dinge zum Lesen, bevor sie live geht."
+      }
+    }
+  ],
+  "version_screen__this_version": "Diese Version",
+  "version_screen__until": "Bis {when}",
+  "version_screen__what_is_in_it": "Was drin ist",
+  "version_screen__what_it_replaced": "Was sie ersetzt hat",
+  "version_screen__what_people_see_now": "Was Leute jetzt sehen",
+  "version_screen__will_change_title": "Wenn sie live geht, ändert sich das",
+  "version_screen__would_come_back": "Würde zurückkommen",
+  "version_screen__would_go_back": "{items} würden wieder so werden wie vorher.",
+  "version_screen__would_have_changed": "Was sie geändert hätte.",
+  "version_screen__would_stop": "Würde aufhören",
+  "version_screen__yes_discard": "Ja, verwerfen",
+  "version_screen__yes_go_back": "Ja, zurückgehen",
+  "versions__day_time": "{day}, {time}",
+  "versions__hours_ago_count": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "vor 1 Stunde",
+        "countPlural=other": "vor {count} Stunden"
+      }
+    }
+  ],
+  "versions__just_now": "gerade eben",
+  "versions__minutes_ago": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "vor {count} Minute",
+        "countPlural=other": "vor {count} Minuten"
+      }
+    }
+  ],
+  "versions__today": "Heute",
+  "versions_screen__ahead": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Du bist eine Änderung weiter als das, was Leute sehen. Beim Veröffentlichen gehen alle zusammen raus.",
+        "countPlural=other": "Du bist {count} Änderungen weiter als das, was Leute sehen. Beim Veröffentlichen gehen alle zusammen raus."
+      }
+    }
+  ],
+  "versions_screen__blurb_cancelled": "Eine neuere Version hat sie ersetzt, bevor sie live ging.",
+  "versions_screen__blurb_failed": "{reason}. Deine Live-App lief weiter.",
+  "versions_screen__blurb_waiting": "Gebaut und geprüft. Vorher braucht sie noch ein paar Dinge von dir.",
+  "versions_screen__blurb_working": "{step}, Schritt {n} von {total}. Deine Live-App bleibt vorerst unberührt.",
+  "versions_screen__by_when": "{by} · {when}",
+  "versions_screen__check_them": "Prüfen",
+  "versions_screen__filter_all": "Alle",
+  "versions_screen__filter_live": "War live",
+  "versions_screen__filter_not": "Nicht live gegangen",
+  "versions_screen__find": "Version finden",
+  "versions_screen__follow_it": "Verfolgen",
+  "versions_screen__go_back_say": "Zu „{title}“ zurückgehen",
+  "versions_screen__go_back_sub": "Was Leute jetzt sehen, wird ersetzt. Du kannst jederzeit wieder wechseln.",
+  "versions_screen__go_back_title": "Zu dieser Version zurückgehen?",
+  "versions_screen__go_back_to_this": "Hierhin zurückgehen",
+  "versions_screen__how_show": "Wie Versionen angezeigt werden",
+  "versions_screen__intro": "Die gespeicherten Momentaufnahmen deiner App. Eine ist live, die anderen liegen im Regal.",
+  "versions_screen__live_meta": [
+    {
+      "declarations": [
+        "input visits",
+        "local visitsPlural = visits: plural"
+      ],
+      "selectors": [
+        "visitsPlural"
+      ],
+      "match": {
+        "visitsPlural=one": "Live seit {since} · {who} · {visits} Person hat in den letzten 24 Stunden vorbeigeschaut",
+        "visitsPlural=other": "Live seit {since} · {who} · {visits} Personen haben in den letzten 24 Stunden vorbeigeschaut"
+      }
+    }
+  ],
+  "versions_screen__no_match": "Keine Version passt.",
+  "versions_screen__not_live": "Noch nicht live",
+  "versions_screen__not_published": "Nicht veröffentlicht",
+  "versions_screen__on_shelf": "Im Regal",
+  "versions_screen__on_shelf_sub": "Zu jeder, die live war, kannst du gefahrlos zurückgehen. Neueste zuerst.",
+  "versions_screen__one_needs_you": "Eine braucht dich",
+  "versions_screen__one_on_way": "Eine ist unterwegs",
+  "versions_screen__open": "Öffnen",
+  "versions_screen__publish": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "Diese Änderung veröffentlichen",
+        "nPlural=other": "Alle {n} Änderungen veröffentlichen"
+      }
+    }
+  ],
+  "versions_screen__publish_say": "Mach {title} bereit zum Veröffentlichen",
+  "versions_screen__publish_sub": "Sie gehen zusammen raus. Ich prüfe sie zuerst und frage dich, bevor etwas live geht.",
+  "versions_screen__publish_title": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Änderung veröffentlichen",
+        "countPlural=other": "{count} Änderungen veröffentlichen"
+      }
+    }
+  ],
+  "versions_screen__review_it": "Ansehen",
+  "versions_screen__saved_not_published": "Gespeichert, noch nicht veröffentlicht.",
+  "versions_screen__see_more": "{n} weitere ansehen",
+  "versions_screen__show_fewer": "Weniger anzeigen",
+  "versions_screen__title": "Versionen",
+  "versions_screen__try_again_say": "„{title}“ noch einmal versuchen",
+  "versions_screen__up_to_date": "Du bist auf dem neuesten Stand",
+  "versions_screen__up_to_date_text": "Alles, was du gespeichert hast, ist das, was Leute jetzt sehen.",
+  "versions_screen__view_cards": "Karten",
+  "versions_screen__view_rows": "Zeilen",
+  "versions_screen__what_matters": "Was jetzt wichtig ist",
+  "versions_screen__what_people_see": "Was Leute jetzt sehen",
+  "versions_screen__whats_in_it": "Was drin ist",
+  "versions_screen__which": "Welche Versionen",
+  "versions_screen__why_live": "„{title}“ ist das, was Leute sehen. Alles, was du als Nächstes veröffentlichst, ersetzt sie, und du kannst jederzeit zurückgehen.",
+  "versions_screen__why_waiting": "„{title}“ ist gebaut und geprüft. Sie geht live, wenn du es sagst, und für deine Besucher ändert sich bis dahin nichts.",
+  "versions_screen__why_working": "„{title}“ wird gerade zusammengestellt. Deine Live-App bleibt bis zum letzten Schritt unberührt.",
+  "versions_screen__you_are_live": "Du bist live",
+  "virtual_user_drawer__all_visits": "Alle Besuche",
+  "virtual_user_drawer__allowed": "Was {name} nutzen darf",
+  "virtual_user_drawer__allowed_adversarial": "Bekommt absichtlich alles zu sehen, um zu prüfen, ob die Rolle den Zugriff wirklich verhindert.",
+  "virtual_user_drawer__allowed_anyone": "Darf die Teile deiner App nutzen, die jeder nutzen kann.",
+  "virtual_user_drawer__allowed_auditor": "Darf alles ansehen, was die Rolle erlaubt, aber nichts, was Daten ändern würde.",
+  "virtual_user_drawer__allowed_roles": "Darf alles nutzen, was die Rolle {roles} erlaubt. Alles andere ist tabu.",
+  "virtual_user_drawer__aria": "{name}, ein virtueller Nutzer",
+  "virtual_user_drawer__changing_visits": "Ändern, wie {name} vorbeischaut",
+  "virtual_user_drawer__cost_text": "Jeder Besuch verbraucht KI-Guthaben, auch wenn niemand zusieht. Deshalb wird das hier eingeschaltet und nie im Code.",
+  "virtual_user_drawer__cost_title": "Kostet jedes Mal ein wenig",
+  "virtual_user_drawer__gap_day": "Jeden Tag",
+  "virtual_user_drawer__gap_few": "Alle paar Tage",
+  "virtual_user_drawer__gap_week": "Jede Woche",
+  "virtual_user_drawer__goal_only": "Sie bekommen nur das Ziel, nie die Schritte. So finden sie ihren eigenen Weg, genau wie echte Leute.",
+  "virtual_user_drawer__goal_quote": "„{goal}“",
+  "virtual_user_drawer__goals_reached": [
+    {
+      "declarations": [
+        "input total",
+        "local totalPlural = total: plural"
+      ],
+      "selectors": [
+        "totalPlural"
+      ],
+      "match": {
+        "totalPlural=one": "{reached} von {total} Ziel erreicht",
+        "totalPlural=other": "{reached} von {total} Zielen erreicht"
+      }
+    }
+  ],
+  "virtual_user_drawer__how_often": "Wie oft",
+  "virtual_user_drawer__looked_around": "Hat sich umgesehen",
+  "virtual_user_drawer__minute_count": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "{n} Minute",
+        "nPlural=other": "{n} Minuten"
+      }
+    }
+  ],
+  "virtual_user_drawer__next_visit": "Nächster Besuch {ago}",
+  "virtual_user_drawer__no_goals": "Noch keine Ziele, ein Besuch würde also sofort enden. Bitte Pikku, {name} etwas zu tun zu geben.",
+  "virtual_user_drawer__no_guarantee": "Ein Besuch ohne Probleme ist eine gute Nachricht für heute, keine Garantie. Jeder Besuch läuft ein wenig anders.",
+  "virtual_user_drawer__no_problems": "Es sind keine Probleme aufgetreten.",
+  "virtual_user_drawer__not_visited": "{name} war noch nicht zu Besuch. Schick einen Besuch los, dann erscheint der Bericht hier.",
+  "virtual_user_drawer__on_visit_text": "Das dauert meist ein paar Minuten. Du kannst diese Seite verlassen. Der Bericht wartet hier.",
+  "virtual_user_drawer__on_visit_title": "{name} ist gerade zu Besuch",
+  "virtual_user_drawer__own_off": "{name} kommt nur, wenn du einen Besuch losschickst. Schalte das ein, und der Besuch kommt von selbst.",
+  "virtual_user_drawer__own_on": "{name} kommt zu einer zufälligen Zeit vorbei, sodass niemand zusieht, wenn etwas auffällt.",
+  "virtual_user_drawer__ran_into": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "Auf dem Weg ist 1 Problem aufgetreten.",
+        "nPlural=other": "Auf dem Weg sind {n} Probleme aufgetreten."
+      }
+    }
+  ],
+  "virtual_user_drawer__report_meta": "{ago}{duration} · auf deiner Vorschau-Seite",
+  "virtual_user_drawer__safe_text": "Besuche gehen nur auf deine Vorschau-Seite, nie auf deine Live-Seite oder zu echten Kunden. Ein Besuch endet nach 40 Aktionen oder früher, wenn sie fertig sind. Jeder verbraucht ein wenig KI-Guthaben, deshalb läuft nichts, bevor du es verlangst.",
+  "virtual_user_drawer__safe_title": "Gefahrlos ausprobieren",
+  "virtual_user_drawer__start_own": "{name} von selbst vorbeischauen lassen",
+  "virtual_user_drawer__stop_own": "Von-selbst-Besuche stoppen",
+  "virtual_user_drawer__stopped_early": "Vorzeitig beendet",
+  "virtual_user_drawer__stopped_early_title": "Der Besuch wurde vorzeitig beendet",
+  "virtual_user_drawer__summary_no_problems": "keine Probleme",
+  "virtual_user_drawer__summary_problems": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "1 Problem",
+        "nPlural=other": "{n} Probleme"
+      }
+    }
+  ],
+  "virtual_user_drawer__tab_about": "Info",
+  "virtual_user_drawer__tab_own": "Von selbst",
+  "virtual_user_drawer__tab_visits": "Besuche ({n})",
+  "virtual_user_drawer__times": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "Einmal",
+        "nPlural=other": "{n} Mal"
+      }
+    }
+  ],
+  "virtual_user_drawer__visit_summary": "{outcome} · {problems}",
+  "virtual_user_drawer__what_found": "Was sie gefunden haben",
+  "virtual_user_drawer__what_tried": "Was sie versucht haben",
+  "virtual_user_drawer__while_trying": "Beim Versuch: {goal}",
+  "virtual_user_drawer__will_try": "Was {name} versuchen wird",
+  "virtual_users__found_custom": "{name}: {detail}",
+  "virtual_users__found_schema_violation": "Deine App hat {name} eine fehlerhafte Antwort gegeben",
+  "virtual_users__found_server_error": "{name} ist auf deiner Seite auf einen Fehler gestoßen",
+  "virtual_users__found_transport_error": "{name} konnte deine Seite nicht erreichen",
+  "virtual_users__found_unexpected_success": "{name} ist an etwas gekommen, wo kein Zugang sein dürfte",
+  "virtual_users__goal_abandoned": "Aufgegeben",
+  "virtual_users__goal_completed": "Geschafft",
+  "virtual_users__goal_open": "Nicht dazu gekommen",
+  "virtual_users__goal_stuck": "Hängengeblieben",
+  "virtual_users__goal_suspended": "Zur Seite gelegt",
+  "virtual_users__just_now": "gerade eben",
+  "virtual_users__kind_accountable": "Erledigt echte Arbeit",
+  "virtual_users__kind_accountable_text": "Führt echte Aufgaben aus, auch auf deiner Live-Seite.",
+  "virtual_users__kind_adversarial": "Regeltester",
+  "virtual_users__kind_adversarial_text": "Versucht Dinge, die nicht erlaubt sein sollten.",
+  "virtual_users__kind_auditor": "Prüfer",
+  "virtual_users__kind_auditor_text": "Schaut sich nur um und ändert nie etwas.",
+  "virtual_users__kind_careless": "Abgelenkt",
+  "virtual_users__kind_careless_text": "Hetzt, überspringt Dinge und klickt doppelt, wenn unsicher.",
+  "virtual_users__kind_newcomer": "Erstbesucher",
+  "virtual_users__kind_newcomer_text": "Kennt deine App noch nicht und muss sich zurechtfinden.",
+  "virtual_users__kind_realistic": "Versiert",
+  "virtual_users__kind_realistic_text": "Weiß genau, was zu tun ist, und legt los.",
+  "virtual_users__kind_stale": "Kommt nach einer Weile wieder",
+  "virtual_users__kind_stale_text": "Erinnert sich an eine ältere Version deiner App.",
+  "virtual_users__outcome_all": "{name} hat alles geschafft, was auf dem Plan stand.",
+  "virtual_users__outcome_looked": "{name} hat sich in deiner App umgesehen.",
+  "virtual_users__outcome_none": "{name} hat nicht geschafft, was auf dem Plan stand.",
+  "virtual_users__outcome_some": "{name} hat {reached} von {total} Dingen geschafft, die auf dem Plan standen.",
+  "virtual_users__outcome_stopped": "Der Besuch von {name} wurde beendet, bevor er fertig war.",
+  "virtual_users_screen__about": "Info",
+  "virtual_users_screen__ask_add_some": "Pikku bitten, welche hinzuzufügen",
+  "virtual_users_screen__ask_turn_on": "Pikku bitten, sie einzuschalten",
+  "virtual_users_screen__each_one_pretends_to_be": "Jeder gibt sich als andere Art von Mensch aus. Besuche gehen nur auf deine Vorschau-Seite.",
+  "virtual_users_screen__empty_text": "Ein virtueller Nutzer gibt sich als eine Art Mensch aus, der deine App nutzt: ein vielbeschäftigter Admin, ein Erstbesucher, ein Kunde in Eile. Er versucht auf deiner Vorschau-Seite etwas zu erledigen und sagt dir in einfachen Worten, wo er nicht weiterkam. Er kann nichts Echtes kaputt machen.",
+  "virtual_users_screen__empty_title": "Lass KI-Stellvertreter deine App ausprobieren, bevor es deine Nutzer tun",
+  "virtual_users_screen__found_by_many": [
+    {
+      "declarations": [
+        "input problems",
+        "local problemsPlural = problems: plural"
+      ],
+      "selectors": [
+        "problemsPlural"
+      ],
+      "match": {
+        "problemsPlural=one": "{problems} Problem von {count} virtuellen Nutzern gefunden",
+        "problemsPlural=other": "{problems} Probleme von {count} virtuellen Nutzern gefunden"
+      }
+    }
+  ],
+  "virtual_users_screen__found_by_name": [
+    {
+      "declarations": [
+        "input problems",
+        "local problemsPlural = problems: plural"
+      ],
+      "selectors": [
+        "problemsPlural"
+      ],
+      "match": {
+        "problemsPlural=one": "{problems} Problem von {name} gefunden",
+        "problemsPlural=other": "{problems} Probleme von {name} gefunden"
+      }
+    }
+  ],
+  "virtual_users_screen__found_none": "Ihre letzten Besuche haben keine Probleme gefunden",
+  "virtual_users_screen__last_line": "{did} · {problems} · {when}",
+  "virtual_users_screen__next_step": "Nächster Schritt",
+  "virtual_users_screen__not_visited": "War noch nicht zu Besuch",
+  "virtual_users_screen__off_text": "Schalte sie ein, dann können sie {app} besuchen. Pikku stellt zuerst eine Änderungsanfrage, die du freigibst. Für deine Besucher ändert sich nichts, bis du das tust.",
+  "virtual_users_screen__off_title": "Virtuelle Nutzer sind in {app} ausgeschaltet",
+  "virtual_users_screen__on_visit_now": "Gerade zu Besuch…",
+  "virtual_users_screen__read_found": "Lesen, was {name} gefunden hat",
+  "virtual_users_screen__reading_past_visits": "Frühere Besuche werden gelesen",
+  "virtual_users_screen__say_describe": "Beschreibe die Arten von Leuten, die meine App nutzen, damit sie sie als virtuelle Nutzer besuchen können. Reiche es als Änderungsanfrage (change request) ein und schreib ausdrücklich „change request“.",
+  "virtual_users_screen__say_turn_on": "Reiche eine Änderungsanfrage mit dem Titel \"Change request: Turn on virtual users in {app}\" ein, damit meine virtuellen Nutzer sie besuchen können. Schreibe in deiner Antwort \"change request\". Mach es einfach und sag mir in einem einfachen Satz Bescheid, wenn es erledigt ist. Frag mich nicht nach Dateien oder Einstellungen.",
+  "virtual_users_screen__send": "{name} deine App ausprobieren lassen",
+  "virtual_users_screen__send_first": "{name} auf einen Besuch schicken",
+  "virtual_users_screen__send_on_visit": "Auf einen Besuch schicken",
+  "virtual_users_screen__sending_a_virtual_user_on": "Ein virtueller Nutzer wird auf einen Besuch geschickt",
+  "virtual_users_screen__text": "KI-Stellvertreter für die Leute, die deine App nutzen. Schick einen auf einen Besuch, und er sagt dir, wo er nicht weiterkam.",
+  "virtual_users_screen__title": "Virtuelle Nutzer",
+  "virtual_users_screen__visiting": "Zu Besuch…",
+  "virtual_users_screen__visits_on_own": "kommen von selbst vorbei",
+  "virtual_users_screen__who_can_visit": "Wer vorbeischauen kann",
+  "virtual_users_screen__why_clean": "Ein Besuch ohne Probleme ist eine gute Nachricht für heute, keine Garantie. Jeder Besuch läuft ein wenig anders, schick sie also nach jeder Änderung erneut los.",
+  "virtual_users_screen__why_found": "Öffne den Besuch von {name}, um zu lesen, was schiefging, und bitte dann Pikku, es zu beheben.",
+  "week_receipt__the_receipt": "Der Beleg",
+  "week_step_strip__done": "Fertig",
+  "week_step_strip__progress": "Schritt {step} von {total}, {what}. Läuft seit {time}. Deine Live-App bleibt bis zum letzten Schritt unberührt.",
+  "week_step_strip__working_on_it": "In Arbeit",
+  "week_strip__count_word": "{count} {word}",
+  "week_strip__day_aria": "{label}. {sentence}",
+  "week_strip__day_label": "{weekday} {date} {month}",
+  "week_strip__days_of_this_week": "Tage dieser Woche",
+  "week_strip__fri_long": "Freitag",
+  "week_strip__fri_short": "Fr",
+  "week_strip__hour": "{hour}:00",
+  "week_strip__mon_long": "Montag",
+  "week_strip__mon_short": "Mo",
+  "week_strip__oct": "Okt",
+  "week_strip__quiet_day": "Ruhiger Tag",
+  "week_strip__sat_long": "Samstag",
+  "week_strip__sat_short": "Sa",
+  "week_strip__sep": "Sep",
+  "week_strip__sun_long": "Sonntag",
+  "week_strip__sun_short": "So",
+  "week_strip__thu_long": "Donnerstag",
+  "week_strip__thu_short": "Do",
+  "week_strip__today": "Heute",
+  "week_strip__tue_long": "Dienstag",
+  "week_strip__tue_short": "Di",
+  "week_strip__wed_long": "Mittwoch",
+  "week_strip__wed_short": "Mi",
+  "week_strip__word_cancelled": "abgebrochen",
+  "week_strip__word_failed": "nicht live gegangen",
+  "week_strip__word_live": "live",
+  "week_strip__word_rolled_back": "zurückgegangen",
+  "week_strip__word_waiting": "wartend",
+  "week_strip__word_was_live": "war live",
+  "week_strip__word_working": "wird veröffentlicht",
+  "workflow_graph__auth": "Anmeldung",
+  "workflow_graph__edge_branch": "Zweig {n}",
+  "workflow_graph__edge_default": "Standard",
+  "workflow_graph__edge_else": "sonst",
+  "workflow_graph__edge_on_error": "bei Fehler",
+  "workflow_graph__edge_then": "dann",
+  "workflow_graph__handle_after": "danach",
+  "workflow_graph__handle_default": "Standard",
+  "workflow_graph__handle_done": "fertig",
+  "workflow_graph__handle_each": "jeweils",
+  "workflow_graph__handle_elif": "sonst wenn {n}",
+  "workflow_graph__handle_else": "sonst",
+  "workflow_graph__handle_if": "wenn",
+  "workflow_graph__handle_next": "weiter",
+  "workflow_graph__handler_on_connect": "onConnect",
+  "workflow_graph__handler_on_disconnect": "onDisconnect",
+  "workflow_graph__handler_on_message": "onMessage",
+  "workflow_graph__middleware": "Middleware",
+  "workflow_graph__node_branch": "Verzweigung",
+  "workflow_graph__node_cancel": "Abbrechen",
+  "workflow_graph__node_channel": "Kanal",
+  "workflow_graph__node_channel_wiring": "Kanalanbindung",
+  "workflow_graph__node_check": "Prüfen",
+  "workflow_graph__node_every": "Jeder",
+  "workflow_graph__node_filter": "Filtern",
+  "workflow_graph__node_generic": "Allgemeiner Knoten (Umsetzung nötig)",
+  "workflow_graph__node_inline": "Inline",
+  "workflow_graph__node_loop": "Schleife",
+  "workflow_graph__node_message_router": "Nachrichtenverteiler",
+  "workflow_graph__node_parallel": "Parallel",
+  "workflow_graph__node_return": "Rückgabe",
+  "workflow_graph__node_set": "Setzen",
+  "workflow_graph__node_sleep": "Warten",
+  "workflow_graph__node_some": "Einige",
+  "workflow_graph__node_suspend": "Anhalten",
+  "workflow_graph__node_switch": "Umschalten",
+  "workflow_graph__none": "Keine",
+  "workflow_graph__not_wired": "Nicht angebunden",
+  "workflow_graph__open": "Öffnen",
+  "workflow_graph__permissions": "Berechtigungen",
+  "workflow_graph__referenced": "Verwendet von",
+  "workflow_graph__retries": "Wiederholungen",
+  "workflow_graph__retries_value": "Wiederholungen: {n}",
+  "workflow_graph__retry_delay": "Wartezeit bis zur Wiederholung",
+  "workflow_graph__retry_delay_value": "Wartezeit bis zur Wiederholung: {n}",
+  "workflow_graph__scroll_sideways": "Seitlich scrollen",
+  "workflow_graph__scroll_vertical": "Nach oben und unten scrollen",
+  "workflow_graph__selected": "Ausgewählt",
+  "workflow_graph__status_cancelled": "Abgebrochen",
+  "workflow_graph__status_done": "Fertig",
+  "workflow_graph__status_failed": "Fehlgeschlagen",
+  "workflow_graph__status_pending": "Ausstehend",
+  "workflow_graph__status_running": "Läuft",
+  "workflow_graph__status_scheduled": "Geplant",
+  "workflow_graph__status_skipped": "Übersprungen",
+  "workflow_graph__status_suspended": "Angehalten",
+  "workflow_graph__triggered_this_run": "In diesem Lauf ausgelöst",
+  "workflow_graph__wiring_cli": "CLI",
+  "workflow_graph__wiring_http": "HTTP",
+  "workflow_graph__wiring_mcp_prompt": "MCP Prompt",
+  "workflow_graph__wiring_mcp_resource": "MCP Resource",
+  "workflow_graph__wiring_mcp_tool": "MCP Tool",
+  "workflow_graph__wiring_queue": "Warteschlange",
+  "workflow_graph__wiring_schedule": "Zeitplan",
+  "workflow_graph__wiring_trigger": "Auslöser"
+}

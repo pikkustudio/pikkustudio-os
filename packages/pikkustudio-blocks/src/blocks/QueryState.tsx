@@ -1,8 +1,9 @@
+import type { I18nNode } from '@pikku/react'
 import type { ReactNode } from 'react'
 import type { UseQueryResult } from '@tanstack/react-query'
 import { ErrorState } from './ErrorState'
 
-export function QueryState<T>({ query, skeleton, empty, children }: { query: UseQueryResult<T>; skeleton: ReactNode; empty?: (data: T) => ReactNode | null; children: (data: T) => ReactNode }) {
+export function QueryState<T>({ query, skeleton, empty, children }: { query: UseQueryResult<T>; skeleton: I18nNode; empty?: (data: T) => ReactNode | null; children: (data: T) => ReactNode }) {
   if (query.isPending) return <div role="status" aria-busy="true">{skeleton}</div>
   if (query.isError) return <ErrorState error={query.error} onRetry={() => query.refetch()} retrying={query.isFetching} />
   return <>{empty?.(query.data) ?? children(query.data)}</>

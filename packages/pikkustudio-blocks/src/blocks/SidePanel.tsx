@@ -1,17 +1,18 @@
+import type { I18nNode, I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
-import { useEffect, type ReactNode } from 'react'
+import { useEffect } from 'react'
 import { X } from 'lucide-react'
 
-/** The right-hand panel for any form or detail. Plain white, like Pikku's; closes on Escape. */
-export function SidePanel({ title, sub, onClose, children }: { title: string; sub?: string; onClose: () => void; children: ReactNode }) {
+/** The end-hand panel for any form or detail. Plain white, like Pikku's; closes on Escape. */
+export function SidePanel({ title, sub, onClose, children }: { title: I18nString; sub?: I18nString; onClose: () => void; children: I18nNode }) {
   useEffect(() => {
     const k = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
     window.addEventListener('keydown', k)
     return () => window.removeEventListener('keydown', k)
   }, [onClose])
   return (
-    <aside role="dialog" aria-label={title} className="fixed inset-y-0 right-0 z-50 flex w-102 max-w-full flex-col border-l border-border bg-card shadow-[0_24px_56px_-14px_rgba(8,40,52,0.35)] @min-[1700px]/app:w-120">
-      <div className="flex items-start gap-0.5 pt-4 pr-3 pb-2.5 pl-6">
+    <aside role="dialog" aria-label={title} className="fixed inset-y-0 end-0 z-50 flex w-102 max-w-full flex-col border-s border-border bg-card shadow-[0_24px_56px_-14px_rgba(8,40,52,0.35)] @min-[1700px]/app:w-120">
+      <div className="flex items-start gap-0.5 pt-4 pe-3 pb-2.5 ps-6">
         <span className="min-w-0 flex-1">
           <h2 className="text-[24px] leading-[1.2] font-bold tracking-[-0.012em] text-balance">{title}</h2>
           {sub ? <p className="mt-1 text-[15px] text-ink-2">{sub}</p> : null}

@@ -1,4 +1,5 @@
 import React from 'react'
+import { asI18n, type I18nString } from '@pikku/react'
 import { Handle, Position } from '@xyflow/react'
 import {
   Ban,
@@ -10,6 +11,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { useGraphRun } from '../../context/GraphHostContext'
+import { useGraphM, type GraphM } from '../../context/MessagesContext'
 import { useFlowDirection } from '../../context/FlowDirectionContext'
 import {
   NodeTile,
@@ -21,7 +23,7 @@ import {
 
 interface OutputHandle {
   id: string
-  label?: string
+  label?: I18nString | number
 }
 
 type HighlightType = 'focused' | 'referenced' | null
@@ -31,9 +33,14 @@ export const FLOW_NODE_WIDTH = 264
 export const flowNodeHeight = (handleCount: number): number =>
   Math.max(72, handleCount * 24 + 8)
 
+type StatusWord = Extract<keyof GraphM, `status_${string}`>
+
 interface RunLook {
   icon: LucideIcon
-  word: string
+  /** Message key for the word on the chip. */
+  word: StatusWord
+  /** A status this graph has no word for is shown as the host sent it. */
+  raw?: string
   ring: string
   chip: string
   spin?: boolean
@@ -43,13 +50,13 @@ interface RunLook {
 const runLooks: Record<string, RunLook> = {
   completed: {
     icon: Check,
-    word: 'Done',
+    word: 'status_done',
     ring: 'ring-success',
     chip: 'bg-success-soft text-success-foreground',
   },
   running: {
     icon: Loader,
-    word: 'Running',
+    word: 'status_running',
     ring: 'ring-info',
     chip: 'bg-info-soft text-info-foreground',
     spin: true,
@@ -57,25 +64,25 @@ const runLooks: Record<string, RunLook> = {
   },
   failed: {
     icon: X,
-    word: 'Failed',
+    word: 'status_failed',
     ring: 'ring-destructive',
     chip: 'bg-destructive-soft text-destructive',
   },
   pending: {
     icon: Clock,
-    word: 'Pending',
+    word: 'status_pending',
     ring: '',
     chip: 'bg-secondary text-muted-foreground',
   },
   suspended: {
     icon: Hourglass,
-    word: 'Suspended',
+    word: 'status_suspended',
     ring: 'ring-warning',
     chip: 'bg-secondary text-warning-foreground',
   },
   cancelled: {
     icon: Ban,
-    word: 'Cancelled',
+    word: 'status_cancelled',
     ring: '',
     chip: 'bg-secondary text-muted-foreground',
   },
@@ -86,11 +93,11 @@ const runLookFor = (status: string): RunLook => {
     case 'succeeded':
       return runLooks.completed
     case 'scheduled':
-      return { ...runLooks.pending, word: 'Scheduled' }
+      return { ...runLooks.pending, word: 'status_scheduled' }
     case 'skipped':
-      return { ...runLooks.cancelled, word: 'Skipped' }
+      return { ...runLooks.cancelled, word: 'status_skipped' }
     default:
-      return runLooks[status] ?? { ...runLooks.pending, word: status }
+      return runLooks[status] ?? { ...runLooks.pending, word: 'status_pending', raw: status }
   }
 }
 
@@ -99,9 +106,9 @@ interface FlowNodeProps {
   tone?: NodeTone
   hasInput?: boolean
   outputHandles?: OutputHandle[]
-  label?: string
+  label?: I18nString
   labelDimmed?: boolean
-  subtitle?: string
+  subtitle?: I18nString
   onClick?: () => void
   highlightType?: HighlightType
   /** The run was triggered through this node (wiring nodes only). */
@@ -124,6 +131,7 @@ export const FlowNode: React.FC<FlowNodeProps> = ({
 }) => {
   const vertical = useFlowDirection() === 'DOWN'
   const run = useGraphRun()
+  const m = useGraphM()
 
   const runStatus = React.useMemo(() => {
     if (!run?.runId || !nodeId) return null
@@ -175,12 +183,12 @@ export const FlowNode: React.FC<FlowNodeProps> = ({
       onClick={onClick}
       onKeyDown={handleKeyDown}
     >
-      {look?.ring && (
+      {look?.ring ? (
         <span
           aria-hidden="true"
           className={`pointer-events-none absolute -inset-px rounded-card ring-2 ${look.ring} ${look.pulse ? 'animate-pulse motion-reduce:animate-none' : ''}`}
         />
-      )}
+      ) : null}
 
       {hasInput && (
         <Handle
@@ -217,17 +225,17 @@ export const FlowNode: React.FC<FlowNodeProps> = ({
                   className={look.spin ? 'animate-spin motion-reduce:animate-none' : ''}
                   aria-hidden="true"
                 />
-                {look.word}
+                {look.raw ? asI18n(look.raw) : m[look.word]()}
               </span>
             )}
             {active && (
               <span className="inline-flex items-center rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-ink-2">
-                Triggered this run
+                {m.triggered_this_run()}
               </span>
             )}
             {highlightType && (
               <span className="inline-flex items-center rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-ink-2">
-                {highlightType === 'focused' ? 'Selected' : 'Referenced'}
+                {highlightType === 'focused' ? m.selected() : m.referenced()}
               </span>
             )}
           </span>
@@ -253,16 +261,16 @@ export const FlowNode: React.FC<FlowNodeProps> = ({
               className={handleClass}
               style={
                 vertical
-                  ? { left: `${offsetPercent}%` }
+                  ? { left: `${offsetPercent}%` } // physical: the workflow canvas is left-to-right in every language (flow runs source to target)
                   : { top: `${offsetPercent}%` }
               }
             />
             {showLabel && (
               <span
-                className={`absolute rounded-lg bg-card px-1.5 py-0.5 font-mono text-[11px] whitespace-nowrap text-ink-2 ${vertical ? 'top-full mt-1 -translate-x-1/2' : 'left-full ml-1 -translate-y-1/2'}`}
+                className={`absolute rounded-lg bg-card px-1.5 py-0.5 font-mono text-[11px] whitespace-nowrap text-ink-2 ${vertical ? 'top-full mt-1 -translate-x-1/2' : 'left-full ml-1 -translate-y-1/2'}`} // physical: the workflow canvas is left-to-right in every language (flow runs source to target)
                 style={
                   vertical
-                    ? { left: `${offsetPercent}%` }
+                    ? { left: `${offsetPercent}%` } // physical: the workflow canvas is left-to-right in every language (flow runs source to target)
                     : { top: `${offsetPercent}%` }
                 }
               >

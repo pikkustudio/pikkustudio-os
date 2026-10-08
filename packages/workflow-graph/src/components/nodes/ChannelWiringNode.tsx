@@ -1,14 +1,17 @@
 import React from 'react'
+import { asI18n, sep, type I18nString } from '@pikku/react'
+import { outside } from '../../lib/outside'
 import type { Node } from '@xyflow/react'
 import type { GraphNodeProps } from '../../types'
 import { Radio } from 'lucide-react'
 import { useGraphActions } from '../../context/GraphHostContext'
 import { NodeTile, nodeCardClass } from '../NodeTile'
+import { useGraphM } from '../../context/MessagesContext'
 import { ChannelRow } from '../ChannelRow'
 
 interface ChannelWiringNodeData {
   colorKey: string
-  channelName: string
+  channelName?: I18nString
   onConnect?: string
   onDisconnect?: string
   onMessage?: string
@@ -19,6 +22,7 @@ export const ChannelWiringNode: React.FC<
   GraphNodeProps<ChannelWiringNodeData>
 > = ({ data, id }) => {
   const { openWorkflowStep } = useGraphActions()
+  const m = useGraphM()
 
   const handleClick = React.useCallback(() => {
     openWorkflowStep(id, 'trigger')
@@ -45,34 +49,34 @@ export const ChannelWiringNode: React.FC<
         <NodeTile icon={Radio} tone="wiring" />
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="truncate text-[15px] leading-5 font-bold">
-            {data.channelName}
+            {data.channelName ?? m.node_channel()}
           </span>
           <span className="truncate text-[13px] leading-[18px] text-ink-2">
-            Channel wiring
+            {m.node_channel_wiring()}
           </span>
         </div>
       </div>
 
       <ChannelRow
-        label="onConnect"
+        label={m.handler_on_connect()}
         handleId="onConnect"
         hasTarget={!!data.onConnect}
       />
       <ChannelRow
-        label="onMessage"
+        label={m.handler_on_message()}
         handleId="onMessage"
         hasTarget={!!data.onMessage}
       />
       {routeEntries.map(([route, target]) => (
         <ChannelRow
           key={route}
-          label={`→ ${route}`}
+          label={<>{sep('→ ')}{asI18n(route)}</>}
           handleId={`route-${route}`}
           hasTarget={!!target}
         />
       ))}
       <ChannelRow
-        label="onDisconnect"
+        label={m.handler_on_disconnect()}
         handleId="onDisconnect"
         hasTarget={!!data.onDisconnect}
       />
@@ -97,7 +101,7 @@ export const getChannelWiringNodeConfig = (
     position,
     data: {
       colorKey: 'teal',
-      channelName: wire.name || 'Channel',
+      channelName: outside(wire.name),
       onConnect: wire.onConnect,
       onDisconnect: wire.onDisconnect,
       onMessage: wire.onMessage,

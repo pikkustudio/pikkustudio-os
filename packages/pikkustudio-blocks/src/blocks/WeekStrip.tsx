@@ -1,3 +1,4 @@
+import { asI18n, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { Check, Clock, LoaderCircle, TriangleAlert, Undo2, X } from 'lucide-react'
 import type { Outcome, Version } from '../mocks/versions'
@@ -30,14 +31,15 @@ export const outcomeGlyph = glyph
 const order: Outcome[] = ['working', 'waiting', 'live', 'failed', 'rolled-back', 'was-live', 'cancelled']
 
 /** Sentence for a day: "1 live, 1 publishing". Never a bare number. */
-export const daySentence = (vs: Version[]) =>
-  vs.length === 0
-    ? m.week_strip__quiet_day()
-    : order
+export const daySentence = (vs: Version[]): I18nString => {
+  if (vs.length === 0) return m.week_strip__quiet_day()
+  const text = order
         .map((o) => [o, vs.filter((v) => v.outcome === o).length] as const)
         .filter(([, n]) => n)
         .map(([o, n]) => `${n} ${glyph[o].word()}`)
         .join(', ')
+  return asI18n(text)
+}
 
 /** Seven small white day cards. Dots and a sentence only, no titles: they are about 155px wide. */
 export function WeekStrip({ byDay, today, picked, onPick }: { byDay: Version[][]; today: number | null; picked: number | null; onPick: (i: number) => void }) {
@@ -52,9 +54,9 @@ export function WeekStrip({ byDay, today, picked, onPick }: { byDay: Version[][]
             type="button"
             disabled={vs.length === 0}
             aria-pressed={picked === i}
-            aria-label={`${d.label}. ${daySentence(vs)}`}
+            aria-label={m.week_strip__day_aria({ label: d.label, sentence: daySentence(vs) })}
             onClick={() => onPick(i)}
-            className={`flex min-h-31 flex-col items-start gap-1 rounded-[14px] border bg-card p-3 text-left shadow-card transition-colors enabled:hover:border-input focus-visible:outline-3 focus-visible:outline-ring ${picked === i ? 'border-primary ring-[3px] ring-accent' : here ? 'border-primary/50 ring-[3px] ring-accent' : 'border-border'} ${vs.length === 0 ? 'text-muted-foreground' : ''}`}
+            className={`flex min-h-31 flex-col items-start gap-1 rounded-[14px] border bg-card p-3 text-start shadow-card transition-colors enabled:hover:border-input focus-visible:outline-3 focus-visible:outline-ring ${picked === i ? 'border-primary ring-[3px] ring-accent' : here ? 'border-primary/50 ring-[3px] ring-accent' : 'border-border'} ${vs.length === 0 ? 'text-muted-foreground' : ''}`}
           >
             <span className="text-[14px] font-bold">{here ? m.week_strip__today() : d.name}</span>
             <span className="text-[20px] leading-none font-bold">{d.date}</span>
@@ -85,14 +87,14 @@ export function WeekDayRuler({ items, now }: { items: Version[]; now?: string })
     <div className="px-1 pb-1" aria-hidden="true">
       <div className="relative h-4 border-b border-border">
         {items.map((v) => (
-          <i key={v.id} style={{ left: `${pos(v.time)}%`, transform: 'translateX(-50%)' }} className={`absolute bottom-[-5px] size-2.5 rounded-full ${dot[v.outcome]}`} />
+          <i key={v.id} style={{ left: `${pos(v.time)}%`, transform: 'translateX(-50%)' }} className={`absolute bottom-[-5px] size-2.5 rounded-full ${dot[v.outcome]}`} />{/* physical: the day timeline runs left to right in every language */}
         ))}
-        {now && <i style={{ left: `${pos(now)}%`, transform: 'translateX(-50%)' }} className="absolute bottom-[-1px] h-3 w-0.5 rounded-full bg-primary" />}
+        {now ? <i style={{ left: `${pos(now)}%`, transform: 'translateX(-50%)' }} className="absolute bottom-[-1px] h-3 w-0.5 rounded-full bg-primary" /> : null}{/* physical: the day timeline runs left to right in every language */}
       </div>
       <div className="relative mt-1.5 h-4 text-[13px] text-muted-foreground">
         {['06', '10', '14', '18', '22'].map((h, i) => (
-          <span key={h} style={{ left: `${i * 25}%`, transform: `translateX(-${i * 25}%)` }} className="absolute">
-            {h}:00
+          <span key={h} style={{ left: `${i * 25}%`, transform: `translateX(-${i * 25}%)` }} className="absolute">{/* physical: the day timeline runs left to right in every language */}
+            {m.week_strip__hour({ hour: h })}
           </span>
         ))}
       </div>

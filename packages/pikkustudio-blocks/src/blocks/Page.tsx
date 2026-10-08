@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { I18nNode } from '@pikku/react'
 import { cva, type VariantProps } from 'class-variance-authority'
 
 const page = cva('mx-auto flex max-w-[1160px] flex-col @min-[1700px]/app:max-w-[1380px]', {
@@ -8,6 +8,6 @@ const page = cva('mx-auto flex max-w-[1160px] flex-col @min-[1700px]/app:max-w-[
   defaultVariants: { gap: 'default' },
 })
 
-export function Page({ children, ...v }: { children: ReactNode } & VariantProps<typeof page>) {
+export function Page({ children, ...v }: { children: I18nNode } & VariantProps<typeof page>) {
   return <div className={page(v)}>{children}</div>
 }

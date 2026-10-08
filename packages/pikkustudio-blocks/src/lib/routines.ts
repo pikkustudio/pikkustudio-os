@@ -1,16 +1,20 @@
+import { asI18n, type I18nString } from '@pikku/react'
 import { useContext } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { m } from '@/i18n/messages'
+import { getLocale } from '@/paraglide/runtime.js'
 import { ProjectRpcCtx } from './projectRpc'
 
 // Same shape the real workflow graph reads (steps with a flow or rpc name), written in the person's own words.
 export type StepKind = 'when' | 'do' | 'ask' | 'wait' | 'end'
 export type StepState = 'done' | 'failed' | 'skipped' | 'waiting' | 'running'
-export type Step = { id: string; kind: StepKind; title: string; says: string; by?: string; ifNot?: string }
+export type Step = { id: string; kind: StepKind; title: I18nString; says: I18nString; by?: I18nString; ifNot?: I18nString }
 export type StepNote = { in?: string; out?: string; error?: string; code?: string; tries?: number }
-export type Run = { id: string; when: string; took: string; ok: boolean; note: string; steps: Record<string, StepState>; why?: string; notes?: Record<string, StepNote>; older?: Step[] }
+export type Run = { id: string; when: I18nString; took: I18nString; ok: boolean; note: I18nString; wrongAt?: I18nString; steps: Record<string, StepState>; why?: string; notes?: Record<string, StepNote>; older?: Step[] }
 /** One thing that happened in a run, in order. `at` is milliseconds since it began. */
 export type Ev = { seq: number; step: string; type: 'started' | 'retried' | 'done' | 'failed'; at: number }
-export type Routine = { id: string; name: string; what: string; runs: string; on: boolean; steps: Step[]; history: Run[] }
+/** `cron` is set for a routine that runs on a schedule; `runs` says when it runs, in words. */
+export type Routine = { id: string; name: string; what: string; runs: I18nString; cron?: string; on: boolean; steps: Step[]; history: Run[] }
 
 const runWord: Record<StepState, string> = { done: 'completed', failed: 'failed', skipped: 'cancelled', waiting: 'pending', running: 'running' }
 
@@ -20,24 +24,22 @@ export function toMeta(r: Routine, steps: Step[] = r.steps) {
   rest.forEach((s, i) => {
     const next = rest[i + 1]?.id
     if (s.kind === 'end') nodes[s.id] = { flow: 'return', stepName: s.title, description: s.says }
-    else if (s.kind === 'wait') nodes[s.id] = { flow: 'sleep', stepName: s.title, description: s.says, duration: 'a quiet moment', next }
+    else if (s.kind === 'wait') nodes[s.id] = { flow: 'sleep', stepName: s.title, description: s.says, duration: m.routines__quiet_moment(), next }
     else if (s.kind === 'ask') {
-      nodes[s.id] = { flow: 'branch', stepName: s.title, condition: { expression: 'Yes' }, thenEntry: next, elseEntry: `${s.id}-no` }
-      nodes[`${s.id}-no`] = { flow: 'return', stepName: s.ifNot ?? 'Stops here' }
-    } else nodes[s.id] = { rpcName: s.by ?? 'Your app', stepName: s.title, description: s.says, next }
+      nodes[s.id] = { flow: 'branch', stepName: s.title, condition: { expression: m.routines__yes() }, thenEntry: next, elseEntry: `${s.id}-no` }
+      nodes[`${s.id}-no`] = { flow: 'return', stepName: s.ifNot ?? m.routines__stops_here() }
+    } else nodes[s.id] = { rpcName: s.by ?? m.routines__your_app(), stepName: s.title, description: s.says, next }
   })
   const start = rest[0].id
-  const timed = r.runs.startsWith('Every')
-  return { name: r.name, steps: [], nodes, entryNodeIds: [start], wires: timed ? { schedule: [{ cron: r.runs.replace(/^Every /, ''), startNode: start }] } : { trigger: [{ name: when.title, startNode: start }] } }
+  return { name: r.name, steps: [], nodes, entryNodeIds: [start], wires: r.cron ? { schedule: [{ cron: r.cron, startNode: start }] } : { trigger: [{ name: when.title, startNode: start }] } }
 }
 
 /** A run as the graph reads it: the state of every step, and what started it. */
 export function toRun(r: Routine, run: Run, states: Record<string, StepState>, running = false) {
-  const timed = r.runs.startsWith('Every')
   return {
     runId: run.id,
     status: running ? 'running' : run.ok ? 'completed' : 'failed',
-    wire: timed ? { type: 'scheduler', id: r.runs } : { type: 'trigger' },
+    wire: r.cron ? { type: 'scheduler', id: r.cron } : { type: 'trigger' },
     stepStates: new Map(Object.entries(states).map(([id, st]) => [id, { status: runWord[st] }])),
   }
 }
@@ -71,29 +73,34 @@ type RealStep = { stepId: string; status: string; result?: unknown; error?: { me
 type RealRun = { id: string; status: string; error?: { message?: string }; createdAt: string; updatedAt: string }
 
 const nice = (id: string) => id.replace(/[-_.]/g, ' ').replace(/^./, (c) => c.toUpperCase())
+// Step names and descriptions come from the project's own workflows, so they are not ours to translate.
+const say = (text: string): I18nString => asI18n(text)
 const stateOf: Record<string, StepState> = { succeeded: 'done', failed: 'failed', running: 'running', scheduled: 'running', suspended: 'waiting', pending: 'waiting' }
 const show = (v: unknown) => (v === undefined ? undefined : typeof v === 'string' ? v : JSON.stringify(v))
 
-const stepsOf = (id: string, m: WorkflowMeta): Step[] => {
-  const nodes = m.nodes ?? {}
-  const cron = m.wires?.schedule?.[0]?.cron
-  const out: Step[] = [{ id: 'when', kind: 'when', title: cron ? `On a schedule: ${cron}` : (m.wires?.trigger?.[0]?.name ?? 'When it is asked to run'), says: 'This is what starts it.' }]
+const stepsOf = (id: string, meta: WorkflowMeta): Step[] => {
+  const nodes = meta.nodes ?? {}
+  const cron = meta.wires?.schedule?.[0]?.cron
+  const out: Step[] = [{ id: 'when', kind: 'when', title: cron ? m.routines__on_a_schedule({ cron }) : meta.wires?.trigger?.[0]?.name ? say(meta.wires.trigger[0].name) : m.routines__when_asked(), says: m.routines__what_starts_it() }]
   const seen = new Set<string>()
-  let cur: string | undefined = m.entryNodeIds?.[0]
+  let cur: string | undefined = meta.entryNodeIds?.[0]
   while (cur && !seen.has(cur) && nodes[cur]) {
     seen.add(cur)
     const n: Node = nodes[cur]
-    const title = n.stepName ?? nice(cur)
-    if (n.flow === 'return') out.push({ id: cur, kind: 'end', title, says: n.description ?? '' })
-    else if (n.flow === 'sleep') out.push({ id: cur, kind: 'wait', title, says: n.description ?? '' })
-    else if (n.flow === 'branch') out.push({ id: cur, kind: 'ask', title, says: n.description ?? '', ifNot: n.elseEntry ? nodes[n.elseEntry]?.stepName : undefined })
-    else out.push({ id: cur, kind: 'do', title, says: n.description ?? '', by: n.rpcName ? nice(n.rpcName.replace(/^.*:/, '')) : undefined })
+    const title = say(n.stepName ?? nice(cur))
+    if (n.flow === 'return') out.push({ id: cur, kind: 'end', title, says: say(n.description ?? '') })
+    else if (n.flow === 'sleep') out.push({ id: cur, kind: 'wait', title, says: say(n.description ?? '') })
+    else if (n.flow === 'branch') out.push({ id: cur, kind: 'ask', title, says: say(n.description ?? ''), ifNot: n.elseEntry ? say(nodes[n.elseEntry]?.stepName ?? '') : undefined })
+    else out.push({ id: cur, kind: 'do', title, says: say(n.description ?? ''), by: n.rpcName ? say(nice(n.rpcName.replace(/^.*:/, ''))) : undefined })
     cur = n.flow === 'branch' ? n.thenEntry : n.next
   }
   return out
 }
 
-const dayOf = (iso: string) => new Date(iso).toLocaleString(undefined, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+const dayOf = (iso: string): I18nString => {
+  const text = new Date(iso).toLocaleString(getLocale(), { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+  return asI18n(text)
+}
 
 const runOf = (r: RealRun, steps: Step[], real: RealStep[]): Run => {
   const by = new Map(real.map((s) => [s.stepId, s]))
@@ -109,9 +116,10 @@ const runOf = (r: RealRun, steps: Step[], real: RealStep[]): Run => {
   return {
     id: r.id,
     when: dayOf(r.createdAt),
-    took: `${secs} seconds`,
+    took: m.routines__took_seconds({ count: secs }),
     ok: r.status === 'completed',
-    note: failed ? `Went wrong at ${failed.title}` : r.status === 'completed' ? 'Ran fine' : nice(r.status),
+    wrongAt: failed?.title,
+    note: failed ? m.routines__went_wrong_at({ step: failed.title }) : r.status === 'completed' ? m.routines__ran_fine() : say(nice(r.status)),
     steps: states,
     why: r.error?.message ?? (failed ? notes[failed.id]?.error : undefined),
     notes,
@@ -128,12 +136,12 @@ export const useRoutines = (key: string) => {
     queryFn: async () => {
       const meta = (await invoke(key, 'console:getAllMeta', {})) as { workflows?: Record<string, WorkflowMeta> }
       return Promise.all(
-        Object.entries(meta.workflows ?? {}).map(async ([id, m]) => {
-          const steps = stepsOf(id, m)
+        Object.entries(meta.workflows ?? {}).map(async ([id, workflow]) => {
+          const steps = stepsOf(id, workflow)
           const runs = ((await invoke(key, 'console:getWorkflowRuns', { workflowName: id, limit: 8 })) as RealRun[] | null) ?? []
           const history = await Promise.all(runs.map(async (r) => runOf(r, steps, ((await invoke(key, 'console:getWorkflowRunSteps', { runId: r.id })) as RealStep[] | null) ?? [])))
-          const cron = m.wires?.schedule?.[0]?.cron
-          return { id, name: nice(id), what: steps.find((s) => s.kind === 'do')?.says ?? '', runs: cron ? `Every ${cron}` : 'When asked to run', on: true, steps, history }
+          const cron = workflow.wires?.schedule?.[0]?.cron
+          return { id, name: nice(id), what: steps.find((s) => s.kind === 'do')?.says ?? '', runs: cron ? m.routines__every({ cron }) : m.routines__when_asked_to_run(), cron, on: true, steps, history }
         }),
       )
     },

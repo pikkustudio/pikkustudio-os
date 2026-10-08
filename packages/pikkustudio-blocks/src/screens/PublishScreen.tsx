@@ -1,3 +1,4 @@
+import { m } from '@/i18n/messages'
 import { useContext } from 'react'
 import { Button } from '../ui/button'
 import { useProjectName } from '../lib/project'
@@ -18,18 +19,18 @@ export function PublishScreen() {
       <PageHead
         size="lead"
         crumb={projectName}
-        title="Put your app on the internet"
-        text="Publishing makes your app available online, so other people can use it. Right now only you can see it."
+        title={m.publish_screen__title()}
+        text={m.publish_screen__text()}
       />
       {view === 'empty' ? (
         <EmptyState
           layout="row"
           icon={Rocket}
-          title="There is nothing to publish yet."
-          text="Your app has no pages yet. Tell Pikku what you want to make, and once something is built you can put it online from here."
+          title={m.publish_screen__empty_title()}
+          text={m.publish_screen__empty_text()}
         >
           <Button size="page" type="button" onClick={() => open('chat')}>
-            Describe your app
+            {m.publish_screen__describe_app()}
           </Button>
         </EmptyState>
       ) : Target ? (

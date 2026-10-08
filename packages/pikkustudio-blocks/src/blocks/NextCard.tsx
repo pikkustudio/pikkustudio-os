@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react'
+import type { I18nNode, I18nString } from '@pikku/react'
 
-export function NextCard({ label, hue, title, why, art, children }: { label: string; hue: 'teal' | 'petrol' | 'sea'; title: string; why: string; art: ReactNode; children?: ReactNode }) {
+export function NextCard({ label, hue, title, why, art, children }: { label: I18nString; hue: 'teal' | 'petrol' | 'sea'; title: I18nString; why: I18nString; art: I18nNode; children?: I18nNode }) {
   return (
     <section data-hue={hue} className="relative grid grid-cols-[minmax(0,1.35fr)_minmax(0,0.65fr)] overflow-hidden rounded-next bg-hero text-hero-ink" aria-label={label}>
       <div className="relative z-1 flex flex-col justify-center gap-3.5 px-10 pt-8.5 pb-9">

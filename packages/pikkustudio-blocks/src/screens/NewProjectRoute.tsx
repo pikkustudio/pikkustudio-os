@@ -1,3 +1,4 @@
+import { m } from '@/i18n/messages'
 import { useContext, useEffect, useState } from 'react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
@@ -5,8 +6,6 @@ import { ProjectRpcCtx } from '../lib/projectRpc'
 import { newProjectName, useAttachFile, useProjectRun, useStartProjectRun } from '../lib/onboarding'
 import { OnbCtx, type OnbState, type Uses } from './OnboardingLayout'
 import { NewProjectScreen } from './NewProjectScreen'
-
-const EXAMPLE = 'A booking page for my baking classes, where people pick a day and pay.'
 
 export function NewProjectRoute() {
   const navigate = useNavigate()
@@ -90,7 +89,7 @@ export function NewProjectRoute() {
         setUses,
         files,
         setFiles,
-        example: EXAMPLE,
+        example: m.onboarding__example(),
         run: run.data,
       }}
     >

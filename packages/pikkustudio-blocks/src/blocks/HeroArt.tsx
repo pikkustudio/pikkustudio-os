@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { I18nNode } from '@pikku/react'
 export type Art = 'arch' | 'bubbles' | 'bars' | 'laptop' | 'cloud' | 'window'
 
 const screens: Partial<Record<Art, { x: number; y: number; w: number; h: number; r: number }>> = {
@@ -77,7 +77,7 @@ function Shapes({ art }: { art: Art }) {
   )
 }
 
-export function HeroArt({ art, thumb }: { art: Art; thumb?: ReactNode }) {
+export function HeroArt({ art, thumb }: { art: Art; thumb?: I18nNode }) {
   const t = screens[art]
   return (
     <svg viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 size-full" aria-hidden="true">

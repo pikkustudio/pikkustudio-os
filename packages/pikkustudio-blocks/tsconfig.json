@@ -2,15 +2,36 @@
   "extends": "../../apps/app/tsconfig.json",
   "compilerOptions": {
     "paths": {
-      "@/*": [
-        "../../apps/app/src/*"
-      ]
+      "@/*": ["../../apps/app/src/*"],
+      "kysely": ["../../node_modules/kysely"],
+      "kysely/*": ["../../node_modules/kysely/*"],
+      "zod": ["../../node_modules/zod"],
+      "zod/*": ["../../node_modules/zod/*"],
+      "nanostores": ["../../node_modules/nanostores"],
+      "nanostores/*": ["../../node_modules/nanostores/*"],
+      "jose": ["../../node_modules/jose"],
+      "jose/*": ["../../node_modules/jose/*"],
+      "csstype": ["../../node_modules/csstype"],
+      "csstype/*": ["../../node_modules/csstype/*"],
+      "better-call": ["../../node_modules/better-call"],
+      "better-call/*": ["../../node_modules/better-call/*"],
+      "better-auth": ["../../node_modules/better-auth"],
+      "better-auth/*": ["../../node_modules/better-auth/*"],
+      "@standard-schema/spec": ["../../node_modules/@standard-schema/spec"],
+      "@standard-schema/spec/*": ["../../node_modules/@standard-schema/spec/*"],
+      "@better-fetch/fetch": ["../../node_modules/@better-fetch/fetch"],
+      "@better-fetch/fetch/*": ["../../node_modules/@better-fetch/fetch/*"],
+      "@better-auth/utils": ["../../node_modules/@better-auth/utils"],
+      "@better-auth/utils/*": ["../../node_modules/@better-auth/utils/*"],
+      "@better-auth/telemetry": ["../../node_modules/@better-auth/telemetry"],
+      "@better-auth/telemetry/*": ["../../node_modules/@better-auth/telemetry/*"],
+      "@better-auth/core": ["../../node_modules/@better-auth/core"],
+      "@better-auth/core/*": ["../../node_modules/@better-auth/core/*"],
+      "react": ["../../node_modules/@types/react"],
+      "react/*": ["../../node_modules/@types/react/*"],
+      "@fabric/sdk/*": ["../../../../../fabric/fabric/packages/fabric-sdk/src/pikku/*"]
     }
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "src/**/*.test.ts"
-  ]
+  "include": ["src"],
+  "exclude": ["src/**/*.test.ts"]
 }

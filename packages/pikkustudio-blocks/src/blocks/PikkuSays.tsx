@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { I18nNode, I18nString } from '@pikku/react'
 
 export function PikkuMark({ className }: { className?: string }) {
   return (
@@ -7,7 +7,7 @@ export function PikkuMark({ className }: { className?: string }) {
     </svg>
   )
 }
-export function PikkuSays({ text, tone = 'card', children }: { text: string; tone?: 'card' | 'plain'; children?: ReactNode }) {
+export function PikkuSays({ text, tone = 'card', children }: { text: I18nString; tone?: 'card' | 'plain'; children?: I18nNode }) {
   const big = tone === 'card'
   return (
     <div className={`flex items-start gap-3 ${big ? 'rounded-card border border-border bg-card p-5' : ''}`}>

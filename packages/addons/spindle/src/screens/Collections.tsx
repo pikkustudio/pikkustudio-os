@@ -1,3 +1,4 @@
+import { m } from '@/i18n/messages'
 import { useCallback, useEffect, useState } from 'react'
 import { Folders, Plus } from 'lucide-react'
 import { Page } from '@pikku/pikkustudio-blocks/blocks/Page'
@@ -8,6 +9,7 @@ import { RowCard, RowStack } from '@pikku/pikkustudio-blocks/blocks/RowCard'
 import { StatusLine } from '@pikku/pikkustudio-blocks/blocks/StatusLine'
 import { Button } from '@pikku/pikkustudio-blocks/ui/button'
 import { useRpc, useBusy, type Kb, type ScreenProps } from './shared.js'
+import { asI18n } from '@pikku/react'
 
 export default function Collections({ navigate }: ScreenProps) {
   const rpc = useRpc()
@@ -25,30 +27,30 @@ export default function Collections({ navigate }: ScreenProps) {
   return (
     <div className="p-8">
       <Page gap="list">
-        <PageHead crumb="Spindle" title="Collections" text="Groups of files that belong together. Searching inside one keeps answers on topic.">
+        <PageHead crumb={m.spindle_collections__spindle()} title={m.spindle_collections__collections()} text={m.spindle_collections__groups_of_files_that_belong_together()}>
           <Button size="page" onClick={() => navigate('/collections/new')}>
-            <Plus /> New collection
+            <Plus />{m.spindle_collections__new_collection()}
           </Button>
         </PageHead>
-        {error ? <InlineAlert title="That did not work" body={error} /> : null}
-        {busy ? <StatusLine tone="wait" text={`${busy}…`} /> : null}
+        {error ? <InlineAlert title={m.spindle_collections__that_did_not_work()} body={asI18n(error)} /> : null}
+        {busy ? <StatusLine tone="wait" text={m.asset__text({ busy })} /> : null}
         {loaded && kbs.length === 0 ? (
-          <EmptyState title="No collections yet" text="Make one yourself, or let Spindle suggest groups from the files you have added.">
+          <EmptyState title={m.spindle_collections__no_collections_yet()} text={m.spindle_collections__make_one_yourself_or_let_spindle()}>
             <div className="flex flex-wrap gap-2.5">
               <Button size="page" onClick={() => navigate('/collections/new')}>
-                <Plus /> New collection
+                <Plus />{m.spindle_collections__new_collection()}
               </Button>
-              <Button size="page" variant="bordered" disabled={busy !== null} onClick={() => void run('Looking for groups', async () => { await rpc.invoke('spindle:spindleProposeKnowledgeBases', {}); navigate('/suggestions') })}>
-                Suggest collections
+              <Button size="page" variant="bordered" disabled={busy !== null} onClick={() => void run(m.spindle_shared__busy_looking_groups(), async () => { await rpc.invoke('spindle:spindleProposeKnowledgeBases', {}); navigate('/suggestions') })}>
+                {m.spindle_collections__suggest_collections()}
               </Button>
             </div>
           </EmptyState>
         ) : (
           <RowStack>
             {kbs.map((kb) => (
-              <RowCard key={kb.kb_id} on tile={<Folders className="size-5" />} title={kb.name} caption={`${kb.assetCount} ${kb.assetCount === 1 ? 'file' : 'files'}`} note={kb.description || undefined}>
+              <RowCard key={kb.kb_id} on tile={<Folders className="size-5" />} title={asI18n(kb.name)} caption={m.spindle_collections__file_count({ count: kb.assetCount })} note={kb.description ? asI18n(kb.description) : undefined}>
                 <Button size="compact" variant="bordered" onClick={() => navigate(`/collections/${kb.kb_id}`)}>
-                  Open
+                  {m.spindle_collections__open()}
                 </Button>
               </RowCard>
             ))}

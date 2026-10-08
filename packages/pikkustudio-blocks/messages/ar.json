@@ -1,0 +1,3352 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "account_hero__label": "حسابكم",
+  "account_hero__title": "مرحبا، هذه مساحتكم",
+  "account_hero__title_named": "مرحبا {name}، هذه مساحتكم",
+  "account_hero__why": "هذه مساحتكم الخاصة. هنا يتعرف Pikku عليكم وعلى الطريقة التي تحبون أن يخاطبكم بها.",
+  "account_screen__language": "اللغة",
+  "account_screen__language_text": "سيتحدث Pikku معكم باللغة التي تختارونها.",
+  "account_screen__lead": "مساحتكم في Studio، مضبوطة كما يناسبكم.",
+  "account_screen__looks": "المظهر",
+  "account_screen__looks_text": "قريبا يمكنكم اختيار المظهر الفاتح أو الداكن، أيهما أريح لأعينكم.",
+  "account_screen__name": "اسمكم وصورتكم",
+  "account_screen__name_unset": "لا نعرف اسمكم بعد",
+  "account_screen__notify": "أخبرني عندما",
+  "account_screen__notify_text": "قريبا سينبهكم Pikku عندما يحتاج إليكم أو عندما يحدث خطأ ما.",
+  "account_screen__on_this_computer": "على هذا الحاسوب",
+  "account_screen__settings": "الإعدادات",
+  "account_screen__sign_out": "تسجيل الخروج",
+  "account_screen__sign_out_failed": "عذرا، لم تنجح العملية. ما زلتم مسجلين دخولكم. يرجى المحاولة مرة أخرى.",
+  "account_screen__sign_out_text": "عملكم محفوظ هنا. يمكنكم العودة في أي وقت.",
+  "account_screen__signed_in": "تم تسجيل الدخول",
+  "account_screen__soon": "ما زلنا نعمل على هذا",
+  "account_screen__title": "حسابكم",
+  "action_notice__bringing": "جار جلبه إلى هذا الحاسوب…",
+  "action_notice__copied": "تم النسخ",
+  "action_notice__copy": "نسخ التفاصيل",
+  "action_notice__denied_access": "لم يسمح لهذا الحاسوب بنسخ {what}. اطلبوا من مسؤول الفريق منحكم الوصول، ثم حاولوا مرة أخرى.",
+  "action_notice__generic": "تعذر نسخ {what}، ولم يتغير أي شيء.",
+  "action_notice__hide": "إخفاء",
+  "action_notice__ours": "المشكلة من جهة Pikku وليست في مشروعكم. لم يكتمل نسخ {what}، ولم يتغير أي شيء.",
+  "action_notice__retrying": "جار المحاولة مرة أخرى…",
+  "action_notice__tell_us": "هل تريدون إبلاغ Pikku بمثل هذه الأخطاء؟",
+  "action_notice__title": "لم تنجح العملية.",
+  "action_notice__told": "أبلغنا فريق Pikku بذلك.",
+  "action_notice__what_happened": "ماذا حدث؟",
+  "ai_connect_panels__back": "رجوع",
+  "ai_connect_panels__do_not_have_it": "ليس لديكم واحد بعد؟",
+  "ai_connect_panels__its_address": "عنوانه",
+  "ai_connect_panels__its_key": "مفتاحه",
+  "ai_connect_panels__lite_llm_is_a_small": "LiteLLM خادم صغير مفتوح المصدر يتحدث مع أي ذكاء اصطناعي. تشغلونه بأنفسكم وتحتفظون بمفاتيحكم.",
+  "ai_connect_panels__openai_gpt_4_1": "openai/gpt-4.1",
+  "ai_connect_panels__optional": "اختياري",
+  "ai_connect_panels__pip_install_litellm_proxy": "pip install 'litellm[proxy]'",
+  "ai_connect_panels__provider_claude": "Claude",
+  "ai_connect_panels__provider_deepseek": "DeepSeek",
+  "ai_connect_panels__provider_gemini": "Gemini",
+  "ai_connect_panels__provider_grok": "Grok",
+  "ai_connect_panels__provider_groq": "Groq",
+  "ai_connect_panels__provider_mistral": "Mistral",
+  "ai_connect_panels__provider_openai": "OpenAI",
+  "ai_connect_panels__provider_openrouter": "OpenRouter",
+  "ai_connect_panels__read_the_lite_llm_guide": "قراءة دليل LiteLLM",
+  "ai_connect_panels__saving": "جار الحفظ",
+  "ai_connect_panels__that_could_not_be": "تعذر الحفظ. تحققوا من العنوان وحاولوا مرة أخرى.",
+  "ai_connect_panels__token_label": "الرمز أو السر",
+  "ai_connect_panels__use_my_lite_llm": "استخدام LiteLLM الخاص بي",
+  "ai_connect_panels__use_provider": "استخدام هذا المزود",
+  "app_card__about": "بخصوص «{name}»: ",
+  "app_card__being_made": "قيد الإنشاء",
+  "app_card__change_it": "تغييره",
+  "app_card__get_the_files": "الحصول على الملفات",
+  "app_card__last_worked_on": "آخر عمل عليه: {when}",
+  "app_card__local": "محلي",
+  "app_card__not_started": "لم يبدأ",
+  "app_card__nothing_to_get_yet": "لا شيء للحصول عليه بعد",
+  "app_card__open_in_design": "فتح في التصميم",
+  "app_card__ready": "جاهز",
+  "app_card__remote": "عن بعد",
+  "app_kind_list__a_program_people_install": "برنامج يثبته الناس على حاسوب Mac أو Windows.",
+  "app_kind_list__a_program_you_run": "برنامج يشغل في الطرفية، مخصص للمطورين والسكربتات.",
+  "app_kind_list__a_real_app_in": "تطبيق حقيقي في App Store.",
+  "app_kind_list__a_real_app_in_2": "تطبيق حقيقي في Google Play.",
+  "app_kind_list__ai_assistant_tool_mcp": "أداة لمساعدي الذكاء الاصطناعي (MCP)",
+  "app_kind_list__android": "Android",
+  "app_kind_list__android_app": "تطبيق Android",
+  "app_kind_list__assistant_tool": "أداة المساعد",
+  "app_kind_list__command_line": "سطر الأوامر",
+  "app_kind_list__command_line_tool": "أداة سطر الأوامر",
+  "app_kind_list__computer": "حاسوب",
+  "app_kind_list__computer_app": "تطبيق للحاسوب",
+  "app_kind_list__i_phone": "iPhone",
+  "app_kind_list__i_phone_and_i_pad_app": "تطبيق iPhone وiPad",
+  "app_kind_list__lets_ai_assistants_like": "يتيح لمساعدي الذكاء الاصطناعي مثل Claude استخدام تطبيقكم، مثل حجز حصة.",
+  "app_kind_list__made_today": "أنشئ اليوم",
+  "app_kind_list__not_started": "لم يبدأ",
+  "app_kind_list__people_open_it_in": "يفتحه الناس في المتصفح، على الهاتف أو الحاسوب.",
+  "app_kind_list__website": "موقع إلكتروني",
+  "app_kind_list__website_or_web_app": "موقع أو تطبيق ويب",
+  "app_not_running__failed_explain": "توقف {name} أثناء الفتح، لذلك لا يوجد شيء لعرضه بعد. المحاولة مرة أخرى تبدأه من جديد. إذا توقف مجددا، أخبروا Pikku في المحادثة بما كنتم تفعلونه.",
+  "app_not_running__failed_text": "حدث ما منع فتحه. المحاولة مرة أخرى تحل المشكلة غالبا. وإن تكررت، اطلبوا من Pikku في المحادثة أن يلقي نظرة.",
+  "app_not_running__failed_title": "لم يبدأ {name}",
+  "app_not_running__hide": "إخفاء",
+  "app_not_running__off_text": "شغلوه لرؤية {what} هنا تماما كما سيراه الناس.",
+  "app_not_running__off_title": "{name} لا يعمل بعد",
+  "app_not_running__start": "تشغيل تطبيقي",
+  "app_not_running__starting_button": "جار التشغيل…",
+  "app_not_running__starting_text": "يجهز Pikku {what} لعرضه. يستغرق ذلك عادة أقل من دقيقة، وسيظهر هنا من تلقاء نفسه.",
+  "app_not_running__starting_title": "جار تجهيز {name}…",
+  "app_not_running__try_again": "حاولوا مرة أخرى",
+  "app_not_running__what_default": "تطبيقكم الحقيقي",
+  "app_not_running__what_happened": "ماذا حدث؟",
+  "app_not_running__your_app": "تطبيقكم",
+  "apps_view__a_website_this_project": "موقع إلكتروني يقدمه هذا المشروع.",
+  "apps_view__everything_you_are_making": "كل ما تصنعونه. يمكن للمشروع الواحد أن يكون موقعا وتطبيق هاتف وغير ذلك، ويمكنكم امتلاك عدة نسخ من كل نوع.",
+  "apps_view__idea_1": "تشغيله على الحاسوب",
+  "apps_view__idea_2": "إنشاء نسخة لأجهزة Android",
+  "apps_view__idea_3": "إضافة تطبيق لفريقي",
+  "apps_view__idea_4": "إضافة أداة لسطر الأوامر",
+  "apps_view__idea_5": "السماح لمساعدي الذكاء الاصطناعي بحجز الحصص",
+  "apps_view__ideas": "أفكار",
+  "apps_view__new_app": "تطبيق جديد",
+  "apps_view__new_kind": "جديد: {kind}",
+  "apps_view__pikku_will_set_this": "سيجهز Pikku هذا عند فتحه.",
+  "apps_view__send": "إرسال",
+  "apps_view__tell_pikku_what_to": "أخبروا Pikku بما تريدون تغييره",
+  "apps_view__tell_pikku_what_to_2": "أخبروا Pikku بما تريدون تغييره، مثل «شغل واجهة الفريق على الحاسوب»",
+  "apps_view__what_kind_of_app": "نوع التطبيق",
+  "apps_view__what_kind_of_app_2": "ما نوع التطبيق؟",
+  "artifact_open__all_artifacts": "كل المخرجات",
+  "artifact_open__designs": "التصاميم",
+  "artifact_open__documents": "المستندات",
+  "artifact_open__it_may_have_been": "ربما أزيلت. ارجعوا إلى المخرجات لرؤية كل ما أنشئ.",
+  "artifact_open__pages": "الصفحات",
+  "artifact_open__see_all_artifacts": "عرض كل المخرجات",
+  "artifact_open__we_could_not_find": "تعذر العثور على هذه المادة.",
+  "artifact_row__design": "تصميم",
+  "artifact_row__document": "مستند",
+  "artifact_row__page": "صفحة",
+  "artifacts_explore__all_ideas": "كل الأفكار",
+  "artifacts_explore__change_say": "تغيير شيء في «{title}»: ",
+  "artifacts_explore__change_something": "تغيير شيء ما",
+  "artifacts_explore__different": "مختلف",
+  "artifacts_explore__directions": "الاتجاهات",
+  "artifacts_explore__latest": "الأحدث",
+  "artifacts_explore__more_like_these": "المزيد من هذا النوع",
+  "artifacts_explore__next_idea": "الفكرة التالية",
+  "artifacts_explore__no_ideas_text": "ستظهر الاتجاهات هنا فور جاهزيتها.",
+  "artifacts_explore__no_ideas_title": "لا أفكار بعد",
+  "artifacts_explore__previous_idea": "الفكرة السابقة",
+  "artifacts_explore__round": "الجولة {n}",
+  "artifacts_explore__round_mode": "{round} · {mode}",
+  "artifacts_explore__side_by_side": "جنبا إلى جنب",
+  "artifacts_explore__similar": "مشابه",
+  "artifacts_explore__something_different": "شيء مختلف",
+  "artifacts_explore__use_this_one": "استخدام هذه",
+  "artifacts_gallery__all_artifacts": "كل المخرجات",
+  "artifacts_gallery__ask_pikku_to_make": "اطلبوا من Pikku صنع شيء",
+  "artifacts_gallery__designs": "التصاميم",
+  "artifacts_gallery__designs_pages_and_documents": "ستحفظ هنا التصاميم والصفحات والمستندات التي يصنعها Pikku لكم.",
+  "artifacts_gallery__documents": "المستندات",
+  "artifacts_gallery__found": "تم العثور على {count}",
+  "artifacts_gallery__kind": "النوع",
+  "artifacts_gallery__nothing_has_been_made": "لم ينشأ شيء بعد.",
+  "artifacts_gallery__nothing_matches_try_another": "لا نتائج مطابقة. جربوا كلمة أخرى.",
+  "artifacts_gallery__pages": "الصفحات",
+  "artifacts_gallery__poster_request": "من فضلك اصنع ملصقا لحصص صنع الخبز في الربيع.",
+  "artifacts_gallery__search_the_artifacts": "البحث في المخرجات",
+  "artifacts_screen__text": "التصاميم والصفحات والمستندات التي أنشئت أثناء بناء تطبيقكم.",
+  "artifacts_screen__title": "المخرجات",
+  "assistant_drawer__a_visitor": "زائر",
+  "assistant_drawer__all_chats": "كل المحادثات",
+  "assistant_drawer__back_to_pikku": "العودة إلى Pikku",
+  "assistant_drawer__chat_label": "محادثة مع {name}",
+  "assistant_drawer__check_this_one": "فحص هذه",
+  "assistant_drawer__close": "إغلاق",
+  "assistant_drawer__could_not_reach": "تعذر الوصول إلى هذا المساعد",
+  "assistant_drawer__fix_prompt": "أخطأ {name} في محادثته مع {who} ({when}). يرجى مراجعة ذلك وإصلاحه.",
+  "assistant_drawer__hello_fallback": "مرحبا، أنا {name}.",
+  "assistant_drawer__is_thinking": "{name} يفكر…",
+  "assistant_drawer__it_got_this_wrong": "أخطأ هنا",
+  "assistant_drawer__looked_something_up": "بحث عن معلومة",
+  "assistant_drawer__message_label": "رسالة إلى {name}",
+  "assistant_drawer__no_chats_yet": "لا محادثات بعد. عندما يتحدث أحد مع {name} ستظهر هنا.",
+  "assistant_drawer__no_quality_check_yet": "لا فحص للجودة بعد",
+  "assistant_drawer__opening": "{hello} تخيلوا أنكم زوار واسألوني أي شيء.",
+  "assistant_drawer__opening_sleepy": "آه! مرحبا. تخيلوا أنكم زوار واسألوني أي شيء.",
+  "assistant_drawer__past_chat": "محادثة سابقة",
+  "assistant_drawer__pretend_you_are_a": "تخيلوا أنكم زوار.",
+  "assistant_drawer__quality_check": "فحص الجودة: {verdict}.",
+  "assistant_drawer__quality_check_line": "فحص الجودة: {check}",
+  "assistant_drawer__send": "إرسال",
+  "assistant_drawer__something_got_in_the_way": "حدث ما أعاق العملية",
+  "assistant_drawer__tab_chat": "المحادثة",
+  "assistant_drawer__tab_history": "السجل ({n})",
+  "assistant_drawer__write_as_a_visitor": "الكتابة كزائر",
+  "assistant_drawer__you_are_talking_to": "أنتم تتحدثون مع {name}، وليس مع Pikku.",
+  "assistants_screen__add_say": "أضف مساعدا جديدا إلى تطبيقي",
+  "assistants_screen__ask_new": "اطلبوا من Pikku مساعدا جديدا",
+  "assistants_screen__chat_with_me": "تحدثوا معي",
+  "assistants_screen__chats_month": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "{count} محادثة هذا الشهر",
+        "countPlural=one": "محادثة واحدة هذا الشهر",
+        "countPlural=two": "محادثتان هذا الشهر",
+        "countPlural=few": "{count} محادثات هذا الشهر",
+        "countPlural=many": "{count} محادثة هذا الشهر",
+        "countPlural=other": "{count} محادثة هذا الشهر"
+      }
+    }
+  ],
+  "assistants_screen__check_suffix": "· {check}",
+  "assistants_screen__each_one_talks_to_people": [
+    {
+      "declarations": [
+        "input total",
+        "local totalPlural = total: plural"
+      ],
+      "selectors": [
+        "totalPlural"
+      ],
+      "match": {
+        "totalPlural=zero": "يتحدث كل مساعد مع الناس بلغة بسيطة ويمكنه تنفيذ أمور نيابة عنهم، مثل التحقق من حصة أو حجز مقعد. وهم معا قادرون على {total} مهمة.",
+        "totalPlural=one": "يتحدث كل مساعد مع الناس بلغة بسيطة ويمكنه تنفيذ أمور نيابة عنهم، مثل التحقق من حصة أو حجز مقعد. وهم معا قادرون على مهمة واحدة.",
+        "totalPlural=two": "يتحدث كل مساعد مع الناس بلغة بسيطة ويمكنه تنفيذ أمور نيابة عنهم، مثل التحقق من حصة أو حجز مقعد. وهم معا قادرون على مهمتين.",
+        "totalPlural=few": "يتحدث كل مساعد مع الناس بلغة بسيطة ويمكنه تنفيذ أمور نيابة عنهم، مثل التحقق من حصة أو حجز مقعد. وهم معا قادرون على {total} مهام.",
+        "totalPlural=many": "يتحدث كل مساعد مع الناس بلغة بسيطة ويمكنه تنفيذ أمور نيابة عنهم، مثل التحقق من حصة أو حجز مقعد. وهم معا قادرون على {total} مهمة.",
+        "totalPlural=other": "يتحدث كل مساعد مع الناس بلغة بسيطة ويمكنه تنفيذ أمور نيابة عنهم، مثل التحقق من حصة أو حجز مقعد. وهم معا قادرون على {total} مهمة."
+      }
+    }
+  ],
+  "assistants_screen__hands_off": "إذا لم يكن الأمر من اختصاصي، أحول الناس إلى {list}.",
+  "assistants_screen__i_can": "يمكنني {list}.",
+  "assistants_screen__idle_text": "لم يتحدث أحد مع {name} بعد. يمكنني إرسال زائر تجريبي إليه لتروا ما سيقوله.",
+  "assistants_screen__meet_sub": "تحدثوا مع أحدهم كما يفعل الزائر، أو اقرؤوا ما قاله لأشخاص حقيقيين.",
+  "assistants_screen__meet_title": "تعرفوا على الفريق",
+  "assistants_screen__n_work": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "يعمل {count} مساعدا في تطبيقكم",
+        "countPlural=one": "يعمل مساعد واحد في تطبيقكم",
+        "countPlural=two": "يعمل مساعدان في تطبيقكم",
+        "countPlural=few": "يعمل {count} مساعدين في تطبيقكم",
+        "countPlural=many": "يعمل {count} مساعدا في تطبيقكم",
+        "countPlural=other": "يعمل {count} مساعدا في تطبيقكم"
+      }
+    }
+  ],
+  "assistants_screen__no_actions": "يجيب عن الأسئلة ولا ينفذ أي إجراءات.",
+  "assistants_screen__no_check_suffix": "· بلا فحص للجودة",
+  "assistants_screen__not_used": "لم يستخدم بعد",
+  "assistants_screen__past_chats": "المحادثات السابقة",
+  "assistants_screen__suggests": "اقتراحات Pikku",
+  "assistants_screen__text": "مساعدو الذكاء الاصطناعي داخل تطبيقكم. يتحدثون مع زواركم نيابة عنكم، ولا يستطيع كل منهم سوى فعل ما هو مذكور هنا.",
+  "assistants_screen__title": "المساعدون",
+  "assistants_screen__try_it_for_me": "تجربته لأجلي",
+  "assistants_screen__try_one": "جربوا أحدهم",
+  "assistants_screen__try_say": "جربوا مساعد الحجز كما يفعل الزائر",
+  "assistants_screen__your_assistants": "مساعدوكم",
+  "builder_chat__add_to_queue": "إضافة إلى قائمة الانتظار",
+  "builder_chat__bigger_detail": "يمكنني وضعه في قائمة الانتظار وتنفيذه كتغيير مستقل، أو إنجازه الآن في هذه المحادثة.",
+  "builder_chat__bigger_title": "هذه مهمة أكبر",
+  "builder_chat__do_it_now": "تنفيذ الآن",
+  "builder_chat__say_add_to_queue": "ضعه في قائمة الانتظار.",
+  "builder_chat__say_do_it_now": "نفذه الآن، في هذه الجلسة.",
+  "changes_b__earlier": "سابقا",
+  "changes_b__no_set": "بلا مجموعة",
+  "changes_b__part_of": "جزء من: {set}",
+  "changes_b__progress": "التقدم",
+  "changes_b__step_changed": "عدل على نسخة",
+  "changes_b__step_of": "الخطوة {step} من {total} · {name}",
+  "changes_b__step_ready": "جاهز لكم",
+  "changes_b__step_tested": "جرى اختباره",
+  "changes_b__step_understood": "تم فهمه",
+  "changes_b__today": "اليوم",
+  "changes_b__waiting_count": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "لا تغييرات",
+        "countPlural=one": "تغيير واحد",
+        "countPlural=two": "تغييران",
+        "countPlural=few": "{count} تغييرات",
+        "countPlural=many": "{count} تغييرا",
+        "countPlural=other": "{count} تغيير"
+      }
+    }
+  ],
+  "changes_b__waiting_tail": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "بانتظاركم.",
+        "countPlural=one": "بانتظاركم.",
+        "countPlural=two": "بانتظاركم.",
+        "countPlural=few": "بانتظاركم.",
+        "countPlural=many": "بانتظاركم.",
+        "countPlural=other": "بانتظاركم."
+      }
+    }
+  ],
+  "changes_b__working_on": "يعمل Pikku على",
+  "changes_b__yesterday": "أمس",
+  "changes_data__state_aside": "مؤجل جانبا",
+  "changes_data__state_done": "تم",
+  "changes_data__state_needs": "يحتاج إليكم",
+  "changes_data__state_waiting": "ينتظر دوره",
+  "changes_data__state_working": "Pikku يعمل عليه",
+  "changes_directions__text": "كل ما يغيره Pikku في تطبيقكم، مجمعا حسب الغرض.",
+  "changes_directions__title": "التغييرات",
+  "changes_timeline__days_ago": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "منذ أقل من يوم",
+        "countPlural=one": "منذ يوم واحد",
+        "countPlural=two": "منذ يومين",
+        "countPlural=few": "منذ {count} أيام",
+        "countPlural=many": "منذ {count} يوما",
+        "countPlural=other": "منذ {count} يوم"
+      }
+    }
+  ],
+  "changes_timeline__empty": "لا تغييرات بعد. أخبروا Pikku بما تريدون تغييره وسيظهر هنا.",
+  "changes_timeline__error": "تعذر تحميل تغييراتكم. حاولوا مرة أخرى بعد قليل.",
+  "changes_timeline__found_automatically": "اكتشف تلقائيا",
+  "changes_timeline__from_app": "من التطبيق",
+  "changes_timeline__from_console": "من وحدة التحكم",
+  "changes_timeline__hours_ago": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "منذ أقل من ساعة",
+        "countPlural=one": "منذ ساعة واحدة",
+        "countPlural=two": "منذ ساعتين",
+        "countPlural=few": "منذ {count} ساعات",
+        "countPlural=many": "منذ {count} ساعة",
+        "countPlural=other": "منذ {count} ساعة"
+      }
+    }
+  ],
+  "changes_timeline__just_now": "الآن",
+  "changes_timeline__loading": "جار تحميل تغييراتكم...",
+  "changes_timeline__minutes_ago": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "منذ أقل من دقيقة",
+        "countPlural=one": "منذ دقيقة واحدة",
+        "countPlural=two": "منذ دقيقتين",
+        "countPlural=few": "منذ {count} دقائق",
+        "countPlural=many": "منذ {count} دقيقة",
+        "countPlural=other": "منذ {count} دقيقة"
+      }
+    }
+  ],
+  "changes_timeline__waiting_its_turn": "ينتظر دوره",
+  "chat__a_change": "تغيير",
+  "chat__cannot_chat_yet": "لا أستطيع المحادثة بعد. اشتراككم يكفي للبناء، لكن المحادثة تتطلب ذكاء اصطناعيا بمفتاح خاص. افتحوا «اختيار ذكاء اصطناعي»، وأضيفوا واحدا، ثم اسألوني مجددا.",
+  "chat__unreachable": "تعذر الوصول إلى Pikku الآن. يرجى المحاولة مرة أخرى.",
+  "chat__wants_to_do_something": "يريد Pikku القيام بشيء",
+  "chat__went_wrong": "حدث ما أعاق العملية. يرجى المحاولة مرة أخرى.",
+  "chat_select_panel__attached_to_your_chat": "مرفق بمحادثتكم",
+  "chat_select_panel__click_anything_in_the": "انقروا على أي عنصر في المعاينة. سيرفق بمحادثتكم مع Pikku لتقولوا مثلا «كبر هذا».",
+  "choose_ai_screen__change_later": "يمكنكم تغيير هذا في أي وقت من الإعدادات. لن أبدله أبدا دون أن أسألكم.",
+  "choose_ai_screen__connect": "ربط LiteLLM الخاص بي",
+  "choose_ai_screen__error_title": "تعذر تحميل الخيارات.",
+  "choose_ai_screen__getting_ready": "جار تجهيز الخيارات",
+  "choose_ai_screen__lead": "يبني Studio باستخدام LiteLLM الخاص بكم، وهو خادم صغير مفتوح المصدر يتحدث مع أي نموذج. تحتفظون بمفاتيحكم وتختارون النموذج.",
+  "choose_ai_screen__loading_title": "جار تجهيز الخيارات.",
+  "choose_ai_screen__other_choices": "خيارات أخرى",
+  "choose_ai_screen__other_ways": "طرق أخرى للربط",
+  "choose_ai_screen__providers_text": "اختاروا واحدا وسأطلب رمزه. يبقى الرمز على هذا الحاسوب.",
+  "choose_ai_screen__providers_title": "مزودو الذكاء الاصطناعي الشائعون",
+  "choose_ai_screen__title": "استخدموا ذكاءكم الاصطناعي الخاص.",
+  "choose_direction__save_failed": "تعذر حفظ هذا الاختيار. {reason}",
+  "color_field__code_label": "رمز {label}",
+  "common__about_seconds": "نحو {secs} ثانية",
+  "content__add_a_file": "إضافة ملف",
+  "content__all_folders": "كل المجلدات",
+  "content__anyone_with_link": "عام",
+  "content__back": "رجوع",
+  "content__cannot_list_text": "ملفاتكم بأمان. حدثوا Studio وستظهر هنا.",
+  "content__cannot_list_title": "لا تستطيع هذه النسخة من Studio عرض ملفاتكم بعد.",
+  "content__crumb": "على هذا الحاسوب",
+  "content__did_not_work": "لم تنجح العملية. لم يتغير أي شيء.",
+  "content__download_failed": "تعذر تنزيل هذا الملف. حاولوا مرة أخرى بعد قليل.",
+  "content__extra_access": "من يمكنه الوصول إلى مجلدات أخرى",
+  "content__folder_empty": "لا شيء في هذا المجلد.",
+  "content__intro": "الصور والمستندات والملفات المرفوعة التي يحتفظ بها مشروعكم. أبقوا الملف لأنفسكم، أو شاركوه برابط يستطيع أي شخص فتحه.",
+  "content__kept_by_addon": "محفوظ بواسطة {addon}",
+  "content__kept_by_project": "محفوظ بواسطة مشروعكم",
+  "content__nothing_private_title": "لا شيء خاص بعد.",
+  "content__nothing_public_title": "لا شيء مشارك بعد.",
+  "content__nothing_text": "أضيفوا ملفا وسيظهر هنا.",
+  "content__only_you": "خاص",
+  "content__private_explained": "أنتم فقط والإضافات التي منحتموها الوصول. الروابط التي تنشئونها تنتهي صلاحيتها بعد ساعة.",
+  "content__public_explained": "يستطيع أي شخص لديه العنوان فتح هذه الملفات دون تسجيل دخول، ولا تنتهي صلاحية العنوان أبدا.",
+  "content__title": "المحتوى",
+  "content__who_can_open": "من يمكنه فتح هذه الملفات",
+  "content_access__can_change": "يمكنه قراءة {path} وتغييره",
+  "content_access__can_read": "يمكنه قراءة {path}",
+  "content_access__keeps_in": "يحفظ ملفاته في {folder}",
+  "content_access__whole_store": "يمكنه الوصول إلى كل الملفات. السبب المذكور: {reason}",
+  "content_file__copy_link": "نسخ الرابط",
+  "content_file__data": "ملف بيانات",
+  "content_file__document": "مستند",
+  "content_file__download": "تنزيل",
+  "content_file__file": "ملف",
+  "content_file__keep_it": "الإبقاء عليه",
+  "content_file__link_copied": "تم نسخ الرابط",
+  "content_file__picture": "صورة",
+  "content_file__remove": "إزالة",
+  "content_file__remove_it_for_good": "إزالته نهائيا",
+  "content_file__sound": "صوت",
+  "content_file__video": "فيديو",
+  "content_folder__files": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "{count} ملفا",
+        "countPlural=one": "ملف واحد",
+        "countPlural=two": "ملفان",
+        "countPlural=few": "{count} ملفات",
+        "countPlural=many": "{count} ملفا",
+        "countPlural=other": "{count} ملفا"
+      }
+    }
+  ],
+  "content_folder__keep_them": "الإبقاء عليها",
+  "content_folder__one_file": "ملف واحد",
+  "content_folder__open": "فتح",
+  "content_folder__remove": "إزالة",
+  "content_folder__remove_all": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "إزالة {count} ملفا نهائيا",
+        "countPlural=one": "إزالة ملف واحد نهائيا",
+        "countPlural=two": "إزالة ملفين نهائيا",
+        "countPlural=few": "إزالة {count} ملفات نهائيا",
+        "countPlural=many": "إزالة {count} ملفا نهائيا",
+        "countPlural=other": "إزالة {count} ملفا نهائيا"
+      }
+    }
+  ],
+  "content_tree__before_tracking": "قبل بدء التتبع",
+  "content_tree__by": "أضافه",
+  "content_tree__changed": "آخر تعديل",
+  "content_tree__clear": "مسح",
+  "content_tree__collapse": "إغلاق {name}",
+  "content_tree__empty_folder": "لا شيء في هذا المجلد بعد.",
+  "content_tree__expand": "فتح {name}",
+  "content_tree__failed": "تعذرت قراءة هذا المجلد. حاولوا مرة أخرى بعد قليل.",
+  "content_tree__file_count": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "لا ملفات",
+        "countPlural=one": "ملف واحد",
+        "countPlural=two": "ملفان",
+        "countPlural=few": "{count} ملفات",
+        "countPlural=many": "{count} ملفا",
+        "countPlural=other": "{count} ملف"
+      }
+    }
+  ],
+  "content_tree__just_now": "الآن",
+  "content_tree__loading": "جار التحميل",
+  "content_tree__more": "عرض المزيد",
+  "content_tree__name": "الاسم",
+  "content_tree__remove_selected": "إزالة {count} نهائيا",
+  "content_tree__remove_selected_ask": "إزالة المحدد",
+  "content_tree__select": "تحديد {name}",
+  "content_tree__select_all": "تحديد كل المعروض",
+  "content_tree__selected": "تم تحديد {count}",
+  "content_tree__share": "{share} من المساحة",
+  "content_tree__size": "المساحة المستخدمة",
+  "content_tree__someone": "شخص ما",
+  "content_tree__total": "كل ما هنا يشغل {size}",
+  "content_tree__try_again": "حاولوا مرة أخرى",
+  "content_tree__you": "أنتم",
+  "content_upload__add_a_file": "إضافة ملف",
+  "content_upload__add_file": "إضافة ملف",
+  "content_upload__adding": "جار الإضافة",
+  "content_upload__anyone_with_link": "عام: يستطيع أي شخص لديه العنوان فتحه",
+  "content_upload__cancel": "إلغاء",
+  "content_upload__close": "إغلاق",
+  "content_upload__folder": "المجلد",
+  "content_upload__folder_example": "photos/2026",
+  "content_upload__folder_help": "الاسم الأول هو المجلد. وكل ما يأتي بعد الشرطة المائلة مجلد بداخله.",
+  "content_upload__only_you": "خاص: أنتم فقط والإضافات التي تسمحون لها",
+  "content_upload__private_note": "يبقى هذا الملف خاصا. تفتحونه برابط تنتهي صلاحيته.",
+  "content_upload__public_note": "سيكون هذا الملف مفتوحا لكل من لديه رابطه.",
+  "content_upload__that_could_not_be": "تعذرت الإضافة. ربما الملف كبير جدا أو من نوع غير مسموح.",
+  "content_upload__the_file": "الملف",
+  "copy__account_fallback": "حسابكم",
+  "copy__bubble_ai_down": "تعذر الوصول إلى الذكاء الاصطناعي.",
+  "copy__bubble_ai_pick": "الأولى في القائمة هي أسرع بداية، ويمكنكم تغيير رأيكم في أي وقت.",
+  "copy__chat_choose_ai": "في هذه الخطوة تختارون الذكاء الاصطناعي الذي سيتولى البناء. القرار قراركم.",
+  "copy__diff_local": "مشاريعكم محفوظة هنا، وتعمل دون اتصال بالإنترنت.",
+  "copy__nobody_else_text": "لا أحد غيركم، إلا إذا اخترتم مشاركة شيء.",
+  "copy__opened_history": "فتحتم Studio.",
+  "copy__publish_failed_text": "لم يتغير أي شيء في موقعكم المنشور. حاولوا مرة أخرى، أو يمكنني فحص الأمر.",
+  "copy__publish_failed_title": "لم يكتمل النشر",
+  "copy__publish_sign_in_button": "تسجيل الدخول",
+  "copy__publish_sign_in_text": "لا أستطيع نشر تطبيقكم قبل تسجيل الدخول. يستغرق ذلك دقيقة.",
+  "copy__publish_sign_in_title": "سجلوا الدخول للنشر",
+  "copy__rail_pitch": "ابنوه كما تبنون موقعا. أخبروني بما تريدون تغييره وسأنفذه.",
+  "copy__signed_in_caption": "تم تسجيل الدخول",
+  "copy__signed_in_lead": "حسابكم متصل. لاستخدام حساب آخر، سجلوا الخروج أولا ثم سجلوا الدخول من جديد.",
+  "copy__start_lead": "هذا اختيارنا لزيارتكم الأولى. يبقى عملكم هنا، ولا حاجة إلى التسجيل في أي مكان.",
+  "copy__step_sign_in_hint": "اختاروا كيف تريدون استخدام Studio.",
+  "copy__use_here_note": "بلا حساب وبلا تسجيل.",
+  "copy__why_no_bill_text": "لا شيء تدفعونه أثناء العمل هنا.",
+  "design_inspector__close_panel": "إغلاق اللوحة",
+  "design_inspector__design_controls": "أدوات التصميم",
+  "design_inspector__design_mode": "وضع التصميم",
+  "design_inspector__mode_component": "مكون",
+  "design_inspector__mode_element": "عنصر",
+  "design_inspector__mode_theme": "السمة",
+  "design_live__apps": "تطبيقاتكم",
+  "design_live__chat_text": "الإشارة إلى جزء من تطبيقكم الحقيقي للحديث عنه غير متاحة بعد. في الوقت الحالي صفوا الجزء في المحادثة وسيجده Pikku.",
+  "design_live__chat_title": "تحديد للمحادثة",
+  "design_live__frame": "{name}، كما يراه الناس",
+  "design_live__look_text": "تغيير الألوان والخطوط هنا غير متاح بعد في تطبيقكم الحقيقي. في الوقت الحالي اطلبوا من Pikku في المحادثة تغييرها.",
+  "design_live__look_title": "المظهر",
+  "design_live__running": "يعمل",
+  "design_live__starting_short": "جار التشغيل",
+  "design_live__words_text": "تحرير النصوص مباشرة في تطبيقكم الحقيقي غير متاح بعد. في الوقت الحالي اطلبوا من Pikku في المحادثة تغيير أي نص أو إضافة لغة.",
+  "design_live__words_title": "الترجمات",
+  "design_workbench__click_any_underlined_wording": "انقروا على أي نص مسطر في المعاينة لتحريره بكل اللغات.",
+  "design_workbench__click_anything_in_the": "انقروا على أي عنصر في المعاينة، مثل زر، لتغيير كل العناصر من هذا النوع.",
+  "design_workbench__click_one_thing_in": "انقروا على عنصر واحد في المعاينة لتغييره وحده.",
+  "design_workbench__select_for_chat": "تحديد للمحادثة",
+  "element_panel__alignment": "المحاذاة",
+  "element_panel__all_buttons": "الأزرار",
+  "element_panel__all_cards": "البطاقات",
+  "element_panel__all_headings": "العناوين",
+  "element_panel__all_texts": "النصوص الأساسية",
+  "element_panel__bold": "عريض",
+  "element_panel__border_colour": "لون الإطار",
+  "element_panel__border_thickness": "سماكة الإطار",
+  "element_panel__centre": "توسيط",
+  "element_panel__changes_all": "يغير جميع ما في تطبيقكم من هذا النوع: {things}. {note}",
+  "element_panel__corner_roundness": "استدارة الزوايا",
+  "element_panel__fill_colour": "لون التعبئة",
+  "element_panel__fit": "ملاءمة",
+  "element_panel__full_width": "العرض الكامل",
+  "element_panel__left": "يسار",
+  "element_panel__light": "خفيف",
+  "element_panel__medium": "متوسط",
+  "element_panel__n_button": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "{count} زرا",
+        "countPlural=one": "زر واحد",
+        "countPlural=two": "زران",
+        "countPlural=few": "{count} أزرار",
+        "countPlural=many": "{count} زرا",
+        "countPlural=other": "{count} زرا"
+      }
+    }
+  ],
+  "element_panel__n_card": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "{count} بطاقة",
+        "countPlural=one": "بطاقة واحدة",
+        "countPlural=two": "بطاقتان",
+        "countPlural=few": "{count} بطاقات",
+        "countPlural=many": "{count} بطاقة",
+        "countPlural=other": "{count} بطاقة"
+      }
+    }
+  ],
+  "element_panel__n_heading": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "{count} عنوانا",
+        "countPlural=one": "عنوان واحد",
+        "countPlural=two": "عنوانان",
+        "countPlural=few": "{count} عناوين",
+        "countPlural=many": "{count} عنوانا",
+        "countPlural=other": "{count} عنوانا"
+      }
+    }
+  ],
+  "element_panel__n_text": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "{count} نصا أساسيا",
+        "countPlural=one": "نص أساسي واحد",
+        "countPlural=two": "نصان أساسيان",
+        "countPlural=few": "{count} نصوص أساسية",
+        "countPlural=many": "{count} نصا أساسيا",
+        "countPlural=other": "{count} نصا أساسيا"
+      }
+    }
+  ],
+  "element_panel__only_this": "يتغير هذا العنصر فقط ({kind}). ويحتفظ بإعداداته حتى لو غيرتم الإعدادات الافتراضية لكل {kinds}.",
+  "element_panel__own_settings_kept": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "{count} عنصرا له إعدادات خاصة يحتفظ بها.",
+        "countPlural=one": "عنصر واحد له إعدادات خاصة يحتفظ بها.",
+        "countPlural=two": "عنصران لهما إعدادات خاصة يحتفظان بها.",
+        "countPlural=few": "{count} عناصر لها إعدادات خاصة تحتفظ بها.",
+        "countPlural=many": "{count} عنصرا له إعدادات خاصة يحتفظ بها.",
+        "countPlural=other": "{count} عنصرا له إعدادات خاصة يحتفظ بها."
+      }
+    }
+  ],
+  "element_panel__right": "يمين",
+  "element_panel__single_one_wins": "ما تضبطونه على عنصر واحد له الأولوية دائما.",
+  "element_panel__size": "الحجم",
+  "element_panel__space_inside": "المسافة الداخلية",
+  "element_panel__text_colour": "لون النص",
+  "element_panel__text_size": "حجم النص",
+  "element_panel__this_button": "الزر",
+  "element_panel__this_card": "البطاقة",
+  "element_panel__this_heading": "العنوان",
+  "element_panel__this_text": "النص الأساسي",
+  "element_panel__undo_changes_to_all": "التراجع عن التغييرات على الجميع",
+  "element_panel__undo_changes_to_this": "التراجع عن التغييرات على هذا العنصر",
+  "element_panel__weight": "السماكة",
+  "element_panel__wide": "عريض الشكل",
+  "email_bar__all_emails": "كل رسائل البريد",
+  "email_bar__back_to_all_emails": "العودة إلى كل رسائل البريد",
+  "email_bar__computer": "حاسوب",
+  "email_bar__email_preview_controls": "أدوات معاينة البريد",
+  "email_bar__emails": "رسائل البريد",
+  "email_bar__language": "اللغة",
+  "email_bar__phone": "هاتف",
+  "email_bar__plain_text": "نص عادي",
+  "email_bar__reload_preview": "إعادة تحميل المعاينة",
+  "email_bar__send_me_a_test": "أرسلوا لي تجربة",
+  "email_bar__show_as": "العرض على",
+  "email_panel__a_sample_with_made_up": "مثال ببيانات وهمية. لا يرسل شيء.",
+  "email_panel__account_email": "بريد الحساب",
+  "email_panel__button_wording": "نص الزر",
+  "email_panel__details_that_change_for": "تفاصيل تتغير لكل شخص",
+  "email_panel__email_controls": "أدوات البريد",
+  "email_panel__other_email": "بريد آخر",
+  "email_panel__paragraph": "الفقرة {n}",
+  "email_panel__reset": "إعادة ضبط",
+  "email_panel__sample_details": "بيانات المثال",
+  "email_panel__sent": "أرسل",
+  "email_panel__subject_line": "سطر الموضوع",
+  "email_panel__what_it_says": "ما تقوله هذه الرسالة · {lang}",
+  "email_panel__when_it_is_sent": "متى ترسل",
+  "email_panel__who_gets_it": "من يتلقاها",
+  "emails__filled_in": "تملأ لكل شخص",
+  "emails_list__account_emails": "رسائل الحساب",
+  "emails_list__emails": "رسائل البريد",
+  "emails_list__goes_to": "ترسل إلى",
+  "emails_list__no_email_matches_that": "لا رسائل بريد تطابق هذا البحث.",
+  "emails_list__nothing_here_matches": "لا شيء هنا يطابق البحث.",
+  "emails_list__other_emails": "رسائل أخرى",
+  "emails_list__search_emails": "البحث في رسائل البريد",
+  "emails_list__sent_on_account": "ترسل عندما يسجل شخص حسابا أو يسجل الدخول أو ينضم إلى فريقكم.",
+  "emails_list__sent_to_visitors": "ترسل عندما يستخدم الزوار موقعكم.",
+  "emails_list__these_are_the_emails": "هذه رسائل البريد التي ترسلها صفحة الحجز لديكم تلقائيا. اطلعوا على صياغة كل رسالة بكل لغة قبل أن تصل إلى الناس. لا شيء يرسل من هذه الصفحة.",
+  "error_report_drawer__aria": "تقارير الأخطاء",
+  "error_report_drawer__change_mind": "يمكنكم تغيير رأيكم لاحقا.",
+  "error_report_drawer__close": "إغلاق",
+  "error_report_drawer__intro": "عندما يتعطل شيء من جهة Pikku، يمكننا إرسال ملاحظة قصيرة إلى فريق Pikku ليصلحه.",
+  "error_report_drawer__never_text": "اسم مشروعكم أو محتواه أو ملفاته أو أي شخص من أفراد فريقكم.",
+  "error_report_drawer__never_title": "ما لا يرسل أبدا",
+  "error_report_drawer__sent_text": "فقط نوع الخطأ ورقم مرجعي والوقت. يبدو كأنه صادر من تطبيق عام.",
+  "error_report_drawer__sent_title": "ما يرسل",
+  "error_report_drawer__title": "هل تريدون إبلاغ Pikku بمثل هذه الأخطاء؟",
+  "error_report_drawer__turn_on": "تفعيل تقارير الأخطاء",
+  "error_state__fix_ask": "لم يتم تحميل شيء ما. يرجى معرفة السبب وتقديم طلب تغيير (change request) لإصلاحه. اكتب \"change request\" في ردك، ثم أخبرني بكلمات بسيطة بما غيرته.\n\n{details}",
+  "error_state__fix_ask_what": "لم يتم تحميل شيء ما ({what}). يرجى معرفة السبب وتقديم طلب تغيير (change request) لإصلاحه. اكتب \"change request\" في ردك، ثم أخبرني بكلمات بسيطة بما غيرته.\n\n{details}",
+  "error_state__hide_details": "إخفاء التفاصيل",
+  "error_state__ours_note": "المشكلة من جهة Pikku وليست في مشروعكم. لم يتغير أي شيء في مشروعكم.",
+  "error_state__show_details": "عرض التفاصيل",
+  "explore_directions__idea": "الفكرة {n}",
+  "explore_directions__look_closer": "إلقاء نظرة أقرب",
+  "explore_directions__more_controlled": "استكشف بضعة خيارات إضافية كاستكشاف جديد، مع البقاء قريبا من الاتجاه الحالي. استخدم Tailwind ودليل التصميم الخاص بالمشروع إن وجد، وغير التفاصيل. اكتب كل خيار في artifacts/<id> مع ملف artifact.json يتضمن \"exploration\":\"<a new short id>\",\"mode\":\"controlled\"، وأضفها واحدا تلو الآخر. الاستكشاف السابق: {exploration}.",
+  "explore_directions__more_extreme": "استكشف بضعة اتجاهات مختلفة تماما كاستكشاف جديد، متجاهلا نظام التصميم. استخدم HTML مستقلا مع CSS مضمن ودون سكربتات. اكتب كل اتجاه في artifacts/<id> مع ملف artifact.json يتضمن \"exploration\":\"<a new short id>\",\"mode\":\"extreme\"، وأضفها واحدا تلو الآخر. الاستكشاف السابق: {exploration}.",
+  "explore_directions__open": "فتح {title}",
+  "explore_directions__use_this_one": "استخدام هذه",
+  "explore_hub__artifacts_text": "الصفحات والملفات التي صنعها Pikku لكم، كلها في مكان واحد.",
+  "explore_hub__artifacts_title": "المخرجات",
+  "explore_hub__ask_pikku": "اسألوا Pikku",
+  "explore_hub__ask_pikku_in_your": "اسألوا Pikku بكلماتكم. سيخبركم بما يجده أو يأخذكم إلى المكان المناسب.",
+  "explore_hub__content_text": "النصوص والصور التي يراها زواركم، جاهزة للتغيير.",
+  "explore_hub__content_title": "المحتوى",
+  "explore_hub__explore": "استكشاف",
+  "explore_hub__front_doors_text": "كل الطرق التي يدخل بها الناس والبرامج إلى مشروعكم.",
+  "explore_hub__front_doors_title": "أبواب الدخول",
+  "explore_hub__jump_to_a_page": "الانتقال إلى صفحة",
+  "explore_hub__k": "⌘K",
+  "explore_hub__more_of_your_project": "المزيد من مشروعكم",
+  "explore_hub__not_sure_where_to": "لا تعرفون أين تبحثون؟",
+  "explore_hub__nothing_here_you_have": "لا شيء هنا يجب عليكم فعله. اختاروا ما يثير فضولكم.",
+  "explore_hub__on_your_sidebar": "في الشريط الجانبي",
+  "explore_hub__press_k_from_any": "اضغطوا ⌘K من أي شاشة للانتقال إلى صفحة.",
+  "explore_hub__things_to_look_into": "أمور تستحق الاطلاع",
+  "explore_hub__translations_text": "كل كلمة يقرؤها الناس، واللغات التي تقدمونها بها.",
+  "explore_hub__translations_title": "الترجمات",
+  "explore_hub__virtual_users_text": "زوار تجريبيون يجربون تطبيقكم لتروا كيف يبدو من وجهة نظرهم.",
+  "explore_hub__virtual_users_title": "المستخدمون الافتراضيون",
+  "explore_hub__what_should_i_look_at_today": "ماذا أطلع عليه اليوم؟",
+  "explore_sample__ai_ask_1": "ماذا يستطيع المساعد أن يفعل؟",
+  "explore_sample__ai_ask_2": "دعوني أجربه",
+  "explore_sample__ai_q": "من هو المساعد؟",
+  "explore_sample__away_ask_1": "أرني ما الذي حدث خطأ الليلة الماضية",
+  "explore_sample__away_ask_2": "هل حدث شيء غريب هذا الأسبوع؟",
+  "explore_sample__away_q": "ماذا حدث أثناء غيابي؟",
+  "explore_sample__cost_ask_1": "كم كلف الذكاء الاصطناعي هذا الأسبوع؟",
+  "explore_sample__cost_ask_2": "هل يمكنني خفضه؟",
+  "explore_sample__cost_q": "كم كلف هذا؟",
+  "explore_sample__mem_ask_1": "ماذا تتذكر عن عملائي؟",
+  "explore_sample__mem_ask_2": "أين الحجوزات؟",
+  "explore_sample__mem_q": "ماذا يتذكر؟",
+  "explore_sample__own_ask_1": "أرسل تذكيرا كل يوم اثنين",
+  "explore_sample__own_ask_2": "ما الذي يعمل ليلا؟",
+  "explore_sample__own_q": "ما الذي يعمل تلقائيا؟",
+  "explore_sample__plug_ask_1": "اربط الدفع بالبطاقات",
+  "explore_sample__plug_ask_2": "ما الموصول حاليا؟",
+  "explore_sample__plug_q": "ما الموصول حاليا؟",
+  "explore_sample__secrets_ask_1": "أضف كلمة مرور أو مفتاحا",
+  "explore_sample__secrets_ask_2": "من استخدمها؟",
+  "explore_sample__secrets_q": "أين تحفظ كلمات المرور الخاصة بي؟",
+  "explore_sample__well_ask_1": "هل كل شيء يعمل؟",
+  "explore_sample__well_ask_2": "أخبرني إذا تعطل شيء",
+  "explore_sample__well_q": "هل كل شيء بخير؟",
+  "explore_sample__who_ask_1": "ادع أختي للمساعدة",
+  "explore_sample__who_ask_2": "من يستطيع تعديل هذا؟",
+  "explore_sample__who_q": "من يسمح له بالدخول؟",
+  "explore_setups_screen__change_ready": "التغيير \"{title}\" جاهز للمراجعة.",
+  "explore_setups_screen__create_the_change": "إنشاء التغيير",
+  "explore_setups_screen__saved_to_your_wishlist_from": "تم الحفظ في قائمة أمنياتكم من {name}. يمكنكم تحويله إلى تغيير لاحقا.",
+  "explore_setups_screen__set_up_as": "الإعداد على نمط {name}",
+  "explore_setups_screen__text": "{idea} {who}. كل خيار هو طريقة كاملة لسير العمل. قارنوا بينها ثم اختاروا واحدا، أو احفظوا الأجزاء التي أعجبتكم.",
+  "explore_setups_screen__this_creates_one_change_with": "سينشئ هذا تغييرا واحدا يضم كل ما يظهر أدناه. يمكنكم مراجعته قبل نشر أي شيء.",
+  "explore_setups_screen__title": "ثلاث طرق لتشغيله",
+  "fabric_pitch__a_stripe_sandbox_to": "بيئة تجريبية من Stripe للتجربة",
+  "fabric_pitch__ai_keeps_an_eye": "يراقب الذكاء الاصطناعي تطبيقكم المنشور ويصلحه عند حدوث عطل، وغالبا قبل أن يلاحظ أحد.",
+  "fabric_pitch__cheap_hosting": "استضافة منخفضة التكلفة",
+  "fabric_pitch__everything_after_the_build": "كل ما بعد البناء نتولاه عنكم.",
+  "fabric_pitch__fabric_is_where_your": "Fabric هو المكان الذي ينطلق منه تطبيقكم على الإنترنت.",
+  "fabric_pitch__not_now": "ليس الآن",
+  "fabric_pitch__pick_the_ai_that": "اختاروا الذكاء الاصطناعي الذي يبني",
+  "fabric_pitch__put_your_app_online": "انشروا تطبيقكم على الإنترنت بنقرة واحدة وبسعر يناسب مشروعا أول.",
+  "fabric_pitch__see_what_fabric_costs": "اطلعوا على أسعار Fabric",
+  "fabric_pitch__studio_is_all_you": "Studio كل ما تحتاجونه للبناء. أما Fabric فتضيفونه حين تريدون نشر التطبيق.",
+  "fabric_pitch__switch_between_the_best": "بدلوا بين أفضل النماذج في أي وقت. لا مفاتيح للبحث عنها ولا حسابات للتنقل بينها.",
+  "fabric_pitch__take_pretend_payments_while": "اقبلوا مدفوعات تجريبية أثناء البناء، لتعمل صفحة الدفع قبل أن يدخل أي مال حقيقي.",
+  "fabric_pitch__watching_and_self_healing": "مراقبة وإصلاح ذاتي",
+  "fabric_pitch__what_fabric_adds": "ما الذي يضيفه Fabric",
+  "fabric_pitch__what_fabric_is": "ما هو Fabric",
+  "front_doors__add_say": "أريد طريقة أخرى للدخول إلى هذا المشروع. من فضلك اسألني عن النوع: موقع إلكتروني أو أمر أو أداة لمساعد ذكاء اصطناعي أو تطبيق محادثة.",
+  "front_doors__cli_caption": "يكتب الناس هذه الأوامر في الطرفية لاستخدام تطبيقكم.",
+  "front_doors__copy": "نسخ الأمر الأول",
+  "front_doors__docs_ask": "اطلبوا من Pikku كتابته",
+  "front_doors__docs_loading": "جار البحث عن المرجع…",
+  "front_doors__docs_missing": "لم يكتب المرجع بعد.",
+  "front_doors__docs_open": "فتح المرجع",
+  "front_doors__docs_say": "من فضلك اكتب المرجع الخاص بالعناوين الإلكترونية لهذا المشروع، حتى تعرف البرامج الأخرى كيف تستخدمها.",
+  "front_doors__empty_hidden": "الأبواب الموجودة هنا مخصصة للبرامج الأخرى فقط. فعلوا عرضها لتروها.",
+  "front_doors__empty_show": "عرضها",
+  "front_doors__empty_text": "لا يستطيع أحد دخول هذا المشروع بعد. أخبروا Pikku بالباب الذي تريدونه أولا، مثل موقع إلكتروني أو تطبيق محادثة.",
+  "front_doors__empty_title": "لا توجد أبواب دخول بعد",
+  "front_doors__fix_ask": "اطلبوا من Pikku إصلاحه",
+  "front_doors__fix_say": "لم يبدأ تشغيل التطبيق {name}. من فضلك اكتشف السبب وأصلحه.",
+  "front_doors__gateway_caption": "يستمع تطبيقكم هنا إلى الرسائل. عدد طرق الوصول إليه: {count}.",
+  "front_doors__group_api": "للبرامج الأخرى",
+  "front_doors__group_api_text": "هكذا تتحدث البرامج الأخرى مع تطبيقكم. لا يحتاج معظم الناس إلى هذه.",
+  "front_doors__group_cli": "سطر الأوامر",
+  "front_doors__group_cli_text": "كتابة في الطرفية، من قبلكم أو من مطور أو عبر سكريبت.",
+  "front_doors__group_gateway": "تطبيقات المحادثة",
+  "front_doors__group_gateway_text": "تطبيقات مراسلة يستطيع الناس من خلالها التحدث مع تطبيقكم.",
+  "front_doors__group_mcp": "مساعدو الذكاء الاصطناعي",
+  "front_doors__group_mcp_text": "أمور يسمح لمساعد ذكاء اصطناعي مثل Claude بفعلها لتطبيقكم.",
+  "front_doors__group_web": "المواقع والتطبيقات",
+  "front_doors__group_web_text": "ما يفتحه الناس في المتصفح.",
+  "front_doors__hero_ask": "اطلبوا من Pikku إضافة واحد",
+  "front_doors__hero_loading": "جار البحث عن الأبواب…",
+  "front_doors__hero_none": "لا توجد طريقة دخول بعد",
+  "front_doors__hero_open": "فتح تطبيقكم",
+  "front_doors__hero_ways": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "{count} طرق دخول",
+        "countPlural=one": "طريقة دخول واحدة",
+        "countPlural=two": "طريقتا دخول ({count})",
+        "countPlural=few": "{count} طرق دخول",
+        "countPlural=many": "{count} طريقة دخول",
+        "countPlural=other": "{count} طريقة دخول"
+      }
+    }
+  ],
+  "front_doors__hero_why": "هذه هي الطرق التي يستطيع بها الناس والبرامج الدخول إلى {name}. لا يغير شيء هنا تطبيقكم؛ هي فقط تظهر أماكن الأبواب.",
+  "front_doors__hero_why_none": "لا شيء يتيح للناس الدخول بعد. أخبروا Pikku بالباب الذي تريدونه أولا، مثل موقع إلكتروني أو تطبيق محادثة.",
+  "front_doors__how_listener": "يستمع إلى الرسائل الجديدة",
+  "front_doors__how_webhook": "ترسل إليه الرسائل",
+  "front_doors__how_websocket": "يبقى متصلا مباشرة",
+  "front_doors__http_caption": "عناوين يمكن للبرامج الأخرى استدعاؤها: {count}.",
+  "front_doors__http_title": "العناوين الإلكترونية",
+  "front_doors__kind_cli": "سطر الأوامر",
+  "front_doors__kind_gateway": "تطبيق محادثة",
+  "front_doors__kind_http": "العناوين الإلكترونية",
+  "front_doors__kind_live": "اتصال مباشر",
+  "front_doors__kind_mcp": "مساعد ذكاء اصطناعي",
+  "front_doors__kind_web": "موقع إلكتروني",
+  "front_doors__lead": "كل الطرق التي يمكن بها لأي شخص دخول {name}: موقع إلكتروني أو أمر أو مساعد ذكاء اصطناعي أو تطبيق محادثة.",
+  "front_doors__live_caption": "تبقى هذه مفتوحة لتتحدث الصفحة أثناء مشاهدة الناس لها.",
+  "front_doors__live_title": "الاتصالات المباشرة",
+  "front_doors__mcp_caption": "أمور يستطيع مساعد الذكاء الاصطناعي فعلها لتطبيقكم: {count}.",
+  "front_doors__mcp_no_tools": "لا أدوات بعد. يستطيع مساعد الذكاء الاصطناعي الاتصال، لكن لا شيء لديه ليفعله.",
+  "front_doors__mcp_title": "أدوات مساعدي الذكاء الاصطناعي",
+  "front_doors__more": "و{count} أخرى",
+  "front_doors__no_shot": "لا توجد صورة بعد",
+  "front_doors__no_shot_text": "يلتقط Pikku صورة لتطبيقكم بعد أن يبني صفحة.",
+  "front_doors__open_app": "فتحه",
+  "front_doors__shot_alt": "لقطة من {name}",
+  "front_doors__state_failed": "لم يبدأ التشغيل",
+  "front_doors__state_ready": "يعمل بشكل جيد",
+  "front_doors__state_starting": "جار البدء…",
+  "front_doors__title": "أبواب الدخول",
+  "front_doors__toggle": "عرض أبواب البرامج الأخرى أيضا",
+  "front_doors__web_caption": "يفتحه الناس في المتصفح، على الهاتف أو الحاسوب.",
+  "golive__aria": "خطوات النشر على الإنترنت",
+  "golive__done": "تم",
+  "golive__step1": "تشغيل مساحة عمل",
+  "golive__step1_done": "مساحة عملكم تعمل",
+  "golive__step1_sub": "اختاروا المكان الذي تريدون العمل فيه.",
+  "golive__step2": "إجراء التغييرات",
+  "golive__step2_action": "الانتقال إلى مساحة عملي",
+  "golive__step2_sub": "اعملوا في مساحة عملكم، أو اطلبوا من Pikku القيام بذلك عنكم.",
+  "golive__step3": "النشر",
+  "golive__step3_sub": "انشروا التطبيق حين تكونون راضين عنه.",
+  "golive__title": "لننشره على الإنترنت.",
+  "golive__why": "ثلاث خطوات قصيرة. أنتم الآن في الأولى.",
+  "knowledge__answer_prompt": "لنجب عن هذا السؤال المفتوح من قاعدة المعرفة: \"{title}\" ({path}). اسألني عما تحتاج إلى معرفته، سؤالا تلو الآخر. وبعد أن أجيب، اكتب الإجابة في تلك الملاحظة، وضع عليها علامة أنها أجيب عنها، وأضف أي ميزات جديدة تترتب عليها.",
+  "knowledge__issue_missing": "“{title}” تشير إلى “{target}” التي لم تكتب بعد.",
+  "knowledge__issue_unlinked": "لا توجد ملاحظة أخرى تشير إلى “{title}”، لذا لن يعثر عليها أحد أثناء التصفح.",
+  "knowledge__q_for_ask": "اسألني لمن هذا التطبيق وماذا يحتاجون منه، سؤالا تلو الآخر، واكتب الإجابات في المعرفة.",
+  "knowledge__q_for_label": "لمن هذا التطبيق؟",
+  "knowledge__q_missing_ask": "اطلع على قاعدة المعرفة واسألني السؤال الذي ستضيف إجابته أكثر ما يمكن إلى ما يستطيع هذا التطبيق فعله. ثم اكتب إجابتي في المعرفة.",
+  "knowledge__q_missing_label": "ما الذي ما زال ناقصا؟",
+  "knowledge__q_visitors_ask": "اسألني عما يستطيع الزوار فعله في هذا التطبيق. اطرح سؤالا واحدا في كل مرة، واكتب كل إجابة في المعرفة.",
+  "knowledge__q_visitors_label": "اسألوني عما يستطيع الزوار فعله",
+  "knowledge_browser__ask_pikku_to_write": "اطلبوا من Pikku كتابة أول ملاحظة",
+  "knowledge_browser__nothing_is_written_down": "لم يدون شيء بعد.",
+  "knowledge_browser__please_write_the_first": "من فضلك اكتب أول ملاحظة عن تطبيقي: ما الغرض منه ومن يستخدمه وأهم القرارات المتخذة حتى الآن.",
+  "knowledge_browser__whenever_you_and_pikku": "كلما قررتم أنتم و Pikku شيئا بشأن تطبيقكم، يكتب Pikku ملاحظة قصيرة عنه هنا، حتى لا يضيع السبب أبدا.",
+  "knowledge_head__a_written_record_of": "سجل مكتوب بكلمات بسيطة للقرارات التي تقف خلف تطبيقكم. يقرؤه Pikku قبل تغيير أي شيء، وبإمكانكم قراءته أيضا.",
+  "knowledge_head__links": "روابط",
+  "knowledge_head__notes": "ملاحظات",
+  "knowledge_head__why_your_app_is": "لماذا بني تطبيقكم بهذه الطريقة",
+  "knowledge_index_view__all_notes": "كل الملاحظات",
+  "knowledge_index_view__ask_pikku_to_fix": "اطلبوا من Pikku إصلاح هذه",
+  "knowledge_index_view__done_of_total": "تم {done} من {total}",
+  "knowledge_index_view__fix_prompt": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "في ملاحظاتكم {count} مشكلة: {problems} هل يمكنك إصلاحها؟",
+        "countPlural=one": "في ملاحظاتكم مشكلة واحدة: {problems} هل يمكنك إصلاحها؟",
+        "countPlural=two": "في ملاحظاتكم مشكلتان: {problems} هل يمكنك إصلاحهما؟",
+        "countPlural=few": "في ملاحظاتكم {count} مشكلات: {problems} هل يمكنك إصلاحها؟",
+        "countPlural=many": "في ملاحظاتكم {count} مشكلة: {problems} هل يمكنك إصلاحها؟",
+        "countPlural=other": "في ملاحظاتكم {count} مشكلة: {problems} هل يمكنك إصلاحها؟"
+      }
+    }
+  ],
+  "knowledge_index_view__folder": "المجلد",
+  "knowledge_index_view__found": "تم العثور على {count}",
+  "knowledge_index_view__no_notes_match_try": "لا توجد ملاحظات مطابقة. جربوا كلمة أخرى.",
+  "knowledge_index_view__nobody_links_to_these": "لا أحد يشير إلى هذه بعد، لذا يصعب العثور عليها.",
+  "knowledge_index_view__notes_need_a_look": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "{count} ملاحظة تحتاج إلى نظرة",
+        "countPlural=one": "ملاحظة واحدة تحتاج إلى نظرة",
+        "countPlural=two": "ملاحظتان تحتاجان إلى نظرة",
+        "countPlural=few": "{count} ملاحظات تحتاج إلى نظرة",
+        "countPlural=many": "{count} ملاحظة تحتاج إلى نظرة",
+        "countPlural=other": "{count} ملاحظة تحتاج إلى نظرة"
+      }
+    }
+  ],
+  "knowledge_index_view__open": "فتح",
+  "knowledge_index_view__search_the_notes": "البحث في الملاحظات",
+  "knowledge_index_view__start": "البداية",
+  "knowledge_note__all_notes": "كل الملاحظات",
+  "knowledge_note__ask_pikku_to_change": "اطلبوا من Pikku تغييرها",
+  "knowledge_note__built_of_total": "تم بناء {done} من {total}",
+  "knowledge_note__i_read_the_note_i": "قرأت الملاحظة “{t}”. أود تغييرها. وهذا ما أريد قوله: ",
+  "knowledge_note__no_other_note_points": "لا توجد ملاحظة أخرى تشير إلى هنا بعد.",
+  "knowledge_note__nobody_has_written_this": "لم يكتب أحد هذه الملاحظة بعد",
+  "knowledge_note__not_written_yet": "لم تكتب بعد",
+  "knowledge_note__notes_are_read_only": "الملاحظات هنا للقراءة فقط.",
+  "knowledge_note__nothing_it_stands_on": "لا شيء. فهي قائمة بذاتها.",
+  "knowledge_note__see_the_build_plan": "عرض خطة البناء",
+  "knowledge_note__step_of_plan": "الخطوة {step} من خطة البناء",
+  "knowledge_note__these_notes_point_here": "هذه الملاحظات تشير إلى هنا",
+  "knowledge_note__this_note_points_to": "تشير هذه الملاحظة إلى",
+  "logs_screen__ask_pikku_fix": "اطلبوا من Pikku الإصلاح",
+  "logs_screen__clear_filters": "مسح عوامل التصفية",
+  "logs_screen__columns": "الأعمدة",
+  "logs_screen__copy": "نسخ",
+  "logs_screen__copy_line": "نسخ السطر",
+  "logs_screen__copy_trace_id": "نسخ معرف التتبع",
+  "logs_screen__crumb": "أثناء البناء",
+  "logs_screen__download_say": "تنزيل هذه الأسطر كملف",
+  "logs_screen__duration": "المدة",
+  "logs_screen__empty_no_match": "لا توجد أسطر مطابقة. جربوا نطاقا زمنيا أوسع أو امسحوا عوامل التصفية.",
+  "logs_screen__empty_none_yet": "لا رسائل بعد. تظهر رسائل تطبيقكم بمجرد أن يبدأ العمل.",
+  "logs_screen__fix_say": "من فضلك أصلح هذه المشكلة: {text}",
+  "logs_screen__function": "الدالة",
+  "logs_screen__hide_line": "إخفاء هذا السطر",
+  "logs_screen__level": "المستوى",
+  "logs_screen__level_all": "الكل",
+  "logs_screen__level_count": "{level} {count}",
+  "logs_screen__level_errors": "الأخطاء",
+  "logs_screen__level_info": "معلومات",
+  "logs_screen__level_warnings": "التحذيرات",
+  "logs_screen__line": "السطر",
+  "logs_screen__line_number": "#{id}",
+  "logs_screen__lines_range": [
+    {
+      "declarations": [
+        "input total",
+        "local totalPlural = total: plural"
+      ],
+      "selectors": [
+        "totalPlural"
+      ],
+      "match": {
+        "totalPlural=zero": "من {from} إلى {to} من أصل {total} سطرا",
+        "totalPlural=one": "من {from} إلى {to} من أصل سطر واحد",
+        "totalPlural=two": "من {from} إلى {to} من أصل سطرين",
+        "totalPlural=few": "من {from} إلى {to} من أصل {total} أسطر",
+        "totalPlural=many": "من {from} إلى {to} من أصل {total} سطرا",
+        "totalPlural=other": "من {from} إلى {to} من أصل {total} سطرا"
+      }
+    }
+  ],
+  "logs_screen__live_switch": "مباشر",
+  "logs_screen__message": "الرسالة",
+  "logs_screen__ms": "{ms} ms",
+  "logs_screen__name_error": "خطأ",
+  "logs_screen__name_info": "معلومات",
+  "logs_screen__name_warn": "تحذير",
+  "logs_screen__next": "التالي",
+  "logs_screen__no_lines": "0 سطر",
+  "logs_screen__page_of": "الصفحة {page} من {pages}",
+  "logs_screen__previous": "السابق",
+  "logs_screen__range_1440": "24 ساعة",
+  "logs_screen__range_15": "15 دقيقة",
+  "logs_screen__range_60": "ساعة واحدة",
+  "logs_screen__search": "البحث في الرسائل والدوال ومعرفات التتبع",
+  "logs_screen__show_all": "عرض الكل",
+  "logs_screen__show_columns": "عرض الأعمدة",
+  "logs_screen__show_line": "عرض هذا السطر",
+  "logs_screen__source": "المصدر",
+  "logs_screen__source_all": "من كل مكان",
+  "logs_screen__source_server": "الخادم",
+  "logs_screen__source_website": "الموقع",
+  "logs_screen__text": "ما يقوله تطبيقكم أثناء بنائه. انقروا على سطر لرؤيته كاملا.",
+  "logs_screen__time_range": "النطاق الزمني",
+  "logs_screen__title": "سجلات البناء",
+  "logs_screen__trace_chip": "التتبع {id} ✕",
+  "logs_screen__trace_id": "معرف التتبع",
+  "logs_screen__type": "النوع",
+  "logs_screen__when": "الوقت",
+  "logs_screen__when_value": "4 أكتوبر 2026، {time}",
+  "logs_screen__whole_trace": "كل ما في هذا التتبع",
+  "machine_opening__cancel": "إلغاء",
+  "machine_opening__our_recommendation": "توصيتنا",
+  "metrics_screen__assistant_note": "سيبحث المساعد في الأمر ويخبركم بما فعله.",
+  "metrics_screen__crumb_app": "أثناء التشغيل",
+  "metrics_screen__crumb_studio": "Pikku Studio",
+  "metrics_screen__detail_failed": "فشل {howMany} خلال هذه المدة.",
+  "metrics_screen__detail_failed_why": "فشل {howMany} خلال هذه المدة. {why}",
+  "metrics_screen__detail_ok": "لم يفشل شيء، والإجابات تصل بسرعة.",
+  "metrics_screen__detail_slow": "بعض الأمور تستغرق وقتا للإجابة. الأبطأ مدرجة أدناه.",
+  "metrics_screen__empty_text": "بمجرد أن يعمل تطبيقكم ويستخدمه أحد، سترون سرعة إجابته وأي شيء حدث بشكل خاطئ. وإن كان يعمل بالفعل، جربوا نطاقا زمنيا أطول.",
+  "metrics_screen__empty_title": "لم يطلب من تطبيقكم شيء بعد",
+  "metrics_screen__failed_times_with_please_find": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "فشل {name} {count} مرة بالرسالة: {why}. من فضلك اكتشف السبب وأصلحه، ثم أخبرني بكلمات بسيطة بما غيرته.",
+        "countPlural=one": "فشل {name} مرة واحدة بالرسالة: {why}. من فضلك اكتشف السبب وأصلحه، ثم أخبرني بكلمات بسيطة بما غيرته.",
+        "countPlural=two": "فشل {name} مرتين بالرسالة: {why}. من فضلك اكتشف السبب وأصلحه، ثم أخبرني بكلمات بسيطة بما غيرته.",
+        "countPlural=few": "فشل {name} {count} مرات بالرسالة: {why}. من فضلك اكتشف السبب وأصلحه، ثم أخبرني بكلمات بسيطة بما غيرته.",
+        "countPlural=many": "فشل {name} {count} مرة بالرسالة: {why}. من فضلك اكتشف السبب وأصلحه، ثم أخبرني بكلمات بسيطة بما غيرته.",
+        "countPlural=other": "فشل {name} {count} مرة بالرسالة: {why}. من فضلك اكتشف السبب وأصلحه، ثم أخبرني بكلمات بسيطة بما غيرته."
+      }
+    }
+  ],
+  "metrics_screen__fix_it": "أصلحه من أجلي",
+  "metrics_screen__fix_problem": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "فشل {name} {count} مرة بالرسالة: {why}.",
+        "countPlural=one": "فشل {name} مرة واحدة بالرسالة: {why}.",
+        "countPlural=two": "فشل {name} مرتين بالرسالة: {why}.",
+        "countPlural=few": "فشل {name} {count} مرات بالرسالة: {why}.",
+        "countPlural=many": "فشل {name} {count} مرة بالرسالة: {why}.",
+        "countPlural=other": "فشل {name} {count} مرة بالرسالة: {why}."
+      }
+    }
+  ],
+  "metrics_screen__fix_prompt": "هناك خطأ يحدث {where}. فشل {howMany} مؤخرا. {problems} من فضلك اكتشف السبب وأصلحه، ثم أخبرني بكلمات بسيطة بما غيرته.",
+  "metrics_screen__fix_this": "إصلاح هذا",
+  "metrics_screen__fix_where_project": "في مشروعي",
+  "metrics_screen__fix_where_studio": "في Pikku Studio",
+  "metrics_screen__happened": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "لم يحدث ({count})",
+        "countPlural=one": "حدث مرة واحدة",
+        "countPlural=two": "حدث مرتين ({count})",
+        "countPlural=few": "حدث {count} مرات",
+        "countPlural=many": "حدث {count} مرة",
+        "countPlural=other": "حدث {count} مرة"
+      }
+    }
+  ],
+  "metrics_screen__how_answering": "كيف يجيب التطبيق",
+  "metrics_screen__how_fast": "مدى سرعة الإجابة",
+  "metrics_screen__how_many": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "{count} أشياء",
+        "countPlural=one": "شيء واحد",
+        "countPlural=two": "شيئان ({count})",
+        "countPlural=few": "{count} أشياء",
+        "countPlural=many": "{count} شيئا",
+        "countPlural=other": "{count} شيء"
+      }
+    }
+  ],
+  "metrics_screen__how_many_limit": "أكثر من {limit} شيء",
+  "metrics_screen__in_this_time": "خلال هذه المدة",
+  "metrics_screen__it_said": "قال: {why}",
+  "metrics_screen__longest_sub": "متوسط وقت الإجابة، الأبطأ أولا.",
+  "metrics_screen__longest_title": "ما يستغرق أطول وقت",
+  "metrics_screen__none_app": "لم يطلب من تطبيقكم شيء خلال هذه المدة.",
+  "metrics_screen__none_studio": "لم يطلب من Studio شيء خلال هذه المدة.",
+  "metrics_screen__nothing_wrong": "لم يحدث أي خطأ خلال هذه المدة. رائع.",
+  "metrics_screen__nothing_yet": "لا شيء بعد",
+  "metrics_screen__on_average": "في المتوسط",
+  "metrics_screen__show_fewer": "عرض أقل",
+  "metrics_screen__show_more": "عرض {count} أخرى",
+  "metrics_screen__slowest": "أبطأ إجابة",
+  "metrics_screen__studio_failed": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "فشل {name} {count} مرة في Pikku Studio بالرسالة: {why}",
+        "countPlural=one": "فشل {name} مرة واحدة في Pikku Studio بالرسالة: {why}",
+        "countPlural=two": "فشل {name} مرتين في Pikku Studio بالرسالة: {why}",
+        "countPlural=few": "فشل {name} {count} مرات في Pikku Studio بالرسالة: {why}",
+        "countPlural=many": "فشل {name} {count} مرة في Pikku Studio بالرسالة: {why}",
+        "countPlural=other": "فشل {name} {count} مرة في Pikku Studio بالرسالة: {why}"
+      }
+    }
+  ],
+  "metrics_screen__studio_note": "يتعلق هذا بتطبيق Studio نفسه، لا بمشروعكم. انسخوا هذا لمشاركته مع فريق Pikku.",
+  "metrics_screen__text_app": "ما طلب من تطبيقكم، ومدى سرعة إجابته، وما حدث بشكل خاطئ.",
+  "metrics_screen__text_studio": "كيف يعمل Pikku Studio نفسه. يتعلق هذا بالأداة، لا بمشروع بعينه.",
+  "metrics_screen__the_longest_it_took": "أطول مدة استغرقها",
+  "metrics_screen__things_asked": "الطلبات الموجهة إليه",
+  "metrics_screen__time_range": "النطاق الزمني",
+  "metrics_screen__times_last": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "{count} مرة، آخرها في {time}",
+        "countPlural=one": "مرة واحدة، آخرها في {time}",
+        "countPlural=two": "مرتان، آخرهما في {time}",
+        "countPlural=few": "{count} مرات، آخرها في {time}",
+        "countPlural=many": "{count} مرة، آخرها في {time}",
+        "countPlural=other": "{count} مرة، آخرها في {time}"
+      }
+    }
+  ],
+  "metrics_screen__title_app": "مقاييس التطبيق",
+  "metrics_screen__title_studio": "مقاييس Studio",
+  "metrics_screen__verdict_failed": "حدثت بعض الأخطاء",
+  "metrics_screen__verdict_ok": "يجيب بشكل جيد",
+  "metrics_screen__verdict_slow": "يجيب ببطء قليل",
+  "metrics_screen__wrong_sub": "الأحدث أولا. والمتكرر مجمع معا.",
+  "metrics_screen__wrong_title": "الأمور التي حدثت بشكل خاطئ",
+  "metrics_shared__a_little_slow": "بطيء قليلا",
+  "metrics_shared__bars_aria": "{title} عبر الزمن. الآن {now}.",
+  "metrics_shared__busy": "مشغول",
+  "metrics_shared__explain_denied": "لم يكن مسموحا بذلك.",
+  "metrics_shared__explain_missing": "طلب شيء ما صفحة أو عنصرا غير موجود.",
+  "metrics_shared__explain_other": "واجه تطبيقكم مشكلة لم يتوقعها.",
+  "metrics_shared__explain_signed_out": "طلب شيء ما هذا دون تسجيل الدخول، فتم رفضه.",
+  "metrics_shared__explain_slow": "استغرقت الإجابة وقتا طويلا جدا فتوقفت.",
+  "metrics_shared__explain_start": "تعذر تشغيل مشروعكم، ولذلك لم يبدأ العمل أبدا.",
+  "metrics_shared__fast": "سريع",
+  "metrics_shared__flat_out": "يعمل بأقصى طاقته",
+  "metrics_shared__home_page": "الصفحة الرئيسية",
+  "metrics_shared__last_5_minutes": "آخر 5 دقائق",
+  "metrics_shared__last_day": "آخر يوم",
+  "metrics_shared__last_hour": "آخر ساعة",
+  "metrics_shared__ms": "{n} ms",
+  "metrics_shared__no_reason": "توقف دون أن يذكر السبب",
+  "metrics_shared__not_enough": "لا تكفي البيانات بعد. سيمتلئ هذا مع استمرار عمل تطبيقكم.",
+  "metrics_shared__now": "الآن",
+  "metrics_shared__relaxed": "مرتاح",
+  "metrics_shared__right_now": "الآن: {value}",
+  "metrics_shared__seconds": "{n} ثانية",
+  "metrics_shared__slow": "بطيء",
+  "metrics_shared__steady": "يعمل بثبات",
+  "mock_plan__added_line": "لا شيء خلف هذا بعد. يعرض تطبيقكم بيانات تجريبية له: {scenarios}.",
+  "mock_plan__added_title": "لم يبن بعد",
+  "mock_plan__changed_title": "لم يعد مطابقا",
+  "mock_plan__empty_text": "كل ما يعرضه تطبيقكم يأتي بالفعل من بيانات حقيقية.",
+  "mock_plan__empty_title": "لا شيء متبق لجعله حقيقيا",
+  "mock_plan__invalid_title": "بيانات تجريبية تحتاج إلى إصلاح",
+  "mock_plan__loading": "جار فحص ما يحتاجه تطبيقكم بعد…",
+  "mock_plan__note": "هذه قائمة فقط. لا يبنى شيء حتى تطلبوا ذلك.",
+  "mock_plan__sub": "ما يحتاجه تطبيقكم في الخلفية بعد",
+  "mock_plan__title": "جعله حقيقيا",
+  "mock_plan__what": "قائمة ما لا يزال بيانات تجريبية",
+  "mock_status__failed": "تعذر علينا فحص الشاشات التي تستخدم بيانات تجريبية.",
+  "mock_status__make_it_real": "جعله حقيقيا",
+  "mock_status__retry": "إعادة المحاولة",
+  "mock_status__sample_data": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "{count} شاشات تستخدم بيانات تجريبية",
+        "countPlural=one": "شاشة واحدة تستخدم بيانات تجريبية",
+        "countPlural=two": "شاشتان ({count}) تستخدمان بيانات تجريبية",
+        "countPlural=few": "{count} شاشات تستخدم بيانات تجريبية",
+        "countPlural=many": "{count} شاشة تستخدم بيانات تجريبية",
+        "countPlural=other": "{count} شاشة تستخدم بيانات تجريبية"
+      }
+    }
+  ],
+  "new_project__folder_say": "لدي مجلد ملفات على هذا الحاسوب وأتساءل إن كان يمكن أن يصبح تطبيقا. من فضلك اشرح ما هو ممكن، واسألني عما في المجلد وما أتمنى أن يفعله.",
+  "new_project__folder_text": "ملاحظات وقوائم ومستندات. أروني ما لديكم وسأخبركم بما يمكن أن يفعله.",
+  "new_project__folder_title": "حولوا مجلد ملفات إلى تطبيق",
+  "new_project__ideas_title": "اطلعوا على أفكار للإلهام",
+  "new_project__import_say": "لدي مشروع Pikku في مستودع git وأود إحضاره إلى هنا. من فضلك اسألني عن عنوانه (يصلح git@github.com:your-team/your-project.git أو https://github.com/your-team/your-project.git)، ثم انسخه إلى هذا الحاسوب وأبقه متزامنا مع مكانه الأصلي.",
+  "new_project__import_text": "أعطوني عنوان git وسأحضر نسخة إلى هنا وأبقيها متزامنة مع مكانها الأصلي.",
+  "new_project__import_title": "افتحوا مشروع Pikku لديكم",
+  "new_project__more_label": "طرق أخرى للبدء",
+  "new_project__more_lead": "لا يلزمكم البدء من صفحة فارغة. اختاروا واحدا وسأتحدث معكم بشأنه.",
+  "new_project__more_title": "لديكم شيء جاهز؟ أحضروه معكم.",
+  "new_project__sheets_say": "أريد أن أعرف أي تطبيقات يمكنني بناؤها من جداولي. من فضلك اسألني إن كانت في Google Sheets (يمكنني الاتصال به) أو ملفات على هذا الحاسوب، وحين تتمكن من رؤيتها اقترح علي بعض التطبيقات المناسبة لها.",
+  "new_project__sheets_text": "أخبروني أين جداولكم وسأقترح تطبيقات تستحق البناء منها.",
+  "new_project__sheets_title": "اكتشفوا ما يمكن أن تصبحه جداولكم",
+  "new_project__site_say": "لدي موقع إلكتروني على الإنترنت وأود إعادة بنائه كمشروع Pikku. من فضلك اشرح ما هو ممكن وما الذي يلزم أن أعطيك إياه، واسألني عن عنوان الموقع.",
+  "new_project__site_text": "أعطوني العنوان وسأخبركم بما يمكنني إعادة إنشائه.",
+  "new_project__site_title": "أعيدوا بناء موقع لديكم على الإنترنت",
+  "new_project__vibe_say": "صنعت مشروعا بأداة برمجة بالذكاء الاصطناعي وأود تحويله إلى مشروع Pikku. من فضلك اشرح بكلمات بسيطة ما يتطلبه ذلك وما قد يتغير، ثم اسألني أين يوجد المشروع.",
+  "new_project__vibe_text": "صنعتم مشروعا بأداة برمجة بالذكاء الاصطناعي؟ يمكنني مساعدتكم في تحويله إلى مشروع Pikku متكامل.",
+  "new_project__vibe_title": "أنقذوا ما بناه أداة ذكاء اصطناعي",
+  "new_project_form__add_files": "إضافة ملفات",
+  "new_project_form__build_an_app": "بناء تطبيق",
+  "new_project_form__drop_hint": "أفلتوا الملفات هنا أو أضيفوها. صور أو مستندات أو ملاحظات يجب أن يقرأها Pikku أولا. اختياري.",
+  "new_project_form__idea_placeholder": "مثلا: صفحة حجز لدروس الخبز لدي، يختار فيها الناس يوما ويدفعون.",
+  "new_project_form__label": "بناء تطبيق",
+  "new_project_form__mobile_note": "الجوال يعني iPhone وAndroid. يستغرق بناؤه ونشره وقتا أطول بشكل ملحوظ، لذا يبدأ كثيرون بالمتصفح.",
+  "new_project_form__nothing_online": "لا ينشر شيء على الإنترنت حتى تطلبوا ذلك.",
+  "new_project_form__pick_one": "اختاروا واحدا على الأقل: المتصفح أو الجوال أو كليهما.",
+  "new_project_form__remove": "إزالة {name}",
+  "new_project_form__start": "ابدؤوا البناء",
+  "new_project_form__title": "ماذا تريدون أن تصنعوا؟",
+  "new_project_form__too_big": "تم تجاهل ملف لأن حجمه يتجاوز 25 MB.",
+  "new_project_form__where_label": "أين سيستخدمه الناس",
+  "new_project_screen__choose_your_ai": "اختاروا الذكاء الاصطناعي الخاص بكم",
+  "new_project_screen__error_needs_ai_text": "تم إنشاء مشروعكم، لكن لم يختر ذكاء اصطناعي بعد. اختاروا واحدا ثم أعيدوا المحاولة. كلماتكم ما زالت هنا.",
+  "new_project_screen__error_needs_ai_title": "أحتاج إلى ذكاء اصطناعي لاستكشاف الاتجاهات.",
+  "new_project_screen__error_text": "حاولت إصلاحه بنفسي ولم أنجح. كلماتكم ما زالت هنا، وإعادة المحاولة ستكمل من حيث توقفت.",
+  "new_project_screen__error_title": "لم أتمكن من إكمال الإعداد.",
+  "new_project_screen__exploring_some_directions": "أستكشف بعض الاتجاهات.",
+  "new_project_screen__idea1_blurb": "قولوا من أنتم وماذا تقدمون وكيف يمكن التواصل معكم.",
+  "new_project_screen__idea1_text": "موقع إلكتروني لعملي. يوضح من أنا وماذا أقدم وكيف يمكن التواصل معي.",
+  "new_project_screen__idea1_title": "موقع لعملي",
+  "new_project_screen__idea2_blurb": "يختار الناس موعدا ويصلكم إشعار. دون تواصل متكرر.",
+  "new_project_screen__idea2_text": "صفحة حجز يختار فيها الناس موعدا ويصلني إشعار عندما يفعلون.",
+  "new_project_screen__idea2_title": "صفحة حجز",
+  "new_project_screen__idea3_blurb": "اعرضوا ما تبيعونه واقبلوا المدفوعات ببساطة.",
+  "new_project_screen__idea3_text": "متجر صغير يعرض ما أبيعه ويقبل المدفوعات.",
+  "new_project_screen__idea3_title": "متجر صغير",
+  "new_project_screen__idea4_blurb": "الأخبار والفعاليات والأعضاء في مكان واحد.",
+  "new_project_screen__idea4_text": "مساحة لناديي فيها أخبار وفعاليات وقائمة أعضاء.",
+  "new_project_screen__idea4_title": "ناد أو مجتمع",
+  "new_project_screen__idea5_blurb": "تابعوا المهام أو الأشخاص أو المخزون دون جدول بيانات.",
+  "new_project_screen__idea5_text": "أداة متابعة لفريقي لمعرفة المهام ومن يتولى ماذا.",
+  "new_project_screen__idea5_title": "أداة متابعة لفريقي",
+  "new_project_screen__idea6_blurb": "شيء يبقيه الناس على الشاشة الرئيسية.",
+  "new_project_screen__idea6_text": "تطبيق يمكن للناس إبقاؤه على الشاشة الرئيسية لهواتفهم.",
+  "new_project_screen__idea6_title": "تطبيق للهواتف",
+  "new_project_screen__ideas_hint": "اختاروا فكرة وسأكتب لكم الجملة الأولى.",
+  "new_project_screen__ideas_label": "أفكار للبدء",
+  "new_project_screen__no_ideas_text": "ستظهر الأفكار هنا كلما تعرفت على ما تحبون صنعه. في الوقت الحالي صفوه بكلماتكم في الأعلى وسأتولى الباقي.",
+  "new_project_screen__no_ideas_title": "لا أفكار لعرضها الآن.",
+  "new_project_screen__step_ask_for_a_first_draft": "أستكشف بعض الاتجاهات",
+  "new_project_screen__step_fix_what_stopped_it": "اعترض شيء الطريق، وأنا أصلحه",
+  "new_project_screen__step_fix_what_stopped_it_starting": "إصلاح ما منع البدء",
+  "new_project_screen__step_look_through_your_files": "أقرأ ملفاتكم",
+  "new_project_screen__step_make_the_project": "إنشاء مشروعكم",
+  "new_project_screen__step_set_up_its_database": "أجهز المكان الذي ستحفظ فيه بياناتكم",
+  "new_project_screen__step_set_up_its_database_again": "أعيد محاولة إعداد البيانات",
+  "new_project_screen__step_set_up_its_workspace": "إعداد مساحة عملكم",
+  "new_project_screen__step_start_it": "أشغله",
+  "new_project_screen__step_start_it_again": "أعيد محاولة التشغيل",
+  "new_project_screen__this_usually_takes_about_two": "يستغرق هذا عادة نحو دقيقتين. يمكنكم التجول أثناء الانتظار، وسأخبركم فور أن يصبح جاهزا.",
+  "new_project_screen__what_went_wrong": "ما الذي حدث بشكل خاطئ",
+  "not_found__projects": "عرض كل المشاريع",
+  "not_found__text": "ربما تغير اسمه أو أزيل، أو أن في العنوان خطأ مطبعيا.",
+  "not_found__title": "لا يمكننا العثور على {what}.",
+  "onb_hero__recommendation": "توصيتنا",
+  "onb_name_screen__about_label": "ماذا تعملون؟",
+  "onb_name_screen__about_placeholder": "مثلا: أقدم دروسا في الخبز في ليدز ولست متخصصا في التقنية.",
+  "onb_name_screen__about_you": "عنكم",
+  "onb_name_screen__change_later": "يمكنكم تغيير هذا في أي وقت من حسابكم.",
+  "onb_name_screen__continue": "متابعة",
+  "onb_name_screen__error_text": "لم يتغير شيء. أعيدوا المحاولة بعد قليل.",
+  "onb_name_screen__lead": "يكفي اسم أول. أستخدمه عندما أتحدث إليكم، وكل ما تخبرونني به عن عملكم يساعدني على الإجابة بما يناسبكم.",
+  "onb_name_screen__loading_text": "أجهز كل شيء.",
+  "onb_name_screen__loading_title": "لحظة من فضلكم.",
+  "onb_name_screen__name_label": "اسمكم",
+  "onb_name_screen__name_placeholder": "Maya",
+  "onb_name_screen__save_error": "تعذر الحفظ. أعيدوا المحاولة.",
+  "onb_name_screen__title": "بماذا أناديكم؟",
+  "onb_sign_in_screen__already_signed_in": "أنتم مسجلو الدخول بالفعل.",
+  "onb_sign_in_screen__did_not_load": "لم يتم تحميل شيء ما، لذا هذه هي الطريقة التي تعمل الآن. كل ما تصنعونه يبقى آمنا هنا.",
+  "onb_sign_in_screen__five_seconds": "يستغرق نحو خمس ثوان.",
+  "onb_sign_in_screen__go_to_projects": "الانتقال إلى مشاريعي",
+  "onb_sign_in_screen__moment": "لحظة من فضلكم. أجهز كل شيء.",
+  "onb_sign_in_screen__never_read": "لا نقرأ أبدا ما تبنونه على هذا الحاسوب.",
+  "onb_sign_in_screen__open_straight_away": "تفتح مشاريعكم فورا.",
+  "onb_sign_in_screen__opening": "جار الفتح",
+  "onb_sign_in_screen__opening_workspace": "جار فتح مساحة عملكم.",
+  "onb_sign_in_screen__other_way": "الطريقة الأخرى",
+  "onb_sign_in_screen__pick_up": "أكملوا من حيث توقفتم.",
+  "onb_sign_in_screen__pure_oss": "هل تريدون استخدام OSS الخالص؟",
+  "onb_sign_in_screen__start_for_now": "ابدؤوا على هذا الحاسوب في الوقت الحالي.",
+  "onb_sign_in_screen__start_here": "ابدؤوا على هذا الحاسوب.",
+  "onb_sign_in_screen__stays_here": "يبقى كل شيء على هذا الحاسوب.",
+  "onb_sign_in_screen__use_here": "استخدام على هذا الحاسوب",
+  "onb_sign_in_screen__use_it_here": "استخدامه على هذا الحاسوب",
+  "onb_sign_in_screen__waiting": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "لا مشاريع لديكم ({count}) على هذا الحاسوب.",
+        "countPlural=one": "مشروعكم ينتظر على هذا الحاسوب، تماما كما تركتموه.",
+        "countPlural=two": "مشروعاكم ({count}) ينتظران على هذا الحاسوب، تماما كما تركتموهما.",
+        "countPlural=few": "مشاريعكم ({count}) تنتظر على هذا الحاسوب، تماما كما تركتموها.",
+        "countPlural=many": "مشاريعكم ({count}) تنتظر على هذا الحاسوب، تماما كما تركتموها.",
+        "countPlural=other": "مشاريعكم ({count}) تنتظر على هذا الحاسوب، تماما كما تركتموها."
+      }
+    }
+  ],
+  "onboarding__example": "صفحة حجز لدروس الخبز لدي، يختار فيها الناس يوما ويدفعون.",
+  "onboarding_layout__a_provider": "مزود",
+  "onboarding_layout__about_choosing": "اختيار الذكاء الاصطناعي",
+  "onboarding_layout__about_project": "مشروعكم الجديد",
+  "onboarding_layout__about_signing": "تسجيل الدخول",
+  "onboarding_layout__ask_build": "ماذا يمكنني أن أبني هنا؟",
+  "onboarding_layout__ask_draft_time": "كم يستغرق إنجاز المسودة الأولى؟",
+  "onboarding_layout__ask_key_private": "هل يبقى مفتاحي خاصا؟",
+  "onboarding_layout__ask_pick": "أيها أختار؟",
+  "onboarding_layout__ask_switch": "هل يمكنني التبديل لاحقا؟",
+  "onboarding_layout__b_as_left": "كل شيء على هذا الحاسوب كما تركتموه.",
+  "onboarding_layout__b_did_not_load": "لم يتم تحميل شيء ما.",
+  "onboarding_layout__b_did_not_work": "لم ينجح ذلك، و",
+  "onboarding_layout__b_getting_ready": "لحظة من فضلكم. أجهز مساحة عملكم.",
+  "onboarding_layout__b_go_back": "يمكنكم العودة إلى الخطوة الأولى.",
+  "onboarding_layout__b_good_one": "وهو اختيار جيد.",
+  "onboarding_layout__b_hi_i_am": "مرحبا، أنا",
+  "onboarding_layout__b_looking": "أفحص حاسوبكم. لحظة من فضلكم.",
+  "onboarding_layout__b_no_ideas": "لا أفكار لدي لكم الآن، لذا",
+  "onboarding_layout__b_not_built": "لم يبن بعد.",
+  "onboarding_layout__b_nothing_changed": "لم يتغير شيء.",
+  "onboarding_layout__b_only_one": "خيار واحد فقط في الوقت الحالي",
+  "onboarding_layout__b_own_words": "أخبروني بكلماتكم الخاصة.",
+  "onboarding_layout__b_picturing": "أخبروني بما تتخيلونه.",
+  "onboarding_layout__b_ready": "سأخبركم فور أن يصبح جاهزا.",
+  "onboarding_layout__b_rough": "يكفي وصف تقريبي.",
+  "onboarding_layout__b_sketching": "أرسم مسودتكم الأولى.",
+  "onboarding_layout__b_this_step": "هذه الخطوة",
+  "onboarding_layout__b_try_again": "هل تريدون أن أعيد المحاولة؟",
+  "onboarding_layout__b_welcome": "مرحبا بعودتكم، Maya.",
+  "onboarding_layout__b_whole_way": "سأكون معكم طوال الطريق، وسأسألكم دائما قبل أن أغير أي شيء مهم.",
+  "onboarding_layout__b_words_safe": "كلماتكم بأمان. هل تريدون أن أعيد المحاولة؟",
+  "onboarding_layout__b_work_safe": "عملكم بأمان",
+  "onboarding_layout__b_works_fine": "ويعمل هذا الحاسوب جيدا من دونه.",
+  "onboarding_layout__chat_ask": "اسألوني أي شيء عن تسجيل الدخول أو عما سيحدث بعد ذلك.",
+  "onboarding_layout__chat_hi": "مرحبا، أنا Pikku. سأكون معكم طوال الطريق، وسأسألكم دائما قبل أن أغير أي شيء مهم.",
+  "onboarding_layout__chat_proj": "أخبروني بما تريدون صنعه وسأبدأ مسودة أولى. لا ينشر شيء على الإنترنت حتى تطلبوا ذلك.",
+  "onboarding_layout__connect_account": "ربط حساب",
+  "onboarding_layout__connect_litellm": "اربطوا LiteLLM الخاص بكم",
+  "onboarding_layout__connect_my_litellm": "ربط LiteLLM الخاص بي",
+  "onboarding_layout__connect_provider": "ربط {provider}",
+  "onboarding_layout__could_not_load": "لم أتمكن من تحميل تحديثاتكم.",
+  "onboarding_layout__could_not_send": "لم أتمكن من إرسال ذلك.",
+  "onboarding_layout__diff_intro": "كنت سأبدأ على هذا الحاسوب. لن تخسروا شيئا إن بدلتم لاحقا.",
+  "onboarding_layout__getting_set_up": "جار الإعداد",
+  "onboarding_layout__good_question": "سؤال جيد. سأبحث في الأمر وأخبركم بما أجده. لن أغير شيئا حتى تطلبوا ذلك.",
+  "onboarding_layout__got_it": "فهمت",
+  "onboarding_layout__keep_open": "إبقاء هذه اللوحة مفتوحة",
+  "onboarding_layout__loading_updates": "جار تحميل التحديثات",
+  "onboarding_layout__nobody": "لا أحد غيركم",
+  "onboarding_layout__nothing_lost_msg": "لم يضع شيء. رسالتكم ما زالت هنا.",
+  "onboarding_layout__nothing_lost_updates": "لا شيء يضيع. وإن حدث أمر عاجل فسأخبركم به.",
+  "onboarding_layout__okay_got_it": "حسنا، فهمت",
+  "onboarding_layout__on_this_computer": "على هذا الحاسوب",
+  "onboarding_layout__only_what_you_ask_it": "فقط ما تطلبون منه العمل عليه. ويسأل قبل أن يغير أي شيء مهم.",
+  "onboarding_layout__only_you": "أنتم وحدكم ترون عملكم",
+  "onboarding_layout__pikku": "Pikku",
+  "onboarding_layout__set_up_here": "الإعداد على هذا الحاسوب",
+  "onboarding_layout__step_about_you": "عنكم",
+  "onboarding_layout__step_about_you_hint": "لأعرف بماذا أناديكم.",
+  "onboarding_layout__step_choose_ai": "اختيار الذكاء الاصطناعي",
+  "onboarding_layout__step_choose_ai_hint": "المساعد الذي يتولى البناء.",
+  "onboarding_layout__step_sign_in": "تسجيل الدخول",
+  "onboarding_layout__step_start": "بدء مشروع",
+  "onboarding_layout__step_start_hint": "قولوا ما تريدون صنعه.",
+  "onboarding_layout__stored_here": "عملكم محفوظ هنا ويعمل دون إنترنت. وليست له نسخة احتياطية في أي مكان آخر.",
+  "onboarding_layout__the_difference": "الفرق",
+  "onboarding_layout__this_computer": "هذا الحاسوب",
+  "onboarding_layout__this_workspace": "مساحة العمل هذه",
+  "onboarding_layout__today": "اليوم",
+  "onboarding_layout__typing": "Pikku يكتب",
+  "onboarding_layout__unpin": "إلغاء التثبيت والسماح بإغلاق هذه اللوحة",
+  "onboarding_layout__use_it": "استخدامه",
+  "onboarding_layout__use_on_computer": "استخدام على هذا الحاسوب",
+  "onboarding_layout__use_own_key": "استخدام مفتاحكم الخاص",
+  "onboarding_layout__use_this_computer": "استخدام هذا الحاسوب",
+  "onboarding_layout__where_it_runs": "أين يعمل",
+  "onboarding_layout__who_sees": "من يرى ماذا",
+  "onboarding_layout__why_intro": "هذا ما فكرت فيه، بكلمات بسيطة.",
+  "onboarding_layout__why_no_bill": "لا فاتورة إضافية",
+  "onboarding_layout__why_nothing": "لا شيء لإعداده",
+  "onboarding_layout__why_nothing_text": "لا تنزيل ولا حساب إضافي.",
+  "onboarding_layout__why_private": "الخيار الموجود على هذا الحاسوب أكثر خصوصية، لكنكم ستنتظرون وقتا أطول لكل إجابة. إن كانت الخصوصية هي الأهم لكم فأخبروني وسأغير اختياري.",
+  "onboarding_layout__why_quick": "إنه سريع",
+  "onboarding_layout__why_quick_text": "تصل الإجابات في ثوان قليلة.",
+  "onboarding_layout__why_this_one": "لماذا هذا الخيار",
+  "onboarding_layout__you": "أنتم",
+  "onboarding_layout__you_text": "كل شيء، ويمكنكم تغيير أي جزء منه.",
+  "overview_screen__area_agents_detail": "مساعدون بالذكاء الاصطناعي يجيبون الزوار أو يرتبون الأمور عنكم.",
+  "overview_screen__area_agents_name": "المساعدون",
+  "overview_screen__area_agents_title": "المساعدون",
+  "overview_screen__area_channels_detail": "حافظوا على تحديث الصفحة أثناء مشاهدة الناس لها، مثل المقاعد المتبقية في دورة.",
+  "overview_screen__area_channels_name": "القنوات المباشرة",
+  "overview_screen__area_channels_title": "الاتصالات المباشرة",
+  "overview_screen__area_clicommands_detail": "اختصارات يمكنكم أو Pikku كتابتها للعناية بالتطبيق.",
+  "overview_screen__area_clicommands_name": "أوامر سطر الأوامر",
+  "overview_screen__area_clicommands_title": "الأوامر",
+  "overview_screen__area_emails_detail": "الرسائل التي يرسلها تطبيقكم، مثل تأكيدات الحجز.",
+  "overview_screen__area_emails_name": "رسائل البريد",
+  "overview_screen__area_emails_title": "رسائل البريد",
+  "overview_screen__area_functions_detail": "كل واحدة منها مهمة صغيرة، مثل حجز دورة أو إرسال إيصال.",
+  "overview_screen__area_functions_name": "الدوال",
+  "overview_screen__area_functions_title": "ما يستطيع التطبيق فعله",
+  "overview_screen__area_gateways_detail": "اربطوا تطبيقكم بتطبيق مراسلة.",
+  "overview_screen__area_gateways_name": "البوابات",
+  "overview_screen__area_gateways_title": "روابط تطبيقات المحادثة",
+  "overview_screen__area_httproutes_detail": "الصفحات والروابط التي يفتحها الناس لاستخدام تطبيقكم.",
+  "overview_screen__area_httproutes_name": "العناوين الإلكترونية",
+  "overview_screen__area_httproutes_title": "العناوين الإلكترونية",
+  "overview_screen__area_mcptools_detail": "الأمور التي يسمح لمساعد الذكاء الاصطناعي باستخدامها.",
+  "overview_screen__area_mcptools_name": "أدوات المساعد",
+  "overview_screen__area_mcptools_title": "أدوات للمساعدين",
+  "overview_screen__area_msg": "لدى “{name}” قائمة خاصة به في وحدة التحكم الكاملة. وهو ليس جزءا من هذا النموذج التجريبي بعد.",
+  "overview_screen__area_queues_detail": "مهام تصطف في طابور حتى لا يضيع شيء عند ازدحام العمل.",
+  "overview_screen__area_queues_name": "الطوابير",
+  "overview_screen__area_queues_title": "قوائم الانتظار",
+  "overview_screen__area_schedulers_detail": "أمور تعمل من تلقاء نفسها، مثل تذكير كل صباح.",
+  "overview_screen__area_schedulers_name": "الجداول الزمنية",
+  "overview_screen__area_schedulers_title": "مهام مجدولة",
+  "overview_screen__area_workflows_detail": "مهام أطول تنتظر وتتحقق وتواصل، مثل حجز من الطلب حتى التذكير.",
+  "overview_screen__area_workflows_name": "سير العمل",
+  "overview_screen__area_workflows_title": "مهام خطوة بخطوة",
+  "overview_screen__ask_about_it": "اسألوا Pikku عنه",
+  "overview_screen__check_again": "إعادة الفحص",
+  "overview_screen__checked_none": "تم الفحص الآن. لا شيء يحتاج إليكم.",
+  "overview_screen__checked_waiting": "تم الفحص الآن. {count} في انتظاركم.",
+  "overview_screen__counts_line": "{agents}، و{workflows}، و{emails}.",
+  "overview_screen__describe_what_you_want": "صفوا ما تريدونه",
+  "overview_screen__front_doors_text": "كل الطرق التي يمكن بها لأي شخص دخول تطبيقكم، مثل موقع إلكتروني أو أمر أو تطبيق محادثة.",
+  "overview_screen__got_it_hide_this": "فهمت، إخفاء هذا",
+  "overview_screen__has_things": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "يستطيع {name} فعل {count} أمرا. أخبروا Pikku بما تريدونه تاليا.",
+        "countPlural=one": "يستطيع {name} فعل أمر واحد. أخبروا Pikku بما تريدونه تاليا.",
+        "countPlural=two": "يستطيع {name} فعل أمرين. أخبروا Pikku بما تريدونه تاليا.",
+        "countPlural=few": "يستطيع {name} فعل {count} أمور. أخبروا Pikku بما تريدونه تاليا.",
+        "countPlural=many": "يستطيع {name} فعل {count} أمرا. أخبروا Pikku بما تريدونه تاليا.",
+        "countPlural=other": "يستطيع {name} فعل {count} أمرا. أخبروا Pikku بما تريدونه تاليا."
+      }
+    }
+  ],
+  "overview_screen__how_going": "كيف تسير الأمور",
+  "overview_screen__how_going_title": "كيف تسير الأمور",
+  "overview_screen__intro_close": "هذه هي الفكرة كاملة. يمكنكم إغلاق هذا حين تتضح لكم.",
+  "overview_screen__look_into_it": "يستطيع Pikku الاطلاع على هذا وإخباركم بما سيتغير قبل بناء أي شيء.",
+  "overview_screen__look_say": "من فضلك اطلع على طلب التغيير (change request) هذا: {title}",
+  "overview_screen__looking_again": "أفحص تطبيقكم مرة أخرى…",
+  "overview_screen__made_of": "مما يتكون مشروعكم",
+  "overview_screen__made_of_hint": "لا تحتاجون إلى هذه لتشغيل تطبيقكم. هي هنا إن كنتم فضوليين، وكل واحدة تفتح قائمتها الخاصة.",
+  "overview_screen__made_of_title": "مما يتكون تطبيقكم",
+  "overview_screen__n_assistants": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "{count} مساعدا",
+        "countPlural=one": "مساعد واحد",
+        "countPlural=two": "مساعدان",
+        "countPlural=few": "{count} مساعدين",
+        "countPlural=many": "{count} مساعدا",
+        "countPlural=other": "{count} مساعدا"
+      }
+    }
+  ],
+  "overview_screen__n_emails": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "{count} رسالة بريد",
+        "countPlural=one": "رسالة بريد واحدة",
+        "countPlural=two": "رسالتا بريد",
+        "countPlural=few": "{count} رسائل بريد",
+        "countPlural=many": "{count} رسالة بريد",
+        "countPlural=other": "{count} رسالة بريد"
+      }
+    }
+  ],
+  "overview_screen__n_workflows": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "{count} مهمة خطوة بخطوة",
+        "countPlural=one": "مهمة واحدة خطوة بخطوة",
+        "countPlural=two": "مهمتان خطوة بخطوة",
+        "countPlural=few": "{count} مهام خطوة بخطوة",
+        "countPlural=many": "{count} مهمة خطوة بخطوة",
+        "countPlural=other": "{count} مهمة خطوة بخطوة"
+      }
+    }
+  ],
+  "overview_screen__need_look": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "لا شيء ({count}) يحتاج إلى نظرة.",
+        "countPlural=one": "شيء واحد يحتاج إلى نظرة.",
+        "countPlural=two": "شيئان ({count}) يحتاجان إلى نظرة.",
+        "countPlural=few": "{count} أشياء تحتاج إلى نظرة.",
+        "countPlural=many": "{count} شيئا يحتاج إلى نظرة.",
+        "countPlural=other": "{count} شيء يحتاج إلى نظرة."
+      }
+    }
+  ],
+  "overview_screen__new_here": "هل أنتم جدد هنا؟ ثلاث خطوات.",
+  "overview_screen__new_here_title": "هل أنتم جدد هنا؟ ثلاث خطوات.",
+  "overview_screen__no_parts": "لا أجزاء بعد.",
+  "overview_screen__no_parts_text": "بمجرد أن يبدأ Pikku البناء، سترون عدد الصفحات ورسائل البريد والمهام المجدولة وغيرها في تطبيقكم، ويمكنكم فتح كل قائمة.",
+  "overview_screen__nothing_needs_you": "لا شيء يحتاج إليكم الآن.",
+  "overview_screen__open_your_app": "فتح تطبيقكم",
+  "overview_screen__see_all_updates": "عرض كل التحديثات",
+  "overview_screen__see_updates": "عرض التحديثات",
+  "overview_screen__show_intro_again": "إظهار المقدمة مرة أخرى",
+  "overview_screen__step1_text": "اكتبوا ما تريدونه بكلماتكم الخاصة. لا بأس إن كان الوصف تقريبيا.",
+  "overview_screen__step1_title": "إخبار Pikku",
+  "overview_screen__step2_text": "يعمل Pikku خطوة بخطوة ويخبركم بما يفعله أثناء العمل.",
+  "overview_screen__step2_title": "مشاهدة كيف يبنى",
+  "overview_screen__step3_after": "حتى يتمكن الآخرون من استخدامه.",
+  "overview_screen__step3_before": "عندما يعجبكم ما بني،",
+  "overview_screen__step3_link": "نشره",
+  "overview_screen__step3_title": "نشره على الإنترنت",
+  "overview_screen__tell_text": "صفوه كما تصفونه لصديق. سيسألكم Pikku قبل أن يبني أي شيء كبير. ولن ينشر أي شيء على الإنترنت حتى توافقوا.",
+  "overview_screen__tell_title": "أخبروا Pikku بما تريدون صنعه",
+  "overview_screen__things_can_do": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "{count} أمرا يستطيع تطبيقكم فعله",
+        "countPlural=one": "أمر واحد يستطيع تطبيقكم فعله",
+        "countPlural=two": "أمران يستطيع تطبيقكم فعلهما",
+        "countPlural=few": "{count} أمور يستطيع تطبيقكم فعلها",
+        "countPlural=many": "{count} أمرا يستطيع تطبيقكم فعله",
+        "countPlural=other": "{count} أمرا يستطيع تطبيقكم فعله"
+      }
+    }
+  ],
+  "overview_screen__waiting": "في انتظارك.",
+  "overview_screen__what_next": "ما الخطوة التالية؟",
+  "page_breadcrumb__browse_app": "تصفح التطبيقات",
+  "page_breadcrumb__browse_artifact": "تصفح المخرجات",
+  "page_breadcrumb__browse_email": "تصفح رسائل البريد",
+  "page_breadcrumb__browse_page": "تصفح الصفحات",
+  "page_breadcrumb__menu_app": "التطبيقات",
+  "page_breadcrumb__menu_artifact": "المخرجات",
+  "page_breadcrumb__menu_email": "رسائل البريد",
+  "page_breadcrumb__menu_page": "الصفحات",
+  "page_breadcrumb__trigger_app": "التطبيق: {name}. تصفح التطبيقات",
+  "page_breadcrumb__trigger_artifact": "مخرج: {name}. تصفح المخرجات",
+  "page_breadcrumb__trigger_email": "بريد إلكتروني: {name}. تصفح رسائل البريد",
+  "page_breadcrumb__trigger_page": "صفحة: {name}. تصفح الصفحات",
+  "part_card__last_changes": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "آخر {count} تغييرا: {outcomes}",
+        "countPlural=one": "آخر تغيير: {outcomes}",
+        "countPlural=two": "آخر تغييرين: {outcomes}",
+        "countPlural=few": "آخر {count} تغييرات: {outcomes}",
+        "countPlural=many": "آخر {count} تغييرا: {outcomes}",
+        "countPlural=other": "آخر {count} تغييرا: {outcomes}"
+      }
+    }
+  ],
+  "part_card__page": "صفحة",
+  "part_card__pip_cancelled": "ألغي",
+  "part_card__pip_failed": "لم ينشر",
+  "part_card__pip_live": "منشور",
+  "part_card__pip_rolled_back": "تم التراجع عنه",
+  "part_card__pip_title": "{title}: {outcome}",
+  "part_card__pip_waiting": "في الانتظار",
+  "part_card__pip_was_live": "كان منشورا",
+  "part_card__pip_working": "قيد النشر",
+  "part_card__routine": "روتين",
+  "part_card__secret_code": "رمز سري",
+  "part_card__setting": "إعداد",
+  "part_steps__building": "قيد البناء",
+  "part_steps__built": "تم البناء",
+  "part_steps__checked": "تم الفحص",
+  "part_steps__checking": "قيد الفحص",
+  "part_steps__done": "تم",
+  "part_steps__fetched": "تم الجلب",
+  "part_steps__fetching": "جار جلب عملكم",
+  "part_steps__going_live": "جار النشر",
+  "part_steps__how_far_it_got": "إلى أي مدى وصل",
+  "part_steps__live": "منشور",
+  "part_steps__not_yet_live": "لم ينشر بعد",
+  "part_steps__progress": "الخطوة {step} من {total}، {what}. مستمر منذ {time}. لن يمس تطبيقكم المنشور حتى الخطوة الأخيرة.",
+  "part_steps__stopped_here": "توقف هنا",
+  "part_steps__tested": "تم الاختبار",
+  "part_steps__testing": "قيد الاختبار",
+  "part_steps__waits_for_you": "في انتظارك",
+  "part_steps__working_on_it_now": "يعمل عليه الآن",
+  "parts__answer_pikku": "أجيبوا Pikku…",
+  "parts__approve_and_keep_it": "الموافقة والاحتفاظ به",
+  "parts__ask_pikku": "اسألوا Pikku…",
+  "parts__bring_it_back": "استعادته",
+  "parts__conversation": "المحادثة",
+  "parts__here_whenever": "أنا هنا متى أردتم تغيير شيء. قولوه فقط بكلماتكم الخاصة.",
+  "parts__hide_details": "إخفاء التفاصيل",
+  "parts__nothing_said": "لم يكتب شيء بعد. اكتبوا هنا إذا أردتم أن يتم الأمر بطريقة مختلفة.",
+  "parts__pick_answer": "اختيار إجابة",
+  "parts__pikku": "Pikku",
+  "parts__pikku_is_asking": "Pikku يسأل",
+  "parts__proposed_sidebar": "الشريط الجانبي المقترح",
+  "parts__send": "إرسال",
+  "parts__set_aside": "وضعه جانبا",
+  "parts__show_details": "إظهار التفاصيل",
+  "parts__sidebar_label": "الشريط الجانبي كما يقترحه Pikku",
+  "parts__take_it_back": "التراجع عنه",
+  "parts__talk_to_pikku": "التحدث إلى Pikku",
+  "parts__what_changed": "ما الذي تغير",
+  "parts__what_will_differ": "ما الذي سيختلف",
+  "parts__write_about": "الكتابة إلى Pikku بشأن هذا",
+  "parts__write_placeholder": "اكتبوا إلى Pikku بشأن هذا…",
+  "parts__you": "أنتم",
+  "performance_screen__busy_title": "مدى انشغاله",
+  "performance_screen__crumb": "أثناء التشغيل",
+  "performance_screen__detail_heavy": "يستخدم تطبيقكم قدرا كبيرا من الذاكرة. غالبا ما تحل إعادة التشغيل ذلك.",
+  "performance_screen__detail_hot": "يستخدم تطبيقكم الآن معظم ما يستطيع استخدامه. قد يبدو بطيئا حتى يهدأ الضغط.",
+  "performance_screen__detail_ok": "لدى تطبيقكم متسع كبير من الموارد.",
+  "performance_screen__empty_text": "بمجرد أن يعمل تطبيقكم، سترون مقدار جهده ومقدار الذاكرة التي يستخدمها. وإن كان يعمل بالفعل، جربوا فترة زمنية أطول.",
+  "performance_screen__empty_title": "شغلوا مشروعكم لتروا أداءه",
+  "performance_screen__how_busy": "مدى انشغاله",
+  "performance_screen__how_doing": "حال التطبيق",
+  "performance_screen__measure_failed": "تعذر قياس هذا المشروع الآن. حاولوا مرة أخرى بعد قليل.",
+  "performance_screen__measuring": "جار قياس مشروعكم…",
+  "performance_screen__memory_in_use": "الذاكرة المستخدمة",
+  "performance_screen__memory_share": "{memory} · {percent}%",
+  "performance_screen__no_reading": "لا توجد قراءة بعد",
+  "performance_screen__note_cpu": "حوالي {percent}% مما يستطيعه. الذروة: {peak}%",
+  "performance_screen__note_free": "{memory} ما زالت متاحة على هذا الحاسوب",
+  "performance_screen__note_moment": "يستغرق هذا لحظات",
+  "performance_screen__note_peak": "أعلى استخدام: {memory}",
+  "performance_screen__note_waiting": "في انتظار قراءة",
+  "performance_screen__over_time": "عبر الوقت",
+  "performance_screen__over_time_sub": "الأعمدة الأعلى تعني قيمة أكبر. الطرف الأيمن هو الوقت الحالي.",
+  "performance_screen__part_code": "الشيفرة الخاصة بكم",
+  "performance_screen__part_code_note": "ما كتبتموه أنتم والمساعد.",
+  "performance_screen__part_media": "الصور والملفات",
+  "performance_screen__part_media_note": "الصور ومقاطع الفيديو والخطوط وغيرها مما ليس شيفرة.",
+  "performance_screen__part_other": "السجل وملفات البناء",
+  "performance_screen__part_other_note": "النسخ المحفوظة وما ينشأ أثناء البناء.",
+  "performance_screen__part_packages": "الحزم المثبتة",
+  "performance_screen__part_packages_note": "أدوات يستعيرها تطبيقكم من الآخرين. يمكن إعادة تثبيتها بأمان.",
+  "performance_screen__skipped": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=zero": "{n} مجلد كانت أكبر من أن تقاس بسرعة، لذا لم تحتسب هنا. المجموع الفعلي أكبر.",
+        "nPlural=one": "كان هناك مجلد واحد أكبر من أن يقاس بسرعة، لذا لم يحتسب هنا. المجموع الفعلي أكبر.",
+        "nPlural=two": "كان هناك مجلدان أكبر من أن يقاسا بسرعة، لذا لم يحتسبا هنا. المجموع الفعلي أكبر.",
+        "nPlural=few": "{n} مجلدات كانت أكبر من أن تقاس بسرعة، لذا لم تحتسب هنا. المجموع الفعلي أكبر.",
+        "nPlural=many": "{n} مجلدا كانت أكبر من أن تقاس بسرعة، لذا لم تحتسب هنا. المجموع الفعلي أكبر.",
+        "nPlural=other": "{n} مجلد كانت أكبر من أن تقاس بسرعة، لذا لم تحتسب هنا. المجموع الفعلي أكبر."
+      }
+    }
+  ],
+  "performance_screen__space_aria": "المساحة المستخدمة: {parts}",
+  "performance_screen__space_goes": "أين تذهب المساحة",
+  "performance_screen__space_goes_sub": "ما يشغله هذا المشروع على حاسوبكم.",
+  "performance_screen__space_used": "المساحة المستخدمة",
+  "performance_screen__text": "مدى جهد تطبيقكم ومقدار ما يستخدمه من حاسوبكم.",
+  "performance_screen__time_range": "الفترة الزمنية",
+  "performance_screen__title": "الأداء",
+  "performance_screen__verdict_heavy": "يستخدم ذاكرة كبيرة",
+  "performance_screen__verdict_hot": "يعمل بجهد كبير",
+  "performance_screen__verdict_ok": "يعمل بارتياح",
+  "pikku_suggests__do_it_for_me": "تنفيذه عني",
+  "pikku_suggests__not_now": "ليس الآن",
+  "pin_button__always": "دائما في الشريط الجانبي",
+  "pin_button__pin": "تثبيت",
+  "pin_button__pin_label": "تثبيت في الشريط الجانبي",
+  "pin_button__pinned": "مثبت",
+  "pin_button__unpin_label": "إلغاء التثبيت من الشريط الجانبي",
+  "preview_bar__computer": "حاسوب",
+  "preview_bar__design": "التصميم",
+  "preview_bar__none": "لا شيء",
+  "preview_bar__none_close": "لا شيء (إغلاق اللوحة الجانبية)",
+  "preview_bar__open_in_a_new": "فتح في علامة تبويب جديدة",
+  "preview_bar__phone": "هاتف",
+  "preview_bar__preview_controls": "عناصر التحكم في المعاينة",
+  "preview_bar__reload_preview": "إعادة تحميل المعاينة",
+  "preview_bar__screen_size": "حجم الشاشة",
+  "preview_bar__select_for_chat": "تحديد للمحادثة",
+  "preview_bar__tablet": "جهاز لوحي",
+  "preview_bar__translations": "الترجمات",
+  "preview_bar__what_to_do_on": "ماذا تفعلون في المعاينة",
+  "project__name_fallback": "مشروعكم",
+  "project_actions__open": "فتح",
+  "project_actions__rename": "إعادة تسمية",
+  "project_actions__resume": "استئناف",
+  "project_card__in_the_sketch_stage": "في مرحلة المسودة",
+  "project_card__last_worked_on": "آخر عمل عليه {when}",
+  "project_card__live": "منشور",
+  "project_card__only_you_can_see": "أنتم وحدكم من يراه",
+  "project_card__paused": "متوقف مؤقتا",
+  "project_card__pikku_working": "Pikku يعمل",
+  "project_card__running_well": "يعمل جيدا",
+  "project_card__visitors_this_week": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "{count} زائرا هذا الأسبوع",
+        "countPlural=one": "زائر واحد هذا الأسبوع",
+        "countPlural=two": "زائران هذا الأسبوع",
+        "countPlural=few": "{count} زوار هذا الأسبوع",
+        "countPlural=many": "{count} زائرا هذا الأسبوع",
+        "countPlural=other": "{count} زائرا هذا الأسبوع"
+      }
+    }
+  ],
+  "project_cards_mock__crumb": "نموذج",
+  "project_cards_mock__text": "كل الحالات التي يمكن أن تظهر في بطاقة المشروع.",
+  "project_cards_mock__title": "المشاريع",
+  "project_facts__attention": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "لا شيء يحتاج إلى نظرة",
+        "countPlural=one": "شيء واحد يحتاج إلى نظرة",
+        "countPlural=two": "شيئان يحتاجان إلى نظرة",
+        "countPlural=few": "{count} أشياء تحتاج إلى نظرة",
+        "countPlural=many": "{count} شيئا تحتاج إلى نظرة",
+        "countPlural=other": "{count} شيء تحتاج إلى نظرة"
+      }
+    }
+  ],
+  "project_facts__cloud": "{count} في السحابة",
+  "project_facts__live": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "منشور في {count} مكان",
+        "countPlural=one": "منشور",
+        "countPlural=two": "منشور في مكانين",
+        "countPlural=few": "منشور في {count} أماكن",
+        "countPlural=many": "منشور في {count} مكانا",
+        "countPlural=other": "منشور في {count} مكان"
+      }
+    }
+  ],
+  "project_facts__local": "{count} على حاسوبكم",
+  "project_facts__not_live": "لم ينشر بعد",
+  "project_facts__nothing_yet": "لا شيء هنا بعد. افتحوه لتبدؤوا.",
+  "project_facts__working_count": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "{count} شخصا يعملون عليه",
+        "countPlural=one": "شخص واحد يعمل عليه",
+        "countPlural=two": "شخصان يعملان عليه",
+        "countPlural=few": "{count} أشخاص يعملون عليه",
+        "countPlural=many": "{count} شخصا يعملون عليه",
+        "countPlural=other": "{count} شخصا يعملون عليه"
+      }
+    }
+  ],
+  "project_facts__working_one": "{name} يعمل عليه",
+  "project_facts__working_two": "{first} و{second} يعملان عليه",
+  "project_home__cloud_asleep_action": "إيقاظه والمواصلة",
+  "project_home__cloud_asleep_hint": "يحتاج إلى الإنترنت.",
+  "project_home__cloud_asleep_title": "مساحة عملكم السحابية في وضع السكون.",
+  "project_home__cloud_asleep_why": "دخلت في السكون عندما توقفتم، لذا لا تكلف شيئا أثناء غيابكم. يستغرق إيقاظها نحو نصف دقيقة، وسيكون كل شيء كما تركتموه.",
+  "project_home__cloud_awake_action": "المتابعة",
+  "project_home__cloud_awake_title": "مواصلة العمل في السحابة.",
+  "project_home__cloud_awake_why": "مساحة عملكم مستيقظة وجاهزة. يستطيع فريقكم رؤية ما تفعلونه هناك.",
+  "project_home__cloud_theirs_action": "الانضمام إلى {name}",
+  "project_home__cloud_theirs_hint": "سترون الشيء نفسه معا.",
+  "project_home__cloud_theirs_title": "{name} يعمل في السحابة الآن.",
+  "project_home__cloud_theirs_why": "يمكنكم الانضمام إلى {name} والمشاهدة دون إعداد أي شيء.",
+  "project_home__cloud_theirs_why_change": "{name} يقوم الآن بما يلي: {change}. يمكنكم الانضمام والمشاهدة دون إعداد أي شيء.",
+  "project_home__local_paused_action": "المتابعة",
+  "project_home__local_paused_hint": "يفتح فورا.",
+  "project_home__local_paused_title": "المتابعة من حيث توقفتم.",
+  "project_home__local_paused_why": "نسختكم على هذا الحاسوب، متوقفة مؤقتا، تماما كما تركتموها {when}.",
+  "project_home__local_working_action": "العودة إليه",
+  "project_home__local_working_hint": "لن يضيع شيء إذا أغلقته.",
+  "project_home__local_working_title": "Pikku يعمل على حاسوبكم.",
+  "project_home__local_working_why": "يمكنكم المشاهدة أو التدخل في أي وقت تشاؤون.",
+  "project_home__local_working_why_change": "يقوم الآن بما يلي: {change}. يمكنكم المشاهدة أو التدخل في أي وقت تشاؤون.",
+  "project_home__offline_action": "حاولوا مرة أخرى",
+  "project_home__offline_hint": "كل ما هو موجود على هذا الحاسوب يعمل كالمعتاد.",
+  "project_home__offline_title": "أنتم غير متصلين بالإنترنت الآن.",
+  "project_home__offline_why": "عند فتح المشروع لأول مرة، يجب أن يصل عبر الإنترنت. وبمجرد عودة الاتصال سأجهزه لكم.",
+  "project_home__stage_change": "نسخة من أجل «{name}»",
+  "project_home__stage_live": "الموقع المنشور",
+  "project_home__stage_live_inline": "الموقع المنشور",
+  "project_home__stage_test": "النسخة التجريبية",
+  "project_home__stage_test_inline": "النسخة التجريبية",
+  "project_home__start_action": "البدء في السحابة",
+  "project_home__start_hint": "يستغرق نحو دقيقة.",
+  "project_home__start_title": "البدء في السحابة.",
+  "project_home__start_why": "هذه أسهل طريقة للبدء. لا حاجة لتثبيت أي شيء، وتكون جاهزة خلال دقيقة تقريبا، ويستطيع فريقكم رؤيتها أيضا. ويمكنكم نقلها إلى حاسوبكم لاحقا.",
+  "project_home_gate__the_project": "المشروع",
+  "project_landing__live_getting_ready": "الموقع المنشور قيد التجهيز",
+  "project_landing__live_needs_look": "الموقع المنشور يحتاج إلى نظرة",
+  "project_landing__live_running_well": "الموقع المنشور يعمل جيدا",
+  "project_landing__nothing_online": "لا شيء منشور بعد",
+  "project_landing__offline": "غير متصل بالإنترنت",
+  "project_landing__people_many_cloud": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "{who} و{count} شخصا آخر في السحابة أيضا",
+        "countPlural=one": "{who} وشخص آخر في السحابة أيضا",
+        "countPlural=two": "{who} وشخصان آخران في السحابة أيضا",
+        "countPlural=few": "{who} و{count} أشخاص آخرون في السحابة أيضا",
+        "countPlural=many": "{who} و{count} شخصا آخر في السحابة أيضا",
+        "countPlural=other": "{who} و{count} شخصا آخر في السحابة أيضا"
+      }
+    }
+  ],
+  "project_landing__people_many_project": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "{who} و{count} شخصا آخر في المشروع أيضا",
+        "countPlural=one": "{who} وشخص آخر في المشروع أيضا",
+        "countPlural=two": "{who} وشخصان آخران في المشروع أيضا",
+        "countPlural=few": "{who} و{count} أشخاص آخرون في المشروع أيضا",
+        "countPlural=many": "{who} و{count} شخصا آخر في المشروع أيضا",
+        "countPlural=other": "{who} و{count} شخصا آخر في المشروع أيضا"
+      }
+    }
+  ],
+  "project_landing__people_one_cloud": "{who} في السحابة أيضا",
+  "project_landing__people_one_project": "{who} في المشروع أيضا",
+  "project_landing__things_need_look": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "{count} أمرا يحتاج إلى نظرة",
+        "countPlural=one": "أمر واحد يحتاج إلى نظرة",
+        "countPlural=two": "أمران يحتاجان إلى نظرة",
+        "countPlural=few": "{count} أمور تحتاج إلى نظرة",
+        "countPlural=many": "{count} أمرا يحتاج إلى نظرة",
+        "countPlural=other": "{count} أمرا يحتاج إلى نظرة"
+      }
+    }
+  ],
+  "project_landing_mock__preview_when": "معاينة الصفحة عندما",
+  "project_landing_mock__said_cloud": "سيفتح مساحة العمل السحابية أو يوقظها أو ينضم إليها.",
+  "project_landing_mock__said_local": "سيفتح المشروع على هذا الحاسوب.",
+  "project_landing_mock__said_look": "سيعرض ما هو منشور دون فتح مساحة عمل.",
+  "project_landing_mock__state": "الحالة",
+  "project_live__action": "إلقاء نظرة",
+  "project_live__needs": "الموقع المنشور يحتاج إلى نظرة",
+  "project_live__title": "موقعكم منشور.",
+  "project_live__well": "الموقع المنشور يعمل جيدا",
+  "project_live__why": "الموقع على الإنترنت ويمكن للناس زيارته. ألقوا نظرة لتروا كيف حاله.",
+  "project_now__all_well": "كل ما هو منشور يعمل جيدا.",
+  "project_now__asleep": "في وضع السكون",
+  "project_now__checked": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "تم فحص {names} {checked}.",
+        "countPlural=one": "تم فحص {names} {checked}.",
+        "countPlural=two": "تم فحص {names} {checked}.",
+        "countPlural=few": "تم فحص {names} {checked}.",
+        "countPlural=many": "تم فحص {names} {checked}.",
+        "countPlural=other": "تم فحص {names} {checked}."
+      }
+    }
+  ],
+  "project_now__else_well": "كل ما عدا ذلك يعمل جيدا.",
+  "project_now__getting_ready": "قيد التجهيز",
+  "project_now__in_cloud": "في السحابة",
+  "project_now__last_online": "هكذا بدا عندما كنتم متصلين آخر مرة.",
+  "project_now__live": "منشور",
+  "project_now__need_look": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "لا شيء يحتاج إلى نظرة في {stage}",
+        "countPlural=one": "شيء واحد يحتاج إلى نظرة في {stage}",
+        "countPlural=two": "شيئان يحتاجان إلى نظرة في {stage}",
+        "countPlural=few": "{count} أشياء تحتاج إلى نظرة في {stage}",
+        "countPlural=many": "{count} شيئا تحتاج إلى نظرة في {stage}",
+        "countPlural=other": "{count} شيء تحتاج إلى نظرة في {stage}"
+      }
+    }
+  ],
+  "project_now__nobody": "لا أحد يعمل على هذا الآن.",
+  "project_now__not_online": "غير منشور",
+  "project_now__nothing_online": "لا شيء منشور بعد.",
+  "project_now__nothing_online_text": "عندما تنشرون هذا المشروع على الإنترنت، سترون هنا كيف حاله.",
+  "project_now__on_computer": "على هذا الحاسوب",
+  "project_now__pikku_working": "Pikku يعمل",
+  "project_now__rest_quiet": "الباقي هادئ.",
+  "project_now__resting": "في راحة",
+  "project_now__see_whats_wrong": "معرفة ما المشكلة",
+  "project_now__stage_state": "{stage}: {state}",
+  "project_now__state_checked": "{state}، تم الفحص {checked}.",
+  "project_now__what_is_online": "ما هو منشور",
+  "project_now__working_now": "يعمل الآن",
+  "project_now__you": "أنتم",
+  "project_row__last_worked_on": "آخر عمل عليه {when}",
+  "project_row__only_you_can_see": "أنتم وحدكم من يراه",
+  "project_ways__cloud_action": "فتح في السحابة",
+  "project_ways__cloud_asleep": "في وضع السكون، وتستيقظ خلال نصف دقيقة تقريبا.",
+  "project_ways__cloud_awake": "مستيقظة، ويستطيع فريقكم رؤيتها.",
+  "project_ways__cloud_carry_on": "المتابعة هناك",
+  "project_ways__cloud_join": "الانضمام إليهم",
+  "project_ways__cloud_join_title": "الانضمام إلى {name} في السحابة",
+  "project_ways__cloud_join_why": "مساحة العمل نفسها ودون إعداد. سترون ما يرونه لحظة بلحظة.",
+  "project_ways__cloud_mine_title": "مساحة عملكم السحابية",
+  "project_ways__cloud_note": "يحتاج إلى الإنترنت.",
+  "project_ways__cloud_title": "العمل في السحابة",
+  "project_ways__cloud_wake": "إيقاظه",
+  "project_ways__cloud_why": "نحن نشغله لكم. لا حاجة لتثبيت أي شيء، ويستطيع فريقكم رؤيته.",
+  "project_ways__live_sub": "افتحوا مساحة عمل لتعملوا عليه. يبقى موقعكم المنشور كما هو حتى تنشروا.",
+  "project_ways__live_title": "هل تريدون تغيير شيء؟",
+  "project_ways__local_action": "العمل على حاسوبي",
+  "project_ways__local_carry_on": "المتابعة هنا",
+  "project_ways__local_mine_title": "نسختكم على هذا الحاسوب",
+  "project_ways__local_mine_why": "متوقفة مؤقتا كما تركتموها {when}. ملفاتكم هنا؛ ولا يزال الذكاء الاصطناعي يحتاج إلى الإنترنت ما لم تستخدموا نموذجا على هذا الحاسوب.",
+  "project_ways__local_note": "تستغرق المرة الأولى بضع دقائق.",
+  "project_ways__local_offline": "يحتاج إلى الإنترنت في المرة الأولى.",
+  "project_ways__local_title": "العمل على هذا الحاسوب",
+  "project_ways__local_why": "ينسخ المشروع إلى هنا وتبقى ملفاتكم معكم. ولا يزال الذكاء الاصطناعي في Pikku يحتاج إلى الإنترنت ما لم تستخدموا نموذجا على هذا الحاسوب.",
+  "project_ways__look_action": "إلقاء نظرة فقط",
+  "project_ways__look_why": "اطلعوا على ما هو منشور وكيف حاله دون فتح أي شيء.",
+  "project_ways__sub": "اختاروا طريقة. يمكنكم التبديل لاحقا ولن يضيع أي شيء من عملكم.",
+  "project_ways__title": "أين تريدون أن تعملوا؟",
+  "projects_grid__all": "الكل",
+  "projects_grid__cards": "بطاقات",
+  "projects_grid__filter_all": "الكل",
+  "projects_grid__filter_paused": "متوقفة مؤقتا",
+  "projects_grid__filter_running": "قيد التشغيل",
+  "projects_grid__how_to_show_them": "طريقة عرضها",
+  "projects_grid__in_progress": "قيد العمل",
+  "projects_grid__list": "قائمة",
+  "projects_grid__no_projects_match_that": "لا توجد مشاريع تطابق ذلك.",
+  "projects_grid__paused": "متوقفة مؤقتا",
+  "projects_grid__running": "قيد التشغيل",
+  "projects_grid__search_your_projects": "البحث في مشاريعكم",
+  "projects_grid__show": "عرض",
+  "projects_grid__show_all_projects": "عرض كل المشاريع",
+  "projects_grid__try_a_different_word": "جربوا كلمة أخرى، أو اعرضوا كل شيء من جديد.",
+  "projects_screen__in_team": "في {team}",
+  "projects_screen__lead_local": "كل ما تصنعونه محفوظ على هذا الحاسوب. افتحوا مشروعا لتواصلوا من حيث توقفتم.",
+  "projects_screen__lead_team": "كل ما يصنعه {team}، على حاسوبكم أو في السحابة. افتحوا مشروعا لتواصلوا من حيث توقفتم.",
+  "projects_screen__new_project": "مشروع جديد",
+  "projects_screen__none_text": "ابدؤوا مشروعا وسيظهر هنا.",
+  "projects_screen__none_title": "ليس لديكم أي مشاريع بعد.",
+  "projects_screen__open_failed": "تعذر فتح هذا المشروع. حاولوا مرة أخرى.",
+  "projects_screen__title": "المشاريع",
+  "publish_hosts__a_fast_host_with": "مزود استضافة سريع مع خطة مجانية للبدء. ستحتاجون إلى حساب Cloudflare.",
+  "publish_hosts__add_what_your_app": "يضيف ما يحتاجه تطبيقكم ليعمل هناك.",
+  "publish_hosts__amazon_aws": "Amazon (AWS)",
+  "publish_hosts__ask_pikku_to_do": "طلب تنفيذ ذلك من Pikku",
+  "publish_hosts__ask_you_for_any": "يطلب منكم أي حساب أو كلمة مرور يحتاجها.",
+  "publish_hosts__azure": "azure",
+  "publish_hosts__check_the_app_still": "يتحقق من أن التطبيق ما زال يعمل.",
+  "publish_hosts__cloudflare": "cloudflare",
+  "publish_hosts__cloudflare_2": "Cloudflare",
+  "publish_hosts__copied_you_can_paste": "تم النسخ. يمكنكم اللصق الآن.",
+  "publish_hosts__copy_the_steps": "نسخ الخطوات",
+  "publish_hosts__hide_the_steps": "إخفاء الخطوات",
+  "publish_hosts__microsoft_azure": "Microsoft Azure",
+  "publish_hosts__microsoft_s_cloud_a_good": "سحابة Microsoft. خيار جيد إذا كانت شركتكم تستخدمها بالفعل. ستحتاجون إلى حساب Azure.",
+  "publish_hosts__on_amazon_web_services": "على Amazon Web Services كدوال بلا خوادم",
+  "publish_hosts__on_cloudflare": "على Cloudflare",
+  "publish_hosts__on_microsoft_azure": "على Microsoft Azure",
+  "publish_hosts__on_my_own_computer": "على حاسوبي أو خادمي الخاص",
+  "publish_hosts__on_my_own_computer_2": "على حاسوبي أو خادمي الخاص",
+  "publish_hosts__or_put_it_somewhere": "أو نشره في مكان آخر",
+  "publish_hosts__prefer_a_different_home": "هل تفضلون مكانا مختلفا لتطبيقكم؟ اختاروا مكانا وسيجهزه Pikku. سيضيف ما يحتاجه تطبيقكم هناك ويطلب منكم أي حسابات أو كلمات مرور.",
+  "publish_hosts__prompt": "من فضلك جهز تطبيقي ليعمل {what}. أضف كل ما يلزم لذلك. قبل أن تستخدم أي حساب أو كلمة مرور، اطلبه مني، وأخبرني بأي شيء يجب أن أفعله بنفسي.",
+  "publish_hosts__quoted": "«{text}»",
+  "publish_hosts__serverless": "serverless",
+  "publish_hosts__show_the_steps": "إظهار الخطوات",
+  "publish_hosts__tell_you_how_to": "يخبركم كيف تكملون الباقي.",
+  "publish_hosts__what_pikku_will_do": "ما سيفعله Pikku",
+  "publish_hosts__what_you_give_to": "ما تعطونه إلى Pikku",
+  "publish_hosts__where_to_run_your": "أين سيعمل تطبيقكم",
+  "publish_hosts__your_app_only_runs": "يعمل تطبيقكم فقط عندما يزوره أحد، وتدفعون مقابل ما يستخدم فقط. ستحتاجون إلى حساب AWS.",
+  "publish_hosts__your_app_runs_as": "يعمل تطبيقكم كبرنامج واحد تشغلونه بأنفسكم. خيار جيد إذا كان لديكم حاسوب أو خادم خاص بكم.",
+  "publish_screen__describe_app": "وصف تطبيقكم",
+  "publish_screen__empty_text": "ليس في تطبيقكم أي صفحات بعد. أخبروا Pikku بما تريدون صنعه، وبمجرد أن يبنى شيء يمكنكم نشره على الإنترنت من هنا.",
+  "publish_screen__empty_title": "لا يوجد ما يمكن نشره بعد.",
+  "publish_screen__text": "النشر يجعل تطبيقكم متاحا على الإنترنت ليستخدمه الآخرون. حاليا أنتم وحدكم من يراه.",
+  "publish_screen__title": "نشر تطبيقكم على الإنترنت",
+  "query_state__something_went_wrong_on": "حدث خطأ من جهتنا. لم يتغير شيء.",
+  "query_state__that_did_not_load": "تعذر تحميل ذلك.",
+  "query_state__try_again": "حاولوا مرة أخرى",
+  "quick_find__artifacts": "المخرجات",
+  "quick_find__ask_in_your_own_words": "اسألوا بكلماتكم الخاصة",
+  "quick_find__ask_pikku": "اسألوا Pikku",
+  "quick_find__assistants": "المساعدون",
+  "quick_find__building_logs": "سجلات البناء",
+  "quick_find__design": "التصميم",
+  "quick_find__esc": "Esc",
+  "quick_find__explore": "استكشاف",
+  "quick_find__front_doors": "أبواب الدخول",
+  "quick_find__how_its_running": "كيف يعمل",
+  "quick_find__jump_to_a_page": "الانتقال إلى صفحة",
+  "quick_find__knowledge": "المعرفة",
+  "quick_find__metrics": "الطلبات والسرعة",
+  "quick_find__nothing_matches": "لا شيء يطابق «{q}».",
+  "quick_find__overview": "نظرة عامة",
+  "quick_find__projects": "المشاريع",
+  "quick_find__publish": "النشر",
+  "quick_find__results": "النتائج",
+  "quick_find__routines": "الروتينات",
+  "quick_find__secrets": "الأسرار",
+  "quick_find__translations": "الترجمات",
+  "quick_find__versions": "النسخ",
+  "quick_find__virtual_users": "المستخدمون الافتراضيون",
+  "resume__back": "العودة إلى مشاريعكم",
+  "resume__failed_lead": "لم يتغير شيء. غالبا ما تحل المحاولة مرة أخرى المشكلة. وإن استمرت، اطلبوا من Pikku في المحادثة أن يلقي نظرة.",
+  "resume__failed_title": "لم يفتح هذه المرة.",
+  "resume__lead": "كان مشروعكم في راحة. أوقظوه الآن، وسيفتح فور أن يصبح جاهزا.",
+  "resume__step_ready": "جار تجهيزه لكم",
+  "resume__step_start": "جار تشغيله",
+  "resume__step_workspace": "جار إيقاظ مساحة عملكم",
+  "resume__title": "جار فتح {name}.",
+  "resume__try_again": "حاولوا مرة أخرى",
+  "road_spine__about_secs": "حوالي {secs} ث",
+  "road_spine__step_of": "الخطوة {step} من {total}",
+  "routine_screen__a_few_seconds": "بضع ثوان",
+  "routine_screen__all_routines": "كل الروتينات",
+  "routine_screen__ask_pikku_change": "طلب تغيير هذا من Pikku",
+  "routine_screen__back_step": "خطوة إلى الخلف",
+  "routine_screen__change_step_say": "غير الخطوة «{step}» في «{name}»",
+  "routine_screen__done_by": "نفذه: {by}",
+  "routine_screen__each_try": "كل محاولة",
+  "routine_screen__ended": "انتهى",
+  "routine_screen__event_after": "{event} بعد {time}",
+  "routine_screen__event_at": "{event}، عند مرور {time}",
+  "routine_screen__finished": "اكتمل",
+  "routine_screen__fix_it": "أصلحه عني",
+  "routine_screen__fix_say": "أصلح هذا: {name} {note}",
+  "routine_screen__follow_live": "تابعه مباشرة",
+  "routine_screen__forward_step": "خطوة إلى الأمام",
+  "routine_screen__gave_back": "ما أعاده",
+  "routine_screen__given": "ما تلقاه",
+  "routine_screen__happening_now": "يحدث الآن",
+  "routine_screen__hide_timeline": "إخفاء الخط الزمني",
+  "routine_screen__if_not": "إن لم يحدث ذلك: {ifNot}.",
+  "routine_screen__just_now": "الآن للتو",
+  "routine_screen__just_routine": "الروتين فقط",
+  "routine_screen__missing": "هذا الروتين غير موجود. ربما أزيل.",
+  "routine_screen__move_run": "تنقل عبر التشغيل",
+  "routine_screen__no_run": "بلا تشغيل، الخطوات فقط",
+  "routine_screen__no_run_picked": "الروتين فقط، ولم يختر أي تشغيل.",
+  "routine_screen__older_notice": "هكذا كان الروتين في ذلك الوقت. وقد تغير منذ ذلك الحين.",
+  "routine_screen__past_runs": "عمليات التشغيل السابقة",
+  "routine_screen__past_runs_sub": "اختاروا واحدا لتروا كيف سار، خطوة بخطوة.",
+  "routine_screen__pick_a_run": "اختاروا تشغيلا من الأعلى لتروا ما حدث هنا.",
+  "routine_screen__run_now": "شغله الآن",
+  "routine_screen__run_summary": ". {note}. استغرق {took}.",
+  "routine_screen__running_now": "قيد التشغيل الآن",
+  "routine_screen__seconds": "{n} ثانية",
+  "routine_screen__show_history": "إظهار السجل",
+  "routine_screen__show_it": "إظهاره",
+  "routine_screen__show_it_now": "إظهاره الآن",
+  "routine_screen__show_timeline": "إظهار الخط الزمني",
+  "routine_screen__show_whole_run": "إظهار التشغيل كاملا",
+  "routine_screen__showing": "المعروض",
+  "routine_screen__started": "بدأ",
+  "routine_screen__state_done": "تم",
+  "routine_screen__state_failed": "حدث خطأ",
+  "routine_screen__state_running": "قيد التنفيذ",
+  "routine_screen__state_skipped": "تم تخطيه",
+  "routine_screen__state_waiting": "لم يبلغ",
+  "routine_screen__step_of": "الخطوة {step} من {total}",
+  "routine_screen__time_in": "بعد {time}",
+  "routine_screen__timeline": "الخط الزمني",
+  "routine_screen__timeline_aria": "الخط الزمني لهذا التشغيل",
+  "routine_screen__took": "المدة",
+  "routine_screen__took_line": "استغرق {took}",
+  "routine_screen__tried_again": "جرت المحاولة مرة أخرى",
+  "routine_screen__tries": "المحاولات",
+  "routine_screen__went_wrong": "حدث خطأ",
+  "routine_screen__what_happened": "ما الذي حدث",
+  "routine_screen__what_runs": "{what} {runs}.",
+  "routine_screen__what_went_wrong": "ما الذي حدث من خطأ",
+  "routine_screen__whole_run": "التشغيل كاملا",
+  "routine_screen__worked": "نجح",
+  "routines__every": "كل {cron}",
+  "routines__on_a_schedule": "وفق جدول: {cron}",
+  "routines__quiet_moment": "لحظة هادئة",
+  "routines__ran_fine": "عمل جيدا",
+  "routines__stops_here": "يتوقف هنا",
+  "routines__took_seconds": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "{count} ثانية",
+        "countPlural=one": "{count} ثانية",
+        "countPlural=two": "{count} ثانيتان",
+        "countPlural=few": "{count} ثوان",
+        "countPlural=many": "{count} ثانية",
+        "countPlural=other": "{count} ثانية"
+      }
+    }
+  ],
+  "routines__went_wrong_at": "حدث خطأ عند {step}",
+  "routines__what_starts_it": "هذا هو ما يبدأه.",
+  "routines__when_asked": "عند طلب تشغيله",
+  "routines__when_asked_to_run": "عند طلب التشغيل",
+  "routines__yes": "نعم",
+  "routines__your_app": "تطبيقكم",
+  "routines_screen__add_say": "أضف روتينا جديدا إلى تطبيقي",
+  "routines_screen__is_on": "{name} مفعل",
+  "routines_screen__look_at_it": "إلقاء نظرة",
+  "routines_screen__n_well": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "{count} روتينا يعمل جيدا",
+        "countPlural=one": "روتين واحد يعمل جيدا",
+        "countPlural=two": "روتينان يعملان جيدا",
+        "countPlural=few": "{count} روتينات تعمل جيدا",
+        "countPlural=many": "{count} روتينا يعمل جيدا",
+        "countPlural=other": "{count} روتينا يعمل جيدا"
+      }
+    }
+  ],
+  "routines_screen__not_run": "لم يعمل بعد",
+  "routines_screen__ran_fine": "عمل جيدا · {when}",
+  "routines_screen__switched_off": "متوقف",
+  "routines_screen__text": "مهام يؤديها تطبيقكم من تلقاء نفسه، وفق جدول زمني أو عند حدوث أمر ما. افتحوا واحدة لتروا كل خطوة وكل مرة عملت فيها.",
+  "routines_screen__title": "الروتينات",
+  "routines_screen__went_wrong": "حدث خطأ · {when}",
+  "routines_screen__why_fine": "سار كل شيء كما ينبغي في آخر مرة. سيخبركم Pikku إن تغير ذلك.",
+  "routines_screen__why_stopped": "توقف «{name}» عند الخطوة {step} ({when}). لدى Pikku فكرة بالفعل عن السبب.",
+  "routines_screen__wrong_count": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "لم يحدث خطأ في أي روتين اليوم",
+        "countPlural=one": "حدث خطأ في روتين واحد اليوم",
+        "countPlural=two": "حدث خطأ في روتينين اليوم",
+        "countPlural=few": "حدث خطأ في {count} روتينات اليوم",
+        "countPlural=many": "حدث خطأ في {count} روتينا اليوم",
+        "countPlural=other": "حدث خطأ في {count} روتين اليوم"
+      }
+    }
+  ],
+  "routines_screen__your_routines": "روتيناتكم",
+  "routines_screen__your_routines_sub": "يبدأ كل روتين بالطريقة نفسها في كل مرة. أوقفوا واحدا وسينتظر ببساطة.",
+  "screen_names__agent_artifacts": "وكيل المخرجات في Pikku",
+  "screen_names__agent_build": "وكيل البناء في Pikku",
+  "screen_names__agent_emails": "وكيل رسائل البريد في Pikku",
+  "screen_names__agent_frontend": "وكيل التصميم في Pikku",
+  "screen_names__agent_knowledge": "وكيل المعرفة في Pikku",
+  "screen_names__artifacts": "المخرجات",
+  "screen_names__build": "البناء",
+  "screen_names__emails": "رسائل البريد",
+  "screen_names__frontend": "التصميم",
+  "screen_names__knowledge": "المعرفة",
+  "secret_activity__could_not_save": "تعذر الحفظ",
+  "secret_activity__given_access": "منح الوصول إلى",
+  "secret_activity__h_ago": "قبل {n} ساعة",
+  "secret_activity__just_now": "الآن للتو",
+  "secret_activity__min_ago": "قبل {n} دقيقة",
+  "secret_activity__nothing_yet_each_time": "لا شيء بعد. في كل مرة يحفظ سر أو يستخدم سيظهر هنا.",
+  "secret_activity__project": "المشروع {name}",
+  "secret_activity__refused": "رفض",
+  "secret_activity__removed": "أزيل",
+  "secret_activity__saved": "حفظ",
+  "secret_activity__studio": "Studio",
+  "secret_activity__this_record_has_been": "تم تغيير هذا السجل. لا تثقوا به.",
+  "secret_activity__this_record_has_not": "لم يتغير هذا السجل",
+  "secret_activity__used": "استخدم",
+  "secret_form__a_password_or_key": "كلمة مرور أو مفتاح تحتاجه مشاريعكم.",
+  "secret_form__add_a_secret": "إضافة سر",
+  "secret_form__cancel": "إلغاء",
+  "secret_form__change_a_secret": "تغيير سر",
+  "secret_form__close": "إغلاق",
+  "secret_form__letters_numbers_and_underscores": "أحرف وأرقام وشرطات سفلية، دون مسافات. يطلبه مشروعكم بهذا الاسم.",
+  "secret_form__locked_in_this_browser": "يقفل في هذا المتصفح قبل إرساله. لا يرى Studio أبدا ما تكتبه.",
+  "secret_form__name": "الاسم",
+  "secret_form__save_secret": "حفظ السر",
+  "secret_form__saving": "جار الحفظ",
+  "secret_form__saving_replaces_what_was": "الحفظ يستبدل ما كان موجودا.",
+  "secret_form__stripe_key": "STRIPE_KEY",
+  "secret_form__that_could_not_be": "تعذر حفظ ذلك. لم يتغير شيء. حاولوا مرة أخرى.",
+  "secret_form__the_secret": "السر",
+  "secrets_hero__add_a_password_or": "أضيفوا كلمة مرور أو مفتاحا مرة واحدة. يقفل في هذا المتصفح قبل حفظه، ولا تطلبه مشاريعكم إلا أثناء التشغيل.",
+  "secrets_hero__add_a_secret": "إضافة سر",
+  "secrets_hero__keep_your_passwords_in": "احتفظوا بكلمات مروركم في مكان واحد آمن.",
+  "secrets_hero__saved": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "لا أسرار محفوظة",
+        "countPlural=one": "سر واحد محفوظ",
+        "countPlural=two": "سران محفوظان",
+        "countPlural=few": "{count} أسرار محفوظة",
+        "countPlural=many": "{count} سرا محفوظا",
+        "countPlural=other": "{count} سر محفوظ"
+      }
+    }
+  ],
+  "secrets_hero__secrets": "الأسرار",
+  "secrets_hero__they_were_locked_in": "قفلت في هذا المتصفح قبل حفظها. لا يستطيع Studio قراءتها مرة أخرى، ويسجل كل استخدام لها في الأسفل.",
+  "secrets_hero__your_secrets_are_locked": "أسراركم محفوظة تحت القفل.",
+  "secrets_list__change": "تغيير",
+  "secrets_list__keep_it": "الاحتفاظ به",
+  "secrets_list__locked_only_your_projects": "مقفل. مشاريعكم وحدها تستطيع فتحه.",
+  "secrets_list__remove": "إزالة",
+  "secrets_list__remove_it_for_good": "إزالته نهائيا",
+  "secrets_list__secret": "سر",
+  "secrets_screen__add_secret": "إضافة سر",
+  "secrets_screen__crumb": "على هذا الحاسوب",
+  "secrets_screen__nothing_saved": "لم يحفظ شيء بعد.",
+  "secrets_screen__nothing_saved_text": "أضيفوا سرا وستتمكن مشاريعكم من استخدامه.",
+  "secrets_screen__remove_failed": "تعذرت إزالة ذلك. لم يتغير شيء.",
+  "secrets_screen__saved": "الأسرار المحفوظة",
+  "secrets_screen__text": "كلمات مرور ومفاتيح تحتاجها مشاريعكم. تقفل في متصفحكم قبل حفظها، فلا يستطيع أحد قراءتها مرة أخرى هنا. وتطلبها المشاريع أثناء التشغيل.",
+  "secrets_screen__title": "الأسرار",
+  "secrets_screen__who_used": "من استخدمها",
+  "segmented__not_written_yet": "لم يكتب بعد",
+  "setups_compare__add_wishlist": "إضافة إلى قائمة الأمنيات",
+  "setups_compare__different_here": "مختلف هنا",
+  "setups_compare__do_this": "تنفيذ هذا",
+  "setups_compare__on_wishlist": "في قائمة أمنياتكم",
+  "shelf_art__safe_to_go_back": "آمن للعودة إليه",
+  "shelf_meta__cancelled": "ألغي",
+  "shelf_meta__fail_build": "تعذر بناؤه",
+  "shelf_meta__fail_data": "تعذر تحديث بياناتكم",
+  "shelf_meta__fail_publish": "تعذر نشره",
+  "shelf_meta__fail_start": "تم بناؤه لكنه لم يعمل",
+  "shelf_meta__failed": "لم ينشر",
+  "shelf_meta__live": "منشور",
+  "shelf_meta__rolled_back": "تم التراجع عنه",
+  "shelf_meta__saved_from_github": "محفوظ من GitHub",
+  "shelf_meta__waiting": "في انتظارك",
+  "shelf_meta__was_live": "كان منشورا",
+  "shelf_meta__working": "قيد النشر",
+  "shelf_strip__done": "تم",
+  "shelf_strip__progress": "الخطوة {step} من {total}، {what}. مستمر منذ {time}. لن يمس تطبيقكم المنشور حتى الخطوة الأخيرة.",
+  "shelf_strip__waiting": "في الانتظار",
+  "shelf_strip__working_on_it_now": "نعمل عليه الآن",
+  "shell_account__everything_and_you_can_change": "كل شيء، ويمكنكم تغيير أي منه.",
+  "shell_account__nobody_else": "لا أحد غيركم",
+  "shell_account__sign_out": "تسجيل الخروج",
+  "shell_account__this_computer": "هذا الحاسوب",
+  "shell_account__where_it_runs": "مكان التشغيل",
+  "shell_account__who_can_see_what": "من يرى ماذا",
+  "shell_account__your_work_is_stored_here": "يحفظ عملكم هنا ويعمل دون إنترنت. ولا توجد له نسخة احتياطية في مكان آخر.",
+  "shell_layout__about": "نبذة",
+  "shell_layout__an_open_question_in_your": "سؤال مفتوح في معرفتكم",
+  "shell_layout__approve": "موافقة",
+  "shell_layout__ask_anything": "اسألوا أي شيء",
+  "shell_layout__ask_or_tell": "اسألوا Pikku أو أخبروه بشيء",
+  "shell_layout__ask_pikku_about_it": "اسألوا Pikku عنه",
+  "shell_layout__back_to": "العودة إلى {project}",
+  "shell_layout__bubble_ask_first": "وسأسأل قبل أن أبني أي شيء.",
+  "shell_layout__bubble_ask_first_build": "سأسأل قبل أن أبني أي شيء.",
+  "shell_layout__bubble_nothing": "لا شيء يحتاج إليكم الآن.",
+  "shell_layout__bubble_tell_me": "أخبروني بما تريدون صنعه",
+  "shell_layout__caught_up_text": "لا شيء يحتاج إليكم الآن. وإن احتاج شيء إليكم فسأضعه هنا وأخبركم به بكلمات بسيطة.",
+  "shell_layout__caught_up_title": "كل شيء على ما يرام.",
+  "shell_layout__changes": "التغييرات",
+  "shell_layout__chat": "المحادثة",
+  "shell_layout__close_panel": "إغلاق اللوحة",
+  "shell_layout__describe_my_app": "صفوا تطبيقي",
+  "shell_layout__dismiss": "إخفاء",
+  "shell_layout__done": "تم",
+  "shell_layout__explore": "استكشاف",
+  "shell_layout__find_a_page": "ابحثوا عن صفحة",
+  "shell_layout__find_shortcut": "⌘K",
+  "shell_layout__give_me_an_example": "أعطوني مثالا",
+  "shell_layout__give_me_an_example_of": "أعطوني مثالا على شيء يمكنني بناؤه هنا.",
+  "shell_layout__good_to_know": "من المفيد معرفته",
+  "shell_layout__home": "الرئيسية",
+  "shell_layout__just_now": "الآن",
+  "shell_layout__language": "اللغة",
+  "shell_layout__left_alone": "لم يمس",
+  "shell_layout__looks": "المظهر",
+  "shell_layout__main": "الرئيسي",
+  "shell_layout__match_this_computer": "مطابقة هذا الحاسوب",
+  "shell_layout__message_pikku": "راسلوا Pikku",
+  "shell_layout__needs_you": "يحتاج إليكم",
+  "shell_layout__new_project": "مشروع جديد",
+  "shell_layout__no_details": "لا توجد تفاصيل بعد.",
+  "shell_layout__not_now": "ليس الآن",
+  "shell_layout__not_now_reply": "لا مشكلة. سأسأل مرة أخرى غدا.",
+  "shell_layout__overview": "نظرة عامة",
+  "shell_layout__people_can_now_open_and": "يمكن للناس الآن فتح {url} وحجز حصة. لا شيء آخر مطلوب منكم.",
+  "shell_layout__pikku_is_on_it": "Pikku يعمل على ذلك",
+  "shell_layout__pikku_scope": "فقط ما تطلبونه منه. ويسأل قبل أن يغير أي شيء مهم.",
+  "shell_layout__publish": "نشر",
+  "shell_layout__remove_from_chat": "إزالة من المحادثة",
+  "shell_layout__say_what_to_change": "قولوا ما الذي يجب تغييره، مثلا: اجعلوا هذا أكبر",
+  "shell_layout__settings": "الإعدادات",
+  "shell_layout__studio": "Pikku Studio",
+  "shell_layout__studio_metrics": "مقاييس Studio",
+  "shell_layout__tell_me_more": "أخبروني المزيد",
+  "shell_layout__tell_me_when": "أخبروني عندما",
+  "shell_layout__tell_me_when_text": "يحتاج Pikku إليكم أو يحدث خطأ ما",
+  "shell_layout__the_project": "المشروع “{projectSlug}”",
+  "shell_layout__thinking": "Pikku يفكر…",
+  "shell_layout__this_change": "هذا التغيير",
+  "shell_layout__updates": "التحديثات",
+  "shell_layout__waiting": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "لا شيء ينتظر.",
+        "countPlural=one": "أمر واحد ينتظر:",
+        "countPlural=two": "أمران ينتظران:",
+        "countPlural=few": "{count} أمور تنتظر.",
+        "countPlural=many": "{count} أمرا ينتظر.",
+        "countPlural=other": "{count} أمر ينتظر."
+      }
+    }
+  ],
+  "shell_layout__what_has_happened": "ما الذي حدث",
+  "shell_layout__where_work_lives": "هنا ترون مكان عملكم، ومن يستطيع رؤيته، وما الذي حدث. لا شيء مخفي.",
+  "shell_layout__working_on_it": "قيد العمل",
+  "shell_layout__your_account": "حسابكم",
+  "shell_layout__your_app_is_live": "تطبيقكم منشور",
+  "shell_layout__your_helper": "Pikku، مساعدكم",
+  "shell_layout__your_name_and_photo": "اسمكم وصورتكم",
+  "shell_layout__your_workspace": "مساحة عملكم",
+  "side_panel__close_panel": "إغلاق اللوحة",
+  "signin__back_title": "أكملوا من حيث توقفتم.",
+  "signin__back_why": "مشاريعكم بانتظاركم على هذا الحاسوب، تماما كما تركتموها.",
+  "signin__busy_title": "نفتح مساحة عملكم.",
+  "signin__busy_why": "لحظة من فضلكم. أجهز كل شيء.",
+  "signin__failed_body": "حدث خطأ ما على هذا الحاسوب. لم يضع شيء، لذا حاولوا مرة أخرى بعد قليل.",
+  "signin__failed_title": "لم نتمكن من فتح مساحة عملكم.",
+  "signin__hint": "يستغرق نحو خمس ثوان.",
+  "signin__hint_back": "تفتح مشاريعكم فورا.",
+  "signin__legal": "لا نقرأ أبدا ما تبنونه على هذا الحاسوب.",
+  "signin__local_title": "ابدأوا على هذا الحاسوب.",
+  "signin__local_why": "هذا ما نقترحه للزيارة الأولى. يبقى عملكم هنا، ولا حاجة إلى التسجيل في أي مكان.",
+  "signin__opening": "جار الفتح",
+  "signin__others_title": "طرق أخرى للدخول",
+  "signin__retry": "حاولوا مرة أخرى",
+  "signin__use_pc": "استخدام هذا الحاسوب",
+  "site_preview__book_sourdough_basics": "احجزوا أساسيات العجين المخمر",
+  "site_preview__bookings": "الحجوزات",
+  "site_preview__export_list": "تصدير القائمة",
+  "site_preview__pick_a_day": "اختاروا يوما",
+  "site_preview__this_week_s_bookings": "حجوزات هذا الأسبوع",
+  "site_preview__your_name": "اسمكم",
+  "theme_panel__automatic": "تلقائي",
+  "theme_panel__automatic_follows_each_visitor_s": "الوضع التلقائي يتبع إعداد شاشة كل زائر.",
+  "theme_panel__background_blend": "مزج الخلفية",
+  "theme_panel__body_text": "النص الأساسي",
+  "theme_panel__brand_colours": "ألوان العلامة",
+  "theme_panel__contrast_note": "يتبدل النص على لونكم الرئيسي تلقائيا بين فاتح وداكن. نص الأزرار يظهر الآن بتباين قدره",
+  "theme_panel__corner_roundness": "استدارة الزوايا",
+  "theme_panel__create": "إنشاء",
+  "theme_panel__dark": "داكن",
+  "theme_panel__depth": "العمق",
+  "theme_panel__easy_to_read": "سهل القراءة",
+  "theme_panel__fonts": "الخطوط",
+  "theme_panel__headings": "العناوين",
+  "theme_panel__highlight_price_tags_badges": "التمييز (بطاقات الأسعار والشارات)",
+  "theme_panel__keep_text_easy_to": "إبقاء النص سهل القراءة",
+  "theme_panel__light": "فاتح",
+  "theme_panel__light_or_dark": "فاتح أو داكن",
+  "theme_panel__main_accent_buttons_links": "اللون الرئيسي (الأزرار والروابط)",
+  "theme_panel__my_theme": "تصميمي",
+  "theme_panel__name_a_new_theme": "سموا تصميما جديدا",
+  "theme_panel__new_theme_name": "اسم التصميم الجديد",
+  "theme_panel__none": "بلا",
+  "theme_panel__page_colour_light_mode": "لون الصفحة (الوضع الفاتح)",
+  "theme_panel__shade_strength": "قوة التظليل",
+  "theme_panel__shadows": "الظلال",
+  "theme_panel__shape_and_mood": "الشكل والأجواء",
+  "theme_panel__soft": "ناعم",
+  "theme_panel__strong": "قوي",
+  "theme_panel__text_colour_light_mode": "لون النص (الوضع الفاتح)",
+  "theme_panel__theme_changes_apply_to": "تنطبق تغييرات التصميم على كل صفحات تطبيقكم.",
+  "theme_panel__use": "استخدام {name}",
+  "theme_panel__your_themes": "تصاميمكم",
+  "toast__failed": "لم ينجح ذلك. يرجى المحاولة مرة أخرى.",
+  "toast__not_allowed": "غير مسموح لكم بذلك.",
+  "toast__sign_in_again": "سجلوا الدخول مرة أخرى للمتابعة.",
+  "toaster__dismiss": "إخفاء",
+  "trans_rows__add_a_language": "إضافة لغة",
+  "trans_rows__all_pages": "كل الصفحات",
+  "trans_rows__ask_pikku_to_translate": "اطلبوا من Pikku ترجمة كل شيء",
+  "trans_rows__everything": "الكل",
+  "trans_rows__everything_is_translated": "كل شيء مترجم",
+  "trans_rows__found": "تم العثور على {count}",
+  "trans_rows__i_would_like_to": "أود إضافة لغة أخرى إلى هذا التطبيق. أي لغة تريدون؟ أخبروني باللغة وسأحدد الإعداد الإقليمي المناسب، ثم أترجم كل شيء.",
+  "trans_rows__languages": "اللغات",
+  "trans_rows__languages_to_show": "اللغات المعروضة",
+  "trans_rows__left": "المتبقي {count}",
+  "trans_rows__left_of": "المتبقي {left} من {total}",
+  "trans_rows__name_percent": " · {percent}%",
+  "trans_rows__nothing_here_everything_is": "لا شيء هنا. كل شيء مترجم.",
+  "trans_rows__only_missing": "الناقص فقط",
+  "trans_rows__original": "الأصل",
+  "trans_rows__page": "الصفحة",
+  "trans_rows__page_option": "{page} · {left}",
+  "trans_rows__pick_at_least_one": "اختاروا لغة واحدة على الأقل أعلاه لبدء الترجمة.",
+  "trans_rows__search_the_wording": "ابحثوا في النصوص",
+  "trans_rows__show": "عرض",
+  "trans_rows__show_more": "عرض {shown} أخرى من {rest}",
+  "trans_rows__showing_the_first_40": "تعرض أول 40 فقط. ضيقوا البحث لرؤية الباقي.",
+  "trans_rows__still_needed": "لا يزال مطلوبا",
+  "trans_rows__text": "…",
+  "trans_rows__text_in_language": "{text} باللغة {language}",
+  "trans_rows__three_languages_at_most": "ثلاث لغات كحد أقصى، بما فيها الإنجليزية. أوقفوا لغة لإضافة أخرى.",
+  "trans_rows__translate_prompt": "يرجى ترجمة كل عبارة ناقصة إلى {languages}، ثم عرض ما كتب علي للمراجعة.",
+  "translation_panel__needs_translating": "· يحتاج إلى ترجمة",
+  "translation_panel__see_all_wording": "عرض كل النصوص",
+  "translation_panel__you_are_editing_wording": "تعدلون نصوصا تظهر في التطبيق. تحفظ كل لغة عند الانتقال إلى غيرها.",
+  "translations_screen__add_language": "إضافة لغة",
+  "translations_screen__i_would_like_to_add": "أود إضافة لغة أخرى إلى هذا التطبيق. أي لغة تريدون؟ أخبروني باللغة وسأحدد الإعداد الإقليمي المناسب، ثم أترجم كل شيء.",
+  "translations_screen__nothing": "لا شيء للترجمة بعد.",
+  "translations_screen__nothing_text": "عندما تصبح في تطبيقكم شاشات تحتوي على نصوص، ستظهر هنا.",
+  "translations_screen__old_pikku": "هذا التطبيق يعمل بنسخة أقدم من Pikku لا تستطيع عرض ترجماته بعد.",
+  "translations_screen__old_pikku_ask": "حدثوا Pikku الخاص بهذا التطبيق",
+  "translations_screen__old_pikku_message": "هذا التطبيق يعمل بنسخة أقدم من Pikku ولا يستطيع عرض ترجماته بعد. يرجى تحديث Pikku الخاص به.",
+  "translations_screen__one_language": "لغة واحدة فقط حتى الآن.",
+  "translations_screen__one_language_text": "اطلبوا من Pikku إضافة لغة أخرى وترجمة كل شيء لكم.",
+  "translations_screen__text": "كل النصوص التي يعرضها تطبيقكم، بكل لغة. أكملوا الناقص وسيحفظ أثناء الكتابة.",
+  "translations_screen__title": "الترجمات",
+  "version_screen__all_passed": "نجحت كلها",
+  "version_screen__all_versions": "كل النسخ",
+  "version_screen__before_it_goes_live": "قبل أن تصبح منشورة",
+  "version_screen__before_this_one": "قبل هذه النسخة",
+  "version_screen__byline": "{who}، {when}. {summary}",
+  "version_screen__change": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "لا تغييرات",
+        "countPlural=one": "تغيير واحد",
+        "countPlural=two": "تغييران",
+        "countPlural=few": "{count} تغييرات",
+        "countPlural=many": "{count} تغييرا",
+        "countPlural=other": "{count} تغيير"
+      }
+    }
+  ],
+  "version_screen__check_safe": "هل هي آمنة؟",
+  "version_screen__check_works": "هل تعمل؟",
+  "version_screen__checks": "الفحوصات",
+  "version_screen__compare": "مقارنة",
+  "version_screen__compared_title": "مقارنة بالنسخة التي قبلها",
+  "version_screen__compared_with_what_people_see": "مقارنة بما يراه الناس الآن.",
+  "version_screen__did_not_go_live": "لم تصبح منشورة",
+  "version_screen__did_not_run": "لم تشغل",
+  "version_screen__discard": "تجاهل",
+  "version_screen__discard_this_version": "تجاهل هذه النسخة؟",
+  "version_screen__do_these_and_the_publish": "أنجزوا هذه الأمور وسيصبح زر النشر متاحا.",
+  "version_screen__fill_in": "أكملوه",
+  "version_screen__fill_it_in": "أكملوه",
+  "version_screen__flag_breaking": "سيتوقف شيء عن العمل",
+  "version_screen__flag_failed": "فشل أحد الفحوصات",
+  "version_screen__flag_security": "تحذير أمني",
+  "version_screen__go_back": "العودة إلى هذه النسخة",
+  "version_screen__go_back_detail": "سيحصل زواركم على “{title}” خلال دقيقة. وتعود “{liveTitle}” إلى الرف. لا شيء يحذف.",
+  "version_screen__group_in_version": "{label} في هذه النسخة",
+  "version_screen__have_read": "قرأت هذا",
+  "version_screen__hero_cancelled_title": "ألغيت",
+  "version_screen__hero_failed_why": "{reason} بقي تطبيقكم المنشور كما هو تماما، فلم يلاحظ أحد شيئا.",
+  "version_screen__hero_live_title": "هذا ما يراه الناس",
+  "version_screen__hero_live_why": [
+    {
+      "declarations": [
+        "input visits",
+        "local visitsPlural = visits: plural"
+      ],
+      "selectors": [
+        "visitsPlural"
+      ],
+      "match": {
+        "visitsPlural=few": "كل من يفتح تطبيقكم يحصل على هذه النسخة. وهي منشورة منذ {since}، مع {visits} زوار خلال آخر يوم.",
+        "visitsPlural=many": "كل من يفتح تطبيقكم يحصل على هذه النسخة. وهي منشورة منذ {since}، مع {visits} زائرا خلال آخر يوم.",
+        "visitsPlural=one": "كل من يفتح تطبيقكم يحصل على هذه النسخة. وهي منشورة منذ {since}، مع زائر واحد خلال آخر يوم.",
+        "visitsPlural=other": "كل من يفتح تطبيقكم يحصل على هذه النسخة. وهي منشورة منذ {since}، مع {visits} زائرا خلال آخر يوم.",
+        "visitsPlural=two": "كل من يفتح تطبيقكم يحصل على هذه النسخة. وهي منشورة منذ {since}، مع زائرين خلال آخر يوم.",
+        "visitsPlural=zero": "كل من يفتح تطبيقكم يحصل على هذه النسخة. وهي منشورة منذ {since}، مع {visits} زائرا خلال آخر يوم."
+      }
+    }
+  ],
+  "version_screen__hero_ready_title": "جاهزة متى شئتم",
+  "version_screen__hero_ready_why": "أنجزتم كل ما كان مطلوبا. لن يتغير شيء لزواركم حتى تضغطوا الزر.",
+  "version_screen__hero_rolled_back_title": "عدتم عنها",
+  "version_screen__hero_rolled_back_why": "أصبحت منشورة، ثم اخترتم النسخة التي قبلها. لم يضع شيء.",
+  "version_screen__hero_waiting_title": "بضعة أمور أولا",
+  "version_screen__hero_waiting_why": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=few": "بنيت وفحصت. {count} أمور تحتاج إليكم قبل أن تصبح منشورة.",
+        "countPlural=many": "بنيت وفحصت. {count} أمرا تحتاج إليكم قبل أن تصبح منشورة.",
+        "countPlural=one": "بنيت وفحصت. أمر واحد يحتاج إليكم قبل أن تصبح منشورة.",
+        "countPlural=other": "بنيت وفحصت. {count} أمر تحتاج إليكم قبل أن تصبح منشورة.",
+        "countPlural=two": "بنيت وفحصت. أمران يحتاجان إليكم قبل أن تصبح منشورة.",
+        "countPlural=zero": "بنيت وفحصت. لا شيء مطلوب منكم قبل أن تصبح منشورة."
+      }
+    }
+  ],
+  "version_screen__hero_was_live_title": "كانت هذه منشورة",
+  "version_screen__hero_was_live_why": "حلت محلها نسخة أحدث. يمكنكم إعادتها متى شئتم.",
+  "version_screen__hero_working_title": "جار النشر…",
+  "version_screen__hero_working_why": "يمكنكم مغادرة هذه الصفحة. لن يمس تطبيقكم المنشور حتى الخطوة الأخيرة.",
+  "version_screen__i_can_read_what_happened": "يمكنني قراءة ما حدث وإصلاح الصورة والمحاولة مرة أخرى. لن يصبح شيء منشورا حتى تقولوا ذلك.",
+  "version_screen__if_you_switched_this_would": "لو انتقلتم إليها، سيتغير هذا",
+  "version_screen__it_leaves_your_history_the": "تختفي من سجلكم. ولا يتأثر التطبيق المنشور.",
+  "version_screen__keep_live": "إبقاء ما هو منشور",
+  "version_screen__line_changed": "تغير",
+  "version_screen__line_new": "جديد",
+  "version_screen__line_removed": "أزيل",
+  "version_screen__live_is_fine": "تطبيقكم المنشور بخير",
+  "version_screen__live_since": "منشورة منذ {when}",
+  "version_screen__meta": "{who} · {when}",
+  "version_screen__meta_took": "{who} · {when} · استغرقت {took}",
+  "version_screen__needs_look": "تحتاج إلى نظرة",
+  "version_screen__no_reason": "لم يذكر سبب.",
+  "version_screen__not_checked": "لم تفحص",
+  "version_screen__not_checked_line": "لم تفحص.",
+  "version_screen__not_found_text": "ربما جرى تجاهلها.",
+  "version_screen__not_found_title": "لم نعثر على تلك النسخة",
+  "version_screen__nothing_found": "لم يعثر على شيء",
+  "version_screen__nothing_risky": "لم يعثر على ما يشكل خطرا.",
+  "version_screen__open_app": "افتحوا تطبيقكم",
+  "version_screen__publish": "النشر على موقعكم المنشور",
+  "version_screen__read": "تمت القراءة",
+  "version_screen__read_it": "اقرأوه",
+  "version_screen__read_log": "اقرأوا ما حدث",
+  "version_screen__save": "حفظ",
+  "version_screen__saved": "تم الحفظ",
+  "version_screen__say_cancel": "إلغاء نشر هذه النسخة",
+  "version_screen__say_discard": "تجاهل “{title}”",
+  "version_screen__say_fix": "أصلح لي “{title}”",
+  "version_screen__say_go_back": "العودة إلى “{title}”",
+  "version_screen__say_publish": "انشر “{title}” على موقعي المنشور",
+  "version_screen__say_retry": "جرب “{title}” مرة أخرى",
+  "version_screen__still_live": "لا تزال منشورة",
+  "version_screen__still_what_people_see": "لا تزال “{title}” هي ما يراه الناس.",
+  "version_screen__tests_failed": "، فشل {n}",
+  "version_screen__tests_line": [
+    {
+      "declarations": [
+        "input passed",
+        "local passedPlural = passed: plural"
+      ],
+      "selectors": [
+        "passedPlural"
+      ],
+      "match": {
+        "passedPlural=zero": "نجح {passed} من الفحوصات{failed}{skipped}. استغرق ذلك {secs} ثانية.",
+        "passedPlural=one": "نجح فحص واحد{failed}{skipped}. استغرق ذلك {secs} ثانية.",
+        "passedPlural=two": "نجح فحصان{failed}{skipped}. استغرق ذلك {secs} ثانية.",
+        "passedPlural=few": "نجح {passed} من الفحوصات{failed}{skipped}. استغرق ذلك {secs} ثانية.",
+        "passedPlural=many": "نجح {passed} من الفحوصات{failed}{skipped}. استغرق ذلك {secs} ثانية.",
+        "passedPlural=other": "نجح {passed} من الفحوصات{failed}{skipped}. استغرق ذلك {secs} ثانية."
+      }
+    }
+  ],
+  "version_screen__tests_not_run": "لم تشغل الفحوصات.",
+  "version_screen__tests_not_run_build": "لم تشغل الفحوصات لأنه تعذر بناء النسخة.",
+  "version_screen__tests_skipped": "، تم تخطي {n}",
+  "version_screen__the_record_from_building_and": "سجل بناء هذه النسخة ونشرها.",
+  "version_screen__the_version_that_was_live": "النسخة التي كانت منشورة إلى أن صدرت هذه.",
+  "version_screen__things": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=few": "{count} أمور للقراءة قبل أن تصبح منشورة.",
+        "countPlural=many": "{count} أمرا للقراءة قبل أن تصبح منشورة.",
+        "countPlural=one": "أمر واحد للقراءة قبل أن تصبح منشورة.",
+        "countPlural=other": "{count} أمر للقراءة قبل أن تصبح منشورة.",
+        "countPlural=two": "أمران للقراءة قبل أن تصبح منشورة.",
+        "countPlural=zero": "لا شيء للقراءة قبل أن تصبح منشورة."
+      }
+    }
+  ],
+  "version_screen__this_version": "هذه النسخة",
+  "version_screen__until": "حتى {when}",
+  "version_screen__what_is_in_it": "ما بداخلها",
+  "version_screen__what_it_replaced": "ما حلت محله",
+  "version_screen__what_people_see_now": "ما يراه الناس الآن",
+  "version_screen__will_change_title": "عندما تصبح منشورة، سيتغير هذا",
+  "version_screen__would_come_back": "سيعود",
+  "version_screen__would_go_back": "سيعود {items} إلى ما كان عليه من قبل.",
+  "version_screen__would_have_changed": "ما كانت ستغيره.",
+  "version_screen__would_stop": "سيتوقف",
+  "version_screen__yes_discard": "نعم، تجاهل",
+  "version_screen__yes_go_back": "نعم، العودة",
+  "versions__day_time": "{day}، {time}",
+  "versions__hours_ago_count": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "منذ 0 ساعة",
+        "countPlural=one": "منذ ساعة واحدة",
+        "countPlural=two": "منذ ساعتين",
+        "countPlural=few": "منذ {count} ساعات",
+        "countPlural=many": "منذ {count} ساعة",
+        "countPlural=other": "منذ {count} ساعة"
+      }
+    }
+  ],
+  "versions__just_now": "الآن",
+  "versions__minutes_ago": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "منذ {count} دقيقة",
+        "countPlural=one": "منذ دقيقة واحدة",
+        "countPlural=two": "منذ دقيقتين",
+        "countPlural=few": "منذ {count} دقائق",
+        "countPlural=many": "منذ {count} دقيقة",
+        "countPlural=other": "منذ {count} دقيقة"
+      }
+    }
+  ],
+  "versions__today": "اليوم",
+  "versions_screen__ahead": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "لا فرق بينكم وبين ما يراه الناس. كل ما حفظتموه منشور.",
+        "countPlural=one": "أنتم متقدمون بتغيير واحد عما يراه الناس. النشر يشمل كل التغييرات معا.",
+        "countPlural=two": "أنتم متقدمون بتغييرين عما يراه الناس. النشر يشمل كل التغييرات معا.",
+        "countPlural=few": "أنتم متقدمون بمقدار {count} تغييرات عما يراه الناس. النشر يشمل كل التغييرات معا.",
+        "countPlural=many": "أنتم متقدمون بمقدار {count} تغييرا عما يراه الناس. النشر يشمل كل التغييرات معا.",
+        "countPlural=other": "أنتم متقدمون بمقدار {count} تغيير عما يراه الناس. النشر يشمل كل التغييرات معا."
+      }
+    }
+  ],
+  "versions_screen__blurb_cancelled": "حلت محلها نسخة أحدث قبل أن تصبح منشورة.",
+  "versions_screen__blurb_failed": "{reason}. بقي تطبيقكم المنشور يعمل.",
+  "versions_screen__blurb_waiting": "بنيت وفحصت. تحتاج أولا إلى بضعة أمور منكم.",
+  "versions_screen__blurb_working": "{step}، الخطوة {n} من {total}. لم يمس تطبيقكم المنشور بعد.",
+  "versions_screen__by_when": "{by} · {when}",
+  "versions_screen__check_them": "افحصوها",
+  "versions_screen__filter_all": "الكل",
+  "versions_screen__filter_live": "كانت منشورة",
+  "versions_screen__filter_not": "لم تصبح منشورة",
+  "versions_screen__find": "ابحثوا عن نسخة",
+  "versions_screen__follow_it": "تابعوها",
+  "versions_screen__go_back_say": "العودة إلى “{title}”",
+  "versions_screen__go_back_sub": "سيستبدل ما يراه الناس الآن. ويمكنكم التبديل مجددا في أي وقت.",
+  "versions_screen__go_back_title": "العودة إلى هذه النسخة؟",
+  "versions_screen__go_back_to_this": "العودة إلى هذه",
+  "versions_screen__how_show": "طريقة عرض النسخ",
+  "versions_screen__intro": "اللقطات المحفوظة لتطبيقكم. واحدة منها منشورة والبقية على الرف.",
+  "versions_screen__live_meta": [
+    {
+      "declarations": [
+        "input visits",
+        "local visitsPlural = visits: plural"
+      ],
+      "selectors": [
+        "visitsPlural"
+      ],
+      "match": {
+        "visitsPlural=few": "منشورة منذ {since} · {who} · زارها {visits} أشخاص خلال آخر يوم",
+        "visitsPlural=many": "منشورة منذ {since} · {who} · زارها {visits} شخصا خلال آخر يوم",
+        "visitsPlural=one": "منشورة منذ {since} · {who} · زارها شخص واحد خلال آخر يوم",
+        "visitsPlural=other": "منشورة منذ {since} · {who} · زارها {visits} شخصا خلال آخر يوم",
+        "visitsPlural=two": "منشورة منذ {since} · {who} · زارها شخصان خلال آخر يوم",
+        "visitsPlural=zero": "منشورة منذ {since} · {who} · زارها {visits} شخصا خلال آخر يوم"
+      }
+    }
+  ],
+  "versions_screen__no_match": "لا توجد نسخة مطابقة.",
+  "versions_screen__not_live": "ليست منشورة بعد",
+  "versions_screen__not_published": "غير منشورة",
+  "versions_screen__on_shelf": "على الرف",
+  "versions_screen__on_shelf_sub": "يمكنكم العودة بأمان إلى أي نسخة كانت منشورة. الأحدث أولا.",
+  "versions_screen__one_needs_you": "واحدة تحتاج إليكم",
+  "versions_screen__one_on_way": "واحدة في الطريق",
+  "versions_screen__open": "فتح",
+  "versions_screen__publish": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=zero": "نشر التغييرات",
+        "nPlural=one": "نشر هذا التغيير",
+        "nPlural=two": "نشر التغييرين",
+        "nPlural=few": "نشر التغييرات ({n}) كلها",
+        "nPlural=many": "نشر التغييرات ({n}) كلها",
+        "nPlural=other": "نشر التغييرات ({n}) كلها"
+      }
+    }
+  ],
+  "versions_screen__publish_say": "جهز {title} للنشر",
+  "versions_screen__publish_sub": "تنشر معا. أفحصها أولا، ثم أسألكم قبل أن يصبح أي شيء منشورا.",
+  "versions_screen__publish_title": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "نشر {count} تغييرا",
+        "countPlural=one": "نشر تغيير واحد",
+        "countPlural=two": "نشر تغييرين",
+        "countPlural=few": "نشر {count} تغييرات",
+        "countPlural=many": "نشر {count} تغييرا",
+        "countPlural=other": "نشر {count} تغييرا"
+      }
+    }
+  ],
+  "versions_screen__review_it": "راجعوها",
+  "versions_screen__saved_not_published": "محفوظة، لكنها لم تنشر بعد.",
+  "versions_screen__see_more": "عرض {n} أخرى",
+  "versions_screen__show_fewer": "عرض أقل",
+  "versions_screen__title": "النسخ",
+  "versions_screen__try_again_say": "جرب “{title}” مرة أخرى",
+  "versions_screen__up_to_date": "كل شيء محدث",
+  "versions_screen__up_to_date_text": "كل ما حفظتموه هو ما يراه الناس الآن.",
+  "versions_screen__view_cards": "بطاقات",
+  "versions_screen__view_rows": "صفوف",
+  "versions_screen__what_matters": "ما يهم الآن",
+  "versions_screen__what_people_see": "ما يراه الناس الآن",
+  "versions_screen__whats_in_it": "ما بداخلها",
+  "versions_screen__which": "أي النسخ",
+  "versions_screen__why_live": "“{title}” هي ما يراه الناس. وأي شيء تنشرونه بعدها سيحل محلها، ويمكنكم العودة إليها دائما.",
+  "versions_screen__why_waiting": "“{title}” بنيت وفحصت. تصبح منشورة عندما تقولون ذلك، ولن يتغير شيء لزواركم حتى ذلك الحين.",
+  "versions_screen__why_working": "“{title}” قيد التجهيز. لن يمس تطبيقكم المنشور حتى الخطوة الأخيرة.",
+  "versions_screen__you_are_live": "أنتم على الهواء",
+  "virtual_user_drawer__all_visits": "كل الزيارات",
+  "virtual_user_drawer__allowed": "ما يستطيع {name} استخدامه",
+  "virtual_user_drawer__allowed_adversarial": "يعرض عليهم كل شيء عمدا، للتأكد من أن دورهم يمنعهم فعلا من الدخول.",
+  "virtual_user_drawer__allowed_anyone": "يمكنهم استخدام أجزاء تطبيقكم المتاحة للجميع.",
+  "virtual_user_drawer__allowed_auditor": "يمكنهم الاطلاع على كل ما يسمح به دورهم، لكن لا شيء يغير البيانات.",
+  "virtual_user_drawer__allowed_roles": "يمكنهم استخدام كل ما يسمح به دور {roles}. وكل ما عدا ذلك ممنوع.",
+  "virtual_user_drawer__aria": "{name}، مستخدم افتراضي",
+  "virtual_user_drawer__changing_visits": "تغيير طريقة زيارة {name}",
+  "virtual_user_drawer__cost_text": "كل زيارة تستهلك رصيدا من الذكاء الاصطناعي، حتى لو لم يكن أحد يشاهد. لهذا يفعل هذا الخيار هنا ولا يفعل أبدا من الشيفرة.",
+  "virtual_user_drawer__cost_title": "يكلف القليل في كل مرة",
+  "virtual_user_drawer__gap_day": "كل يوم",
+  "virtual_user_drawer__gap_few": "كل بضعة أيام",
+  "virtual_user_drawer__gap_week": "كل أسبوع",
+  "virtual_user_drawer__goal_only": "يحصلون على الهدف فقط، لا على الخطوات، فيجدون طريقهم بأنفسهم تماما كالناس الحقيقيين.",
+  "virtual_user_drawer__goal_quote": "“{goal}”",
+  "virtual_user_drawer__goals_reached": [
+    {
+      "declarations": [
+        "input total",
+        "local totalPlural = total: plural"
+      ],
+      "selectors": [
+        "totalPlural"
+      ],
+      "match": {
+        "totalPlural=zero": "تحقق {reached} من أصل {total} هدفا",
+        "totalPlural=one": "تحقق {reached} من أصل هدف واحد",
+        "totalPlural=two": "تحقق {reached} من أصل هدفين",
+        "totalPlural=few": "تحقق {reached} من أصل {total} أهداف",
+        "totalPlural=many": "تحقق {reached} من أصل {total} هدفا",
+        "totalPlural=other": "تحقق {reached} من أصل {total} هدفا"
+      }
+    }
+  ],
+  "virtual_user_drawer__how_often": "عدد المرات",
+  "virtual_user_drawer__looked_around": "تجول في التطبيق",
+  "virtual_user_drawer__minute_count": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=zero": "أقل من دقيقة",
+        "nPlural=one": "دقيقة واحدة",
+        "nPlural=two": "دقيقتان",
+        "nPlural=few": "{n} دقائق",
+        "nPlural=many": "{n} دقيقة",
+        "nPlural=other": "{n} دقيقة"
+      }
+    }
+  ],
+  "virtual_user_drawer__next_visit": "الزيارة القادمة {ago}",
+  "virtual_user_drawer__no_goals": "لا أهداف بعد، لذا ستنتهي الزيارة فورا. اطلبوا من Pikku أن يمنح {name} شيئا يفعله.",
+  "virtual_user_drawer__no_guarantee": "زيارة بلا مشكلات خبر جيد لهذا اليوم، لكنها ليست ضمانا. فكل زيارة تسير بشكل مختلف قليلا.",
+  "virtual_user_drawer__no_problems": "لم تواجههم أي مشكلات.",
+  "virtual_user_drawer__not_visited": "{name} لم يزر التطبيق بعد. أرسلوه في زيارة وسيظهر التقرير هنا.",
+  "virtual_user_drawer__on_visit_text": "يستغرق هذا عادة بضع دقائق. يمكنكم مغادرة هذه الصفحة، وسينتظركم التقرير هنا.",
+  "virtual_user_drawer__on_visit_title": "{name} في زيارة الآن",
+  "virtual_user_drawer__own_off": "{name} يزور التطبيق فقط عندما ترسلونه. فعلوا هذا الخيار وسيأتي من تلقاء نفسه.",
+  "virtual_user_drawer__own_on": "{name} يأتي في وقت عشوائي، فلا يكون أحد يراقب عندما يجد شيئا.",
+  "virtual_user_drawer__ran_into": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=zero": "لم تواجههم أي مشكلات في الطريق.",
+        "nPlural=one": "واجهتهم مشكلة واحدة في الطريق.",
+        "nPlural=two": "واجهتهم مشكلتان في الطريق.",
+        "nPlural=few": "واجهتهم {n} مشكلات في الطريق.",
+        "nPlural=many": "واجهتهم {n} مشكلة في الطريق.",
+        "nPlural=other": "واجهتهم {n} مشكلة في الطريق."
+      }
+    }
+  ],
+  "virtual_user_drawer__report_meta": "{ago}{duration} · على موقع المعاينة الخاص بكم",
+  "virtual_user_drawer__safe_text": "تقتصر الزيارات على موقع المعاينة، ولا تصل أبدا إلى موقعكم المنشور أو إلى عملاء حقيقيين. تنتهي الزيارة بعد 40 إجراء، أو قبل ذلك إذا أنهوا مهمتهم. وتستهلك كل زيارة قليلا من رصيد الذكاء الاصطناعي، ولهذا لا يعمل شيء حتى تطلبوا ذلك.",
+  "virtual_user_drawer__safe_title": "آمن للتجربة",
+  "virtual_user_drawer__start_own": "السماح بأن يزور {name} من تلقاء نفسه",
+  "virtual_user_drawer__stop_own": "إيقاف الزيارات التلقائية",
+  "virtual_user_drawer__stopped_early": "توقفت مبكرا",
+  "virtual_user_drawer__stopped_early_title": "توقفت الزيارة مبكرا",
+  "virtual_user_drawer__summary_no_problems": "بلا مشكلات",
+  "virtual_user_drawer__summary_problems": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=zero": "بلا مشكلات",
+        "nPlural=one": "مشكلة واحدة",
+        "nPlural=two": "مشكلتان",
+        "nPlural=few": "{n} مشكلات",
+        "nPlural=many": "{n} مشكلة",
+        "nPlural=other": "{n} مشكلة"
+      }
+    }
+  ],
+  "virtual_user_drawer__tab_about": "نبذة",
+  "virtual_user_drawer__tab_own": "من تلقاء نفسه",
+  "virtual_user_drawer__tab_visits": "الزيارات ({n})",
+  "virtual_user_drawer__times": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=zero": "أبدا",
+        "nPlural=one": "مرة واحدة",
+        "nPlural=two": "مرتان",
+        "nPlural=few": "{n} مرات",
+        "nPlural=many": "{n} مرة",
+        "nPlural=other": "{n} مرة"
+      }
+    }
+  ],
+  "virtual_user_drawer__visit_summary": "{outcome} · {problems}",
+  "virtual_user_drawer__what_found": "ما وجدوه",
+  "virtual_user_drawer__what_tried": "ما حاولوا فعله",
+  "virtual_user_drawer__while_trying": "أثناء محاولة: {goal}",
+  "virtual_user_drawer__will_try": "ما سيحاول {name} فعله",
+  "virtual_users__found_custom": "{name}: {detail}",
+  "virtual_users__found_schema_violation": "أعطى تطبيقكم {name} إجابة معطوبة",
+  "virtual_users__found_server_error": "واجه {name} خطأ في موقعكم",
+  "virtual_users__found_transport_error": "تعذر على {name} الوصول إلى موقعكم",
+  "virtual_users__found_unexpected_success": "وصل {name} إلى شيء لا ينبغي أن يسمح له بدخوله",
+  "virtual_users__goal_abandoned": "استسلموا",
+  "virtual_users__goal_completed": "نجحوا",
+  "virtual_users__goal_open": "لم يصلوا إليه",
+  "virtual_users__goal_stuck": "علقوا",
+  "virtual_users__goal_suspended": "تركوه جانبا",
+  "virtual_users__just_now": "الآن",
+  "virtual_users__kind_accountable": "ينجز عملا حقيقيا",
+  "virtual_users__kind_accountable_text": "ينفذ مهام حقيقية، حتى على موقعكم المنشور.",
+  "virtual_users__kind_adversarial": "مختبر القواعد",
+  "virtual_users__kind_adversarial_text": "يجرب أشياء لا ينبغي أن يسمح له بفعلها.",
+  "virtual_users__kind_auditor": "مدقق",
+  "virtual_users__kind_auditor_text": "يتجول فقط ولا يغير شيئا أبدا.",
+  "virtual_users__kind_careless": "مشتت",
+  "virtual_users__kind_careless_text": "يستعجل ويتخطى أشياء وينقر مرتين عندما يتردد.",
+  "virtual_users__kind_newcomer": "زائر لأول مرة",
+  "virtual_users__kind_newcomer_text": "لم ير تطبيقكم من قبل وعليه أن يكتشفه بنفسه.",
+  "virtual_users__kind_realistic": "متمكن",
+  "virtual_users__kind_realistic_text": "يعرف ما يريد ويمضي فيه مباشرة.",
+  "virtual_users__kind_stale": "يعود بعد غياب",
+  "virtual_users__kind_stale_text": "يتذكر نسخة أقدم من تطبيقكم.",
+  "virtual_users__outcome_all": "أنجز {name} كل ما جاء من أجله.",
+  "virtual_users__outcome_looked": "تجول {name} في تطبيقكم.",
+  "virtual_users__outcome_none": "لم ينجز {name} ما جاء من أجله.",
+  "virtual_users__outcome_some": "أنجز {name} {reached} من أصل {total} مما جاء من أجله.",
+  "virtual_users__outcome_stopped": "توقفت زيارة {name} قبل أن تكتمل.",
+  "virtual_users_screen__about": "نبذة",
+  "virtual_users_screen__ask_add_some": "اطلبوا من Pikku إضافة بعضهم",
+  "virtual_users_screen__ask_turn_on": "اطلبوا من Pikku تشغيلهم",
+  "virtual_users_screen__each_one_pretends_to_be": "يتظاهر كل واحد منهم بأنه نوع مختلف من الناس. تقتصر الزيارات على موقع المعاينة الخاص بكم.",
+  "virtual_users_screen__empty_text": "المستخدم الافتراضي يتظاهر بأنه نوع واحد من الناس الذين يستخدمون تطبيقكم: مسؤول مشغول، أو زائر لأول مرة، أو عميل على عجلة. يحاول إنجاز شيء ما على موقع المعاينة ويخبركم بكلمات بسيطة أين تعثر. ولا يستطيع إتلاف أي شيء حقيقي.",
+  "virtual_users_screen__empty_title": "دعوا بدائل بالذكاء الاصطناعي تجرب تطبيقكم قبل مستخدميكم",
+  "virtual_users_screen__found_by_many": [
+    {
+      "declarations": [
+        "input problems",
+        "local problemsPlural = problems: plural"
+      ],
+      "selectors": [
+        "problemsPlural"
+      ],
+      "match": {
+        "problemsPlural=zero": "عثر {count} من المستخدمين الافتراضيين على {problems} مشكلة",
+        "problemsPlural=one": "عثر {count} من المستخدمين الافتراضيين على مشكلة واحدة",
+        "problemsPlural=two": "عثر {count} من المستخدمين الافتراضيين على مشكلتين",
+        "problemsPlural=few": "عثر {count} من المستخدمين الافتراضيين على {problems} مشكلات",
+        "problemsPlural=many": "عثر {count} من المستخدمين الافتراضيين على {problems} مشكلة",
+        "problemsPlural=other": "عثر {count} من المستخدمين الافتراضيين على {problems} مشكلة"
+      }
+    }
+  ],
+  "virtual_users_screen__found_by_name": [
+    {
+      "declarations": [
+        "input problems",
+        "local problemsPlural = problems: plural"
+      ],
+      "selectors": [
+        "problemsPlural"
+      ],
+      "match": {
+        "problemsPlural=zero": "عثر {name} على {problems} مشكلة",
+        "problemsPlural=one": "عثر {name} على مشكلة واحدة",
+        "problemsPlural=two": "عثر {name} على مشكلتين",
+        "problemsPlural=few": "عثر {name} على {problems} مشكلات",
+        "problemsPlural=many": "عثر {name} على {problems} مشكلة",
+        "problemsPlural=other": "عثر {name} على {problems} مشكلة"
+      }
+    }
+  ],
+  "virtual_users_screen__found_none": "لم تكشف زياراتهم الأخيرة عن أي مشكلات",
+  "virtual_users_screen__last_line": "{did} · {problems} · {when}",
+  "virtual_users_screen__next_step": "الخطوة التالية",
+  "virtual_users_screen__not_visited": "لم يزر التطبيق بعد",
+  "virtual_users_screen__off_text": "فعلوهم وسيتمكنون من زيارة {app}. سيقدم Pikku أولا طلب تغيير لتوافقوا عليه. ولن يتغير شيء لزواركم حتى تفعلوا.",
+  "virtual_users_screen__off_title": "المستخدمون الافتراضيون متوقفون في {app}",
+  "virtual_users_screen__on_visit_now": "في زيارة الآن…",
+  "virtual_users_screen__read_found": "اقرأوا ما وجده {name}",
+  "virtual_users_screen__reading_past_visits": "قراءة الزيارات السابقة",
+  "virtual_users_screen__say_describe": "صف أنواع الناس الذين يستخدمون تطبيقي كي يتمكنوا من زيارته كمستخدمين افتراضيين. قدمه كطلب تغيير (change request) واكتب صراحة \"change request\".",
+  "virtual_users_screen__say_turn_on": "قدم طلب تغيير بعنوان \"Change request: Turn on virtual users in {app}\" كي يتمكن المستخدمون الافتراضيون التابعون لي من زيارته. اكتب \"change request\" في ردك. نفذ الأمر مباشرة وأخبرني بجملة بسيطة واحدة عند الانتهاء. لا تسألني عن الملفات أو الإعدادات.",
+  "virtual_users_screen__send": "أرسلوا {name} لتجربة تطبيقكم",
+  "virtual_users_screen__send_first": "أرسلوا {name} في زيارة",
+  "virtual_users_screen__send_on_visit": "إرسال في زيارة",
+  "virtual_users_screen__sending_a_virtual_user_on": "جار إرسال مستخدم افتراضي في زيارة",
+  "virtual_users_screen__text": "بدائل بالذكاء الاصطناعي للأشخاص الذين يستخدمون تطبيقكم. أرسلوا أحدهم في زيارة وسيخبركم أين تعثر.",
+  "virtual_users_screen__title": "المستخدمون الافتراضيون",
+  "virtual_users_screen__visiting": "في زيارة…",
+  "virtual_users_screen__visits_on_own": "يزورون من تلقاء أنفسهم",
+  "virtual_users_screen__who_can_visit": "من يمكنه الزيارة",
+  "virtual_users_screen__why_clean": "زيارة بلا مشكلات خبر جيد لهذا اليوم، لكنها ليست ضمانا. فكل زيارة تسير بشكل مختلف قليلا، لذا أرسلوهم مجددا بعد أي تغيير.",
+  "virtual_users_screen__why_found": "افتحوا زيارة {name} لقراءة ما حدث من خطأ، ثم اطلبوا من Pikku إصلاحه.",
+  "week_receipt__the_receipt": "الإيصال",
+  "week_step_strip__done": "تم",
+  "week_step_strip__progress": "الخطوة {step} من {total}، {what}. مستمرة منذ {time}. لن يمس تطبيقكم المنشور حتى الخطوة الأخيرة.",
+  "week_step_strip__working_on_it": "قيد العمل",
+  "week_strip__count_word": "{count} {word}",
+  "week_strip__day_aria": "{label}. {sentence}",
+  "week_strip__day_label": "{weekday} {date} {month}",
+  "week_strip__days_of_this_week": "أيام هذا الأسبوع",
+  "week_strip__fri_long": "الجمعة",
+  "week_strip__fri_short": "جمعة",
+  "week_strip__hour": "{hour}:00",
+  "week_strip__mon_long": "الاثنين",
+  "week_strip__mon_short": "اثنين",
+  "week_strip__oct": "أكتوبر",
+  "week_strip__quiet_day": "يوم هادئ",
+  "week_strip__sat_long": "السبت",
+  "week_strip__sat_short": "سبت",
+  "week_strip__sep": "سبتمبر",
+  "week_strip__sun_long": "الأحد",
+  "week_strip__sun_short": "أحد",
+  "week_strip__thu_long": "الخميس",
+  "week_strip__thu_short": "خميس",
+  "week_strip__today": "اليوم",
+  "week_strip__tue_long": "الثلاثاء",
+  "week_strip__tue_short": "ثلاثاء",
+  "week_strip__wed_long": "الأربعاء",
+  "week_strip__wed_short": "أربعاء",
+  "week_strip__word_cancelled": "ألغيت",
+  "week_strip__word_failed": "لم تصبح منشورة",
+  "week_strip__word_live": "منشورة",
+  "week_strip__word_rolled_back": "أعيدت",
+  "week_strip__word_waiting": "في الانتظار",
+  "week_strip__word_was_live": "كانت منشورة",
+  "week_strip__word_working": "قيد النشر",
+  "workflow_graph__auth": "المصادقة",
+  "workflow_graph__edge_branch": "فرع {n}",
+  "workflow_graph__edge_default": "افتراضي",
+  "workflow_graph__edge_else": "وإلا",
+  "workflow_graph__edge_on_error": "عند الخطأ",
+  "workflow_graph__edge_then": "ثم",
+  "workflow_graph__handle_after": "بعد",
+  "workflow_graph__handle_default": "افتراضي",
+  "workflow_graph__handle_done": "تم",
+  "workflow_graph__handle_each": "لكل",
+  "workflow_graph__handle_elif": "وإلا إذا {n}",
+  "workflow_graph__handle_else": "وإلا",
+  "workflow_graph__handle_if": "إذا",
+  "workflow_graph__handle_next": "التالي",
+  "workflow_graph__handler_on_connect": "onConnect",
+  "workflow_graph__handler_on_disconnect": "onDisconnect",
+  "workflow_graph__handler_on_message": "onMessage",
+  "workflow_graph__middleware": "البرمجية الوسيطة",
+  "workflow_graph__node_branch": "تفرع",
+  "workflow_graph__node_cancel": "إلغاء",
+  "workflow_graph__node_channel": "قناة",
+  "workflow_graph__node_channel_wiring": "ربط القناة",
+  "workflow_graph__node_check": "فحص",
+  "workflow_graph__node_every": "كل",
+  "workflow_graph__node_filter": "تصفية",
+  "workflow_graph__node_generic": "عقدة عامة (تحتاج إلى تنفيذ)",
+  "workflow_graph__node_inline": "مضمن",
+  "workflow_graph__node_loop": "حلقة",
+  "workflow_graph__node_message_router": "موجه الرسائل",
+  "workflow_graph__node_parallel": "متواز",
+  "workflow_graph__node_return": "إرجاع",
+  "workflow_graph__node_set": "تعيين",
+  "workflow_graph__node_sleep": "انتظار",
+  "workflow_graph__node_some": "بعض",
+  "workflow_graph__node_suspend": "تعليق",
+  "workflow_graph__node_switch": "تبديل",
+  "workflow_graph__none": "لا شيء",
+  "workflow_graph__not_wired": "غير مربوط",
+  "workflow_graph__open": "فتح",
+  "workflow_graph__permissions": "الصلاحيات",
+  "workflow_graph__referenced": "مشار إليه",
+  "workflow_graph__retries": "إعادة المحاولة",
+  "workflow_graph__retries_value": "إعادة المحاولة: {n}",
+  "workflow_graph__retry_delay": "مهلة إعادة المحاولة",
+  "workflow_graph__retry_delay_value": "مهلة إعادة المحاولة: {n}",
+  "workflow_graph__scroll_sideways": "مرروا جانبيا",
+  "workflow_graph__scroll_vertical": "مرروا لأعلى ولأسفل",
+  "workflow_graph__selected": "محدد",
+  "workflow_graph__status_cancelled": "ألغي",
+  "workflow_graph__status_done": "تم",
+  "workflow_graph__status_failed": "فشل",
+  "workflow_graph__status_pending": "قيد الانتظار",
+  "workflow_graph__status_running": "قيد التشغيل",
+  "workflow_graph__status_scheduled": "مجدول",
+  "workflow_graph__status_skipped": "تم التخطي",
+  "workflow_graph__status_suspended": "معلق",
+  "workflow_graph__triggered_this_run": "أطلق في هذا التشغيل",
+  "workflow_graph__wiring_cli": "CLI",
+  "workflow_graph__wiring_http": "HTTP",
+  "workflow_graph__wiring_mcp_prompt": "MCP Prompt",
+  "workflow_graph__wiring_mcp_resource": "MCP Resource",
+  "workflow_graph__wiring_mcp_tool": "MCP Tool",
+  "workflow_graph__wiring_queue": "قائمة الانتظار",
+  "workflow_graph__wiring_schedule": "جدولة",
+  "workflow_graph__wiring_trigger": "مشغل"
+}

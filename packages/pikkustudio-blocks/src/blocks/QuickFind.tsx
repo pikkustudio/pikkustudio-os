@@ -1,3 +1,4 @@
+import { type I18nString, asI18n } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { useNavigate } from '@tanstack/react-router'
@@ -17,10 +18,10 @@ const pages = (): Hit[] => (
     [m.quick_find__translations(), '/translations', Globe],
     [m.quick_find__artifacts(), '/artifacts', FileText],
     [m.quick_find__knowledge(), '/knowledge', BookOpen],
-    [m.quick_find__apps(), '/apps', Smartphone],
+    [m.quick_find__front_doors(), '/front-doors', Smartphone],
     [m.quick_find__publish(), '/publish', Upload],
     [m.quick_find__assistants(), '/assistants', Users],
-    ['Virtual users', '/virtual-users', UserRoundCheck],
+    [m.quick_find__virtual_users(), '/virtual-users', UserRoundCheck],
     [m.quick_find__routines(), '/routines', Workflow],
     [m.quick_find__versions(), '/versions', History],
     [m.quick_find__building_logs(), '/logs', ScrollText],
@@ -30,7 +31,7 @@ const pages = (): Hit[] => (
   ] as const
 ).map(([label, to, Icon]) => ({ key: `page-${to || 'ask'}`, label, hint: to ? '' : m.quick_find__ask_in_your_own_words(), id: to, Icon }))
 
-export function QuickFind({ onClose, onAsk }: { onClose: () => void; onAsk: (text: string) => void }) {
+export function QuickFind({ onClose, onAsk }: { onClose: () => void; onAsk: (text: I18nString) => void }) {
   const go = useNavigate()
   const [q, setQ] = useState('')
   const [at, setAt] = useState(0)
@@ -79,13 +80,13 @@ export function QuickFind({ onClose, onAsk }: { onClose: () => void; onAsk: (tex
           {hits.length === 0 ? <li className="px-3 py-6 text-center text-[15px] text-muted-foreground">{m.quick_find__nothing_matches({ q })}</li> : null}
           {hits.map((h, i) => (
             <li key={h.key} role="option" aria-selected={i === at}>
-              <button type="button" onClick={() => pick(h)} onMouseEnter={() => setAt(i)} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left aria-selected:bg-accent" aria-selected={i === at}>
+              <button type="button" onClick={() => pick(h)} onMouseEnter={() => setAt(i)} className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-start aria-selected:bg-accent" aria-selected={i === at}>
                 <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-secondary text-ink-2">
                   <h.Icon className="size-4.5" />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <b className="block truncate text-[15px] leading-[1.3]">{h.label}</b>
-                  <small className="block truncate text-[13px] leading-[1.3] text-muted-foreground">{h.hint}</small>
+                  <b className="block truncate text-[15px] leading-[1.3]">{asI18n(h.label)}</b>
+                  <small className="block truncate text-[13px] leading-[1.3] text-muted-foreground">{asI18n(h.hint)}</small>
                 </span>
               </button>
             </li>

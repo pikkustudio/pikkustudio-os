@@ -1,5 +1,6 @@
+import { asI18n, sep, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
-import { Link } from '@tanstack/react-router'
+import { Link } from './Link'
 import { ArrowRight, Check, Cloud, Download, Hammer, Laptop } from 'lucide-react'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
@@ -7,7 +8,7 @@ import { keep } from '../lib/links'
 import { AskPikku } from './AskPikku'
 import { appKinds } from './AppKindList'
 
-export type AppItem = { id: string; kind: string; name: string; summary: string; sketch: 'home' | 'classes' | 'book'; state: 'made' | 'building' | 'new'; when: string; where?: 'local' | 'remote' }
+export type AppItem = { id: string; kind: string; name: I18nString; summary: I18nString; sketch: 'home' | 'classes' | 'book'; state: 'made' | 'building' | 'new'; when: I18nString; where?: 'local' | 'remote' }
 
 const HELP_FLAG = '--help'
 
@@ -20,12 +21,13 @@ const states = () => ({
 export function AppCard({ item }: { item: AppItem }) {
   const kind = appKinds().find((k) => k.id === item.kind) ?? appKinds()[0]
   const st = states()[item.state]
+  const command = `${item.name.toLowerCase().replace(/\s+/g, '-')} ${HELP_FLAG}`
   return (
     <article className="flex flex-col overflow-hidden rounded-card border border-border bg-card shadow-card" aria-label={item.name}>
       <div className="grid aspect-[2/1] place-items-center overflow-hidden border-b border-border bg-secondary">
         {item.kind === 'cli' ? (
-          <div className="size-full bg-[#0E1F24] p-4 font-mono text-[13px] leading-6 text-[#D5E2E6]">
-            <div><span className="text-[#6FD3D8]">$</span> {`${item.name.toLowerCase().replace(/\s+/g, '-')} ${HELP_FLAG}`}</div>
+          <div dir="ltr" className="size-full bg-[#0E1F24] p-4 font-mono text-[13px] leading-6 text-[#D5E2E6]">
+            <div><span className="text-[#6FD3D8]">{sep('$')}</span>{sep(' ')}{asI18n(command)}</div>
           </div>
         ) : (
           <span className="grid size-20 place-items-center rounded-2xl bg-card text-ink-2 shadow-card">
@@ -36,7 +38,7 @@ export function AppCard({ item }: { item: AppItem }) {
       <div className="flex flex-1 flex-col gap-2.5 px-4.5 py-4">
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant="pillMute" className="gap-1.5">
-            <kind.Icon /> {kind.short}
+            <kind.Icon />{sep(' ')}{kind.short}
           </Badge>
           {item.where ? (
             <Badge variant="pillInfo" className="gap-1.5">
@@ -57,10 +59,10 @@ export function AppCard({ item }: { item: AppItem }) {
             <Link {...keep} to="/design">
               
               {m.app_card__open_in_design()}
-              <ArrowRight className="size-4.5" />
+              <ArrowRight className="rtl:-scale-x-100 size-4.5" />
             </Link>
           </Button>
-          <AskPikku label={m.app_card__change_it()} prompt={`About "${item.name}": `} />
+          <AskPikku label={m.app_card__change_it()} prompt={m.app_card__about({ name: item.name })} />
           <Button variant="ghost" size="compact" type="button" disabled={item.state === 'new'} title={item.state === 'new' ? m.app_card__nothing_to_get_yet() : m.app_card__get_the_files()}>
             <Download className="size-4.5" />
             

@@ -1,3 +1,4 @@
+import type { I18nProps } from '../lib/i18n-props'
 import * as React from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '../lib/utils'
@@ -23,7 +24,7 @@ const inputVariants = cva(
   }
 )
 
-function Input({ className, type, layout, shape, ...props }: React.ComponentProps<'input'> & VariantProps<typeof inputVariants>) {
+function Input({ className, type, layout, shape, ...props }: I18nProps<React.ComponentProps<'input'>> & VariantProps<typeof inputVariants>) {
   return (
     <input
       type={type}

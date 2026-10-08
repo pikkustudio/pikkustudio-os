@@ -1,12 +1,15 @@
+import { asI18n, type I18nString } from '@pikku/react'
+
 export const MISSING_MARKER = '%i18n-missing%'
 
 export const isMissing = (value: string | undefined) => value === undefined || value.includes(MISSING_MARKER)
 
-export const languageName = (code: string) => {
+export const languageName = (code: string): I18nString => {
   try {
-    return new Intl.DisplayNames([code], { type: 'language' }).of(code) ?? code
+    const name = new Intl.DisplayNames([code], { type: 'language' }).of(code) ?? code
+    return asI18n(name)
   } catch {
-    return code
+    return asI18n(code)
   }
 }
 

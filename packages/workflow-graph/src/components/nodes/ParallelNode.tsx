@@ -1,15 +1,17 @@
 import React from 'react'
+import { asI18n, type I18nString } from '@pikku/react'
 import type { Node } from '@xyflow/react'
 import type { GraphNodeProps } from '../../types'
 import { FlowNode } from './FlowNode'
 import { Workflow } from 'lucide-react'
 import { useGraphActions } from '../../context/GraphHostContext'
+import { useGraphM } from '../../context/MessagesContext'
 import { useGraphHighlight } from '../../context/GraphHostContext'
 
 interface ParallelNodeData {
   colorKey: string
   childrenCount?: number
-  stepName?: string
+  stepName?: I18nString
 }
 
 type HighlightType = 'focused' | 'referenced' | null
@@ -19,6 +21,7 @@ export const ParallelNode: React.FC<GraphNodeProps<ParallelNodeData>> = ({
   id,
 }) => {
   const { openWorkflowStep } = useGraphActions()
+  const m = useGraphM()
   const graphHighlight = useGraphHighlight()
 
   const highlightType: HighlightType = React.useMemo(() => {
@@ -29,17 +32,17 @@ export const ParallelNode: React.FC<GraphNodeProps<ParallelNodeData>> = ({
   }, [graphHighlight, id])
 
   const outputHandles = React.useMemo(() => {
-    const handles = []
+    const handles: Array<{ id: string; label: number | I18nString }> = []
     const count = data.childrenCount || 0
 
     for (let i = 0; i < count; i++) {
-      handles.push({ id: `child-${i}`, label: `${i + 1}` })
+      handles.push({ id: `child-${i}`, label: i + 1 })
     }
 
-    handles.push({ id: 'done', label: 'done' })
+    handles.push({ id: 'done', label: m.handle_done() })
 
     return handles
-  }, [data.childrenCount])
+  }, [data.childrenCount, m])
 
   const handleClick = React.useCallback(() => {
     openWorkflowStep(id, 'parallel')
@@ -51,7 +54,7 @@ export const ParallelNode: React.FC<GraphNodeProps<ParallelNodeData>> = ({
       tone="decision"
       hasInput={true}
       outputHandles={outputHandles}
-      label="Parallel"
+      label={m.node_parallel()}
       subtitle={data.stepName}
       onClick={handleClick}
       highlightType={highlightType}
@@ -72,7 +75,7 @@ export const getParallelNodeConfig = (
     data: {
       colorKey: 'workflow',
       childrenCount: step.children?.length || 0,
-      stepName: step.stepName,
+      stepName: asI18n(step.stepName),
       nodeType: 'flow',
     },
   }

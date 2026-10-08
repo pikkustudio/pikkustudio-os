@@ -19,7 +19,7 @@ export type ListedProject = {
 }
 
 // The projects of the team in the URL: Studio lists them by team, so the `local` team is what is
-// only on this computer and a Fabric team is what is in Fabric.
+// only on this computer and a team is what is online.
 export const useTeamProjects = () => {
   const team = useTeamSlug()
   return usePikkuQuery('studio:listProjects', { team }, {

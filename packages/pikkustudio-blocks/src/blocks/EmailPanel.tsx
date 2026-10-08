@@ -24,7 +24,7 @@ export function EmailPanel({ email, fields, langs, lang, copy, vals, onCopy, onV
             {m.email_panel__a_sample_with_made_up()}
           </span>
         </HintNote>
-        <InspectorSection title={`What this email says · ${langs[lang]}`}>
+        <InspectorSection title={m.email_panel__what_it_says({ lang: langs[lang] })}>
           <div className="flex flex-col gap-3">
             <label className="flex flex-col gap-1">
               <span className="text-px13 font-bold text-muted-foreground">{m.email_panel__subject_line()}</span>
@@ -58,8 +58,8 @@ export function EmailPanel({ email, fields, langs, lang, copy, vals, onCopy, onV
           <ul className="flex flex-col gap-2">
             {email.ph.map((k) => (
               <li key={k} className="grid grid-cols-[auto_1fr] items-baseline gap-2.5 text-px14 text-ink-2">
-                <code className="rounded-sm bg-accent px-2 py-0.5 font-mono text-[13px] leading-[normal] font-bold text-accent-foreground">{fields[k]?.token}</code>
-                <span>{fields[k]?.about}</span>
+                <code dir="ltr" className="rounded-sm bg-accent px-2 py-0.5 font-mono text-[13px] leading-[normal] font-bold text-accent-foreground">{fields[k]?.token ?? null}</code>
+                <span>{fields[k]?.about ?? null}</span>
               </li>
             ))}
           </ul>
@@ -75,7 +75,7 @@ export function EmailPanel({ email, fields, langs, lang, copy, vals, onCopy, onV
           <div className="flex flex-col gap-3">
             {email.ph.map((k) => (
               <label key={k} className="flex flex-col gap-1">
-                <span className="text-px13 font-bold text-muted-foreground">{fields[k]?.label}</span>
+                <span className="text-px13 font-bold text-muted-foreground">{fields[k]?.label ?? null}</span>
                 <Input shape="field" value={vals[k]} onChange={(e) => onVal(k, e.target.value)} />
               </label>
             ))}

@@ -15,6 +15,17 @@ export {
 export type { FlowDirection } from './context/FlowDirectionContext'
 
 export {
+  MessagesProvider,
+  useGraphM,
+  defaultMessages,
+} from './context/MessagesContext'
+export type {
+  GraphM,
+  WorkflowGraphMessages,
+  CompleteWorkflowGraphMessages,
+} from './context/MessagesContext'
+
+export {
   GraphHostProvider,
   useGraphHost,
   useGraphActions,

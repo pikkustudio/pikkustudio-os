@@ -1,4 +1,6 @@
 import React from 'react'
+import type { I18nString } from '@pikku/react'
+import { outside } from '../../lib/outside'
 import type { Node } from '@xyflow/react'
 import type { GraphNodeProps } from '../../types'
 import { useGraphFunctionMeta } from '../../context/GraphHostContext'
@@ -9,9 +11,9 @@ import { FlowNode } from './FlowNode'
 
 interface FunctionNodeData {
   type: string
-  title: string
-  stepName?: string
-  description?: string
+  title: I18nString
+  stepName?: I18nString
+  description?: I18nString
   colorKey: string
   inWorkflow?: boolean
   terminal?: boolean
@@ -63,7 +65,7 @@ export const FunctionNode: React.FC<FunctionNodeProps> = ({
       icon={FunctionIcon}
       tone="step"
       hasInput={inFlow}
-      outputHandles={data.terminal ? [] : [{ id: 'default', label: '' }]}
+      outputHandles={data.terminal ? [] : [{ id: 'default' }]}
       label={label}
       labelDimmed={!hasStepName}
       subtitle={subtitle}
@@ -91,7 +93,7 @@ export const getFunctionNodeConfig = (
     data: {
       type: 'Function',
       title: pikkuFuncId,
-      stepName: description,
+      stepName: outside(description),
       colorKey: 'function',
       nodeType: 'rpc',
       inWorkflow,

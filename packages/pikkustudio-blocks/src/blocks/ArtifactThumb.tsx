@@ -1,3 +1,4 @@
+import type { I18nString } from '@pikku/react'
 type Shape = { x: number; y: number; w: number; h: number; fill: string; rx?: number }
 
 const ink = 'fill-[#0E1F24]'
@@ -61,7 +62,7 @@ const sketches: Record<'home' | 'classes' | 'book', Shape[]> = {
   ],
 }
 
-export function ArtifactThumb({ kind, label }: { kind: 'home' | 'classes' | 'book'; label: string }) {
+export function ArtifactThumb({ kind, label }: { kind: 'home' | 'classes' | 'book'; label: I18nString }) {
   return (
     <svg viewBox="0 0 320 200" role="img" aria-label={label} className="block size-full">
       <rect width="320" height="200" className={white} />

@@ -1,4 +1,6 @@
 import React from 'react'
+import type { I18nString } from '@pikku/react'
+import { outside } from '../../lib/outside'
 import type { Node } from '@xyflow/react'
 import type { GraphNodeProps } from '../../types'
 import { FlowNode } from './FlowNode'
@@ -16,6 +18,7 @@ import {
 import { useGraphActions } from '../../context/GraphHostContext'
 import { useGraphHighlight } from '../../context/GraphHostContext'
 import { useGraphRun } from '../../context/GraphHostContext'
+import { useGraphM } from '../../context/MessagesContext'
 
 type WiringType =
   | 'http'
@@ -41,9 +44,9 @@ const wiringTypeToWireType: Record<WiringType, string> = {
 interface WiringNodeData {
   colorKey: string
   triggerType: WiringType
-  label: string
+  label?: I18nString
   wireId?: string
-  outputHandles: Array<{ id: string; label?: string }>
+  outputHandles: Array<{ id: string; label?: I18nString }>
 }
 
 const wiringIcons: Record<WiringType, LucideIcon> = {
@@ -66,6 +69,7 @@ export const WiringNode: React.FC<GraphNodeProps<WiringNodeData>> = ({
   const { openWorkflowStep } = useGraphActions()
   const graphHighlight = useGraphHighlight()
   const run = useGraphRun()
+  const m = useGraphM()
 
   const highlightType: HighlightType = React.useMemo(() => {
     if (!graphHighlight) return null
@@ -80,18 +84,18 @@ export const WiringNode: React.FC<GraphNodeProps<WiringNodeData>> = ({
 
   const icon = wiringIcons[data.triggerType] || Zap
 
-  const wiringTypeLabels: Record<string, string> = {
-    http: 'HTTP',
-    queue: 'Queue',
-    cli: 'CLI',
-    'mcp-tool': 'MCP Tool',
-    'mcp-prompt': 'MCP Prompt',
-    'mcp-resource': 'MCP Resource',
-    schedule: 'Schedule',
-    trigger: 'Trigger',
+  const wiringTypeLabels: Record<string, I18nString> = {
+    http: m.wiring_http(),
+    queue: m.wiring_queue(),
+    cli: m.wiring_cli(),
+    'mcp-tool': m.wiring_mcp_tool(),
+    'mcp-prompt': m.wiring_mcp_prompt(),
+    'mcp-resource': m.wiring_mcp_resource(),
+    schedule: m.wiring_schedule(),
+    trigger: m.wiring_trigger(),
   }
 
-  const typeLabel = wiringTypeLabels[data.triggerType] || 'Trigger'
+  const typeLabel = wiringTypeLabels[data.triggerType] || m.wiring_trigger()
 
   const isActive = React.useMemo(() => {
     const wire = run?.wire
@@ -109,7 +113,7 @@ export const WiringNode: React.FC<GraphNodeProps<WiringNodeData>> = ({
       hasInput={false}
       outputHandles={data.outputHandles}
       label={typeLabel}
-      subtitle={data.label !== typeLabel ? data.label : undefined}
+      subtitle={data.label && data.label !== typeLabel ? data.label : undefined}
       onClick={handleClick}
       active={isActive}
       highlightType={highlightType}
@@ -123,9 +127,9 @@ export const getHttpWiringNodeConfig = (
   position: { x: number; y: number },
   wire: { route?: string; method?: string; startNode?: string }
 ): Node => {
-  const outputHandles: Array<{ id: string; label?: string }> = []
+  const outputHandles: Array<{ id: string; label?: I18nString }> = []
   if (wire.startNode) {
-    outputHandles.push({ id: 'start', label: '' })
+    outputHandles.push({ id: 'start' })
   }
 
   return {
@@ -135,7 +139,7 @@ export const getHttpWiringNodeConfig = (
     data: {
       colorKey: 'http',
       triggerType: 'http',
-      label: `${wire.method?.toUpperCase() || 'GET'} ${wire.route || ''}`,
+      label: outside(`${wire.method?.toUpperCase() || 'GET'} ${wire.route || ''}`),
       wireId: `${wire.method?.toLowerCase() || 'get'}:${wire.route || ''}`,
       outputHandles,
       nodeType: 'wiring',
@@ -148,9 +152,9 @@ export const getQueueWiringNodeConfig = (
   position: { x: number; y: number },
   wire: { name?: string; startNode?: string }
 ): Node => {
-  const outputHandles: Array<{ id: string; label?: string }> = []
+  const outputHandles: Array<{ id: string; label?: I18nString }> = []
   if (wire.startNode) {
-    outputHandles.push({ id: 'start', label: '' })
+    outputHandles.push({ id: 'start' })
   }
 
   return {
@@ -160,7 +164,7 @@ export const getQueueWiringNodeConfig = (
     data: {
       colorKey: 'queue',
       triggerType: 'queue',
-      label: wire.name || 'Queue',
+      label: outside(wire.name),
       wireId: wire.name,
       outputHandles,
       nodeType: 'wiring',
@@ -173,9 +177,9 @@ export const getCliWiringNodeConfig = (
   position: { x: number; y: number },
   wire: { command?: string; startNode?: string }
 ): Node => {
-  const outputHandles: Array<{ id: string; label?: string }> = []
+  const outputHandles: Array<{ id: string; label?: I18nString }> = []
   if (wire.startNode) {
-    outputHandles.push({ id: 'start', label: '' })
+    outputHandles.push({ id: 'start' })
   }
 
   return {
@@ -185,7 +189,7 @@ export const getCliWiringNodeConfig = (
     data: {
       colorKey: 'cli',
       triggerType: 'cli',
-      label: wire.command || 'CLI',
+      label: outside(wire.command),
       wireId: wire.command,
       outputHandles,
       nodeType: 'wiring',
@@ -198,9 +202,9 @@ export const getMcpToolWiringNodeConfig = (
   position: { x: number; y: number },
   wire: { name?: string; startNode?: string }
 ): Node => {
-  const outputHandles: Array<{ id: string; label?: string }> = []
+  const outputHandles: Array<{ id: string; label?: I18nString }> = []
   if (wire.startNode) {
-    outputHandles.push({ id: 'start', label: '' })
+    outputHandles.push({ id: 'start' })
   }
 
   return {
@@ -210,7 +214,7 @@ export const getMcpToolWiringNodeConfig = (
     data: {
       colorKey: 'mcp',
       triggerType: 'mcp-tool',
-      label: wire.name || 'MCP Tool',
+      label: outside(wire.name),
       wireId: wire.name ? `tool:${wire.name}` : undefined,
       outputHandles,
       nodeType: 'wiring',
@@ -223,9 +227,9 @@ export const getMcpPromptWiringNodeConfig = (
   position: { x: number; y: number },
   wire: { name?: string; startNode?: string }
 ): Node => {
-  const outputHandles: Array<{ id: string; label?: string }> = []
+  const outputHandles: Array<{ id: string; label?: I18nString }> = []
   if (wire.startNode) {
-    outputHandles.push({ id: 'start', label: '' })
+    outputHandles.push({ id: 'start' })
   }
 
   return {
@@ -235,7 +239,7 @@ export const getMcpPromptWiringNodeConfig = (
     data: {
       colorKey: 'mcp',
       triggerType: 'mcp-prompt',
-      label: wire.name || 'MCP Prompt',
+      label: outside(wire.name),
       wireId: wire.name ? `prompt:${wire.name}` : undefined,
       outputHandles,
       nodeType: 'wiring',
@@ -248,9 +252,9 @@ export const getMcpResourceWiringNodeConfig = (
   position: { x: number; y: number },
   wire: { uri?: string; startNode?: string }
 ): Node => {
-  const outputHandles: Array<{ id: string; label?: string }> = []
+  const outputHandles: Array<{ id: string; label?: I18nString }> = []
   if (wire.startNode) {
-    outputHandles.push({ id: 'start', label: '' })
+    outputHandles.push({ id: 'start' })
   }
 
   return {
@@ -260,7 +264,7 @@ export const getMcpResourceWiringNodeConfig = (
     data: {
       colorKey: 'mcp',
       triggerType: 'mcp-resource',
-      label: wire.uri || 'MCP Resource',
+      label: outside(wire.uri),
       wireId: wire.uri ? `resource:${wire.uri}` : undefined,
       outputHandles,
       nodeType: 'wiring',
@@ -273,12 +277,12 @@ export const getScheduleWiringNodeConfig = (
   position: { x: number; y: number },
   wire: { cron?: string; interval?: string; startNode?: string }
 ): Node => {
-  const outputHandles: Array<{ id: string; label?: string }> = []
+  const outputHandles: Array<{ id: string; label?: I18nString }> = []
   if (wire.startNode) {
-    outputHandles.push({ id: 'start', label: '' })
+    outputHandles.push({ id: 'start' })
   }
 
-  const label = wire.cron || wire.interval || 'Schedule'
+  const label = wire.cron || wire.interval
 
   return {
     id,
@@ -300,9 +304,9 @@ export const getNamedWiringNodeConfig = (
   position: { x: number; y: number },
   wire: { name?: string; startNode?: string }
 ): Node => {
-  const outputHandles: Array<{ id: string; label?: string }> = []
+  const outputHandles: Array<{ id: string; label?: I18nString }> = []
   if (wire.startNode) {
-    outputHandles.push({ id: 'start', label: '' })
+    outputHandles.push({ id: 'start' })
   }
 
   return {
@@ -312,7 +316,7 @@ export const getNamedWiringNodeConfig = (
     data: {
       colorKey: 'trigger',
       triggerType: 'trigger',
-      label: wire.name || 'Trigger',
+      label: outside(wire.name),
       wireId: wire.name,
       outputHandles,
       nodeType: 'wiring',

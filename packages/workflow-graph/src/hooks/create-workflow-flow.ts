@@ -1,3 +1,4 @@
+import { asI18n, type I18nString } from '@pikku/react'
 import type { Node, Edge } from '@xyflow/react'
 import type { WorkflowsMeta } from '@pikku/core/workflow'
 import { getBranchNodeConfig } from '../components/nodes/BranchNode'
@@ -25,6 +26,7 @@ import {
   getNamedWiringNodeConfig,
 } from '../components/nodes/WiringNode'
 import { getChannelWiringNodeConfig } from '../components/nodes/ChannelWiringNode'
+import { defaultM, type GraphM } from '../context/MessagesContext'
 
 interface WorkflowFlowResult {
   nodes: Node[]
@@ -33,10 +35,10 @@ interface WorkflowFlowResult {
 
 /** A branch's condition is the readable thing about the edge, so it rides the
  *  edge as a label rather than costing the graph a node of its own. */
-function branchLabel(condition: any, fallback: string): string {
+function branchLabel(condition: any, fallback: I18nString): I18nString {
   const expression = condition?.expression
   return typeof expression === 'string' && expression.length > 0
-    ? expression
+    ? asI18n(expression)
     : fallback
 }
 
@@ -44,7 +46,7 @@ function createEdge(
   id: string,
   source: string,
   target: string,
-  label?: string,
+  label?: I18nString,
   sourceHandle?: string
 ): Edge {
   const edge: Edge = {
@@ -65,8 +67,13 @@ function createEdge(
  * Compensation edge: a failure route, not part of the happy path, so it reads
  * as an aside rather than another sequential step.
  */
-function createErrorEdge(id: string, source: string, target: string): Edge {
-  const edge = createEdge(id, source, target, 'on error')
+function createErrorEdge(
+  id: string,
+  source: string,
+  target: string,
+  m: GraphM
+): Edge {
+  const edge = createEdge(id, source, target, m.edge_on_error())
   edge.animated = false
   edge.style = { stroke: 'var(--destructive)', strokeDasharray: '4 4' }
   edge.labelStyle = {
@@ -231,7 +238,8 @@ function getSourceHandle(
 }
 
 export function createWorkflowFlow(
-  workflow: WorkflowsMeta[0]
+  workflow: WorkflowsMeta[0],
+  m: GraphM = defaultM
 ): WorkflowFlowResult {
   const nodes: Node[] = []
   const edges: Edge[] = []
@@ -292,7 +300,7 @@ export function createWorkflowFlow(
             `${nodeId}-to-${step.thenEntry}`,
             nodeId,
             step.thenEntry,
-            branchLabel(step.condition, 'then'),
+            branchLabel(step.condition, m.edge_then()),
             getSourceHandle(stepType, 'then')
           )
         )
@@ -304,7 +312,7 @@ export function createWorkflowFlow(
             `${nodeId}-to-${step.elseEntry}`,
             nodeId,
             step.elseEntry,
-            'else',
+            m.edge_else(),
             'false'
           )
         )
@@ -318,7 +326,7 @@ export function createWorkflowFlow(
                 `${nodeId}-branch-${branchIndex}-to-${branch.entry}`,
                 nodeId,
                 branch.entry,
-                branchLabel(branch.condition, `branch ${branchIndex + 1}`),
+                branchLabel(branch.condition, m.edge_branch({ n: branchIndex + 1 })),
                 branchIndex === 0 ? 'true' : `branch-${branchIndex}`
               )
             )
@@ -332,12 +340,14 @@ export function createWorkflowFlow(
       if (step.cases) {
         step.cases.forEach((caseItem: any, caseIndex: number) => {
           if (caseItem.entry) {
+            const caseText = String(caseItem.value)
+            const caseLabel = asI18n(caseText)
             edges.push(
               createEdge(
                 `${nodeId}-case-${caseIndex}-to-${caseItem.entry}`,
                 nodeId,
                 caseItem.entry,
-                String(caseItem.value),
+                caseLabel,
                 getSourceHandle(stepType, `case-${caseItem.value}`)
               )
             )
@@ -351,7 +361,7 @@ export function createWorkflowFlow(
             `${nodeId}-default-to-${step.defaultEntry}`,
             nodeId,
             step.defaultEntry,
-            'default',
+            m.edge_default(),
             getSourceHandle(stepType, 'default')
           )
         )
@@ -366,7 +376,7 @@ export function createWorkflowFlow(
 
       errorTargets.forEach((target: string) => {
         edges.push(
-          createErrorEdge(`${nodeId}-onerror-${target}`, nodeId, target)
+          createErrorEdge(`${nodeId}-onerror-${target}`, nodeId, target, m)
         )
         processNode(target, depth + 1)
       })

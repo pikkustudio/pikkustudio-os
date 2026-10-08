@@ -40,7 +40,7 @@ export function SecretsHero({ count, onAdd }: { count: number | undefined; onAdd
         {count ? (
           <span className="inline-flex items-center gap-2.5 text-px16 font-bold">
             <span className="size-3 shrink-0 rounded-full bg-success ring-4 ring-hero-ink/20" />
-            {count === 1 ? m.secrets_hero__1_secret_saved() : `${count} secrets saved`}
+            {m.secrets_hero__saved({ count })}
           </span>
         ) : null}
       </div>

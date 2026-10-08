@@ -1,3 +1,4 @@
+import { asI18n } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useState } from 'react'
 import { KeyRound, Pencil } from 'lucide-react'
@@ -23,7 +24,7 @@ export function SecretsList({
             <KeyRound className="size-5" />
           </span>
           <div className="flex min-w-48 flex-1 flex-col">
-            <b className="truncate text-[16px] leading-[1.3]">{name}</b>
+            <b className="truncate text-[16px] leading-[1.3]">{asI18n(name)}</b>
             <span className="text-[14px] text-ink-2">{m.secrets_list__locked_only_your_projects()}</span>
           </div>
           <div className="flex items-center gap-2">

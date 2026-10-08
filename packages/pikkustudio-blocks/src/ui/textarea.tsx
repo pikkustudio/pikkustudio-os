@@ -1,3 +1,4 @@
+import type { I18nProps } from '../lib/i18n-props'
 import * as React from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '../lib/utils'
@@ -16,7 +17,7 @@ const textareaVariants = cva(
   }
 )
 
-function Textarea({ className, tone, ...props }: React.ComponentProps<'textarea'> & VariantProps<typeof textareaVariants>) {
+function Textarea({ className, tone, ...props }: I18nProps<React.ComponentProps<'textarea'>> & VariantProps<typeof textareaVariants>) {
   return (
     <textarea
       data-slot="textarea"

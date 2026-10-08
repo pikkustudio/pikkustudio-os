@@ -1,6 +1,7 @@
+import type { I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useContext } from 'react'
-import { Link } from '@tanstack/react-router'
+import { Link } from './Link'
 import { useProjectName } from '../lib/project'
 import { AppWindow, Bot, ChevronRight, Clock, Database, FileText, HeartPulse, KeyRound, Languages, Layers, Plug, ScrollText, Search, Users, Wallet, type LucideIcon } from 'lucide-react'
 import { Button } from '../ui/button'
@@ -10,7 +11,7 @@ import { Page } from './Page'
 import { NextCard } from './NextCard'
 import { PageHead } from './PageHead'
 import { Section } from './Section'
-import { questions } from './exploreSample'
+import { questions, type Question } from './exploreSample'
 import { MOVABLE, usePins, type Movable } from '../lib/pins'
 
 const icons: Record<string, LucideIcon> = { away: ScrollText, secrets: KeyRound, cost: Wallet, who: KeyRound, own: Clock, mem: Database, well: HeartPulse, ai: Bot, plug: Plug }
@@ -26,12 +27,12 @@ export function Art() {
   )
 }
 
-const cls = 'flex w-full items-center gap-4 px-5 py-4 text-left no-underline transition-colors duration-140 hover:bg-secondary'
+const cls = 'flex w-full items-center gap-4 px-5 py-4 text-start no-underline transition-colors duration-140 hover:bg-secondary'
 const pages: Record<string, string> = { away: '/logs', secrets: '/secrets', well: '/performance' }
 
 type Hue = 'teal' | 'petrol' | 'sea'
 
-function HubRow({ hue, Icon, title, text, aside, to, onPick }: { hue: Hue; Icon: LucideIcon; title: string; text: string; aside?: string; to?: string; onPick?: () => void }) {
+function HubRow({ hue, Icon, title, text, aside, to, onPick }: { hue: Hue; Icon: LucideIcon; title: I18nString; text: I18nString; aside?: I18nString; to?: string; onPick?: () => void }) {
   const inner = (
     <>
       <span data-hue={hue} className="grid size-11 shrink-0 place-items-center rounded-xl bg-hero text-hero-ink">
@@ -41,8 +42,8 @@ function HubRow({ hue, Icon, title, text, aside, to, onPick }: { hue: Hue; Icon:
         <b className="block text-[17px] leading-[1.3] text-foreground">{title}</b>
         <small className="block text-[14px] text-ink-2">{text}</small>
       </span>
-      {aside && <span className="shrink-0 text-[13px] text-muted-foreground">{aside}</span>}
-      <ChevronRight className="size-5 shrink-0 text-muted-foreground" />
+      {aside ? <span className="shrink-0 text-[13px] text-muted-foreground">{aside}</span> : null}
+      <ChevronRight className="rtl:-scale-x-100 size-5 shrink-0 text-muted-foreground" />
     </>
   )
   return to ? (
@@ -56,17 +57,17 @@ function HubRow({ hue, Icon, title, text, aside, to, onPick }: { hue: Hue; Icon:
   )
 }
 
-function Row({ q }: { q: (typeof questions)[number] }) {
+function Row({ q }: { q: Question }) {
   const { say } = useContext(ShellCtx)
   return <HubRow hue={q.hue} Icon={icons[q.id]} title={q.q} text={q.ask[0]} to={pages[q.id]} onPick={() => say(q.q)} />
 }
 
-const movable: Record<Movable, { hue: Hue; Icon: LucideIcon; title: () => string; text: () => string }> = {
+const movable: Record<Movable, { hue: Hue; Icon: LucideIcon; title: () => I18nString; text: () => I18nString }> = {
   'virtual-users': { hue: 'teal', Icon: Users, title: () => m.explore_hub__virtual_users_title(), text: () => m.explore_hub__virtual_users_text() },
   translations: { hue: 'sea', Icon: Languages, title: () => m.explore_hub__translations_title(), text: () => m.explore_hub__translations_text() },
   artifacts: { hue: 'petrol', Icon: Layers, title: () => m.explore_hub__artifacts_title(), text: () => m.explore_hub__artifacts_text() },
   content: { hue: 'teal', Icon: FileText, title: () => m.explore_hub__content_title(), text: () => m.explore_hub__content_text() },
-  apps: { hue: 'sea', Icon: AppWindow, title: () => m.explore_hub__apps_title(), text: () => m.explore_hub__apps_text() },
+  'front-doors': { hue: 'sea', Icon: AppWindow, title: () => m.explore_hub__front_doors_title(), text: () => m.explore_hub__front_doors_text() },
 }
 
 export function ExploreHub() {
@@ -81,7 +82,7 @@ export function ExploreHub() {
       <button
         type="button"
         onClick={openFind}
-        className="flex h-11.5 w-full max-w-xl items-center gap-2.5 rounded-full border border-input bg-card px-5.5 text-left text-px15 text-ink-2 transition-colors duration-140 hover:bg-secondary"
+        className="flex h-11.5 w-full max-w-xl items-center gap-2.5 rounded-full border border-input bg-card px-5.5 text-start text-px15 text-ink-2 transition-colors duration-140 hover:bg-secondary"
       >
         <Search className="size-4.5" />
         <span className="flex-1">{m.explore_hub__jump_to_a_page()}</span>
@@ -108,7 +109,7 @@ export function ExploreHub() {
 
       <Section title={m.explore_hub__things_to_look_into()}>
         <div className="divide-y divide-border overflow-hidden rounded-[22px] border border-border bg-card">
-          {questions.map((q) => (
+          {questions().map((q) => (
             <Row key={q.id} q={q} />
           ))}
         </div>

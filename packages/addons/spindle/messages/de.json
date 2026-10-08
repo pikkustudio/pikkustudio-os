@@ -1,0 +1,217 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "asset__text": "{busy}…",
+  "library__adding": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{name} wird hinzugefügt",
+        "countPlural=other": "{count} Dateien werden hinzugefügt"
+      }
+    }
+  ],
+  "spindle_asset__add": "Hinzufügen",
+  "spindle_asset__add_to_a_collection": "Zu einer Sammlung hinzufügen",
+  "spindle_asset__added_by_you": "Von dir hinzugefügt",
+  "spindle_asset__collections": "Sammlungen",
+  "spindle_asset__collections_that_hold_this_file": "Sammlungen, in denen diese Datei liegt.",
+  "spindle_asset__facts": "{kind} · {file} · {size}",
+  "spindle_asset__how_spindle_read_it": "So hat Spindle die Datei gelesen",
+  "spindle_asset__it_is_not_in_any_collection": "Sie ist noch in keiner Sammlung.",
+  "spindle_asset__library": "Bibliothek",
+  "spindle_asset__not_read_yet": "Noch nicht gelesen.",
+  "spindle_asset__nothing_yet_once_the_file_is": "Noch nichts. Sobald die Datei gelesen ist, erscheint ihr Text hier.",
+  "spindle_asset__open": "Öffnen",
+  "spindle_asset__passage_count": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Textstelle, in der Reihenfolge ihres Auftretens.",
+        "countPlural=other": "{count} Textstellen, in der Reihenfolge ihres Auftretens."
+      }
+    }
+  ],
+  "spindle_asset__read_it_again": "Noch einmal lesen",
+  "spindle_asset__show_all_count": "Alle {count} anzeigen",
+  "spindle_asset__step_done": "Fertig",
+  "spindle_asset__step_failed": "Hat nicht geklappt",
+  "spindle_asset__step_running": "In Arbeit",
+  "spindle_asset__take_out": "Herausnehmen",
+  "spindle_asset__that_did_not_work": "Das hat nicht geklappt",
+  "spindle_asset__what_spindle_found": "Was Spindle gefunden hat",
+  "spindle_collection__add_a_file": "Datei hinzufügen",
+  "spindle_collection__add_to_collection": "Zur Sammlung hinzufügen",
+  "spindle_collection__choose_a_file": "Datei auswählen",
+  "spindle_collection__collections": "Sammlungen",
+  "spindle_collection__delete_collection": "Sammlung löschen",
+  "spindle_collection__files_in_this_collection": "Dateien in dieser Sammlung",
+  "spindle_collection__keep_it": "Behalten",
+  "spindle_collection__nothing_here_yet_add_a_file": "Hier ist noch nichts. Füge unten eine Datei hinzu.",
+  "spindle_collection__open": "Öffnen",
+  "spindle_collection__take_out": "Herausnehmen",
+  "spindle_collection__that_did_not_work": "Das hat nicht geklappt",
+  "spindle_collection__yes_delete_it": "Ja, löschen",
+  "spindle_collection__your_files_stay_in_the_library": "Deine Dateien bleiben in der Bibliothek. Nur die Gruppe wird entfernt.",
+  "spindle_collections__collections": "Sammlungen",
+  "spindle_collections__file_count": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Datei",
+        "countPlural=other": "{count} Dateien"
+      }
+    }
+  ],
+  "spindle_collections__groups_of_files_that_belong_together": "Gruppen von Dateien, die zusammengehören. Wenn du in einer Sammlung suchst, bleiben die Antworten beim Thema.",
+  "spindle_collections__make_one_yourself_or_let_spindle": "Erstelle selbst eine, oder lass dir von Spindle Gruppen aus deinen hinzugefügten Dateien vorschlagen.",
+  "spindle_collections__new_collection": "Neue Sammlung",
+  "spindle_collections__no_collections_yet": "Noch keine Sammlungen",
+  "spindle_collections__open": "Öffnen",
+  "spindle_collections__spindle": "Spindle",
+  "spindle_collections__suggest_collections": "Sammlungen vorschlagen",
+  "spindle_collections__that_did_not_work": "Das hat nicht geklappt",
+  "spindle_library__add_files": "Dateien hinzufügen",
+  "spindle_library__all_files": "Alle Dateien",
+  "spindle_library__choose_files": "Dateien auswählen",
+  "spindle_library__drop_documents_recordings_videos_or_images": "Zieh Dokumente, Aufnahmen, Videos oder Bilder hierher oder wähle sie auf deinem Computer aus.",
+  "spindle_library__every_file_is_already_in_a": "Jede Datei ist schon in einer Sammlung.",
+  "spindle_library__every_file_you_have_added_spindle": "Alle Dateien, die du hinzugefügt hast. Spindle liest jede einzelne, damit du in allen zusammen suchen kannst.",
+  "spindle_library__install_with": "Installieren mit: {command}",
+  "spindle_library__library": "Bibliothek",
+  "spindle_library__needs_tools": "Dafür braucht es {tools} auf diesem Computer. {installs}",
+  "spindle_library__not_in_a_collection": "Nicht in einer Sammlung",
+  "spindle_library__open": "Öffnen",
+  "spindle_library__read_it": "Lesen",
+  "spindle_library__review_them_and_decide_which_collections": "Sieh sie dir an und entscheide, welche Sammlungen entstehen sollen.",
+  "spindle_library__see_suggestions": "Vorschläge ansehen",
+  "spindle_library__spindle": "Spindle",
+  "spindle_library__spindle_cannot_read_some_files_yet": "Spindle kann einige Dateien noch nicht lesen",
+  "spindle_library__start_by_adding_your_files": "Fang an, indem du deine Dateien hinzufügst",
+  "spindle_library__suggestion_count": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Spindle hat {count} Vorschlag, wie du deine Dateien gruppieren kannst",
+        "countPlural=other": "Spindle hat {count} Vorschläge, wie du deine Dateien gruppieren kannst"
+      }
+    }
+  ],
+  "spindle_library__that_did_not_work": "Das hat nicht geklappt",
+  "spindle_library__try_again": "Noch einmal versuchen",
+  "spindle_newcollection__booking_cancellation_and_opening_hours": "Buchung, Stornierung und Öffnungszeiten",
+  "spindle_newcollection__cancel": "Abbrechen",
+  "spindle_newcollection__collections": "Sammlungen",
+  "spindle_newcollection__create_collection": "Sammlung erstellen",
+  "spindle_newcollection__give_it_a_name_you_can": "Gib ihr einen Namen. Dateien kannst du danach bei jeder Datei hinzufügen.",
+  "spindle_newcollection__name": "Name",
+  "spindle_newcollection__new_collection": "Neue Sammlung",
+  "spindle_newcollection__that_did_not_work": "Das hat nicht geklappt",
+  "spindle_newcollection__visitor_policies": "Regeln für Besucher",
+  "spindle_newcollection__what_belongs_in_it": "Was hineingehört",
+  "spindle_search__answer": "Antwort",
+  "spindle_search__ask": "Fragen",
+  "spindle_search__ask_a_question_and_get_an": "Stell eine Frage und bekomm eine Antwort mit der Seite, aus der sie stammt, oder such nach einem Wort.",
+  "spindle_search__ask_a_question_or_search_for": "Stell eine Frage oder such nach einem Wort",
+  "spindle_search__citation": "{title}, {where}",
+  "spindle_search__everything": "Alles",
+  "spindle_search__found_by": "{where} · gefunden über {matchedBy}",
+  "spindle_search__just_search": "Nur suchen",
+  "spindle_search__not_in_your_files": "Nicht in deinen Dateien",
+  "spindle_search__nothing_matched": "Nichts gefunden",
+  "spindle_search__nothing_you_have_added_says_this": "Nichts, was du hinzugefügt hast, sagt das. Deshalb rät Spindle nicht.",
+  "spindle_search__open": "Öffnen",
+  "spindle_search__open_file": "Datei öffnen",
+  "spindle_search__place_count": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Stelle gefunden",
+        "countPlural=other": "{count} Stellen gefunden"
+      }
+    }
+  ],
+  "spindle_search__search": "Suchen",
+  "spindle_search__spindle": "Spindle",
+  "spindle_search__that_did_not_work": "Das hat nicht geklappt",
+  "spindle_shared__busy_adding": "Wird hinzugefügt",
+  "spindle_shared__busy_adding_files": "Dateien werden hinzugefügt",
+  "spindle_shared__busy_creating": "Wird erstellt",
+  "spindle_shared__busy_creating_collection": "Sammlung wird erstellt",
+  "spindle_shared__busy_deleting": "Wird gelöscht",
+  "spindle_shared__busy_dismissing": "Wird verworfen",
+  "spindle_shared__busy_looking_groups": "Suche nach Gruppen",
+  "spindle_shared__busy_reading_again": "Datei wird noch einmal gelesen",
+  "spindle_shared__busy_reading_answer": "Deine Dateien werden nach einer Antwort durchgelesen",
+  "spindle_shared__busy_reading_file": "Datei wird gelesen",
+  "spindle_shared__busy_searching": "Suche läuft",
+  "spindle_shared__busy_taking_out": "Wird herausgenommen",
+  "spindle_shared__kind_audio": "Aufnahme",
+  "spindle_shared__kind_document": "Dokument",
+  "spindle_shared__kind_image": "Bild",
+  "spindle_shared__kind_text": "Text",
+  "spindle_shared__kind_video": "Video",
+  "spindle_shared__state_extracted": "Bereit zum Suchen",
+  "spindle_shared__state_extracting": "Wird gerade gelesen",
+  "spindle_shared__state_failed": "Konnte nicht gelesen werden",
+  "spindle_shared__state_uploaded": "Wartet aufs Lesen",
+  "spindle_shared__step_categorise": "Bilder beschrieben",
+  "spindle_shared__step_extract": "Text gelesen",
+  "spindle_shared__step_keyframes": "Schlüsselbilder ausgewählt",
+  "spindle_shared__step_place": "Sammlungen ausgewählt",
+  "spindle_shared__step_probe": "Aufnahme angesehen",
+  "spindle_shared__step_summarise": "Kurze Zusammenfassung geschrieben",
+  "spindle_shared__step_transcribe": "Gesprochenes aufgeschrieben",
+  "spindle_shared__where_frame": "Bild bei {seconds} s",
+  "spindle_shared__where_page": "Seite {page}",
+  "spindle_shared__where_speech": "bei {seconds} s",
+  "spindle_shared__where_summary": "Zusammenfassung",
+  "spindle_suggestions__a_file": "Eine Datei",
+  "spindle_suggestions__add_them": "Hinzufügen",
+  "spindle_suggestions__choose_a_collection": "Sammlung auswählen",
+  "spindle_suggestions__collection_name": "Name der Sammlung",
+  "spindle_suggestions__every_file_is_in_a_collection": "Jede Datei ist in einer Sammlung, oder Spindle hat keine neuen Gruppen vorzuschlagen. Füge mehr Dateien hinzu und sieh noch einmal nach.",
+  "spindle_suggestions__files_that_fit_no_collection_yet": "Dateien, die noch in keine Sammlung passen. Spindle gruppiert, was zusammengehört, und du entscheidest.",
+  "spindle_suggestions__fit_clear": "Gehört eindeutig dazu",
+  "spindle_suggestions__fit_maybe": "Gehört vielleicht dazu",
+  "spindle_suggestions__fit_probable": "Gehört wahrscheinlich dazu",
+  "spindle_suggestions__look_again": "Noch einmal suchen",
+  "spindle_suggestions__make_this_collection": "Diese Sammlung erstellen",
+  "spindle_suggestions__not_now": "Jetzt nicht",
+  "spindle_suggestions__nothing_to_decide": "Nichts zu entscheiden",
+  "spindle_suggestions__or_add_them_to_one_you": "Oder füge sie einer Sammlung hinzu, die du schon hast",
+  "spindle_suggestions__see_collections": "Sammlungen ansehen",
+  "spindle_suggestions__spindle": "Spindle",
+  "spindle_suggestions__spindle_suggests_a_collection": "Spindle schlägt eine Sammlung vor",
+  "spindle_suggestions__suggestions": "Vorschläge",
+  "spindle_suggestions__that_did_not_work": "Das hat nicht geklappt"
+}

@@ -1,4 +1,4 @@
-/* The approved Fabric palette. It overrides the generated theme where they differ and adds the colours the theme has no field for. */
+/* The approved palette. It overrides the generated theme where they differ and adds the colours the theme has no field for. */
 :root {
   --background: #f6fafb;
   --foreground: #0e1f24;
@@ -176,7 +176,7 @@
   --animate-shimmer: shimmer 1.4s linear infinite;
   @keyframes shimmer {
     to {
-      background-position: -200% 0;
+      background-position: -200% 0; /* physical: shimmer sweeps the same way in every language */
     }
   }
   --radius-dev: 14px;
@@ -244,7 +244,7 @@
 
 :root {
   --indigo: #0b4f5c;
-  --fabric: #2f43c9;
+  --brand-mark: #2f43c9;
   --on-warning: #0e1f24;
   --field: #ffffff;
   --note: #e3ecfd;
@@ -254,7 +254,7 @@
 }
 .dark {
   --indigo: #1f6f7c;
-  --fabric: #8ea0ff;
+  --brand-mark: #8ea0ff;
   --coral: #ff8a7a;
   --success-soft: #123324;
   --success-foreground: #8fe3a4;
@@ -272,7 +272,7 @@
 
 @theme inline {
   --color-indigo: var(--indigo);
-  --color-fabric: var(--fabric);
+  --color-brand-mark: var(--brand-mark);
   --color-on-warning: var(--on-warning);
   --color-field: var(--field);
   --color-note: var(--note);

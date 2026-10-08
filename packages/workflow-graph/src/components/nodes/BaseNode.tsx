@@ -1,4 +1,5 @@
 import React from 'react'
+import { asI18n, type I18nNode, type I18nString } from '@pikku/react'
 import { Handle, Position } from '@xyflow/react'
 import { Code, Lock, LockOpen, Shield, Layers } from 'lucide-react'
 import { GraphBadge } from '../GraphBadge'
@@ -10,19 +11,20 @@ import {
   type TileIcon,
 } from '../NodeTile'
 import { useFlowDirection } from '../../context/FlowDirectionContext'
+import { useGraphM } from '../../context/MessagesContext'
 import { FLOW_NODE_WIDTH } from './FlowNode'
 
 interface OutputHandle {
   id: string
-  label?: string
+  label?: I18nString
 }
 
 interface BaseNodeProps {
   data: {
     icon?: TileIcon
     colorKey: string
-    title: string
-    description?: string
+    title: I18nString
+    description?: I18nString
     tags?: string[]
     auth?: boolean
     permissionsCount?: number
@@ -33,7 +35,7 @@ interface BaseNodeProps {
   hasInput?: boolean
   hasOutput?: boolean
   outputHandles?: OutputHandle[]
-  additionalBody?: React.ReactNode
+  additionalBody?: I18nNode
   width?: number
   hideMetadataIndicators?: boolean
   inFlow?: boolean
@@ -51,6 +53,7 @@ export const BaseNode: React.FC<BaseNodeProps> = ({
   inFlow = true,
 }) => {
   const vertical = useFlowDirection() === 'DOWN'
+  const m = useGraphM()
 
   const hasMetadata =
     !hideMetadataIndicators &&
@@ -115,14 +118,14 @@ export const BaseNode: React.FC<BaseNodeProps> = ({
                 ) : (
                   <LockOpen size={14} strokeWidth={2} aria-hidden="true" />
                 )}
-                {data.auth ? 'Auth' : 'Open'}
+                {data.auth ? m.auth() : m.open()}
               </span>
             )}
             {data.permissionsCount !== undefined &&
               data.permissionsCount > 0 && (
                 <span
                   className="inline-flex items-center gap-1"
-                  title="Permissions"
+                  title={m.permissions()}
                 >
                   <Shield size={14} strokeWidth={2} aria-hidden="true" />
                   {data.permissionsCount}
@@ -131,7 +134,7 @@ export const BaseNode: React.FC<BaseNodeProps> = ({
             {data.middlewareCount !== undefined && data.middlewareCount > 0 && (
               <span
                 className="inline-flex items-center gap-1"
-                title="Middleware"
+                title={m.middleware()}
               >
                 <Layers size={14} strokeWidth={2} aria-hidden="true" />
                 {data.middlewareCount}
@@ -163,19 +166,19 @@ export const BaseNode: React.FC<BaseNodeProps> = ({
                     className={handleClass}
                     style={
                       vertical
-                        ? { left: `${offsetPercent}%` }
+                        ? { left: `${offsetPercent}%` } // physical: the workflow canvas is left-to-right in every language (flow runs source to target)
                         : { top: `${offsetPercent}%` }
                     }
                   />
                   <span
-                    className={`absolute rounded-lg bg-card px-1.5 py-0.5 font-mono text-[11px] whitespace-nowrap text-ink-2 ${vertical ? 'top-full mt-1 -translate-x-1/2' : 'left-full ml-1 -translate-y-1/2'}`}
+                    className={`absolute rounded-lg bg-card px-1.5 py-0.5 font-mono text-[11px] whitespace-nowrap text-ink-2 ${vertical ? 'top-full mt-1 -translate-x-1/2' : 'left-full ml-1 -translate-y-1/2'}`} // physical: the workflow canvas is left-to-right in every language (flow runs source to target)
                     style={
                       vertical
-                        ? { left: `${offsetPercent}%` }
+                        ? { left: `${offsetPercent}%` } // physical: the workflow canvas is left-to-right in every language (flow runs source to target)
                         : { top: `${offsetPercent}%` }
                     }
                   >
-                    {handle.label || handle.id}
+                    {handle.label || asI18n(handle.id)}
                   </span>
                 </React.Fragment>
               )

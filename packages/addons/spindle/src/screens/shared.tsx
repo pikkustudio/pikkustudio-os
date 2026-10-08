@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react'
-import { usePikkuRPC } from '@pikku/react'
+import { m } from '@/i18n/messages'
+import { usePikkuRPC, type I18nString } from '@pikku/react'
 import { FileText, Film, Image, Mic } from 'lucide-react'
 
 export type ScreenProps = { params: Record<string, string>; navigate: (path: string) => void }
@@ -13,43 +14,43 @@ export const useRpc = () => usePikkuRPC() as unknown as Rpc
 export const where = (h: { source: string; page: number | null; startSeconds?: number | null; start_seconds?: number | null; frameAt?: number | null; frame_at?: number | null }) => {
   const start = h.startSeconds ?? h.start_seconds ?? 0
   const frame = h.frameAt ?? h.frame_at ?? 0
-  return h.source === 'page' ? `page ${h.page}` : h.source === 'speech' ? `${Math.floor(start)}s in` : h.source === 'frame' ? `frame at ${Math.floor(frame)}s` : 'summary'
+  return h.source === 'page' ? m.spindle_shared__where_page({ page: h.page ?? 0 }) : h.source === 'speech' ? m.spindle_shared__where_speech({ seconds: Math.floor(start) }) : h.source === 'frame' ? m.spindle_shared__where_frame({ seconds: Math.floor(frame) }) : m.spindle_shared__where_summary()
 }
 
 export const KIND = {
-  document: { icon: FileText, label: 'Document' },
-  text: { icon: FileText, label: 'Text' },
-  audio: { icon: Mic, label: 'Recording' },
-  video: { icon: Film, label: 'Video' },
-  image: { icon: Image, label: 'Image' },
+  document: { icon: FileText, label: m.spindle_shared__kind_document },
+  text: { icon: FileText, label: m.spindle_shared__kind_text },
+  audio: { icon: Mic, label: m.spindle_shared__kind_audio },
+  video: { icon: Film, label: m.spindle_shared__kind_video },
+  image: { icon: Image, label: m.spindle_shared__kind_image },
 } as const
 
 export const kindOf = (kind: string) => KIND[kind as keyof typeof KIND] ?? KIND.document
 
 export const STATE = {
-  uploaded: { tone: 'quiet', label: 'Waiting to be read' },
-  extracting: { tone: 'warn', label: 'Reading it now' },
-  extracted: { tone: 'ok', label: 'Ready to search' },
-  failed: { tone: 'bad', label: 'Could not be read' },
+  uploaded: { tone: 'quiet', label: m.spindle_shared__state_uploaded },
+  extracting: { tone: 'warn', label: m.spindle_shared__state_extracting },
+  extracted: { tone: 'ok', label: m.spindle_shared__state_extracted },
+  failed: { tone: 'bad', label: m.spindle_shared__state_failed },
 } as const
 
 export const stateOf = (status: string) => STATE[status as keyof typeof STATE] ?? STATE.uploaded
 
 export const STEP = {
-  extract: 'Read the text',
-  probe: 'Looked at the recording',
-  transcribe: 'Wrote down what was said',
-  keyframes: 'Picked out key frames',
-  categorise: 'Described the pictures',
-  summarise: 'Wrote a short summary',
-  place: 'Chose collections',
+  extract: m.spindle_shared__step_extract,
+  probe: m.spindle_shared__step_probe,
+  transcribe: m.spindle_shared__step_transcribe,
+  keyframes: m.spindle_shared__step_keyframes,
+  categorise: m.spindle_shared__step_categorise,
+  summarise: m.spindle_shared__step_summarise,
+  place: m.spindle_shared__step_place,
 } as const
 
 export const useBusy = (reload: () => Promise<void>) => {
-  const [busy, setBusy] = useState<string | null>(null)
+  const [busy, setBusy] = useState<I18nString | null>(null)
   const [error, setError] = useState<string | null>(null)
   const run = useCallback(
-    async (label: string, work: () => Promise<void>) => {
+    async (label: I18nString, work: () => Promise<void>) => {
       setBusy(label)
       setError(null)
       try {

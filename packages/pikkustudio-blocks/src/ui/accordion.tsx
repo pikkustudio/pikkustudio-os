@@ -1,12 +1,14 @@
+import type { I18nNode, I18nString } from '@pikku/react'
+import type { I18nProps } from '../lib/i18n-props'
 import * as React from 'react'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '../lib/utils'
 
-function Accordion({ className, ...props }: React.ComponentProps<'div'>) {
+function Accordion({ className, ...props }: I18nProps<React.ComponentProps<'div'>>) {
   return <div data-slot="accordion" className={cn('flex flex-col border-t border-border', className)} {...props} />
 }
 
-function AccordionItem({ title, defaultOpen = false, className, children }: { title: string; defaultOpen?: boolean; className?: string; children: React.ReactNode }) {
+function AccordionItem({ title, defaultOpen = false, className, children }: { title: I18nString; defaultOpen?: boolean; className?: string; children: I18nNode }) {
   const [open, setOpen] = React.useState(defaultOpen)
   const id = React.useId()
   return (

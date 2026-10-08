@@ -1,3 +1,4 @@
+import { m } from '@/i18n/messages'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useProjectKey, useProjectName } from '../lib/project'
 import { useProjectAction, useProjectQuery } from '../lib/projectRpc'
@@ -8,6 +9,7 @@ import { TransRows } from '../blocks/TransRows'
 import { EmptyState } from '../blocks/EmptyState'
 import { Languages } from 'lucide-react'
 import { CardsSkeleton, QueryState } from '../blocks/QueryState'
+import { faultOf } from '../blocks/ErrorState'
 import { AskPikku } from '../blocks/AskPikku'
 import type { TransString } from '../types/translations'
 
@@ -38,11 +40,16 @@ function Editor({ app, projectKey }: { app: I18nApp; projectKey: string }) {
   }
   if (!locales.length)
     return (
-      <EmptyState layout="row" icon={Languages} title="Only one language so far." text="Ask Pikku to add another language and translate everything for you.">
-        <AskPikku label="Add a language" prompt="I would like to add another language to this app. Which one should it be? Tell me the language and I will work out the right locale, then translate everything." />
+      <EmptyState layout="row" icon={Languages} title={m.translations_screen__one_language()} text={m.translations_screen__one_language_text()}>
+        <AskPikku label={m.translations_screen__add_language()} prompt={m.translations_screen__i_would_like_to_add()} />
       </EmptyState>
     )
   return <TransRows items={items} locales={locales} baseLocale={app.baseLocale} set={set} />
+}
+
+const missingFunction = (error: unknown) => {
+  const f = faultOf(error)
+  return f.status === 404 || /^NotFound/.test(f.name ?? '') || /getI18n|not found|no such function/i.test(f.message ?? '')
 }
 
 export function TranslationsScreen() {
@@ -51,7 +58,12 @@ export function TranslationsScreen() {
   const apps = useProjectQuery<{ apps: I18nApp[] }>(key, 'console:getI18n')
   return (
     <Page gap="snug">
-      <PageHead crumb={projectName} title="Translations" text="All the wording your app shows, in every language. Fill in what is missing and it saves as you go." />
+      <PageHead crumb={projectName} title={m.translations_screen__title()} text={m.translations_screen__text()} />
+      {apps.isError && missingFunction(apps.error) ? (
+        <EmptyState layout="row" icon={Languages} title={m.translations_screen__old_pikku()}>
+          <AskPikku label={m.translations_screen__old_pikku_ask()} prompt={m.translations_screen__old_pikku_message()} />
+        </EmptyState>
+      ) : (
       <QueryState query={apps} skeleton={<CardsSkeleton count={2} />}>
         {(data) => {
           const app = data.apps.find((a) => Object.keys(a.locales).length > 1) ?? data.apps[0]
@@ -60,10 +72,11 @@ export function TranslationsScreen() {
               <Editor key={app.app} app={app} projectKey={key} />
             </div>
           ) : (
-            <EmptyState layout="row" icon={Languages} title="Nothing to translate yet." text="Once your app has screens with wording, it will show up here." />
+            <EmptyState layout="row" icon={Languages} title={m.translations_screen__nothing()} text={m.translations_screen__nothing_text()} />
           )
         }}
       </QueryState>
+      )}
     </Page>
   )
 }

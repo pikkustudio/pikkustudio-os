@@ -1,3 +1,4 @@
+import { m } from '@/i18n/messages'
 import { useContext } from 'react'
 import { Button } from '../ui/button'
 import { ArrowRight, Cloud, Server } from 'lucide-react'
@@ -19,36 +20,36 @@ export function LitellmHero({ st, loading, open, retry }: { st: string; loading:
 <div>
         {st === 'normal' ? (
           <>
-            <h1 className={h1}>Bring your own AI.</h1>
-            <p className={lead}>Studio builds with your own LiteLLM, a small open-source server that talks to any model. You keep your keys, and you pick the model.</p>
+            <h1 className={h1}>{m.choose_ai_screen__title()}</h1>
+            <p className={lead}>{m.choose_ai_screen__lead()}</p>
           </>
         ) : null}
         {loading ? (
           <>
-            <h1 className={h1}>Getting the choices ready.</h1>
-            <p className={lead}>One moment.</p>
+            <h1 className={h1}>{m.choose_ai_screen__loading_title()}</h1>
+            <p className={lead}>{m.onb_name_screen__loading_title()}</p>
           </>
         ) : null}
         {st === 'error' ? (
           <>
-            <h1 className={h1}>The choices did not load.</h1>
-            <p className={lead}>Nothing was changed. Try again in a moment.</p>
+            <h1 className={h1}>{m.choose_ai_screen__error_title()}</h1>
+            <p className={lead}>{m.onb_name_screen__error_text()}</p>
           </>
         ) : null}
       </div>
       <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-3">
         {st === 'error' ? (
           <Button variant="hero" size="pageLg" type="button" onClick={retry}>
-            Try again
+            {m.signin__retry()}
           </Button>
         ) : (
           <Button variant="hero" size="pageLg" type="button" disabled={loading} onClick={() => open('litellm')}>
-            Connect my LiteLLM
-            <ArrowRight className="size-5.5" />
+            {m.choose_ai_screen__connect()}
+            <ArrowRight className="rtl:-scale-x-100 size-5.5" />
           </Button>
         )}
       </div>
-      {st === 'normal' ? <p className="text-[15px] text-hero-ink-2">You can change this any time in Settings. I will never switch it without asking.</p> : null}
+      {st === 'normal' ? <p className="text-[15px] text-hero-ink-2">{m.choose_ai_screen__change_later()}</p> : null}
     </HeroShell>
   )
 }
@@ -68,9 +69,9 @@ export function ChooseAiScreen() {
         <LitellmHero st={st} loading={loading} open={open} retry={retry} />
       )}
 
-      <section id="alts" aria-label="Other choices">
+      <section id="alts" aria-label={m.choose_ai_screen__other_choices()}>
         <div className="mb-4 flex items-baseline justify-between gap-4">
-          <h2 className="text-[26px] leading-[1.2] font-bold tracking-[-0.012em] text-balance">Other ways to connect</h2>
+          <h2 className="text-[26px] leading-[1.2] font-bold tracking-[-0.012em] text-balance">{m.choose_ai_screen__other_ways()}</h2>
         </div>
         <div className="grid grid-cols-1 gap-4">
           {st === 'normal' || st === 'error' ? (
@@ -82,12 +83,12 @@ export function ChooseAiScreen() {
                     <Server className="size-7" />
                   </span>
                   <div>
-                    <h3 className="mb-1 text-[22px] leading-[1.2] font-bold tracking-[-0.012em] text-balance">Popular AI providers</h3>
-                    <p className="max-w-ch56 text-[16px] text-ink-2 text-pretty">Pick one and I will ask for its token. It stays on this computer.</p>
+                    <h3 className="mb-1 text-[22px] leading-[1.2] font-bold tracking-[-0.012em] text-balance">{m.choose_ai_screen__providers_title()}</h3>
+                    <p className="max-w-ch56 text-[16px] text-ink-2 text-pretty">{m.choose_ai_screen__providers_text()}</p>
                   </div>
                 </div>
                 <ul className="flex list-none flex-wrap gap-2.5">
-                  {providers.map(([name, id]) => (
+                  {providers().map(([name, id]) => (
                     <li key={id}>
                       <Button variant="bordered" size="page" type="button" onClick={() => via(id)}>
                         {name}
@@ -100,7 +101,7 @@ export function ChooseAiScreen() {
           ) : null}
           {loading ? (
             <>
-              <div className="min-h-27.5 animate-shimmer rounded-[22px] bg-[linear-gradient(90deg,var(--secondary),var(--surface-3),var(--secondary))] bg-[length:200%_100%]" role="status" aria-label="Getting the choices ready" />
+              <div className="min-h-27.5 animate-shimmer rounded-[22px] bg-[linear-gradient(90deg,var(--secondary),var(--surface-3),var(--secondary))] bg-[length:200%_100%]" role="status" aria-label={m.choose_ai_screen__getting_ready()} />
               <div className="min-h-27.5 animate-shimmer rounded-[22px] bg-[linear-gradient(90deg,var(--secondary),var(--surface-3),var(--secondary))] bg-[length:200%_100%]" aria-hidden="true" />
             </>
           ) : null}

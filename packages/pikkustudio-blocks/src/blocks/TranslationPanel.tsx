@@ -1,3 +1,4 @@
+import { asI18n } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { Button } from '../ui/button'
 import { Textarea } from '../ui/textarea'
@@ -13,8 +14,8 @@ export function TranslationPanel({ entry, onEdit }: { entry: Translations[string
       {langs.map(([code, name, rtl]) => (
         <label key={code} className="flex flex-col gap-1">
           <span className="text-px13 font-bold text-muted-foreground">
-            {name}
-            {entry[code] ? '' : m.translation_panel__needs_translating()}
+            {asI18n(name)}
+            {entry[code] ? null : m.translation_panel__needs_translating()}
           </span>
           <Textarea tone="field" rows={2} dir={rtl ? 'rtl' : undefined} value={entry[code]} onChange={(e) => onEdit(code, e.target.value)} />
         </label>

@@ -1,8 +1,9 @@
 import React from 'react'
+import { asI18n, type I18nNode } from '@pikku/react'
 
 type GraphBadgeProps = (
   | { type: 'dynamic'; badge: string; value: string | number }
-  | { type: 'label'; children: React.ReactNode }
+  | { type: 'label'; children: I18nNode }
 ) & {
   className?: string
   onClick?: React.MouseEventHandler<HTMLSpanElement>
@@ -17,8 +18,8 @@ const humanize = (str: string): string =>
         .replace(/\b\w/g, (c) => c.toUpperCase())
 
 export const GraphBadge: React.FC<GraphBadgeProps> = (props) => {
-  const content =
-    props.type === 'label' ? props.children : humanize(String(props.value))
+  const humanized = props.type === 'label' ? '' : humanize(String(props.value))
+  const content = props.type === 'label' ? props.children : asI18n(humanized)
 
   return (
     <span

@@ -1,3 +1,4 @@
+import { asI18n } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useEffect, useState } from 'react'
 import { Check } from 'lucide-react'
@@ -24,12 +25,12 @@ export function ShelfStrip({ phase, start = 134, onHero }: { phase: number; star
                 <Check className="size-4" strokeWidth={3} aria-label={m.shelf_strip__done()} />
               </span>
             ) : i === phase ? (
-              <span className={`size-7 animate-spin rounded-full border-[3px] border-r-transparent ${onHero ? 'border-hero-ink' : 'border-info'}`} role="status" aria-label={m.shelf_strip__working_on_it_now()} />
+              <span className={`size-7 animate-spin rounded-full border-[3px] border-e-transparent ${onHero ? 'border-hero-ink' : 'border-info'}`} role="status" aria-label={m.shelf_strip__working_on_it_now()} />
             ) : (
               <span className={`size-7 rounded-full border-[2.5px] ${onHero ? 'border-hero-ink-2 opacity-60' : 'border-input'}`} aria-label={m.shelf_strip__waiting()} />
             )}
-            <b className={`text-[14px] leading-[1.3] ${ink}`}>{name}</b>
-            <small className={`text-[13px] ${sub}`}>{i < phase ? m.shelf_strip__done() : i === phase ? m.shelf_strip__working_on_it_now() : `About ${secs} seconds`}</small>
+            <b className={`text-[14px] leading-[1.3] ${ink}`}>{asI18n(name)}</b>
+            <small className={`text-[13px] ${sub}`}>{i < phase ? m.shelf_strip__done() : i === phase ? m.shelf_strip__working_on_it_now() : m.common__about_seconds({ secs })}</small>
           </li>
         ))}
       </ol>

@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { I18nNode, I18nString } from '@pikku/react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { PinButton } from './PinButton'
 
@@ -17,7 +17,7 @@ const lead = cva('text-pretty text-ink-2', {
   defaultVariants: { size: 'default' },
 })
 
-export function PageHead({ crumb, title, text, children, size, width, ...v }: { crumb: ReactNode; title: string; text?: ReactNode; children?: ReactNode } & VariantProps<typeof head> & VariantProps<typeof lead> & VariantProps<typeof body>) {
+export function PageHead({ crumb, title, text, children, size, width, ...v }: { crumb?: I18nNode; title: I18nString; text?: I18nNode; children?: I18nNode } & VariantProps<typeof head> & VariantProps<typeof lead> & VariantProps<typeof body>) {
   return (
     <div className={head(v)}>
       <div className={body({ width })}>

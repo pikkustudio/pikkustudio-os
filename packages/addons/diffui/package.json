@@ -15,17 +15,16 @@
       "import": "./dist/src/index.js"
     },
     "./.pikku/*": "./dist/.pikku/addon/*",
-    "./screens/*": {
-      "types": "./dist/src/screens/*.d.ts",
-      "import": "./dist/src/screens/*.js"
-    }
+    "./screens/*": "./src/screens/*.tsx"
   },
   "files": [
-    "dist"
+    "dist",
+    "src/screens"
   ],
   "scripts": {
     "prebuild": "pikku all",
     "build": "tsc && pikku dist",
+    "tsc:i18n": "tsc --noEmit -p tsconfig.i18n.json",
     "pikku": "pikku all"
   },
   "peerDependencies": {

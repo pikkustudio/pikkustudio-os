@@ -1,18 +1,20 @@
+import { asI18n, sep, type I18nString } from '@pikku/react'
+import { m } from '@/i18n/messages'
 import { useEffect, useState } from 'react'
 import { ArrowLeft, Check, CircleAlert, X } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Segmented } from './Segmented'
 import { ErrorState } from './ErrorState'
 import { useProjectAction } from '../lib/projectRpc'
-import { FOUND, GOAL_WORD, KIND, ago, outcome, problemsOf, reached, type Run, type VirtualUser } from '../lib/virtualUsers'
+import { FOUND, goalWord, kindOf, ago, outcome, problemsOf, reached, type Run, type VirtualUser } from '../lib/virtualUsers'
 
 type Tab = 'visits' | 'about' | 'own'
 
 const DAY = 86_400_000
-const GAPS: [string, string, number, number][] = [
-  ['day', 'Every day', DAY * 0.5, DAY * 1.5],
-  ['few', 'Every few days', DAY * 2, DAY * 4],
-  ['week', 'Every week', DAY * 5, DAY * 9],
+const GAPS = (): [string, I18nString, number, number][] => [
+  ['day', m.virtual_user_drawer__gap_day(), DAY * 0.5, DAY * 1.5],
+  ['few', m.virtual_user_drawer__gap_few(), DAY * 2, DAY * 4],
+  ['week', m.virtual_user_drawer__gap_week(), DAY * 5, DAY * 9],
 ]
 
 const gapOf = (min: number) => (min <= DAY ? 'day' : min <= DAY * 3 ? 'few' : 'week')
@@ -23,34 +25,33 @@ function Report({ u, run, onBack }: { u: VirtualUser; run: Run; onBack: () => vo
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-auto px-5 py-5">
       <Button variant="bordered" size="compact" className="self-start" onClick={onBack}>
-        <ArrowLeft className="size-4" aria-hidden="true" />
-        All visits
+        <ArrowLeft className="rtl:-scale-x-100 size-4" aria-hidden="true" />
+        {m.virtual_user_drawer__all_visits()}
       </Button>
       <div>
         <h3 className="font-heading text-[22px] leading-[1.2] font-bold">{outcome(u.name, run)}</h3>
         <p className="mt-1 text-[15px] text-ink-2">
-          {ago(run.createdAt)}
-          {mins ? ` · ${mins} ${mins === 1 ? 'minute' : 'minutes'}` : ''} · on your preview site
+          {m.virtual_user_drawer__report_meta({ ago: ago(run.createdAt), duration: mins ? ` · ${m.virtual_user_drawer__minute_count({ n: mins })}` : '' })}
         </p>
-        <p className="mt-2 text-[16px] text-ink-2">{problems.length === 0 ? 'They ran into no problems.' : problems.length === 1 ? 'They ran into 1 problem on the way.' : `They ran into ${problems.length} problems on the way.`}</p>
+        <p className="mt-2 text-[16px] text-ink-2">{problems.length === 0 ? m.virtual_user_drawer__no_problems() : m.virtual_user_drawer__ran_into({ n: problems.length })}</p>
       </div>
       {run.status === 'failed' && run.error ? (
         <div className="rounded-card border border-border bg-secondary p-4 text-[15px] text-ink-2">
-          <b className="block text-foreground">The visit stopped early</b>
-          {run.error}
+          <b className="block text-foreground">{m.virtual_user_drawer__stopped_early_title()}</b>
+          {asI18n(run.error)}
         </div>
       ) : null}
       {problems.length > 0 ? (
         <section>
-          <h4 className="mb-2 font-heading text-[18px] font-bold">What they found</h4>
+          <h4 className="mb-2 font-heading text-[18px] font-bold">{m.virtual_user_drawer__what_found()}</h4>
           <ul className="flex flex-col gap-2.5">
             {problems.map((p, i) => (
               <li key={i} className="flex gap-3 rounded-card border border-destructive/40 bg-card p-3.5">
                 <CircleAlert className="mt-0.5 size-5 shrink-0 text-destructive" aria-hidden="true" />
                 <span className="text-[16px]">
                   <b className="block">{FOUND(u.name, p.kind, p.detail)}</b>
-                  {p.goal ? <span className="block text-[14px] text-ink-2">While trying to: {p.goal}</span> : null}
-                  <span className="block text-[14px] text-ink-2">{p.count === 1 ? 'Once' : `${p.count} times`}</span>
+                  {p.goal ? <span className="block text-[14px] text-ink-2">{m.virtual_user_drawer__while_trying({ goal: p.goal })}</span> : null}
+                  <span className="block text-[14px] text-ink-2">{m.virtual_user_drawer__times({ n: p.count })}</span>
                 </span>
               </li>
             ))}
@@ -59,21 +60,21 @@ function Report({ u, run, onBack }: { u: VirtualUser; run: Run; onBack: () => vo
       ) : null}
       {run.intents.length > 0 ? (
         <section>
-          <h4 className="mb-2 font-heading text-[18px] font-bold">What they tried to do</h4>
+          <h4 className="mb-2 font-heading text-[18px] font-bold">{m.virtual_user_drawer__what_tried()}</h4>
           <ul className="flex flex-col divide-y divide-border rounded-card border border-border bg-card">
             {run.intents.map((i) => (
               <li key={i.id} className="flex items-center justify-between gap-3 px-4 py-3 text-[16px]">
-                <span>{i.title}</span>
+                <span>{asI18n(i.title)}</span>
                 <span className={`flex shrink-0 items-center gap-1.5 text-[14px] font-semibold ${i.status === 'completed' ? 'text-accent-foreground' : 'text-ink-2'}`}>
                   {i.status === 'completed' ? <Check className="size-4" aria-hidden="true" /> : null}
-                  {GOAL_WORD[i.status] ?? i.status}
+                  {goalWord(i.status)}
                 </span>
               </li>
             ))}
           </ul>
         </section>
       ) : null}
-      <p className="text-[14px] text-ink-2">A visit with no problems is good news for today, not a guarantee. Each visit goes a little differently.</p>
+      <p className="text-[14px] text-ink-2">{m.virtual_user_drawer__no_guarantee()}</p>
     </div>
   )
 }
@@ -82,7 +83,8 @@ export function VirtualUserDrawer({ u, projectKey, start, onClose }: { u: Virtua
   const [tab, setTab] = useState<Tab>(start)
   const [open, setOpen] = useState<string | null>(null)
   const save = useProjectAction<{ persona: string; enabled?: boolean; minIntervalMs?: number; maxIntervalMs?: number }>(projectKey, 'console:setVirtualUserSchedule', ['console:getVirtualUserSchedules'])
-  const [kind, kindText] = KIND[u.disposition]
+  const [kind, kindText] = kindOf(u.disposition)
+  const initial = u.name.charAt(0)
   const run = u.visits.find((v) => v.runId === open)
   const on = !!u.schedule?.enabled
   const gap = gapOf(u.schedule?.minIntervalMs ?? DAY * 2)
@@ -93,31 +95,31 @@ export function VirtualUserDrawer({ u, projectKey, start, onClose }: { u: Virtua
     return () => window.removeEventListener('keydown', k)
   }, [onClose])
 
-  const tabBtn = (id: Tab, label: string) => (
+  const tabBtn = (id: Tab, label: I18nString) => (
     <button type="button" role="tab" aria-selected={tab === id} onClick={() => (setTab(id), setOpen(null))} className={`border-b-[3px] px-4 py-3 text-[16px] font-semibold ${tab === id ? 'border-primary text-accent-foreground' : 'border-transparent text-ink-2'}`}>
       {label}
     </button>
   )
 
   return (
-    <aside aria-label={`${u.name}, a virtual user`} className="fixed inset-y-0 right-0 z-50 flex w-102 max-w-full flex-col border-l border-border bg-card shadow-[0_24px_56px_-14px_rgba(8,40,52,0.45)] @min-[1700px]/app:w-120">
+    <aside aria-label={m.virtual_user_drawer__aria({ name: u.name })} className="fixed inset-y-0 end-0 z-50 flex w-102 max-w-full flex-col border-s border-border bg-card shadow-[0_24px_56px_-14px_rgba(8,40,52,0.45)] @min-[1700px]/app:w-120">
       <header data-hue="petrol" className="flex items-center gap-3 bg-hero px-5 pt-4 pb-4 text-hero-ink">
         <span className="grid size-14 shrink-0 place-items-center rounded-full bg-white font-heading text-[24px] font-bold text-hero-btn-ink" aria-hidden="true">
-          {u.name.charAt(0)}
+          {asI18n(initial)}
         </span>
         <span className="min-w-0 flex-1">
           <h2 className="font-heading text-[22px] leading-[1.15] font-bold tracking-[-0.012em]">{u.name}</h2>
-          <small className="block text-[14px] text-hero-ink-2">{[u.job, kind].filter(Boolean).join(' · ')}</small>
+          <small className="block text-[14px] text-hero-ink-2">{u.job ? <>{u.job}{sep(' · ')}</> : null}{kind}</small>
         </span>
-        <button type="button" aria-label="Close" onClick={onClose} className="grid size-11 place-items-center rounded-full text-hero-ink transition-colors hover:bg-white/15">
+        <button type="button" aria-label={m.common__close()} onClick={onClose} className="grid size-11 place-items-center rounded-full text-hero-ink transition-colors hover:bg-white/15">
           <X className="size-5.5" />
         </button>
       </header>
 
       <div className="flex gap-1 border-b border-border px-3" role="tablist">
-        {tabBtn('about', 'About')}
-        {tabBtn('visits', `Visits (${u.visits.length})`)}
-        {tabBtn('own', 'On their own')}
+        {tabBtn('about', m.virtual_user_drawer__tab_about())}
+        {tabBtn('visits', m.virtual_user_drawer__tab_visits({ n: u.visits.length }))}
+        {tabBtn('own', m.virtual_user_drawer__tab_own())}
       </div>
 
       {tab === 'visits' ? (
@@ -127,18 +129,18 @@ export function VirtualUserDrawer({ u, projectKey, start, onClose }: { u: Virtua
           <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-auto px-5 py-5">
             {u.visiting ? (
               <div role="status" className="rounded-card bg-accent p-4 text-[15px] text-accent-foreground">
-                <b className="block">{u.name} is on a visit now</b>
-                This usually takes a few minutes. You can leave this page. The report will wait here.
+                <b className="block">{m.virtual_user_drawer__on_visit_title({ name: u.name })}</b>
+                {m.virtual_user_drawer__on_visit_text()}
               </div>
             ) : null}
-            {u.visits.length === 0 && !u.visiting ? <p className="text-[16px] text-ink-2">{u.name} has not visited yet. Send them on a visit and the report will show up here.</p> : null}
+            {u.visits.length === 0 && !u.visiting ? <p className="text-[16px] text-ink-2">{m.virtual_user_drawer__not_visited({ name: u.name })}</p> : null}
             {u.visits.map((v) => {
               const n = problemsOf(v).length
               return (
-                <button key={v.runId} type="button" onClick={() => setOpen(v.runId)} className="flex flex-col gap-0.5 rounded-card border border-border bg-card px-4 py-3 text-left transition-colors hover:bg-secondary">
+                <button key={v.runId} type="button" onClick={() => setOpen(v.runId)} className="flex flex-col gap-0.5 rounded-card border border-border bg-card px-4 py-3 text-start transition-colors hover:bg-secondary">
                   <b className="text-[16px]">{ago(v.createdAt)}</b>
                   <span className="text-[15px] text-ink-2">
-                    {v.status === 'failed' ? 'Stopped early' : v.intents.length ? `${reached(v)} of ${v.intents.length} goals reached` : 'Looked around'} · {n === 0 ? 'no problems' : n === 1 ? '1 problem' : `${n} problems`}
+                    {m.virtual_user_drawer__visit_summary({ outcome: v.status === 'failed' ? m.virtual_user_drawer__stopped_early() : v.intents.length ? m.virtual_user_drawer__goals_reached({ reached: reached(v), total: v.intents.length }) : m.virtual_user_drawer__looked_around(), problems: n === 0 ? m.virtual_user_drawer__summary_no_problems() : m.virtual_user_drawer__summary_problems({ n }) })}
                   </span>
                 </button>
               )
@@ -151,38 +153,38 @@ export function VirtualUserDrawer({ u, projectKey, start, onClose }: { u: Virtua
         <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-auto px-5 py-5">
           <section>
             <h3 className="font-heading text-[18px] font-bold">{kind}</h3>
-            <p className="mt-1 text-[16px] text-ink-2">{[u.description, kindText].filter(Boolean).join(' ')}</p>
+            <p className="mt-1 text-[16px] text-ink-2">{u.description ? <>{u.description}{sep(' ')}</> : null}{kindText}</p>
           </section>
           <section>
-            <h3 className="mb-2 font-heading text-[18px] font-bold">What {u.name} will try to do</h3>
+            <h3 className="mb-2 font-heading text-[18px] font-bold">{m.virtual_user_drawer__will_try({ name: u.name })}</h3>
             {u.goals.length === 0 ? (
-              <p className="text-[16px] text-ink-2">No goals yet, so a visit would stop straight away. Ask Pikku to give {u.name} something to do.</p>
+              <p className="text-[16px] text-ink-2">{m.virtual_user_drawer__no_goals({ name: u.name })}</p>
             ) : (
               <ul className="flex flex-col gap-2">
                 {u.goals.map((g) => (
                   <li key={g} className="flex gap-2.5 text-[16px]">
-                    <Check className="mt-0.5 size-5 shrink-0 text-accent-foreground" aria-hidden="true" />“{g}”
+                    <Check className="mt-0.5 size-5 shrink-0 text-accent-foreground" aria-hidden="true" />{m.virtual_user_drawer__goal_quote({ goal: g })}
                   </li>
                 ))}
               </ul>
             )}
-            <p className="mt-3 text-[14px] text-ink-2">They only get the goal, never the steps, so they find their own way around, just like a real person.</p>
+            <p className="mt-3 text-[14px] text-ink-2">{m.virtual_user_drawer__goal_only()}</p>
           </section>
           <section>
-            <h3 className="mb-1 font-heading text-[18px] font-bold">What {u.name} is allowed to use</h3>
+            <h3 className="mb-1 font-heading text-[18px] font-bold">{m.virtual_user_drawer__allowed({ name: u.name })}</h3>
             <p className="text-[16px] text-ink-2">
               {u.disposition === 'auditor'
-                ? 'Can look at everything their role allows, but nothing that would change data.'
+                ? m.virtual_user_drawer__allowed_auditor()
                 : u.disposition === 'adversarial'
-                  ? 'Is shown everything on purpose, to check that their role really keeps them out.'
+                  ? m.virtual_user_drawer__allowed_adversarial()
                   : u.roles.length
-                    ? `Can use whatever the ${u.roles.join(' and ')} role allows. Everything else is off-limits.`
-                    : 'Can use the parts of your app that anyone can.'}
+                    ? m.virtual_user_drawer__allowed_roles({ roles: new Intl.ListFormat(undefined, { type: 'conjunction' }).format(u.roles) })
+                    : m.virtual_user_drawer__allowed_anyone()}
             </p>
           </section>
           <section className="rounded-card bg-secondary p-4 text-[15px] text-ink-2">
-            <b className="block text-foreground">Safe to try</b>
-            Visits only go to your preview site, never to your live site or real customers. A visit ends after 40 actions, or sooner if they finish. Each one uses a little AI credit, which is why nothing runs until you ask.
+            <b className="block text-foreground">{m.virtual_user_drawer__safe_title()}</b>
+            {m.virtual_user_drawer__safe_text()}
           </section>
         </div>
       ) : null}
@@ -190,23 +192,23 @@ export function VirtualUserDrawer({ u, projectKey, start, onClose }: { u: Virtua
       {tab === 'own' ? (
         <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-auto px-5 py-5">
           <p className="text-[16px] text-ink-2">
-            {on ? `${u.name} turns up at a random time, so nobody is watching when they find something.` : `${u.name} only visits when you send them. Turn this on and they will turn up by themselves.`}
+            {on ? m.virtual_user_drawer__own_on({ name: u.name }) : m.virtual_user_drawer__own_off({ name: u.name })}
           </p>
           <Button variant={on ? 'bordered' : 'default'} size="page" className="self-start" disabled={save.isPending} onClick={() => save.mutate({ persona: u.id, enabled: !on })}>
-            {on ? 'Stop visiting on their own' : `Let ${u.name} visit on their own`}
+            {on ? m.virtual_user_drawer__stop_own() : m.virtual_user_drawer__start_own({ name: u.name })}
           </Button>
           {on ? (
             <div className="flex flex-col gap-2">
-              <b className="text-[16px]">How often</b>
-              <Segmented label="How often" value={gap} options={GAPS.map(([id, text]) => [id, text])} onChange={(id) => { const g = GAPS.find((x) => x[0] === id)!; save.mutate({ persona: u.id, minIntervalMs: g[2], maxIntervalMs: g[3] }) }} />
-              {u.schedule ? <small className="text-[14px] text-ink-2">Next visit {ago(u.schedule.nextRunAt)}</small> : null}
+              <b className="text-[16px]">{m.virtual_user_drawer__how_often()}</b>
+              <Segmented label={m.virtual_user_drawer__how_often()} value={gap} options={GAPS().map(([id, text]) => [id, text])} onChange={(id) => { const g = GAPS().find((x) => x[0] === id)!; save.mutate({ persona: u.id, minIntervalMs: g[2], maxIntervalMs: g[3] }) }} />
+              {u.schedule ? <small className="text-[14px] text-ink-2">{m.virtual_user_drawer__next_visit({ ago: ago(u.schedule.nextRunAt) })}</small> : null}
             </div>
           ) : null}
           <p className="rounded-card bg-secondary p-4 text-[15px] text-ink-2">
-            <b className="block text-foreground">Costs a little each time</b>
-            Every visit uses AI credit, even when nobody is watching. That is why this is switched on here and never from code.
+            <b className="block text-foreground">{m.virtual_user_drawer__cost_title()}</b>
+            {m.virtual_user_drawer__cost_text()}
           </p>
-          {save.isError ? <ErrorState error={save.error} what={`Changing how ${u.name} visits`} onRetry={() => save.reset()} /> : null}
+          {save.isError ? <ErrorState error={save.error} what={m.virtual_user_drawer__changing_visits({ name: u.name })} onRetry={() => save.reset()} /> : null}
         </div>
       ) : null}
     </aside>

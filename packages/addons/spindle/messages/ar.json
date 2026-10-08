@@ -1,0 +1,237 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "asset__text": "{busy}…",
+  "library__adding": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "لا توجد ملفات قيد الإضافة ({count})",
+        "countPlural=one": "جار إضافة {name}",
+        "countPlural=two": "جار إضافة ملفين ({count})",
+        "countPlural=few": "جار إضافة {count} ملفات",
+        "countPlural=many": "جار إضافة {count} ملفا",
+        "countPlural=other": "جار إضافة {count} ملف"
+      }
+    }
+  ],
+  "spindle_asset__add": "إضافة",
+  "spindle_asset__add_to_a_collection": "إضافة إلى مجموعة",
+  "spindle_asset__added_by_you": "أضفتموه أنتم",
+  "spindle_asset__collections": "المجموعات",
+  "spindle_asset__collections_that_hold_this_file": "المجموعات التي تحتوي على هذا الملف.",
+  "spindle_asset__facts": "{kind} · {file} · {size}",
+  "spindle_asset__how_spindle_read_it": "كيف قرأ Spindle الملف",
+  "spindle_asset__it_is_not_in_any_collection": "ليس في أي مجموعة بعد.",
+  "spindle_asset__library": "المكتبة",
+  "spindle_asset__not_read_yet": "لم تتم قراءته بعد.",
+  "spindle_asset__nothing_yet_once_the_file_is": "لا شيء حتى الآن. بعد قراءة الملف سيظهر نصه هنا.",
+  "spindle_asset__open": "فتح",
+  "spindle_asset__passage_count": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "لا توجد مقاطع ({count}).",
+        "countPlural=one": "مقطع واحد ({count})، بحسب ترتيب ظهوره.",
+        "countPlural=two": "مقطعان ({count})، بحسب ترتيب ظهورهما.",
+        "countPlural=few": "{count} مقاطع، بحسب ترتيب ظهورها.",
+        "countPlural=many": "{count} مقطعا، بحسب ترتيب ظهورها.",
+        "countPlural=other": "{count} مقطع، بحسب ترتيب ظهورها."
+      }
+    }
+  ],
+  "spindle_asset__read_it_again": "قراءته مرة أخرى",
+  "spindle_asset__show_all_count": "عرض الكل ({count})",
+  "spindle_asset__step_done": "تم",
+  "spindle_asset__step_failed": "لم ينجح",
+  "spindle_asset__step_running": "قيد العمل",
+  "spindle_asset__take_out": "إزالة",
+  "spindle_asset__that_did_not_work": "لم ينجح ذلك",
+  "spindle_asset__what_spindle_found": "ما وجده Spindle",
+  "spindle_collection__add_a_file": "إضافة ملف",
+  "spindle_collection__add_to_collection": "إضافة إلى المجموعة",
+  "spindle_collection__choose_a_file": "اختيار ملف",
+  "spindle_collection__collections": "المجموعات",
+  "spindle_collection__delete_collection": "حذف المجموعة",
+  "spindle_collection__files_in_this_collection": "الملفات في هذه المجموعة",
+  "spindle_collection__keep_it": "الإبقاء عليها",
+  "spindle_collection__nothing_here_yet_add_a_file": "لا شيء هنا بعد. أضيفوا ملفا في الأسفل.",
+  "spindle_collection__open": "فتح",
+  "spindle_collection__take_out": "إزالة",
+  "spindle_collection__that_did_not_work": "لم ينجح ذلك",
+  "spindle_collection__yes_delete_it": "نعم، حذفها",
+  "spindle_collection__your_files_stay_in_the_library": "ستبقى ملفاتكم في المكتبة. تحذف المجموعة فقط.",
+  "spindle_collections__collections": "المجموعات",
+  "spindle_collections__file_count": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "لا توجد ملفات",
+        "countPlural=one": "ملف واحد",
+        "countPlural=two": "ملفان",
+        "countPlural=few": "{count} ملفات",
+        "countPlural=many": "{count} ملفا",
+        "countPlural=other": "{count} ملف"
+      }
+    }
+  ],
+  "spindle_collections__groups_of_files_that_belong_together": "مجموعات من الملفات التي تنتمي إلى بعضها. البحث داخل مجموعة يبقي الإجابات في صلب الموضوع.",
+  "spindle_collections__make_one_yourself_or_let_spindle": "أنشئوا مجموعة بأنفسكم، أو دعوا Spindle يقترح مجموعات من الملفات التي أضفتموها.",
+  "spindle_collections__new_collection": "مجموعة جديدة",
+  "spindle_collections__no_collections_yet": "لا توجد مجموعات بعد",
+  "spindle_collections__open": "فتح",
+  "spindle_collections__spindle": "Spindle",
+  "spindle_collections__suggest_collections": "اقتراح مجموعات",
+  "spindle_collections__that_did_not_work": "لم ينجح ذلك",
+  "spindle_library__add_files": "إضافة ملفات",
+  "spindle_library__all_files": "كل الملفات",
+  "spindle_library__choose_files": "اختيار ملفات",
+  "spindle_library__drop_documents_recordings_videos_or_images": "اسحبوا المستندات أو التسجيلات أو مقاطع الفيديو أو الصور وأفلتوها هنا، أو اختاروها من حاسوبكم.",
+  "spindle_library__every_file_is_already_in_a": "كل ملف موجود بالفعل في مجموعة.",
+  "spindle_library__every_file_you_have_added_spindle": "كل الملفات التي أضفتموها. يقرأ Spindle كل ملف حتى تتمكنوا من البحث في جميعها.",
+  "spindle_library__install_with": "للتثبيت استخدموا: {command}",
+  "spindle_library__library": "المكتبة",
+  "spindle_library__needs_tools": "يحتاج إلى {tools} على هذا الحاسوب. {installs}",
+  "spindle_library__not_in_a_collection": "ليست في أي مجموعة",
+  "spindle_library__open": "فتح",
+  "spindle_library__read_it": "قراءة",
+  "spindle_library__review_them_and_decide_which_collections": "راجعوها وقرروا أي المجموعات تريدون إنشاءها.",
+  "spindle_library__see_suggestions": "عرض الاقتراحات",
+  "spindle_library__spindle": "Spindle",
+  "spindle_library__spindle_cannot_read_some_files_yet": "لا يستطيع Spindle قراءة بعض الملفات بعد",
+  "spindle_library__start_by_adding_your_files": "البدء بإضافة ملفاتكم",
+  "spindle_library__suggestion_count": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "ليس لدى Spindle أي اقتراح لتجميع ملفاتكم",
+        "countPlural=one": "لدى Spindle اقتراح واحد لتجميع ملفاتكم",
+        "countPlural=two": "لدى Spindle اقتراحان لتجميع ملفاتكم",
+        "countPlural=few": "لدى Spindle {count} اقتراحات لتجميع ملفاتكم",
+        "countPlural=many": "لدى Spindle {count} اقتراحا لتجميع ملفاتكم",
+        "countPlural=other": "لدى Spindle {count} اقتراح لتجميع ملفاتكم"
+      }
+    }
+  ],
+  "spindle_library__that_did_not_work": "لم ينجح ذلك",
+  "spindle_library__try_again": "حاولوا مرة أخرى",
+  "spindle_newcollection__booking_cancellation_and_opening_hours": "الحجز والإلغاء وساعات العمل",
+  "spindle_newcollection__cancel": "إلغاء",
+  "spindle_newcollection__collections": "المجموعات",
+  "spindle_newcollection__create_collection": "إنشاء المجموعة",
+  "spindle_newcollection__give_it_a_name_you_can": "امنحوها اسما. يمكنكم إضافة الملفات إليها لاحقا من أي ملف.",
+  "spindle_newcollection__name": "الاسم",
+  "spindle_newcollection__new_collection": "مجموعة جديدة",
+  "spindle_newcollection__that_did_not_work": "لم ينجح ذلك",
+  "spindle_newcollection__visitor_policies": "سياسات الزوار",
+  "spindle_newcollection__what_belongs_in_it": "ما الذي ينتمي إليها",
+  "spindle_search__answer": "الإجابة",
+  "spindle_search__ask": "سؤال",
+  "spindle_search__ask_a_question_and_get_an": "اطرحوا سؤالا لتحصلوا على إجابة مع الصفحة التي جاءت منها، أو ابحثوا عن كلمة.",
+  "spindle_search__ask_a_question_or_search_for": "اطرحوا سؤالا أو ابحثوا عن كلمة",
+  "spindle_search__citation": "{title}، {where}",
+  "spindle_search__everything": "الكل",
+  "spindle_search__found_by": "{where} · عثر عليه عبر {matchedBy}",
+  "spindle_search__just_search": "بحث فقط",
+  "spindle_search__not_in_your_files": "غير موجود في ملفاتكم",
+  "spindle_search__nothing_matched": "لا نتائج مطابقة",
+  "spindle_search__nothing_you_have_added_says_this": "لا شيء مما أضفتموه يقول ذلك، لذلك لن يخمن Spindle.",
+  "spindle_search__open": "فتح",
+  "spindle_search__open_file": "فتح الملف",
+  "spindle_search__place_count": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "لم يعثر على أي موضع",
+        "countPlural=one": "عثر على موضع واحد",
+        "countPlural=two": "عثر على موضعين",
+        "countPlural=few": "عثر على {count} مواضع",
+        "countPlural=many": "عثر على {count} موضعا",
+        "countPlural=other": "عثر على {count} موضع"
+      }
+    }
+  ],
+  "spindle_search__search": "بحث",
+  "spindle_search__spindle": "Spindle",
+  "spindle_search__that_did_not_work": "لم ينجح ذلك",
+  "spindle_shared__busy_adding": "جار الإضافة",
+  "spindle_shared__busy_adding_files": "جار إضافة الملفات",
+  "spindle_shared__busy_creating": "جار الإنشاء",
+  "spindle_shared__busy_creating_collection": "جار إنشاء المجموعة",
+  "spindle_shared__busy_deleting": "جار الحذف",
+  "spindle_shared__busy_dismissing": "جار التجاهل",
+  "spindle_shared__busy_looking_groups": "جار البحث عن مجموعات",
+  "spindle_shared__busy_reading_again": "جار قراءة الملف مرة أخرى",
+  "spindle_shared__busy_reading_answer": "جار قراءة ملفاتكم للعثور على إجابة",
+  "spindle_shared__busy_reading_file": "جار قراءة الملف",
+  "spindle_shared__busy_searching": "جار البحث",
+  "spindle_shared__busy_taking_out": "جار الإزالة",
+  "spindle_shared__kind_audio": "تسجيل",
+  "spindle_shared__kind_document": "مستند",
+  "spindle_shared__kind_image": "صورة",
+  "spindle_shared__kind_text": "نص",
+  "spindle_shared__kind_video": "فيديو",
+  "spindle_shared__state_extracted": "جاهز للبحث",
+  "spindle_shared__state_extracting": "تجري قراءته الآن",
+  "spindle_shared__state_failed": "تعذرت قراءته",
+  "spindle_shared__state_uploaded": "في انتظار القراءة",
+  "spindle_shared__step_categorise": "وصف الصور",
+  "spindle_shared__step_extract": "قراءة النص",
+  "spindle_shared__step_keyframes": "اختيار اللقطات الرئيسية",
+  "spindle_shared__step_place": "اختيار المجموعات",
+  "spindle_shared__step_probe": "الاطلاع على التسجيل",
+  "spindle_shared__step_summarise": "كتابة ملخص قصير",
+  "spindle_shared__step_transcribe": "تدوين ما قيل",
+  "spindle_shared__where_frame": "اللقطة عند {seconds} ث",
+  "spindle_shared__where_page": "الصفحة {page}",
+  "spindle_shared__where_speech": "عند {seconds} ث",
+  "spindle_shared__where_summary": "الملخص",
+  "spindle_suggestions__a_file": "ملف",
+  "spindle_suggestions__add_them": "إضافتها",
+  "spindle_suggestions__choose_a_collection": "اختيار مجموعة",
+  "spindle_suggestions__collection_name": "اسم المجموعة",
+  "spindle_suggestions__every_file_is_in_a_collection": "كل ملف موجود في مجموعة، أو ليس لدى Spindle مجموعات جديدة ليقترحها. أضيفوا المزيد من الملفات وانظروا مرة أخرى.",
+  "spindle_suggestions__files_that_fit_no_collection_yet": "ملفات لا تناسب أي مجموعة حتى الآن. يجمع Spindle ما ينتمي إلى بعضه، وأنتم تقررون.",
+  "spindle_suggestions__fit_clear": "ينتمي بوضوح",
+  "spindle_suggestions__fit_maybe": "قد ينتمي",
+  "spindle_suggestions__fit_probable": "ينتمي على الأرجح",
+  "spindle_suggestions__look_again": "البحث مرة أخرى",
+  "spindle_suggestions__make_this_collection": "إنشاء هذه المجموعة",
+  "spindle_suggestions__not_now": "ليس الآن",
+  "spindle_suggestions__nothing_to_decide": "لا شيء لتقرره",
+  "spindle_suggestions__or_add_them_to_one_you": "أو إضافتها إلى مجموعة لديكم بالفعل",
+  "spindle_suggestions__see_collections": "عرض المجموعات",
+  "spindle_suggestions__spindle": "Spindle",
+  "spindle_suggestions__spindle_suggests_a_collection": "Spindle يقترح مجموعة",
+  "spindle_suggestions__suggestions": "الاقتراحات",
+  "spindle_suggestions__that_did_not_work": "لم ينجح ذلك"
+}

@@ -128,7 +128,7 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
   return services
 }
 
-export { studioHome } from './projects.js'
+export { LOCAL_TEAM, studioHome } from './projects.js'
 export { StudioSettingsFile } from './settings.js'
 export { StudioAi } from './ai.js'
 export { StudioProjectsService, fileProjectStore } from './projects.js'

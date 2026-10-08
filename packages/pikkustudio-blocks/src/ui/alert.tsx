@@ -1,3 +1,4 @@
+import type { I18nProps } from '../lib/i18n-props'
 import * as React from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '../lib/utils'
@@ -14,15 +15,15 @@ const alertVariants = cva('relative w-full rounded-lg border px-4 py-3 text-sm',
   defaultVariants: { variant: 'default' },
 })
 
-function Alert({ className, variant, ...props }: React.ComponentProps<'div'> & VariantProps<typeof alertVariants>) {
+function Alert({ className, variant, ...props }: I18nProps<React.ComponentProps<'div'>> & VariantProps<typeof alertVariants>) {
   return <div data-slot="alert" role="alert" className={cn(alertVariants({ variant }), className)} {...props} />
 }
 
-function AlertTitle({ className, ...props }: React.ComponentProps<'div'>) {
+function AlertTitle({ className, ...props }: I18nProps<React.ComponentProps<'div'>>) {
   return <div data-slot="alert-title" className={cn('mb-1 font-medium leading-none tracking-tight', className)} {...props} />
 }
 
-function AlertDescription({ className, ...props }: React.ComponentProps<'div'>) {
+function AlertDescription({ className, ...props }: I18nProps<React.ComponentProps<'div'>>) {
   return <div data-slot="alert-description" className={cn('text-sm text-muted-foreground', className)} {...props} />
 }
 

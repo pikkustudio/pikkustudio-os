@@ -1,3 +1,5 @@
+import { asI18n, type I18nString } from '@pikku/react'
+import { m } from '@/i18n/messages'
 import { createContext, useCallback, useContext, useRef, useState } from 'react'
 
 export type ChatEvent = { type: string; [key: string]: unknown }
@@ -5,7 +7,7 @@ export type ChatTransport = (path: string, body: unknown) => AsyncIterable<ChatE
 
 export type ChatItem =
   | { id: string; kind: 'me' | 'pikku'; text: string }
-  | { id: string; kind: 'card'; toolCallId: string; runId: string; title: string; detail: string; state: 'ask' | 'working' | 'done' | 'declined'; yes?: string; no?: string }
+  | { id: string; kind: 'card'; toolCallId: string; runId: string; title: I18nString; detail: I18nString; state: 'ask' | 'working' | 'done' | 'declined'; yes?: I18nString; no?: I18nString }
 
 export const fetchTransport = (base: string): ChatTransport =>
   async function* (path, body) {
@@ -68,8 +70,13 @@ export const ChatTransportCtx = createContext<ChatTransport>(mockTransport)
 export const ProjectChatTransportCtx = createContext<ChatTransport>(mockTransport)
 
 const cardFor = (value: { toolName: string; args: Record<string, unknown> }) => {
-  if (value.toolName.endsWith('postChange')) return { title: String(value.args.title ?? 'A change'), detail: String(value.args.body ?? '') }
-  return { title: 'Pikku wants to do something', detail: JSON.stringify(value.args) }
+  if (value.toolName.endsWith('postChange')) {
+    const title = String(value.args.title ?? '')
+    const detail = String(value.args.body ?? '')
+    return { title: title ? asI18n(title) : m.chat__a_change(), detail: asI18n(detail) }
+  }
+  const detail = JSON.stringify(value.args)
+  return { title: m.chat__wants_to_do_something(), detail: asI18n(detail) }
 }
 
 export const usePikkuChat = (projectKey: string) => {
@@ -92,10 +99,10 @@ export const usePikkuChat = (projectKey: string) => {
           else if (e.type === 'CUSTOM' && e.name === 'pikku:approval-request') {
             const v = e.value as { toolCallId: string; toolName: string; runId: string; args: Record<string, unknown> }
             setItems((x) => [...x, { id: `c${v.toolCallId}`, kind: 'card', toolCallId: v.toolCallId, runId: v.runId, state: 'ask', ...cardFor(v) }])
-          } else if (e.type === 'RUN_ERROR') push({ kind: 'pikku', text: /Choose an AI/.test(String(e.message)) ? 'I cannot chat yet. Your subscription works for building, but chatting needs an AI with its own key. Open Choose an AI, add one, then ask me again.' : 'Something got in the way. Please try again.' })
+          } else if (e.type === 'RUN_ERROR') push({ kind: 'pikku', text: /Choose an AI/.test(String(e.message)) ? m.chat__cannot_chat_yet() : m.chat__went_wrong() })
         }
       } catch {
-        push({ kind: 'pikku', text: 'I could not reach Pikku just now. Please try again.' })
+        push({ kind: 'pikku', text: m.chat__unreachable() })
       } finally {
         setItems((x) => x.filter((i) => !(i.kind === 'pikku' && !i.text.trim())))
         setBusy(false)

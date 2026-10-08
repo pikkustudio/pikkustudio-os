@@ -1,3 +1,4 @@
+import { asI18n, sep, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useMemo, useState, type CSSProperties } from 'react'
 import { Check, ChevronDown, Search } from 'lucide-react'
@@ -12,7 +13,10 @@ import type { Lang, TransString } from '../types/translations'
 const STEP = 15
 const MAX = 2
 const section = (id: string) => (id.includes('__') ? id.split('__')[0] : 'other')
-const nice = (k: string) => k.charAt(0).toUpperCase() + k.slice(1).replace(/_/g, ' ')
+const nice = (k: string): I18nString => {
+  const text = k.charAt(0).toUpperCase() + k.slice(1).replace(/_/g, ' ')
+  return asI18n(text)
+}
 
 export function TransRows({ items, locales, baseLocale, set }: { items: TransString[]; locales: string[]; baseLocale: string; set: (id: string, lang: Lang, value: string) => void }) {
   const [on, setOn] = useState<string[]>(() => locales.slice(0, MAX))
@@ -40,11 +44,11 @@ export function TransRows({ items, locales, baseLocale, set }: { items: TransStr
   const row = (s: (typeof items)[number]) => (
     <li key={s.id} style={vars} className={`${grid} px-3.5 py-2`}>
       <span className="text-[15px] leading-[1.3] font-bold">
-        {s.base}
+        {asI18n(s.base)}
         {flat ? <span className="ms-2 text-px13 font-normal text-muted-foreground">{nice(section(s.id))}</span> : null}
       </span>
       {cols.map((c) => (
-        <Textarea key={c.id} tone="field" rows={1} dir={c.rtl ? 'rtl' : undefined} className={`min-h-10 py-2 ${val(s, c.id) ? '' : 'border-dashed border-warning bg-warning-soft'}`} value={val(s, c.id)} onChange={(e) => put(s, c.id, e.target.value)} placeholder="…" aria-label={`${s.base} in ${c.name}`} />
+        <Textarea key={c.id} tone="field" rows={1} dir={c.rtl ? 'rtl' : undefined} className={`min-h-10 py-2 ${val(s, c.id) ? '' : 'border-dashed border-warning bg-warning-soft'}`} value={val(s, c.id)} onChange={(e) => put(s, c.id, e.target.value)} placeholder={m.trans_rows__text()} aria-label={m.trans_rows__text_in_language({ text: s.base, language: c.name })} />
       ))}
     </li>
   )
@@ -54,13 +58,16 @@ export function TransRows({ items, locales, baseLocale, set }: { items: TransStr
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center gap-2" role="group" aria-label={m.trans_rows__languages_to_show()}>
         <b className="me-1 text-px14 text-muted-foreground">{m.trans_rows__languages()}</b>
-        <span className="rounded-full bg-secondary px-3.5 py-1.5 text-px14 font-bold text-ink-2">{languageName(baseLocale)} · {m.trans_rows__original()}</span>
-        {catalog.map((l) => (
-          <Button key={l.id} variant="filter" size="compactTight" type="button" aria-pressed={on.includes(l.id)} disabled={!on.includes(l.id) && on.length >= MAX} onClick={() => flip(l.id)}>
-            {on.includes(l.id) ? <Check className="size-4" /> : null}
-            {l.name}
-          </Button>
-        ))}
+        <span className="rounded-full bg-secondary px-3.5 py-1.5 text-px14 font-bold text-ink-2">{languageName(baseLocale)}{sep(' · ')}{m.trans_rows__original()}</span>
+        {catalog.map((l) => {
+          const name = l.name
+          return (
+            <Button key={l.id} variant="filter" size="compactTight" type="button" aria-pressed={on.includes(l.id)} disabled={!on.includes(l.id) && on.length >= MAX} onClick={() => flip(l.id)}>
+              {on.includes(l.id) ? <Check className="size-4" /> : null}
+              {name}
+            </Button>
+          )
+        })}
         <AskPikku label={m.trans_rows__add_a_language()} prompt={m.trans_rows__i_would_like_to()} />
         {on.length >= MAX ? <span className="text-px13 text-muted-foreground">{m.trans_rows__three_languages_at_most()}</span> : null}
       </div>
@@ -69,7 +76,7 @@ export function TransRows({ items, locales, baseLocale, set }: { items: TransStr
           <SelectTrigger shape="pill" className="h-12 w-52 shrink-0 border-[1.5px] bg-field" aria-label={m.trans_rows__page()}><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{m.trans_rows__all_pages()}</SelectItem>
-            {pages.map((p) => <SelectItem key={p} value={p}>{nice(p)} · {m.trans_rows__left({ count: miss(p) })}</SelectItem>)}
+            {pages.map((p) => <SelectItem key={p} value={p}>{m.trans_rows__page_option({ page: nice(p), left: m.trans_rows__left({ count: miss(p) }) })}</SelectItem>)}
           </SelectContent>
         </Select>
         <Select value={filter} onValueChange={setFilter}>
@@ -77,8 +84,8 @@ export function TransRows({ items, locales, baseLocale, set }: { items: TransStr
           <SelectContent><SelectItem value="missing">{m.trans_rows__only_missing()}</SelectItem><SelectItem value="all">{m.trans_rows__everything()}</SelectItem></SelectContent>
         </Select>
         <div className="relative min-w-52 flex-1">
-          <Search className="absolute top-1/2 left-3.5 size-5.5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-          <Input type="search" shape="pill" className="h-12 border-[1.5px] border-input bg-field pl-10.5 text-px16 shadow-none md:text-px16" placeholder={m.trans_rows__search_the_wording()} aria-label={m.trans_rows__search_the_wording()} value={q} onChange={(e) => setQ(e.target.value)} />
+          <Search className="absolute top-1/2 start-3.5 size-5.5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+          <Input type="search" shape="pill" className="h-12 border-[1.5px] border-input bg-field ps-10.5 text-px16 shadow-none md:text-px16" placeholder={m.trans_rows__search_the_wording()} aria-label={m.trans_rows__search_the_wording()} value={q} onChange={(e) => setQ(e.target.value)} />
         </div>
       </div>
       {cols.length ? (
@@ -88,13 +95,13 @@ export function TransRows({ items, locales, baseLocale, set }: { items: TransStr
             <div className="flex flex-wrap gap-x-5 gap-y-1.5">
               {cols.map((c) => (
                 <div key={c.id} className="flex min-w-36 flex-1 flex-col gap-1">
-                  <span className="text-px13 font-bold"><bdi>{c.name}</bdi> · {Math.round(((total - lack(c.id)) / total) * 100)}%</span>
+                  <span className="text-px13 font-bold"><bdi>{c.name}</bdi>{m.trans_rows__name_percent({ percent: Math.round(((total - lack(c.id)) / total) * 100) })}</span>
                   <div className="h-2 overflow-hidden rounded-full bg-card"><div className="h-full rounded-full bg-primary" style={{ width: `${((total - lack(c.id)) / total) * 100}%` }} /></div>
                 </div>
               ))}
             </div>
           </div>
-          {cols.some((c) => lack(c.id)) ? <AskPikku label={m.trans_rows__ask_pikku_to_translate()} prompt={`Please translate every missing phrase into ${cols.map((c) => c.name).join(' and ')}, then show me what you wrote to check.`} /> : null}
+          {cols.some((c) => lack(c.id)) ? <AskPikku label={m.trans_rows__ask_pikku_to_translate()} prompt={m.trans_rows__translate_prompt({ languages: cols.map((c) => c.name).join(' and ') })} /> : null}
         </div>
       ) : <p className="px-2 text-ink-2">{m.trans_rows__pick_at_least_one()}</p>}
       {cols.length && shown.length === 0 ? <p className="px-2 text-ink-2">{m.trans_rows__nothing_here_everything_is()}</p> : null}
@@ -119,7 +126,7 @@ export function TransRows({ items, locales, baseLocale, set }: { items: TransStr
           return (
             <section key={p} className="flex flex-col gap-2">
               <button type="button" aria-expanded={!closed} onClick={() => setShut(closed ? shut.filter((x) => x !== p) : [...shut, p])} className="flex w-full cursor-pointer items-center gap-2 px-1 pt-2 text-start">
-                <ChevronDown className={`size-4 text-muted-foreground transition-transform ${closed ? '-rotate-90' : ''}`} />
+                <ChevronDown className={`size-4 text-muted-foreground transition-transform ${closed ? '-rotate-90 rtl:rotate-90' : ''}`} />
                 <h2 className="m-0 text-px14 font-bold text-muted-foreground">{nice(p)}</h2>
                 <span className="text-px13 text-muted-foreground">{m.trans_rows__left_of({ left: miss(p), total: items.filter((s) => section(s.id) === p).length })}</span>
               </button>

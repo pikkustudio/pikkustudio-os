@@ -1,3 +1,4 @@
+import { m } from '@/i18n/messages'
 import { useContext } from 'react'
 import { useProjectKey, useProjectName } from '../lib/project'
 import { useProjectQuery } from '../lib/projectRpc'
@@ -15,7 +16,7 @@ export function ArtifactsScreen() {
   const artifacts = useProjectQuery<{ artifacts: Artifact[] }>(key, 'console:listArtifacts', null, { refetchInterval: 4000 })
   return (
     <Page gap="snug">
-      <PageHead crumb={projectName} title="Artifacts" text="The designs, pages and documents made while building your app." size="lead" />
+      <PageHead crumb={projectName} title={m.artifacts_screen__title()} text={m.artifacts_screen__text()} size="lead" />
       <QueryState query={artifacts} skeleton={<CardsSkeleton count={3} />}>
         {(data) => <ArtifactsGallery key={view} view={view} items={data.artifacts} onAsk={say} />}
       </QueryState>

@@ -1,5 +1,5 @@
+import type { I18nNode, I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
-import type { ReactNode } from 'react'
 import { Bell, Globe, LogOut, Palette, User } from 'lucide-react'
 import { AccountHero } from '../blocks/AccountHero'
 import { Page } from '../blocks/Page'
@@ -13,7 +13,7 @@ import { languageName } from '../lib/i18n'
 import { supportedLocales, useLocale, type Locale } from '@/i18n/config'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 
-const Group = ({ title, children }: { title: string; children: ReactNode }) => (
+const Group = ({ title, children }: { title: I18nString; children: I18nNode }) => (
   <section className="flex flex-col gap-2" aria-label={title}>
     <h2 className="px-1 pt-2 text-px14 font-bold text-muted-foreground">{title}</h2>
     {children}
@@ -60,7 +60,7 @@ export function AccountScreen() {
             </RowStack>
           </Group>
           <Group title={m.account_screen__signed_in()}>
-            <RowCard tile={<LogOut className="size-5" />} title={m.account_screen__sign_out()} caption={m.account_screen__sign_out_text()}>
+            <RowCard tile={<LogOut className="rtl:-scale-x-100 size-5" />} title={m.account_screen__sign_out()} caption={m.account_screen__sign_out_text()}>
               <Button type="button" variant="bordered" size="compact" disabled={signOut.isPending} onClick={() => signOut.mutate({})}>
                 {m.account_screen__sign_out()}
               </Button>

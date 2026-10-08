@@ -1,3 +1,4 @@
+import { asI18n } from '@pikku/react'
 import { ArtifactFrame } from './ArtifactFrame'
 import type { Artifact } from '../types/artifacts'
 
@@ -10,16 +11,16 @@ export function ArtifactPageView({ item, device }: { item: Artifact; device: 'co
             <i className="size-2.5 rounded-full bg-[#FF6F61]" />
             <i className="size-2.5 rounded-full bg-[#FFC83D]" />
             <i className="size-2.5 rounded-full bg-[#00767E]" />
-            <span className="ml-3 h-5 flex-1 truncate rounded-full bg-card px-3 text-[12px] leading-5 text-muted-foreground">{item.title}</span>
+            <span className="ms-3 h-5 flex-1 truncate rounded-full bg-card px-3 text-[12px] leading-5 text-muted-foreground">{asI18n(item.title)}</span>
           </div>
           <div className="aspect-[8/5]">
-            <ArtifactFrame html={item.html ?? ''} title={item.title} />
+            <ArtifactFrame html={item.html ?? ''} title={asI18n(item.title)} />
           </div>
         </div>
       ) : (
         <div className={`max-w-full overflow-hidden rounded-[2rem] border-[10px] border-foreground bg-card shadow-lg ${device === 'tablet' ? 'w-[28rem]' : 'w-[20rem]'}`}>
           <div className="h-130 overflow-hidden">
-            <ArtifactFrame html={item.html ?? ''} title={item.title} />
+            <ArtifactFrame html={item.html ?? ''} title={asI18n(item.title)} />
           </div>
         </div>
       )}

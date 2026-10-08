@@ -22,7 +22,7 @@ export function Toaster() {
   return (
     <div role="status" aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-6 z-60 flex flex-col items-center gap-2 px-4">
       {items.map((t) => (
-        <div key={t.id} className="pointer-events-auto flex max-w-md items-center gap-3 rounded-full bg-foreground py-2.5 pr-2.5 pl-5 text-px15 font-semibold text-background shadow-lg">
+        <div key={t.id} className="pointer-events-auto flex max-w-md items-center gap-3 rounded-full bg-foreground py-2.5 pe-2.5 ps-5 text-px15 font-semibold text-background shadow-lg">
           <span className="min-w-0 flex-1">{t.text}</span>
           <button type="button" aria-label={m.toaster__dismiss()} onClick={() => dismiss(t.id)} className="grid size-7 shrink-0 place-items-center rounded-full hover:bg-background/15">
             <X className="size-4" />

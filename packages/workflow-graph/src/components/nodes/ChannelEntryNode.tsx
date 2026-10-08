@@ -1,4 +1,6 @@
 import React from 'react'
+import type { I18nString } from '@pikku/react'
+import { useGraphM } from '../../context/MessagesContext'
 import type { GraphNodeProps } from '../../types'
 import { Radio } from 'lucide-react'
 import { useGraphActions } from '../../context/GraphHostContext'
@@ -6,10 +8,10 @@ import { NodeTile, nodeCardClass } from '../NodeTile'
 import { ChannelRow } from '../ChannelRow'
 
 interface ChannelEntryNodeData {
-  channelName: string
-  route: string
+  channelName: I18nString
+  route: I18nString
   handlers: string[]
-  categories: string[]
+  categories: I18nString[]
   channelMeta: any
 }
 
@@ -17,6 +19,7 @@ export const ChannelEntryNode: React.FC<
   GraphNodeProps<ChannelEntryNodeData>
 > = ({ data }) => {
   const { openChannel } = useGraphActions()
+  const m = useGraphM()
 
   const handleClick = React.useCallback(() => {
     openChannel(data.channelName, data.channelMeta)
@@ -48,13 +51,13 @@ export const ChannelEntryNode: React.FC<
       </div>
 
       {data.handlers.includes('connect') && (
-        <ChannelRow label="onConnect" handleId="connect" />
+        <ChannelRow label={m.handler_on_connect()} handleId="connect" />
       )}
       {data.handlers.includes('disconnect') && (
-        <ChannelRow label="onDisconnect" handleId="disconnect" />
+        <ChannelRow label={m.handler_on_disconnect()} handleId="disconnect" />
       )}
       {data.handlers.includes('message') && (
-        <ChannelRow label="onMessage" handleId="message" />
+        <ChannelRow label={m.handler_on_message()} handleId="message" />
       )}
       {data.categories.map((cat) => (
         <ChannelRow key={cat} label={cat} handleId={`category-${cat}`} />

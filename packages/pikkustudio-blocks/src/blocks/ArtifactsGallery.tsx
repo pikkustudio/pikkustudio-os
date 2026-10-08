@@ -1,3 +1,4 @@
+import type { I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useState } from 'react'
 import { Search, Sparkles } from 'lucide-react'
@@ -9,13 +10,13 @@ import { ArtifactRow } from './ArtifactRow'
 import { PikkuDot } from './PikkuDot'
 import type { Artifact } from '../types/artifacts'
 
-const kinds: Array<[Artifact['kind'], string]> = [
-  ['Design', 'Designs'],
-  ['Page', 'Pages'],
-  ['Document', 'Documents'],
+const kinds = (): Array<[Artifact['kind'], I18nString]> => [
+  ['Design', m.artifacts_gallery__designs()],
+  ['Page', m.artifacts_gallery__pages()],
+  ['Document', m.artifacts_gallery__documents()],
 ]
 
-export function ArtifactsGallery({ view, items, onAsk }: { items: Artifact[]; view: 'healthy' | 'problem' | 'empty'; onAsk: (text: string) => void }) {
+export function ArtifactsGallery({ view, items, onAsk }: { items: Artifact[]; view: 'healthy' | 'problem' | 'empty'; onAsk: (text: I18nString) => void }) {
   const [q, setQ] = useState('')
   const [kind, setKind] = useState('all')
   const term = q.trim().toLowerCase()
@@ -41,7 +42,7 @@ export function ArtifactsGallery({ view, items, onAsk }: { items: Artifact[]; vi
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{m.artifacts_gallery__all_artifacts()}</SelectItem>
-            {kinds.map(([id, text]) => (
+            {kinds().map(([id, text]) => (
               <SelectItem key={id} value={id}>
                 {text}
               </SelectItem>
@@ -49,11 +50,11 @@ export function ArtifactsGallery({ view, items, onAsk }: { items: Artifact[]; vi
           </SelectContent>
         </Select>
         <div className="relative min-w-0 flex-1">
-          <Search className="absolute top-1/2 left-3.5 size-5.5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-          <Input type="search" shape="pill" className="h-12 border-[1.5px] border-input bg-field pl-10.5 text-px16 shadow-none md:text-px16" placeholder={m.artifacts_gallery__search_the_artifacts()} aria-label={m.artifacts_gallery__search_the_artifacts()} value={q} onChange={(e) => setQ(e.target.value)} />
+          <Search className="absolute top-1/2 start-3.5 size-5.5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+          <Input type="search" shape="pill" className="h-12 border-[1.5px] border-input bg-field ps-10.5 text-px16 shadow-none md:text-px16" placeholder={m.artifacts_gallery__search_the_artifacts()} aria-label={m.artifacts_gallery__search_the_artifacts()} value={q} onChange={(e) => setQ(e.target.value)} />
         </div>
       </div>
-      {term ? <p className="px-2 text-px14 text-muted-foreground">{found.length ? `${found.length} found` : m.artifacts_gallery__nothing_matches_try_another()}</p> : null}
+      {term ? <p className="px-2 text-px14 text-muted-foreground">{found.length ? m.artifacts_gallery__found({ count: found.length }) : m.artifacts_gallery__nothing_matches_try_another()}</p> : null}
       {term ? (
         <ul className="@container/row m-0 flex list-none flex-col gap-2 p-0">
           {found.map((a) => (
@@ -61,7 +62,7 @@ export function ArtifactsGallery({ view, items, onAsk }: { items: Artifact[]; vi
           ))}
         </ul>
       ) : (
-        kinds.map(([id, text]) => {
+        kinds().map(([id, text]) => {
           const list = found.filter((a) => a.kind === id)
           return list.length ? (
             <section key={id} className="flex flex-col gap-2">

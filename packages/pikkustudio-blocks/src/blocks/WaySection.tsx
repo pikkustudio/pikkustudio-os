@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react'
+import type { I18nNode, I18nString } from '@pikku/react'
 
-export function WaySection({ title, sub, children }: { title: string; sub?: string; children: ReactNode }) {
+export function WaySection({ title, sub, children }: { title: I18nString; sub?: I18nString; children: I18nNode }) {
   return (
     <section aria-label={title}>
       <div className="mb-4 flex items-baseline justify-between gap-4">

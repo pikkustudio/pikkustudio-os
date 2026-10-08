@@ -1,16 +1,18 @@
 import React from 'react'
+import { asI18n, type I18nString } from '@pikku/react'
 import type { Node } from '@xyflow/react'
 import type { GraphNodeProps } from '../../types'
 import { FlowNode } from './FlowNode'
 import { GitCompare } from 'lucide-react'
 import { useGraphActions } from '../../context/GraphHostContext'
+import { useGraphM } from '../../context/MessagesContext'
 import { useGraphHighlight } from '../../context/GraphHostContext'
 
 interface SwitchNodeData {
   colorKey: string
   expression?: string
   cases?: Array<{ value: string }>
-  stepName?: string
+  stepName?: I18nString
 }
 
 type HighlightType = 'focused' | 'referenced' | null
@@ -20,6 +22,7 @@ export const SwitchNode: React.FC<GraphNodeProps<SwitchNodeData>> = ({
   id,
 }) => {
   const { openWorkflowStep } = useGraphActions()
+  const m = useGraphM()
   const graphHighlight = useGraphHighlight()
 
   const highlightType: HighlightType = React.useMemo(() => {
@@ -38,11 +41,11 @@ export const SwitchNode: React.FC<GraphNodeProps<SwitchNodeData>> = ({
       })
     }
 
-    handles.push({ id: 'default', label: 'default' })
-    handles.push({ id: 'after', label: 'after' })
+    handles.push({ id: 'default', label: m.handle_default() })
+    handles.push({ id: 'after', label: m.handle_after() })
 
     return handles
-  }, [data.cases])
+  }, [data.cases, m])
 
   const handleClick = React.useCallback(() => {
     openWorkflowStep(id, 'switch')
@@ -54,7 +57,7 @@ export const SwitchNode: React.FC<GraphNodeProps<SwitchNodeData>> = ({
       tone="decision"
       hasInput={true}
       outputHandles={outputHandles}
-      label="Switch"
+      label={m.node_switch()}
       subtitle={data.stepName}
       onClick={handleClick}
       highlightType={highlightType}
@@ -76,7 +79,7 @@ export const getSwitchNodeConfig = (
       colorKey: 'workflow',
       expression: step.expression,
       cases: step.cases,
-      stepName: step.stepName,
+      stepName: asI18n(step.stepName),
       nodeType: 'flow',
     },
   }

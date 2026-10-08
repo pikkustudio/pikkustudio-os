@@ -1,3 +1,4 @@
+import type { I18nProps } from '../lib/i18n-props'
 import * as React from 'react'
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
@@ -47,7 +48,7 @@ const buttonVariants = cva(
         segment: 'h-8.5 px-3.5 text-px14',
         bar: 'size-10 p-0',
         picker: 'h-10 max-w-full min-w-0 gap-2.5 px-4.5 text-px15',
-        back: 'h-auto gap-2 py-1.5 pr-2.5 pl-1 text-px16',
+        back: 'h-auto gap-2 py-1.5 pe-2.5 ps-1 text-px16',
         link: 'h-auto gap-1.5 px-1 py-1.5',
         tile: 'h-auto flex-col gap-2 py-6',
         row: 'h-9 justify-start gap-3 px-4',
@@ -74,7 +75,7 @@ function Button({
   join,
   asChild = false,
   ...props
-}: React.ComponentProps<'button'> &
+}: I18nProps<React.ComponentProps<'button'>> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
   }) {

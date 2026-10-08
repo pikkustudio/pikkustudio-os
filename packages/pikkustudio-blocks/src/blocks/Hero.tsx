@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { I18nNode, I18nString } from '@pikku/react'
 import { HeroArt, type Art } from './HeroArt'
 
 export function Hero({
@@ -9,16 +9,18 @@ export function Hero({
   actions,
   hint,
   thumb,
+  notice,
   children,
 }: {
   hue: 'teal' | 'petrol' | 'sea'
   art: Art
-  title: string
-  why: string
-  actions?: ReactNode
-  hint?: string
-  thumb?: ReactNode
-  children?: ReactNode
+  title: I18nString
+  why: I18nString
+  actions?: I18nNode
+  hint?: I18nString
+  thumb?: I18nNode
+  notice?: I18nNode
+  children?: I18nNode
 }) {
   return (
     <section
@@ -37,6 +39,7 @@ export function Hero({
             {hint ? <span className="text-px15 text-hero-ink-2">{hint}</span> : null}
           </div>
         ) : null}
+        {notice}
       </div>
       <div className="relative hidden min-h-55 md:block" aria-hidden="true">
         <HeroArt art={art} thumb={thumb} />

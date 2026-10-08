@@ -1,3 +1,4 @@
+import { type I18nString, asI18n } from '@pikku/react'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { Check, ChevronDown, Copy, LoaderCircle, RefreshCw, TriangleAlert } from 'lucide-react'
 import { m } from '@/i18n/messages'
@@ -40,7 +41,7 @@ function Spot({ ours }: { ours: boolean }) {
   )
 }
 
-export function ErrorState({ error, what, onRetry, retrying }: { error: unknown; what?: string; onRetry?: () => void; retrying?: boolean }) {
+export function ErrorState({ error, what, onRetry, retrying }: { error: unknown; what?: I18nString; onRetry?: () => void; retrying?: boolean }) {
   const { say } = useContext(ShellCtx)
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -64,36 +65,36 @@ export function ErrorState({ error, what, onRetry, retrying }: { error: unknown;
       <div>
         <b className="block font-heading text-[22px] text-foreground">{m.query_state__that_did_not_load()}</b>
         <p className="mx-auto mt-1 max-w-ch56 text-[16px] text-pretty text-ink-2">
-          {ours ? "This is on Pikku's side, not in your project. Nothing in your project was changed." : m.query_state__something_went_wrong_on()}
+          {ours ? m.error_state__ours_note() : m.query_state__something_went_wrong_on()}
         </p>
-        {ours && passed ? <p className="mx-auto mt-1 max-w-ch56 text-px15 text-ink-2">We have passed this on to the Pikku team.</p> : null}
+        {ours && passed ? <p className="mx-auto mt-1 max-w-ch56 text-px15 text-ink-2">{m.action_notice__told()}</p> : null}
       </div>
       <div className="flex flex-wrap items-center justify-center gap-3">
         {!ours ? (
-          <Button variant="default" size="page" type="button" disabled={retrying} onClick={() => say(`Something did not load${what ? ` (${what})` : ''}. Please find out why and file a change request to fix it. Say "change request" in your reply, then tell me in plain words what you changed.\n\n${details}`)}>
+          <Button variant="default" size="page" type="button" disabled={retrying} onClick={() => say(what ? m.error_state__fix_ask_what({ what, details }) : m.error_state__fix_ask({ details }))}>
             <PikkuDot />
-            Fix this for me
+            {m.metrics_screen__fix_it()}
           </Button>
         ) : null}
         {onRetry ? (
           <Button variant={ours ? 'default' : 'bordered'} size="page" type="button" onClick={onRetry} disabled={retrying} aria-busy={retrying}>
             {retrying ? <LoaderCircle className="size-4.5 animate-spin" /> : <RefreshCw className="size-4.5" />}
-            {retrying ? 'Trying again…' : m.query_state__try_again()}
+            {retrying ? m.action_notice__retrying() : m.query_state__try_again()}
           </Button>
         ) : null}
       </div>
       {ours && choice === 'unset' ? (
         <button type="button" onClick={() => setAsking(true)} className="text-px15 font-semibold text-muted-foreground underline-offset-2 hover:text-foreground hover:underline">
-          Want Pikku to be told about errors like this?
+          {m.action_notice__tell_us()}
         </button>
       ) : null}
       <button type="button" aria-expanded={open} onClick={() => setOpen((v) => !v)} className="inline-flex items-center gap-1.5 text-px15 font-semibold text-muted-foreground hover:text-foreground">
         <ChevronDown className={`size-4 transition-transform ${open ? 'rotate-180' : ''}`} />
-        {open ? 'Hide the details' : 'Show the details'}
+        {open ? m.error_state__hide_details() : m.error_state__show_details()}
       </button>
       {open ? (
-        <div className="w-full max-w-xl rounded-xl bg-secondary p-4 text-left">
-          <pre className="m-0 max-h-48 overflow-auto font-mono text-px13 whitespace-pre-wrap text-ink-2" data-testid="error-details">{details}</pre>
+        <div className="w-full max-w-xl rounded-xl bg-secondary p-4 text-start">
+          <pre dir="ltr" className="m-0 max-h-48 overflow-auto font-mono text-px13 whitespace-pre-wrap text-ink-2" data-testid="error-details">{asI18n(details)}</pre>
           <Button
             variant="bordered"
             size="compact"
@@ -102,7 +103,7 @@ export function ErrorState({ error, what, onRetry, retrying }: { error: unknown;
             onClick={() => void navigator.clipboard?.writeText(details).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000) })}
           >
             {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
-            {copied ? 'Copied' : 'Copy the details'}
+            {copied ? m.common__copied() : m.action_notice__copy()}
           </Button>
         </div>
       ) : null}

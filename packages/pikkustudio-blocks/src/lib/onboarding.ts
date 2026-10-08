@@ -3,7 +3,7 @@ import type { UseMutationResult, UseQueryResult } from '@tanstack/react-query'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 
 export type Account = {
-  signIn: 'local' | 'fabric' | null
+  signIn: string | null
   name: string | null
   about: string | null
   ai: unknown

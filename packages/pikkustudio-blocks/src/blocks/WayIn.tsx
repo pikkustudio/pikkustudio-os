@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react'
+import type { I18nNode, I18nString } from '@pikku/react'
 
-export function WayIn({ icon, title, body, action }: { icon: ReactNode; title: string; body: string; action: ReactNode }) {
+export function WayIn({ icon, title, body, action }: { icon: I18nNode; title: I18nString; body: I18nString; action: I18nNode }) {
   return (
     <div className="grid grid-cols-way items-center gap-5 rounded-empty border bg-card px-7 py-6.5 shadow-card transition-all duration-240 ease-spring hover:-translate-y-0.5 hover:border-input hover:shadow-lift">
       <span className="grid size-14 place-items-center rounded-xl bg-indigo text-white [&_svg]:size-7">{icon}</span>

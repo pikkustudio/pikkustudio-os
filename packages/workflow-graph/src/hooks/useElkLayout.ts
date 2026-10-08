@@ -64,6 +64,11 @@ export function useElkLayout(
 
   const nodeIds = useMemo(() => nodes.map((n) => n.id).join(','), [nodes])
   const edgeIds = useMemo(() => edges.map((e) => e.id).join(','), [edges])
+  // Labels are part of the layout (they take room), so a new language redraws it.
+  const edgeLabels = useMemo(
+    () => edges.map((e) => String(e.label ?? '')).join('|'),
+    [edges]
+  )
 
   useEffect(() => {
     // Cancellation flag (not state): a state guard would drop a dep change
@@ -217,7 +222,7 @@ export function useElkLayout(
     return () => {
       cancelled = true
     }
-  }, [nodeIds, edgeIds, direction])
+  }, [nodeIds, edgeIds, edgeLabels, direction])
 
   return result.nodes.length > 0 ? result : { nodes, edges }
 }

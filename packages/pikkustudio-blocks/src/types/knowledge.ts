@@ -1,7 +1,9 @@
+import type { I18nString } from '@pikku/react'
+
 export type Note = {
   id: string
   sec: string
-  t: string
+  t: I18nString
   sum: string
   body: string[]
   links: string[]

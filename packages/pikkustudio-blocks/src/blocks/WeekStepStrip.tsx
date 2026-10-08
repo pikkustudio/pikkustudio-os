@@ -1,3 +1,4 @@
+import { asI18n } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useEffect, useState } from 'react'
 import { Check, LoaderCircle } from 'lucide-react'
@@ -20,8 +21,8 @@ export function WeekStepStrip({ phase, start = 134 }: { phase: number; start?: n
             <span className={`grid size-7 place-items-center rounded-full border-2 ${i < phase ? 'border-hero-ink bg-hero-ink text-hero' : i === phase ? 'border-hero-ink' : 'border-hero-ink/50'}`}>
               {i < phase ? <Check className="size-4" aria-hidden="true" /> : i === phase ? <LoaderCircle className="size-4 animate-spin" aria-hidden="true" /> : null}
             </span>
-            <span className="text-[14px] leading-tight font-bold">{name}</span>
-            <span className="text-[13px] text-hero-ink-2">{i < phase ? m.week_step_strip__done() : i === phase ? m.week_step_strip__working_on_it() : `About ${secs} seconds`}</span>
+            <span className="text-[14px] leading-tight font-bold">{asI18n(name)}</span>
+            <span className="text-[13px] text-hero-ink-2">{i < phase ? m.week_step_strip__done() : i === phase ? m.week_step_strip__working_on_it() : m.common__about_seconds({ secs })}</span>
           </li>
         ))}
       </ol>

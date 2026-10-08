@@ -1,3 +1,4 @@
+import { m } from '@/i18n/messages'
 import { useCallback, useEffect, useRef, useState, type DragEvent } from 'react'
 import { Sparkles, Upload } from 'lucide-react'
 import { Page } from '@pikku/pikkustudio-blocks/blocks/Page'
@@ -8,6 +9,7 @@ import { RowCard, RowStack, Dot } from '@pikku/pikkustudio-blocks/blocks/RowCard
 import { StatusLine } from '@pikku/pikkustudio-blocks/blocks/StatusLine'
 import { Button } from '@pikku/pikkustudio-blocks/ui/button'
 import { useRpc, useBusy, kindOf, stateOf, type Asset, type ScreenProps } from './shared.js'
+import { asI18n } from '@pikku/react'
 
 type Tool = { tool: string; status: 'ready' | 'missing' | 'unknown'; get: { brew?: string; apt?: string } | null }
 
@@ -43,8 +45,9 @@ export default function Library({ navigate }: ScreenProps) {
     return () => clearInterval(t)
   }, [reading, load])
 
-  const upload = (files: File[]) =>
-    run(files.length === 1 ? `Adding ${files[0]!.name}` : `Adding ${files.length} files`, async () => {
+  const upload = (files: File[]) => {
+    const firstName = files[0]?.name ?? ''
+    return run(m.library__adding({ count: files.length, name: asI18n(firstName) }), async () => {
       for (const f of files) {
         const u = await rpc.invoke('spindle:spindleRequestAssetUpload', { fileName: f.name, mimeType: f.type, sizeBytes: f.size })
         const put = await fetch(u.uploadUrl, { method: u.uploadMethod, headers: u.uploadHeaders, body: f })
@@ -53,6 +56,7 @@ export default function Library({ navigate }: ScreenProps) {
         await rpc.invoke('spindle:spindleExtractAsset', { assetId: asset.asset_id })
       }
     })
+  }
 
   const drop = (e: DragEvent) => {
     e.preventDefault()
@@ -75,47 +79,47 @@ export default function Library({ navigate }: ScreenProps) {
       className={`min-h-full p-8 transition-colors ${dragging ? 'bg-accent' : ''}`}
     >
       <Page gap="list">
-        <PageHead crumb="Spindle" title="Library" text="Every file you have added. Spindle reads each one so you can search across all of them.">
+        <PageHead crumb={m.spindle_library__spindle()} title={m.spindle_library__library()} text={m.spindle_library__every_file_you_have_added_spindle()}>
           <input ref={file} type="file" multiple hidden onChange={(e) => e.target.files && void upload(Array.from(e.target.files))} />
           <Button size="page" onClick={() => file.current?.click()} disabled={busy !== null}>
-            <Upload /> Add files
+            <Upload />{m.spindle_library__add_files()}
           </Button>
         </PageHead>
 
         {missing.length > 0 ? (
           <InlineAlert
-            title="Spindle cannot read some files yet"
-            body={`It needs ${missing.map((t) => t.tool).join(' and ')} on this computer. ${missing.map((t) => t.get?.brew ?? t.get?.apt).filter(Boolean).map((c) => `Install with: ${c}`).join('. ')}`}
+            title={m.spindle_library__spindle_cannot_read_some_files_yet()}
+            body={m.spindle_library__needs_tools({ tools: missing.map((t) => t.tool).join(' and '), installs: missing.map((t) => t.get?.brew ?? t.get?.apt).filter(Boolean).map((c) => m.spindle_library__install_with({ command: String(c) })).join('. ') })}
           />
         ) : null}
-        {error ? <InlineAlert title="That did not work" body={error} /> : null}
-        {busy ? <StatusLine tone="wait" text={`${busy}…`} /> : null}
+        {error ? <InlineAlert title={m.spindle_library__that_did_not_work()} body={asI18n(error)} /> : null}
+        {busy ? <StatusLine tone="wait" text={m.asset__text({ busy })} /> : null}
         {suggestions > 0 ? (
-          <RowCard flag tile={<Sparkles className="size-5" />} title={`Spindle has ${suggestions} ${suggestions === 1 ? 'suggestion' : 'suggestions'} for grouping your files`} caption="Review them and decide which collections to make.">
+          <RowCard flag tile={<Sparkles className="size-5" />} title={m.spindle_library__suggestion_count({ count: suggestions })} caption={m.spindle_library__review_them_and_decide_which_collections()}>
             <Button size="compact" onClick={() => navigate('/suggestions')}>
-              See suggestions
+              {m.spindle_library__see_suggestions()}
             </Button>
           </RowCard>
         ) : null}
 
         {empty ? (
-          <EmptyState title="Start by adding your files" text="Drop documents, recordings, videos or images here, or choose them from your computer.">
+          <EmptyState title={m.spindle_library__start_by_adding_your_files()} text={m.spindle_library__drop_documents_recordings_videos_or_images()}>
             <Button size="page" onClick={() => file.current?.click()} disabled={busy !== null}>
-              <Upload /> Choose files
+              <Upload />{m.spindle_library__choose_files()}
             </Button>
           </EmptyState>
         ) : (
           <>
             <div className="flex flex-wrap items-center gap-2">
               <Button variant="filter" size="filter" aria-pressed={!unplaced} onClick={() => setUnplaced(false)}>
-                All files
+                {m.spindle_library__all_files()}
               </Button>
               <Button variant="filter" size="filter" aria-pressed={unplaced} onClick={() => setUnplaced(true)}>
-                Not in a collection
+                {m.spindle_library__not_in_a_collection()}
               </Button>
             </div>
             {assets.length === 0 ? (
-              <p className="text-ink-2">Every file is already in a collection.</p>
+              <p className="text-ink-2">{m.spindle_library__every_file_is_already_in_a()}</p>
             ) : (
               <RowStack>
                 {assets.map((a) => {
@@ -123,15 +127,15 @@ export default function Library({ navigate }: ScreenProps) {
                   const state = stateOf(a.status)
                   const Icon = kind.icon
                   return (
-                    <RowCard key={a.asset_id} on={a.status === 'extracted'} flag={a.status === 'failed'} tile={<Icon className="size-5" />} title={a.title} caption={kind.label}>
-                      <Dot tone={state.tone}>{state.label}</Dot>
+                    <RowCard key={a.asset_id} on={a.status === 'extracted'} flag={a.status === 'failed'} tile={<Icon className="size-5" />} title={asI18n(a.title)} caption={kind.label()}>
+                      <Dot tone={state.tone}>{state.label()}</Dot>
                       {a.status === 'uploaded' || a.status === 'failed' ? (
-                        <Button size="compact" variant="bordered" disabled={busy !== null} onClick={() => void run('Reading the file', async () => void (await rpc.invoke('spindle:spindleExtractAsset', { assetId: a.asset_id })))}>
-                          {a.status === 'failed' ? 'Try again' : 'Read it'}
+                        <Button size="compact" variant="bordered" disabled={busy !== null} onClick={() => void run(m.spindle_shared__busy_reading_file(), async () => void (await rpc.invoke('spindle:spindleExtractAsset', { assetId: a.asset_id })))}>
+                          {a.status === 'failed' ? m.spindle_library__try_again() : m.spindle_library__read_it()}
                         </Button>
                       ) : null}
                       <Button size="compact" variant="bordered" onClick={() => navigate(`/files/${a.asset_id}`)}>
-                        Open
+                        {m.spindle_library__open()}
                       </Button>
                     </RowCard>
                   )

@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { I18nNode, I18nString } from '@pikku/react'
 import { Inbox } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { VariantProps } from 'class-variance-authority'
@@ -31,7 +31,7 @@ export function EmptyState({
   children,
   layout,
   icon = Inbox,
-}: { title: string; text: string; children?: ReactNode; icon?: LucideIcon } & VariantProps<typeof box>) {
+}: { title: I18nString; text?: I18nString; children?: I18nNode; icon?: LucideIcon } & VariantProps<typeof box>) {
   return (
     <div className={box({ layout })}>
       <Spot icon={icon} />

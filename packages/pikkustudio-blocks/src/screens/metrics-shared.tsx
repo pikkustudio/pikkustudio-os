@@ -1,3 +1,5 @@
+import { asI18n, type I18nString } from '@pikku/react'
+import { m } from '@/i18n/messages'
 import { useEffect, useMemo, useState } from 'react'
 
 export type Metric = {
@@ -13,10 +15,10 @@ export type Metric = {
   memMb: number | null
 }
 
-export const ranges: Array<[string, string]> = [
-  ['5', 'Last 5 minutes'],
-  ['60', 'Last hour'],
-  ['1440', 'Last day'],
+export const ranges = (): Array<[string, I18nString]> => [
+  ['5', m.metrics_shared__last_5_minutes()],
+  ['60', m.metrics_shared__last_hour()],
+  ['1440', m.metrics_shared__last_day()],
 ]
 
 export const BARS = 40
@@ -29,39 +31,48 @@ export const words = (raw: string) => {
   return spaced.charAt(0).toUpperCase() + spaced.slice(1)
 }
 
-export const nameOf = (m: Pick<Metric, 'wireType' | 'wireId'>) => {
-  const id = m.wireId ?? 'unknown'
-  if (m.wireType === 'http') {
+export const nameOf = (metric: Pick<Metric, 'wireType' | 'wireId'>) => {
+  const id = metric.wireId ?? 'unknown'
+  if (metric.wireType === 'http') {
     const segments = (id.split(':').slice(1).join(':') || id).split('/').filter(Boolean)
-    return words(segments[segments.length - 1] ?? 'Home page')
+    return words(segments[segments.length - 1] ?? m.metrics_shared__home_page())
   }
   return words(id.split(':').pop() ?? id)
 }
 
 export const reason = (raw: string | null) => {
   const first = (raw ?? '').split('\n')[0]!.trim().replace(/[:;,\s]+$/, '')
-  return first || 'It stopped without saying why'
+  return first || m.metrics_shared__no_reason()
 }
 
-export const explain = (why: string) => {
-  if (/authentication required|not signed in|unauthori[sz]ed/i.test(why)) return 'Something asked for this without being signed in, so it was turned away.'
-  if (/not found|no such|cannot find/i.test(why)) return 'Something asked for a page or item that does not exist.'
-  if (/stopped while starting|failed to start|could not start/i.test(why)) return 'Your project could not start, so it never came up.'
-  if (/timeout|timed out|too long/i.test(why)) return 'It took too long to answer and gave up.'
-  if (/permission|forbidden|not allowed/i.test(why)) return 'It was not allowed to do this.'
-  return 'Your app hit a problem it did not expect.'
+export const explain = (why: string): I18nString => {
+  if (/authentication required|not signed in|unauthori[sz]ed/i.test(why)) return m.metrics_shared__explain_signed_out()
+  if (/not found|no such|cannot find/i.test(why)) return m.metrics_shared__explain_missing()
+  if (/stopped while starting|failed to start|could not start/i.test(why)) return m.metrics_shared__explain_start()
+  if (/timeout|timed out|too long/i.test(why)) return m.metrics_shared__explain_slow()
+  if (/permission|forbidden|not allowed/i.test(why)) return m.metrics_shared__explain_denied()
+  return m.metrics_shared__explain_other()
 }
 
-export const seconds = (ms: number) => (ms < 1000 ? `${Math.round(ms)} ms` : `${(ms / 1000).toFixed(ms < 10_000 ? 1 : 0)} seconds`)
-export const speed = (ms: number) =>
+export const seconds = (ms: number): I18nString => (ms < 1000 ? m.metrics_shared__ms({ n: Math.round(ms) }) : m.metrics_shared__seconds({ n: (ms / 1000).toFixed(ms < 10_000 ? 1 : 0) }))
+export const speed = (ms: number): { word: I18nString; bar: string; text: string } =>
   ms < 1000
-    ? { word: 'Fast', bar: 'bg-success', text: 'text-success' }
+    ? { word: m.metrics_shared__fast(), bar: 'bg-success', text: 'text-success' }
     : ms < 3000
-      ? { word: 'A little slow', bar: 'bg-warning', text: 'text-warning' }
-      : { word: 'Slow', bar: 'bg-destructive', text: 'text-destructive' }
-export const memory = (mb: number) => (mb >= 1024 ? `${(mb / 1024).toFixed(1)} GB` : `${Math.round(mb)} MB`)
-export const busyWord = (pct: number) => (pct < 25 ? 'Relaxed' : pct < 60 ? 'Working steadily' : pct < 90 ? 'Busy' : 'Working flat out')
-export const clock = (at: number) => new Date(at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+      ? { word: m.metrics_shared__a_little_slow(), bar: 'bg-warning', text: 'text-warning' }
+      : { word: m.metrics_shared__slow(), bar: 'bg-destructive', text: 'text-destructive' }
+export const memory = (mb: number): I18nString => {
+  const text =
+    mb >= 1024
+      ? new Intl.NumberFormat(undefined, { style: 'unit', unit: 'gigabyte', unitDisplay: 'short', maximumFractionDigits: 1 }).format(mb / 1024)
+      : new Intl.NumberFormat(undefined, { style: 'unit', unit: 'megabyte', unitDisplay: 'short', maximumFractionDigits: 0 }).format(mb)
+  return asI18n(text)
+}
+export const busyWord = (pct: number): I18nString => (pct < 25 ? m.metrics_shared__relaxed() : pct < 60 ? m.metrics_shared__steady() : pct < 90 ? m.metrics_shared__busy() : m.metrics_shared__flat_out())
+export const clock = (at: number): I18nString => {
+  const time = new Date(at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+  return asI18n(time)
+}
 
 export function Art({ calm }: { calm: boolean }) {
   return (
@@ -77,7 +88,7 @@ export function Art({ calm }: { calm: boolean }) {
   )
 }
 
-export function Figure({ label, value, note }: { label: string; value: string; note: string }) {
+export function Figure({ label, value, note }: { label: I18nString; value: I18nString | number; note: I18nString }) {
   return (
     <div className="min-w-0">
       <div className="text-px14 font-semibold text-hero-ink-2">{label}</div>
@@ -87,7 +98,7 @@ export function Figure({ label, value, note }: { label: string; value: string; n
   )
 }
 
-export function Bars({ title, hue, points, from, to, top, say }: { title: string; hue: string; points: Array<[number, number]>; from: number; to: number; top: number; say: (v: number) => string }) {
+export function Bars({ title, hue, points, from, to, top, say }: { title: I18nString; hue: string; points: Array<[number, number]>; from: number; to: number; top: number; say: (v: number) => string }) {
   const first = points[0]?.[0] ?? to
   const start = Math.max(from, first)
   const span = Math.max(1, to - start)
@@ -106,11 +117,11 @@ export function Bars({ title, hue, points, from, to, top, say }: { title: string
     <section className="rounded-empty border border-border bg-card p-5">
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
         <h2 className="text-px17 font-bold">{title}</h2>
-        {last ? <span className="text-sm text-ink-2">Right now: {say(last[1])}</span> : null}
+        {last ? <span className="text-sm text-ink-2">{m.metrics_shared__right_now({ value: say(last[1]) })}</span> : null}
       </div>
       {enough ? (
         <>
-          <div className="mt-5 flex h-28 items-end gap-0.5" data-hue={hue} role="img" aria-label={`${title} over time. Right now ${say(last![1])}.`}>
+          <div className="mt-5 flex h-28 items-end gap-0.5" data-hue={hue} role="img" aria-label={m.metrics_shared__bars_aria({ title, now: say(last![1]) })}>
             {buckets.map((v, i) => (
               <div key={i} className="flex h-full flex-1 items-end">
                 <div className={v === null ? 'h-px w-full bg-border' : 'w-full rounded-t-sm bg-hero'} style={v === null ? undefined : { height: `${Math.max(4, Math.min(100, (v / top) * 100))}%` }} />
@@ -119,11 +130,11 @@ export function Bars({ title, hue, points, from, to, top, say }: { title: string
           </div>
           <div className="mt-2 flex justify-between text-px13 text-muted-foreground">
             <span>{clock(start)}</span>
-            <span>Now</span>
+            <span>{m.metrics_shared__now()}</span>
           </div>
         </>
       ) : (
-        <p className="mt-5 text-px15 text-muted-foreground">Not enough yet. This fills in as your app keeps running.</p>
+        <p className="mt-5 text-px15 text-muted-foreground">{m.metrics_shared__not_enough()}</p>
       )}
     </section>
   )

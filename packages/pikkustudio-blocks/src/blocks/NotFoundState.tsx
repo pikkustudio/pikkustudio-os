@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react'
+import type { I18nNode, I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
-import { NextCard } from './NextCard'
+import { StateScreen } from './StateScreen'
 
 function Art() {
   return (
@@ -17,14 +17,10 @@ function Art() {
   )
 }
 
-export function NotFoundState({ what, text, children }: { what: string; text?: string; children?: ReactNode }) {
+export function NotFoundState({ what, text, children }: { what: I18nString; text?: I18nString; children?: I18nNode }) {
   return (
-    <div className="flex min-h-full flex-col justify-center">
-      <div className="mx-auto w-full max-w-3xl">
-        <NextCard label={m.not_found__title({ what })} hue="petrol" art={<Art />} title={m.not_found__title({ what })} why={text ?? m.not_found__text()}>
-          {children ? <div className="mt-1 flex flex-wrap items-center gap-3">{children}</div> : null}
-        </NextCard>
-      </div>
-    </div>
+    <StateScreen label={m.not_found__title({ what })} hue="petrol" art={<Art />} title={m.not_found__title({ what })} why={text ?? m.not_found__text()}>
+      {children ? <div className="mt-1 flex flex-wrap items-center gap-3">{children}</div> : null}
+    </StateScreen>
   )
 }

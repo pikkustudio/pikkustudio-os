@@ -1,9 +1,11 @@
 import React from 'react'
+import { asI18n, type I18nString } from '@pikku/react'
 import type { Node } from '@xyflow/react'
 import type { GraphNodeProps } from '../../types'
 import { FlowNode } from './FlowNode'
 import { Split } from 'lucide-react'
 import { useGraphActions } from '../../context/GraphHostContext'
+import { useGraphM } from '../../context/MessagesContext'
 import { useGraphHighlight } from '../../context/GraphHostContext'
 
 interface BranchNodeData {
@@ -11,7 +13,7 @@ interface BranchNodeData {
   condition?: string
   hasElse?: boolean
   branchCount?: number
-  stepName?: string
+  stepName?: I18nString
 }
 
 type HighlightType = 'focused' | 'referenced' | null
@@ -21,6 +23,7 @@ export const BranchNode: React.FC<GraphNodeProps<BranchNodeData>> = ({
   id,
 }) => {
   const { openWorkflowStep } = useGraphActions()
+  const m = useGraphM()
   const graphHighlight = useGraphHighlight()
 
   const highlightType: HighlightType = React.useMemo(() => {
@@ -31,21 +34,21 @@ export const BranchNode: React.FC<GraphNodeProps<BranchNodeData>> = ({
   }, [graphHighlight, id])
 
   const outputHandles = React.useMemo(() => {
-    const handles = [{ id: 'true', label: 'if' }]
+    const handles = [{ id: 'true', label: m.handle_if() }]
 
     if (data.branchCount && data.branchCount > 1) {
       for (let i = 1; i < data.branchCount; i++) {
-        handles.push({ id: `branch-${i}`, label: `elif ${i}` })
+        handles.push({ id: `branch-${i}`, label: m.handle_elif({ n: i }) })
       }
     }
 
     if (data.hasElse) {
-      handles.push({ id: 'false', label: 'else' })
+      handles.push({ id: 'false', label: m.handle_else() })
     }
 
-    handles.push({ id: 'after', label: 'next' })
+    handles.push({ id: 'after', label: m.handle_next() })
     return handles
-  }, [data.hasElse, data.branchCount])
+  }, [data.hasElse, data.branchCount, m])
 
   const handleClick = React.useCallback(() => {
     openWorkflowStep(id, 'branch')
@@ -57,7 +60,7 @@ export const BranchNode: React.FC<GraphNodeProps<BranchNodeData>> = ({
       tone="decision"
       hasInput={true}
       outputHandles={outputHandles}
-      label="Branch"
+      label={m.node_branch()}
       subtitle={data.stepName}
       onClick={handleClick}
       highlightType={highlightType}
@@ -83,7 +86,7 @@ export const getBranchNodeConfig = (
       condition: step.condition || 'condition',
       hasElse,
       branchCount,
-      stepName: step.stepName,
+      stepName: asI18n(step.stepName),
       nodeType: 'flow',
     },
   }

@@ -1,3 +1,5 @@
+import { asI18n } from '@pikku/react'
+import { m } from '@/i18n/messages'
 import { useProjectQuery } from './projectRpc'
 import type { EmailsData, EmailTemplate } from '../types/emails'
 
@@ -12,22 +14,26 @@ const ACCOUNT = /invit|magic|reset|sign|welcome|verif|confirm|password|login/i
 export function useEmails(key: string) {
   const meta = useProjectQuery<Meta>(key, 'console:getAllMeta')
   const templates = meta.data?.emailsMeta?.templates ?? {}
-  const emails: EmailTemplate[] = Object.entries(templates).map(([id, t]) => ({
+  const none: string = ''
+  const emails: EmailTemplate[] = Object.entries(templates).map(([id, t]) => {
+    const name = nice(id)
+    return {
     id,
     group: ACCOUNT.test(id) ? 'A' : 'B',
-    name: nice(id),
-    when: '',
-    to: '',
+    name: asI18n(name),
+    when: asI18n(none),
+    to: asI18n(none),
     ph: t.variables ?? [],
     locales: Object.keys(t.locales ?? {}),
-  }))
+    }
+  })
   const codes = [...new Set(emails.flatMap((e) => e.locales))]
   const names = new Intl.DisplayNames(['en'], { type: 'language' })
   const vars = [...new Set(emails.flatMap((e) => e.ph))]
   const data: EmailsData = {
-    langs: Object.fromEntries(codes.map((c) => [c, names.of(c) ?? c])),
-    short: Object.fromEntries(codes.map((c) => [c, c.toUpperCase()])),
-    fields: Object.fromEntries(vars.map((v) => [v, { token: `{{ ${v} }}`, about: 'Filled in for each person', label: nice(v), start: SAMPLE[v] ?? '' }])),
+    langs: Object.fromEntries(codes.map((c) => { const language = names.of(c) ?? c; return [c, asI18n(language)] })),
+    short: Object.fromEntries(codes.map((c) => { const up = c.toUpperCase(); return [c, asI18n(up)] })),
+    fields: Object.fromEntries(vars.map((v) => { const token = `{{ ${v} }}`; const label = nice(v); return [v, { token: asI18n(token), about: m.emails__filled_in(), label: asI18n(label), start: SAMPLE[v] ?? '' }] })),
     emails,
   }
   return { query: meta, data }

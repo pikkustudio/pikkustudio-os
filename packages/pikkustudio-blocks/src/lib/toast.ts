@@ -1,13 +1,15 @@
 import { useSyncExternalStore } from 'react'
+import type { I18nString } from '@pikku/react'
+import { m } from '@/i18n/messages'
 
-export type Toast = { id: number; text: string }
+export type Toast = { id: number; text: I18nString }
 
 let items: Toast[] = []
 let next = 1
 const listeners = new Set<() => void>()
 const emit = () => listeners.forEach((l) => l())
 
-export function toast(text: string) {
+export function toast(text: I18nString) {
   if (items.some((t) => t.text === text)) return
   const id = next++
   items = [...items, { id, text }]
@@ -31,9 +33,9 @@ export function useToasts() {
   )
 }
 
-export function errorText(error: unknown) {
+export function errorText(error: unknown): I18nString {
   const name = (error as { name?: string } | null)?.name
-  if (name === 'MissingSessionError') return 'Sign in again to carry on.'
-  if (name === 'ForbiddenError') return 'You are not allowed to do that.'
-  return 'That did not work. Please try again.'
+  if (name === 'MissingSessionError') return m.toast__sign_in_again()
+  if (name === 'ForbiddenError') return m.toast__not_allowed()
+  return m.toast__failed()
 }

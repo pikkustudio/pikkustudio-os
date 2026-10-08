@@ -1,3 +1,4 @@
+import { asI18n, sep, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { ChevronRight, Download, File as FileIcon, FileText, Folder, Image, Link2, Music, Package, Table, Trash2, Video } from 'lucide-react'
@@ -29,7 +30,7 @@ export type ContentTreeProps = {
 
 const locale = () => (typeof navigator === 'undefined' ? 'en' : navigator.language)
 
-const Confirm = ({ label, keep, busy, onYes, onNo }: { label: string; keep: string; busy: boolean; onYes: () => void; onNo: () => void }) => (
+const Confirm = ({ label, keep, busy, onYes, onNo }: { label: I18nString; keep: I18nString; busy: boolean; onYes: () => void; onNo: () => void }) => (
   <div className="flex flex-wrap items-center justify-end gap-x-2 gap-y-1">
     <Button type="button" variant="destructive" size="compact" disabled={busy} onClick={onYes}>{label}</Button>
     <Button type="button" variant="ghost" size="compactTight" onClick={onNo}>{keep}</Button>
@@ -98,13 +99,13 @@ function Row({ item, props, picked, onPick, onMore }: RowProps) {
         <div className="flex min-w-0 items-center gap-2 ps-(--pad)" style={{ '--pad': pad(0) } as CSSProperties}>
           <ChevronRight className={`size-4 shrink-0 text-muted-foreground transition-transform rtl:-scale-x-100 ${item.isExpanded() ? 'rotate-90 rtl:-rotate-90' : ''}`} aria-hidden="true" />
           <Icon className="size-4.5 shrink-0 text-primary" aria-hidden="true" />
-          <span className="truncate text-px15 font-bold">{node.name}</span>
-          <span className="shrink-0 text-px13 text-muted-foreground">{node.fileCount === 1 ? m.content_tree__one_file() : m.content_tree__files({ count: node.fileCount })}</span>
+          <span className="truncate text-px15 font-bold">{asI18n(node.name)}</span>
+          <span className="shrink-0 text-px13 text-muted-foreground">{m.content_tree__file_count({ count: node.fileCount })}</span>
           {item.isLoading() ? <span className="size-3 shrink-0 animate-pulse rounded-full bg-secondary" aria-label={m.content_tree__loading()} /> : null}
-          {owner ? <span className="shrink-0 text-px13 text-muted-foreground max-md:hidden">· {m.content__kept_by_addon({ addon: owner })}</span> : null}
+          {owner ? <span className="shrink-0 text-px13 text-muted-foreground max-md:hidden">{sep('· ')}{m.content__kept_by_addon({ addon: owner })}</span> : null}
         </div>
         <div className="text-px14 font-semibold tabular-nums max-md:hidden">{formatBytes(node.totalBytes)}</div>
-        <div className="text-px14 text-ink-2 max-md:hidden">{node.lastChanged ? timeAgo(node.lastChanged, locale(), m.content_tree__just_now()) : ''}</div>
+        <div className="text-px14 text-ink-2 max-md:hidden">{node.lastChanged ? timeAgo(node.lastChanged, locale(), m.content_tree__just_now()) : null}</div>
         <div className="max-md:hidden" />
         <div {...stop}>
           {sure ? (
@@ -128,7 +129,7 @@ function Row({ item, props, picked, onPick, onMore }: RowProps) {
       <Pick name={node.name} picked={picked} onChange={(range) => onPick(node.id, range)} />
       <div className="flex min-w-0 items-center gap-2 ps-(--pad)" style={{ '--pad': pad(24) } as CSSProperties}>
         <Icon className="size-4.5 shrink-0 text-muted-foreground" aria-hidden="true" />
-        <span className="truncate text-px15 font-semibold">{node.name}</span>
+        <span className="truncate text-px15 font-semibold">{asI18n(node.name)}</span>
       </div>
       <div className="text-px14 tabular-nums max-md:hidden">{formatBytes(node.sizeBytes)}</div>
       <div className="text-px14 text-ink-2 max-md:hidden">{timeAgo(node.changedAt, locale(), m.content_tree__just_now())}</div>

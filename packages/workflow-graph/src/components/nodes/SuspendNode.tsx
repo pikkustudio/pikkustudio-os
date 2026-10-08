@@ -1,15 +1,18 @@
 import React from 'react'
+import type { I18nString } from '@pikku/react'
+import { outside } from '../../lib/outside'
 import type { Node } from '@xyflow/react'
 import type { GraphNodeProps } from '../../types'
 import { FlowNode } from './FlowNode'
 import { Hourglass } from 'lucide-react'
 import { useGraphActions } from '../../context/GraphHostContext'
+import { useGraphM } from '../../context/MessagesContext'
 import { useGraphHighlight } from '../../context/GraphHostContext'
 
 interface SuspendNodeData {
   colorKey: string
-  title?: string
-  description?: string
+  title?: I18nString
+  description?: I18nString
 }
 
 type HighlightType = 'focused' | 'referenced' | null
@@ -19,6 +22,7 @@ export const SuspendNode: React.FC<GraphNodeProps<SuspendNodeData>> = ({
   id,
 }) => {
   const { openWorkflowStep } = useGraphActions()
+  const m = useGraphM()
   const graphHighlight = useGraphHighlight()
 
   const highlightType: HighlightType = React.useMemo(() => {
@@ -37,8 +41,8 @@ export const SuspendNode: React.FC<GraphNodeProps<SuspendNodeData>> = ({
       icon={Hourglass}
       tone="wait"
       hasInput={true}
-      outputHandles={[{ id: 'default', label: '' }]}
-      label="Suspend"
+      outputHandles={[{ id: 'default' }]}
+      label={m.node_suspend()}
       subtitle={data.description}
       onClick={handleClick}
       highlightType={highlightType}
@@ -60,7 +64,7 @@ export const getSuspendNodeConfig = (
     position,
     data: {
       colorKey: 'workflow',
-      title: step.reason,
+      title: outside(step.reason),
       description: step.reason ?? step.stepName,
       nodeType: 'flow',
     },

@@ -1,3 +1,4 @@
+import { asI18n, sep, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useState } from 'react'
 import { Button } from '../ui/button'
@@ -26,8 +27,8 @@ export function ThemePanel({
   current: string
   theme: Theme
   swatches: string[]
-  fonts: [string, string][]
-  contrast: string
+  fonts: [string, I18nString][]
+  contrast: I18nString
   onPick: (key: string) => void
   onCreate: (name: string) => void
   onChange: (patch: Partial<Theme>) => void
@@ -43,10 +44,10 @@ export function ThemePanel({
               type="button"
               aria-pressed={key === current}
               onClick={() => onPick(key)}
-              className="flex flex-col gap-1.5 rounded-[14px] border-2 border-border bg-card p-2 text-left text-px13 font-bold aria-pressed:border-primary aria-pressed:ring-3 aria-pressed:ring-accent"
+              className="flex flex-col gap-1.5 rounded-[14px] border-2 border-border bg-card p-2 text-start text-px13 font-bold aria-pressed:border-primary aria-pressed:ring-3 aria-pressed:ring-accent"
             >
               <i className="block h-8.5 rounded-lg" style={{ background: `linear-gradient(135deg,${t.acc} 55%,${t.sup} 55%)` }} />
-              {t.name}
+              {asI18n(t.name)}
             </button>
           ))}
         </div>
@@ -75,7 +76,7 @@ export function ThemePanel({
               <button
                 key={c}
                 type="button"
-                aria-label={`Use ${c}`}
+                aria-label={m.theme_panel__use({ name: c })}
                 aria-pressed={c.toLowerCase() === theme.acc.toLowerCase()}
                 onClick={() => onChange({ acc: c })}
                 style={{ background: c }}
@@ -129,7 +130,7 @@ export function ThemePanel({
             label={m.theme_panel__light_or_dark()}
             value={theme.mode}
             onChange={(v) => onChange({ mode: v as Theme['mode'] })}
-            options={[['light', 'Light'], ['dark', 'Dark'], ['auto', 'Automatic']]}
+            options={[['light', m.theme_panel__light()], ['dark', m.theme_panel__dark()], ['auto', m.theme_panel__automatic()]]}
             note={m.theme_panel__automatic_follows_each_visitor_s()}
           />
         </div>
@@ -140,14 +141,14 @@ export function ThemePanel({
           {m.theme_panel__keep_text_easy_to()}
         </Switch>
         <p className="mt-2 text-[13.5px] leading-[1.45] text-ink-2">
-          {m.theme_panel__contrast_note()} <b>{contrast}</b>
+          {m.theme_panel__contrast_note()}{sep(' ')}<b>{contrast}</b>
         </p>
       </InspectorSection>
       <InspectorSection title={m.theme_panel__depth()}>
         <div className="flex flex-col gap-3.5">
           <RangeField label={m.theme_panel__shade_strength()} min={1} max={8} value={theme.shade} unit="" onChange={(v) => onChange({ shade: v })} />
-          <SegmentField label={m.theme_panel__background_blend()} value={theme.grad} onChange={(v) => onChange({ grad: v as Theme['grad'] })} options={[['none', 'None'], ['soft', 'Soft'], ['strong', 'Strong']]} />
-          <SegmentField label={m.theme_panel__shadows()} value={theme.sh} onChange={(v) => onChange({ sh: v as Theme['sh'] })} options={[['none', 'None'], ['soft', 'Soft'], ['strong', 'Strong']]} />
+          <SegmentField label={m.theme_panel__background_blend()} value={theme.grad} onChange={(v) => onChange({ grad: v as Theme['grad'] })} options={[['none', m.theme_panel__none()], ['soft', m.theme_panel__soft()], ['strong', m.theme_panel__strong()]]} />
+          <SegmentField label={m.theme_panel__shadows()} value={theme.sh} onChange={(v) => onChange({ sh: v as Theme['sh'] })} options={[['none', m.theme_panel__none()], ['soft', m.theme_panel__soft()], ['strong', m.theme_panel__strong()]]} />
         </div>
       </InspectorSection>
       <HintNote>{m.theme_panel__theme_changes_apply_to()}</HintNote>

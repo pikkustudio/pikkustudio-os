@@ -1,3 +1,4 @@
+import { asI18n, sep, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { ShieldAlert, ShieldCheck } from 'lucide-react'
 import { Badge } from '../ui/badge'
@@ -10,34 +11,35 @@ export interface ActivityEvent {
   outcome: string
 }
 
-const who = (name: string) => {
-  if (name === 'admin') return 'Studio'
-  if (name.startsWith('project:')) return `Project ${name.slice('project:'.length)}`
-  return name
+const who = (name: string): I18nString => {
+  if (name === 'admin') return m.secret_activity__studio()
+  if (name.startsWith('project:')) return m.secret_activity__project({ name: name.slice('project:'.length) })
+  return asI18n(name)
 }
 
-const did = (event: ActivityEvent) => {
+const did = (event: ActivityEvent): I18nString => {
   const refused = event.outcome !== 'success'
   switch (event.action) {
     case 'secret.read':
-      return refused ? 'was refused' : 'used'
+      return refused ? m.secret_activity__refused() : m.secret_activity__used()
     case 'secret.write':
-      return refused ? 'could not save' : 'saved'
+      return refused ? m.secret_activity__could_not_save() : m.secret_activity__saved()
     case 'secret.delete':
-      return 'removed'
+      return m.secret_activity__removed()
     case 'token.mint':
-      return 'was given access for'
+      return m.secret_activity__given_access()
     default:
-      return event.action
+      return asI18n(event.action)
   }
 }
 
-const ago = (iso: string) => {
+const ago = (iso: string): I18nString => {
   const seconds = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 1000))
-  if (seconds < 60) return 'just now'
-  if (seconds < 3600) return `${Math.floor(seconds / 60)} min ago`
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)} h ago`
-  return new Date(iso).toLocaleDateString()
+  if (seconds < 60) return m.secret_activity__just_now()
+  if (seconds < 3600) return m.secret_activity__min_ago({ n: Math.floor(seconds / 60) })
+  if (seconds < 86400) return m.secret_activity__h_ago({ n: Math.floor(seconds / 3600) })
+  const date = new Date(iso).toLocaleDateString()
+  return asI18n(date)
 }
 
 export function SecretActivity({ events, intact }: { events: ActivityEvent[]; intact: boolean }) {
@@ -63,7 +65,7 @@ export function SecretActivity({ events, intact }: { events: ActivityEvent[]; in
           {events.map((event, i) => (
             <li key={`${event.at}-${i}`} className="flex flex-wrap items-baseline gap-x-3 gap-y-1 rounded-card border border-border bg-card px-3.5 py-2.5 text-[15px] shadow-card">
               <span className="min-w-0 flex-1">
-                <b>{who(event.who)}</b> {did(event)} {event.key ? <b>{event.key}</b> : null}
+                <b>{who(event.who)}</b>{sep(' ')}{did(event)}{sep(' ')}{event.key ? <b>{asI18n(event.key)}</b> : null}
               </span>
               <time dateTime={event.at} className="text-px14 text-muted-foreground">
                 {ago(event.at)}

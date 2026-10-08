@@ -1,3 +1,5 @@
+import { asI18n, type I18nString } from '@pikku/react'
+import { m } from '@/i18n/messages'
 import { useEffect, useRef, useState } from 'react'
 import { ArrowRight, Check } from 'lucide-react'
 import { Button } from '../ui/button'
@@ -18,18 +20,16 @@ function Shot({ d, onOpen }: { d: Artifact; onOpen: (id: string) => void }) {
     return () => watch.disconnect()
   }, [])
   return (
-    <button ref={box} type="button" aria-label={`Open ${d.title}`} onClick={() => onOpen(d.id)} className="relative block min-h-0 flex-1 overflow-hidden rounded-xl border border-border bg-card text-left">
-      <div style={{ width: SITE_WIDTH, height: `calc(100% / ${scale})`, transform: `scale(${scale})` }} className="pointer-events-none absolute top-0 left-0 origin-top-left">
-        <ArtifactFrame html={d.html ?? ''} title={d.title} />
+    <button ref={box} type="button" aria-label={m.explore_directions__open({ title: d.title })} onClick={() => onOpen(d.id)} className="relative block min-h-0 flex-1 overflow-hidden rounded-xl border border-border bg-card text-start">
+      <div style={{ width: SITE_WIDTH, height: `calc(100% / ${scale})`, transform: `scale(${scale})` }} className="pointer-events-none absolute top-0 start-0 origin-top-left rtl:origin-top-right">
+        <ArtifactFrame html={d.html ?? ''} title={asI18n(d.title)} />
       </div>
     </button>
   )
 }
 
-export const moreIdeasMessage = (mode: 'controlled' | 'extreme', exploration: string) =>
-  mode === 'controlled'
-    ? `Explore a few more options as a new exploration, staying close to the current direction. Use Tailwind, and the project's design guide if it has one, and vary the details. Write each to artifacts/<id> with artifact.json including "exploration":"<a new short id>","mode":"controlled", and add them one at a time. Earlier exploration: ${exploration}.`
-    : `Explore a few completely different directions as a new exploration, ignoring the design system. Self-contained HTML with inline CSS and no scripts. Write each to artifacts/<id> with artifact.json including "exploration":"<a new short id>","mode":"extreme", and add them one at a time. Earlier exploration: ${exploration}.`
+export const moreIdeasMessage = (mode: 'controlled' | 'extreme', exploration: string): I18nString =>
+  mode === 'controlled' ? m.explore_directions__more_controlled({ exploration }) : m.explore_directions__more_extreme({ exploration })
 
 export function ExploreDirections({ directions, onOpen }: { directions: Artifact[]; onOpen: (id: string) => void }) {
   const choose = useChooseDirection()
@@ -38,17 +38,17 @@ export function ExploreDirections({ directions, onOpen }: { directions: Artifact
       {directions.map((d, i) => (
         <section key={d.id} className="flex min-w-100 flex-1 snap-start flex-col gap-3 rounded-2xl bg-card p-3.5 shadow-lift">
           <header className="flex flex-col gap-0.5">
-            <p className="m-0 text-px13 font-semibold text-muted-foreground">Idea {i + 1}</p>
-            <h2 className="m-0 text-px20 font-bold">{d.title}</h2>
-            <p className="m-0 text-px15 text-ink-2 text-pretty">{d.summary}</p>
+            <p className="m-0 text-px13 font-semibold text-muted-foreground">{m.explore_directions__idea({ n: i + 1 })}</p>
+            <h2 className="m-0 text-px20 font-bold">{asI18n(d.title)}</h2>
+            <p className="m-0 text-px15 text-ink-2 text-pretty">{asI18n(d.summary)}</p>
           </header>
           <Shot d={d} onOpen={onOpen} />
           <div className="flex gap-2">
             <Button variant="bordered" size="compact" type="button" onClick={() => onOpen(d.id)}>
-              Look closer <ArrowRight />
+              {m.explore_directions__look_closer()}<ArrowRight className="rtl:-scale-x-100" />
             </Button>
             <Button size="compact" type="button" onClick={() => choose(d)}>
-              <Check /> Use this one
+              <Check />{m.explore_directions__use_this_one()}
             </Button>
           </div>
         </section>
@@ -64,7 +64,7 @@ export function ExploreDirection({ direction, device, reloadKey }: { direction: 
     <div className="relative flex min-h-0 flex-1 items-start justify-center overflow-auto rounded-card bg-surface-3 p-4.5">
       <div className={`h-full w-full self-start transition-[max-width] duration-420 ease-[cubic-bezier(.16,1,.3,1)] ${widths[device]}`}>
         <div key={`${direction.id}-${reloadKey}`} className="h-full overflow-hidden rounded-2xl shadow-lift">
-          <ArtifactFrame html={direction.html ?? ''} title={direction.title} />
+          <ArtifactFrame html={direction.html ?? ''} title={asI18n(direction.title)} />
         </div>
       </div>
     </div>

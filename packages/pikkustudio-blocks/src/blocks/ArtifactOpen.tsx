@@ -1,6 +1,8 @@
+import { asI18n, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useState } from 'react'
-import { Link, useNavigate } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
+import { Link } from './Link'
 import { keep } from '../lib/links'
 import { ArrowLeft, FileQuestion } from 'lucide-react'
 import { Button } from '../ui/button'
@@ -13,8 +15,8 @@ import type { Artifact } from '../types/artifacts'
 import type { PageGroup } from './PageBreadcrumb'
 import type { Device } from '../types/designTypes'
 
-const kinds: Array<[Artifact['kind'], string]> = [['Design', 'Designs'], ['Page', 'Pages'], ['Document', 'Documents']]
-const groupsOf = (all: Artifact[]): PageGroup[] => kinds.map(([kind, label]) => ({ app: kind, label, pages: all.filter((a) => a.kind === kind).map((a) => ({ id: a.id, name: a.title, text: a.summary })) }))
+const kinds = (): Array<[Artifact['kind'], I18nString]> => [['Design', m.artifact_open__designs()], ['Page', m.artifact_open__pages()], ['Document', m.artifact_open__documents()]]
+const groupsOf = (all: Artifact[]): PageGroup[] => kinds().map(([kind, label]) => ({ app: kind, label, pages: all.filter((a) => a.kind === kind).map((a) => ({ id: a.id, name: asI18n(a.title), text: asI18n(a.summary) })) }))
 
 export function ArtifactOpen({ item, all }: { item?: Artifact; all: Artifact[] }) {
   const go = useNavigate()
@@ -33,7 +35,7 @@ export function ArtifactOpen({ item, all }: { item?: Artifact; all: Artifact[] }
       <PreviewBar
         app={item.kind}
         page={item.id}
-        noun="Artifact"
+        kind="artifact"
         groups={groupsOf(all)}
         device={device}
         hideDevice={item.kind !== 'Page'}
@@ -46,7 +48,7 @@ export function ArtifactOpen({ item, all }: { item?: Artifact; all: Artifact[] }
         actions={
           <Button asChild variant="bordered" size="compact">
             <Link {...keep} to="/artifacts">
-              <ArrowLeft className="size-4.5" />
+              <ArrowLeft className="rtl:-scale-x-100 size-4.5" />
               
               {m.artifact_open__all_artifacts()}
             </Link>

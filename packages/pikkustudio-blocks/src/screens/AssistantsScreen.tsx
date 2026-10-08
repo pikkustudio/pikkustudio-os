@@ -1,3 +1,5 @@
+import { m } from '@/i18n/messages'
+import { sep } from '@pikku/react'
 import { useContext, useState } from 'react'
 import { Moon } from 'lucide-react'
 import { Button } from '../ui/button'
@@ -24,26 +26,26 @@ export function AssistantsScreen() {
 
   return (
     <Page gap="snug">
-      <PageHead crumb={app} title="Assistants" text="The AI helpers inside your app. They talk with your visitors for you, and each one can only do the things listed here." size="lead" />
+      <PageHead crumb={app} title={m.assistants_screen__title()} text={m.assistants_screen__text()} size="lead" />
 
       <NextCard
-        label="Your assistants"
+        label={m.assistants_screen__your_assistants()}
         hue="petrol"
         art={<Art />}
-        title={`${list.length} assistants work in your app`}
-        why={`Each one talks to people in plain language and can take actions for them, like checking a class or booking a seat. Between them they can do ${total} things.`}
+        title={m.assistants_screen__n_work({ count: list.length })}
+        why={m.assistants_screen__each_one_talks_to_people({ total })}
       >
         <div className="flex flex-wrap gap-3">
-          <Button variant="hero" size="page" onClick={() => say('Try the Booking helper the way a visitor would')}>
-            Try one out
+          <Button variant="hero" size="page" onClick={() => say(m.assistants_screen__try_say())}>
+            {m.assistants_screen__try_one()}
           </Button>
-          <Button variant="heroGhost" size="page" onClick={() => say('Add a new assistant to my app')}>
-            Ask Pikku for a new one
+          <Button variant="heroGhost" size="page" onClick={() => say(m.assistants_screen__add_say())}>
+            {m.assistants_screen__ask_new()}
           </Button>
         </div>
       </NextCard>
 
-      <Section title="Meet the team" sub="Chat with one the way a visitor would, or read back what it said to real people.">
+      <Section title={m.assistants_screen__meet_title()} sub={m.assistants_screen__meet_sub()}>
         <div className="grid grid-cols-1 gap-4 @3xl/app:grid-cols-3">
           {list.map((x) => {
             const sleeping = x.chats === 0
@@ -56,25 +58,26 @@ export function AssistantsScreen() {
                   </span>
                   <h3 className="font-heading text-[24px] leading-[1.15] font-bold tracking-[-0.015em]">{x.name}</h3>
                 </div>
-                <p className="relative rounded-[20px] rounded-tl-md bg-white px-4 py-3 text-[16px] leading-[1.4] text-hero-btn-ink">{x.hello}</p>
+                <p className="relative rounded-[20px] rounded-ss-md bg-white px-4 py-3 text-[16px] leading-[1.4] text-hero-btn-ink">{x.hello}</p>
                 <p className="text-[15px] text-hero-ink-2">
-                  {x.does.length === 0 ? 'Answers questions, takes no actions.' : `I can ${x.does.map((d) => d.charAt(0).toLowerCase() + d.slice(1)).join(', ')}.`}
-                  {x.handsOff.length > 0 && ` If it is not mine, I pass people to the ${x.handsOff.join(', ')}.`}
+                  {x.does.length === 0 ? m.assistants_screen__no_actions() : m.assistants_screen__i_can({ list: x.does.map((d) => d.charAt(0).toLowerCase() + d.slice(1)).join(', ') })}
+                  {x.handsOff.length > 0 ? sep(' ') : null}
+                  {x.handsOff.length > 0 ? m.assistants_screen__hands_off({ list: x.handsOff.join(', ') }) : null}
                 </p>
-                <small className="mt-auto text-[14px] text-hero-ink-2">{sleeping ? 'Not used yet' : `${x.chats} chats this month`}{x.check ? ` · ${x.check}` : ' · no quality check'}</small>
+                <small className="mt-auto text-[14px] text-hero-ink-2">{sleeping ? m.assistants_screen__not_used() : m.assistants_screen__chats_month({ count: x.chats })}{sep(' ')}{x.check ? m.assistants_screen__check_suffix({ check: x.check }) : m.assistants_screen__no_check_suffix()}</small>
                 <div className="flex gap-3">
                   <Button variant="hero" size="compact" onClick={() => setDrawer({ id: x.id, tab: 'chat' })}>
-                    Chat with me
+                    {m.assistants_screen__chat_with_me()}
                   </Button>
                   <Button variant="heroGhost" size="compact" onClick={() => setDrawer({ id: x.id, tab: 'history' })}>
-                    Past chats
+                    {m.assistants_screen__past_chats()}
                   </Button>
                 </div>
               </article>
             )
           })}
         </div>
-        {idle ? <PikkuSuggests title="Pikku suggests" text={`Nobody has talked to the ${idle.name} yet. I can send it a pretend visitor so you can see what it says.`} yes="Try it for me" /> : null}
+        {idle ? <PikkuSuggests title={m.assistants_screen__suggests()} text={m.assistants_screen__idle_text({ name: idle.name })} yes={m.assistants_screen__try_it_for_me()} /> : null}
       </Section>
 
       {a && drawer && (

@@ -16,6 +16,9 @@ import type { DesignArtifact } from '@/lib/discovery'
 import { m } from '@/lib/i18n'
 import { MONO } from './chrome'
 
+/** A folder name, not copy. */
+const ARTIFACTS_DIR = 'artifacts/'
+
 export function ArtifactDialog({
   artifacts,
   selectedId,
@@ -140,7 +143,7 @@ export function ArtifactDialog({
           {!error && artifacts.length === 0 && (
             <Notice tone="empty">
               {m.dialog_none_yet()}{' '}
-              <span style={{ fontFamily: MONO, fontSize: 11.5 }}>artifacts/</span>.
+              <span style={{ fontFamily: MONO, fontSize: 11.5 }}>{ARTIFACTS_DIR}</span>.
             </Notice>
           )}
           {!error && artifacts.length > 0 && visible.length === 0 && (

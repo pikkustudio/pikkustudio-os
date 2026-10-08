@@ -39,7 +39,7 @@ export function ContentUploadForm({
     <aside
       role="dialog"
       aria-label={m.content_upload__add_a_file()}
-      className="fixed inset-y-0 right-0 z-50 flex w-102 max-w-full flex-col border-l border-border bg-card shadow-[0_24px_56px_-14px_rgba(8,40,52,0.45)] @min-[1700px]/app:w-120"
+      className="fixed inset-y-0 end-0 z-50 flex w-102 max-w-full flex-col border-s border-border bg-card shadow-[0_24px_56px_-14px_rgba(8,40,52,0.45)] @min-[1700px]/app:w-120"
     >
       <header data-hue="petrol" className="flex items-center gap-3 bg-hero px-5 py-4 text-hero-ink">
         <span className="grid size-12 shrink-0 place-items-center rounded-full bg-white text-hero-btn-ink" aria-hidden="true">

@@ -1,3 +1,5 @@
+import type { I18nString } from '@pikku/react'
+import { m } from '@/i18n/messages'
 import { useMemo } from 'react'
 import { Activity } from 'lucide-react'
 import { PageHead } from '../blocks/PageHead'
@@ -15,7 +17,7 @@ const slice = (from: number, to: number) => {
   return `M100 100 L${point(from)} A84 84 0 ${to - from > Math.PI ? 1 : 0} 1 ${point(to)} Z`
 }
 
-function DiskPie({ parts }: { parts: Array<{ label: string; note: string; mb: number; fill: string; dot: string }> }) {
+function DiskPie({ parts }: { parts: Array<{ label: I18nString; note: I18nString; mb: number; fill: string; dot: string }> }) {
   const total = parts.reduce((n, p) => n + p.mb, 0)
   let angle = 0
   const wedges = parts.map((p) => {
@@ -26,7 +28,7 @@ function DiskPie({ parts }: { parts: Array<{ label: string; note: string; mb: nu
   })
   return (
     <div className="grid items-center gap-8 md:grid-cols-[minmax(0,15rem)_minmax(0,1fr)]" data-hue="teal">
-      <svg viewBox="0 0 200 200" role="img" aria-label={`Space used: ${parts.map((p) => `${p.label} ${memory(p.mb)}`).join(', ')}`} className="mx-auto size-56">
+      <svg viewBox="0 0 200 200" role="img" aria-label={m.performance_screen__space_aria({ parts: parts.map((p) => `${p.label} ${memory(p.mb)}`).join(', ') })} className="mx-auto size-56">
         <circle cx="100" cy="100" r="92" className="fill-secondary" />
         {wedges.map((w) => (
           <path key={w.label} d={w.d} className={`${w.fill} stroke-card`} strokeWidth="4" strokeLinejoin="round" />
@@ -40,7 +42,7 @@ function DiskPie({ parts }: { parts: Array<{ label: string; note: string; mb: nu
               <div className="flex flex-wrap items-baseline gap-x-3">
                 <span className="text-px16 font-semibold">{p.label}</span>
                 <span className="text-px15 text-ink-2 tabular-nums">
-                  {memory(p.mb)} · {Math.round((p.mb / total) * 100)}%
+                  {m.performance_screen__memory_share({ memory: memory(p.mb), percent: Math.round((p.mb / total) * 100) })}
                 </span>
               </div>
               <div className="text-px14 text-muted-foreground">{p.note}</div>
@@ -68,51 +70,51 @@ export function PerformanceScreen() {
   const hot = latest?.cpuPct != null && latest.cpuPct >= 60
   const heavy = latest?.memMb != null && latest.memMb >= 1536
   const diskParts = [
-    { label: 'Installed packages', note: 'Tools your app borrows from other people. Safe to reinstall.', mb: space?.packagesMb ?? 0, fill: 'fill-w3', dot: 'bg-w3' },
-    { label: 'Your code', note: 'What you and the assistant have written.', mb: space?.codeMb ?? 0, fill: 'fill-coral', dot: 'bg-coral' },
-    { label: 'Pictures and files', note: 'Images, videos, fonts and other things that are not code.', mb: space?.mediaMb ?? 0, fill: 'fill-w2', dot: 'bg-w2' },
-    { label: 'History and build files', note: 'Saved versions and things made while building.', mb: space?.otherMb ?? 0, fill: 'fill-w5', dot: 'bg-w5' },
+    { label: m.performance_screen__part_packages(), note: m.performance_screen__part_packages_note(), mb: space?.packagesMb ?? 0, fill: 'fill-w3', dot: 'bg-w3' },
+    { label: m.performance_screen__part_code(), note: m.performance_screen__part_code_note(), mb: space?.codeMb ?? 0, fill: 'fill-coral', dot: 'bg-coral' },
+    { label: m.performance_screen__part_media(), note: m.performance_screen__part_media_note(), mb: space?.mediaMb ?? 0, fill: 'fill-w2', dot: 'bg-w2' },
+    { label: m.performance_screen__part_other(), note: m.performance_screen__part_other_note(), mb: space?.otherMb ?? 0, fill: 'fill-w5', dot: 'bg-w5' },
   ]
   const diskUsed = diskParts.reduce((n, p) => n + p.mb, 0)
-  const verdict = hot ? 'Working hard' : heavy ? 'Using a lot of memory' : 'Running comfortably'
+  const verdict = hot ? m.performance_screen__verdict_hot() : heavy ? m.performance_screen__verdict_heavy() : m.performance_screen__verdict_ok()
   const detail = hot
-    ? 'Your app is using most of what it can right now. It may feel slow until it settles.'
+    ? m.performance_screen__detail_hot()
     : heavy
-      ? 'Your app is holding on to a lot of memory. Restarting it usually clears this.'
-      : 'Your app has plenty of room to spare.'
+      ? m.performance_screen__detail_heavy()
+      : m.performance_screen__detail_ok()
 
   return (
     <Page gap="snug">
-      <PageHead crumb="While it runs" title="Performance" text="How hard your app is working and how much of your computer it is using." size="lead">
-        <Segmented label="Time range" value={range} options={ranges} onChange={setRange} />
+      <PageHead crumb={m.performance_screen__crumb()} title={m.performance_screen__title()} text={m.performance_screen__text()} size="lead">
+        <Segmented label={m.performance_screen__time_range()} value={range} options={ranges()} onChange={setRange} />
       </PageHead>
 
       {!samples.length && !process.isLoading ? (
         <div className="flex flex-col items-center gap-3 rounded-empty border border-border bg-card px-6 py-14 text-center" data-testid="performance-empty">
           <Activity className="size-8 text-muted-foreground" />
-          <p className="text-px17 font-semibold">Start your project to see how it performs</p>
-          <p className="max-w-[48ch] text-px15 text-ink-2">Once your app is running, you will see how hard it is working and how much memory it uses. If it is running already, try a longer time range.</p>
+          <p className="text-px17 font-semibold">{m.performance_screen__empty_title()}</p>
+          <p className="max-w-[48ch] text-px15 text-ink-2">{m.performance_screen__empty_text()}</p>
         </div>
       ) : (
         <>
-          <NextCard label="How the app is doing" hue={hot || heavy ? 'petrol' : 'teal'} art={<Art calm={!hot && !heavy} />} title={verdict} why={detail}>
+          <NextCard label={m.performance_screen__how_doing()} hue={hot || heavy ? 'petrol' : 'teal'} art={<Art calm={!hot && !heavy} />} title={verdict} why={detail}>
             <div className="mt-2 grid grid-cols-3 gap-6 border-t border-hero-ink/20 pt-5" data-testid="performance-cards">
-              <Figure label="How busy it is" value={latest?.cpuPct != null ? busyWord(latest.cpuPct) : 'No reading yet'} note={latest?.cpuPct != null ? `About ${Math.round(latest.cpuPct)}% of what it can. Busiest: ${Math.round(peakBusy)}%` : 'Waiting for a reading'} />
-              <Figure label="Memory in use" value={latest?.memMb != null ? memory(latest.memMb) : 'No reading yet'} note={latest?.memMb != null ? `Most it has used: ${memory(peakMem)}` : 'Waiting for a reading'} />
-              <Figure label="Space used" value={space ? memory(diskUsed) : 'Measuring…'} note={space ? `${memory(space.freeMb)} still free on this computer` : 'This takes a moment'} />
+              <Figure label={m.performance_screen__how_busy()} value={latest?.cpuPct != null ? busyWord(latest.cpuPct) : m.performance_screen__no_reading()} note={latest?.cpuPct != null ? m.performance_screen__note_cpu({ percent: Math.round(latest.cpuPct), peak: Math.round(peakBusy) }) : m.performance_screen__note_waiting()} />
+              <Figure label={m.performance_screen__memory_in_use()} value={latest?.memMb != null ? memory(latest.memMb) : m.performance_screen__no_reading()} note={latest?.memMb != null ? m.performance_screen__note_peak({ memory: memory(peakMem) }) : m.performance_screen__note_waiting()} />
+              <Figure label={m.performance_screen__space_used()} value={space ? memory(diskUsed) : m.performance_screen__measuring()} note={space ? m.performance_screen__note_free({ memory: memory(space.freeMb) }) : m.performance_screen__note_moment()} />
             </div>
           </NextCard>
 
-          <Section title="Over time" sub="Taller bars mean more. The right edge is now.">
+          <Section title={m.performance_screen__over_time()} sub={m.performance_screen__over_time_sub()}>
             <div className="grid gap-4 lg:grid-cols-2">
-              <Bars title="How busy it has been" hue="teal" points={busy} from={from} to={to} top={Math.max(30, ...busy.map((p) => p[1]))} say={(v) => busyWord(v).toLowerCase()} />
-              <Bars title="Memory in use" hue="petrol" points={mem} from={from} to={to} top={Math.max(...mem.map((p) => p[1]), 1) * 1.1} say={memory} />
+              <Bars title={m.performance_screen__busy_title()} hue="teal" points={busy} from={from} to={to} top={Math.max(30, ...busy.map((p) => p[1]))} say={(v) => busyWord(v).toLowerCase()} />
+              <Bars title={m.performance_screen__memory_in_use()} hue="petrol" points={mem} from={from} to={to} top={Math.max(...mem.map((p) => p[1]), 1) * 1.1} say={memory} />
             </div>
           </Section>
 
-          <Section title="Where the space goes" sub="What this project takes up on your computer.">
+          <Section title={m.performance_screen__space_goes()} sub={m.performance_screen__space_goes_sub()}>
             <div className="rounded-empty border border-border bg-card p-6" data-testid="performance-disk">
-              {space && diskUsed > 0 ? <><DiskPie parts={diskParts} />{space.skipped > 0 ? <p className="mt-5 text-px14 text-muted-foreground" data-testid="performance-skipped">{space.skipped === 1 ? 'One folder was too big to measure quickly, so it is not counted here.' : `${space.skipped} folders were too big to measure quickly, so they are not counted here.`} The real total is larger.</p> : null}</> : <p className="text-px15 text-muted-foreground">{disk.isError ? 'Could not measure this project just now. Try again in a moment.' : 'Measuring your project…'}</p>}
+              {space && diskUsed > 0 ? <><DiskPie parts={diskParts} />{space.skipped > 0 ? <p className="mt-5 text-px14 text-muted-foreground" data-testid="performance-skipped">{m.performance_screen__skipped({ n: space.skipped })}</p> : null}</> : <p className="text-px15 text-muted-foreground">{disk.isError ? m.performance_screen__measure_failed() : m.performance_screen__measuring()}</p>}
             </div>
           </Section>
         </>

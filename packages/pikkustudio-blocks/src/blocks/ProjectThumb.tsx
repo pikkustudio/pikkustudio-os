@@ -1,3 +1,4 @@
+import type { I18nString } from '@pikku/react'
 export type ProjectLook = 'bakery' | 'kiln' | 'garden' | 'dog'
 
 const looks: Record<ProjectLook, { bg: string; shapes: Array<{ cx: number; cy: number; r: number; fill: string }>; bars: string }> = {
@@ -54,7 +55,7 @@ export function ProjectThumbShapes({ look }: { look: ProjectLook }) {
   )
 }
 
-export function ProjectThumb({ look, label }: { look: ProjectLook; label: string }) {
+export function ProjectThumb({ look, label }: { look: ProjectLook; label: I18nString }) {
   return (
     <svg viewBox="0 0 320 200" role="img" aria-label={label} className="block size-full" preserveAspectRatio="xMidYMid slice">
       <ProjectThumbShapes look={look} />

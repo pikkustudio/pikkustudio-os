@@ -84,7 +84,8 @@
     "pikku": "pikku all && pikku db export",
     "score": "bun bin/score.ts",
     "test": "bun test",
-    "tsc": "tsc --noEmit"
+    "tsc": "tsc --noEmit",
+    "tsc:i18n": "tsc --noEmit -p tsconfig.i18n.json"
   },
   "devDependencies": {
     "@pikku/cli": "*",

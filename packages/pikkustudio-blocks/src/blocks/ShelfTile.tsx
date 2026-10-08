@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { I18nNode, I18nString } from '@pikku/react'
 import type { LucideIcon } from 'lucide-react'
 import { Dot } from './RowCard'
 import { ShelfArt, ShelfLabel, type ShelfHue } from './ShelfArt'
@@ -7,7 +7,7 @@ import { ShelfArt, ShelfLabel, type ShelfHue } from './ShelfArt'
  * One saved version as a named save slot: flat art on top, its plain title, one sentence, a status line, who and when, one action.
  * `wide` lays the art beside the text (the live stage). `flag` is the amber border for "needs you"; `dashed` is a saved-but-not-published slot.
  */
-export function ShelfTile({ hue, icon, label, title, text, status, tone = 'quiet', meta, safe, flag, dashed, wide, children }: { hue: ShelfHue; icon: LucideIcon; label?: string; title: ReactNode; text: string; status: string; tone?: 'ok' | 'warn' | 'bad' | 'quiet'; meta: string; safe?: boolean; flag?: boolean; dashed?: boolean; wide?: boolean; children?: ReactNode }) {
+export function ShelfTile({ hue, icon, label, title, text, status, tone = 'quiet', meta, safe, flag, dashed, wide, children }: { hue: ShelfHue; icon: LucideIcon; label?: I18nString; title: I18nNode; text: I18nString; status: I18nString; tone?: 'ok' | 'warn' | 'bad' | 'quiet'; meta: I18nString; safe?: boolean; flag?: boolean; dashed?: boolean; wide?: boolean; children?: I18nNode }) {
   return (
     <article className={`flex gap-3.5 rounded-card border bg-card p-3 shadow-card ${wide ? 'flex-row items-stretch' : 'flex-col'} ${flag ? 'border-warning' : dashed ? 'border-dashed border-border' : 'border-border'}`}>
       <ShelfArt hue={hue} icon={icon} safe={safe} className={wide ? 'w-[34%] min-h-44' : 'h-[128px]'} />

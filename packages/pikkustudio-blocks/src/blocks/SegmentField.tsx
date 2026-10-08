@@ -1,7 +1,7 @@
-import type { ReactNode } from 'react'
+import type { I18nNode, I18nString } from '@pikku/react'
 import { Segmented } from './Segmented'
 
-export function SegmentField({ label, options, value, onChange, note }: { label: string; options: [string, string][]; value: string; onChange: (v: string) => void; note?: ReactNode }) {
+export function SegmentField({ label, options, value, onChange, note }: { label: I18nString; options: Array<[string, I18nNode]>; value: string; onChange: (v: string) => void; note?: I18nNode }) {
   return (
     <div className="flex flex-col gap-1.5">
       <span className="block text-px13 font-bold text-muted-foreground">{label}</span>

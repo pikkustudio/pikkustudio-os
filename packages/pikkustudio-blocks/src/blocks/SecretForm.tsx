@@ -1,3 +1,4 @@
+import { asI18n } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useEffect, useState, type FormEvent } from 'react'
 import { Lock, X } from 'lucide-react'
@@ -43,14 +44,14 @@ export function SecretForm({
     <aside
       role="dialog"
       aria-label={fixed ? m.secret_form__change_a_secret() : m.secret_form__add_a_secret()}
-      className="fixed inset-y-0 right-0 z-50 flex w-102 max-w-full flex-col border-l border-border bg-card shadow-[0_24px_56px_-14px_rgba(8,40,52,0.45)] @min-[1700px]/app:w-120"
+      className="fixed inset-y-0 end-0 z-50 flex w-102 max-w-full flex-col border-s border-border bg-card shadow-[0_24px_56px_-14px_rgba(8,40,52,0.45)] @min-[1700px]/app:w-120"
     >
       <header data-hue="petrol" className="flex items-center gap-3 bg-hero px-5 py-4 text-hero-ink">
         <span className="grid size-12 shrink-0 place-items-center rounded-full bg-white text-hero-btn-ink" aria-hidden="true">
           <Lock className="size-6" />
         </span>
         <span className="min-w-0 flex-1">
-          <h2 className="font-heading text-[22px] leading-[1.15] font-bold tracking-[-0.012em]">{fixed ? name : m.secret_form__add_a_secret()}</h2>
+          <h2 className="font-heading text-[22px] leading-[1.15] font-bold tracking-[-0.012em]">{fixed ? asI18n(name) : m.secret_form__add_a_secret()}</h2>
           <small className="block text-[14px] text-hero-ink-2">{fixed ? m.secret_form__saving_replaces_what_was() : m.secret_form__a_password_or_key()}</small>
         </span>
         <button type="button" aria-label={m.secret_form__close()} onClick={onClose} className="grid size-11 place-items-center rounded-full text-hero-ink transition-colors hover:bg-white/15">

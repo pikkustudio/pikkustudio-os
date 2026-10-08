@@ -6,6 +6,10 @@ import { PreviewProvider } from '@/lib/PreviewProvider'
 import { PreviewSurface } from '@/lib/PreviewSurface'
 import { m } from '@/lib/i18n'
 
+/** File patterns, not copy. */
+const STORIES_GLOB = '*.stories.tsx'
+const COMPONENTS_DIR = 'apps/*/src/components/'
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Library lens — the user's shadcn primitives, each rendered in all its variants
 // under the active theme. The console drives `section` (the component title) via
@@ -44,8 +48,8 @@ export function LibraryView({
     return (
       <div ref={containerRef} className="flex flex-col items-center py-8">
         <p className="text-sm text-[var(--app-text-faint)]">
-          {m.view_no_stories()} <code>*.stories.tsx</code> {m.view_files_to()}{' '}
-          <code>apps/*/src/components/</code>.
+          {m.view_no_stories()} <code>{STORIES_GLOB}</code> {m.view_files_to()}{' '}
+          <code>{COMPONENTS_DIR}</code>.
         </p>
       </div>
     )

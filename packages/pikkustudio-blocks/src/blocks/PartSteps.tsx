@@ -31,7 +31,7 @@ export function PartSteps({ phase, state, failedAt }: { phase: number; state: 'w
                 </span>
                 {now ? doing()[i] : state === 'stopped' && i === 4 ? m.part_steps__not_yet_live() : short()[i]}
               </span>
-              <small className="pl-8 text-[13px] text-muted-foreground">{done ? m.part_steps__done() : now ? m.part_steps__working_on_it_now() : bad ? m.part_steps__stopped_here() : state === 'stopped' && i === 4 ? m.part_steps__waits_for_you() : `About ${secs} seconds`}</small>
+              <small className="ps-8 text-[13px] text-muted-foreground">{done ? m.part_steps__done() : now ? m.part_steps__working_on_it_now() : bad ? m.part_steps__stopped_here() : state === 'stopped' && i === 4 ? m.part_steps__waits_for_you() : m.common__about_seconds({ secs })}</small>
             </li>
           )
         })}
