@@ -8,7 +8,7 @@ export const BUILDER_MODES: BuilderMode[] = ['build', 'frontend', 'artifacts', '
 export function modeScope(mode: BuilderMode, projectDir?: string): { only?: string[]; protected?: string[] } {
   if (mode === 'frontend') {
     if (projectDir) mkdirSync(join(projectDir, '.mocks'), { recursive: true })
-    return { only: ['apps', '.mocks', '.pikku', 'packages/functions-sdk', 'packages/theme'] }
+    return { only: ['apps', '.mocks', 'DESIGN.md', '.pikku', 'packages/functions-sdk', 'packages/theme'] }
   }
   if (mode === 'artifacts') return { only: ['artifacts'] }
   if (mode === 'knowledge') return { only: ['knowledge'] }

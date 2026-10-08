@@ -1,5 +1,5 @@
 import assert from 'node:assert'
-import { mkdir, mkdtemp, readlink, writeFile, lstat } from 'node:fs/promises'
+import { mkdir, mkdtemp, readlink, rm, writeFile, lstat } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, test } from 'node:test'
@@ -14,6 +14,8 @@ const fixture = async () => {
     await mkdir(join(project, 'node_modules', '@pikku', name), { recursive: true })
     await writeFile(join(project, 'node_modules', '@pikku', name, 'package.json'), '{}')
   }
+  await mkdir(join(project, '.studio'), { recursive: true })
+  await writeFile(join(project, '.studio', 'project.json'), '{}')
   return { dev, project }
 }
 
@@ -22,6 +24,13 @@ describe('linkDevPikku', () => {
     const { project } = await fixture()
     assert.deepEqual(await linkDevPikku(project, undefined), [])
     assert.equal((await lstat(join(project, 'node_modules', '@pikku', 'cli'))).isSymbolicLink(), false)
+  })
+
+  test('leaves a project Studio did not create on its own pinned pikku', async () => {
+    const { dev, project } = await fixture()
+    await rm(join(project, '.studio'), { recursive: true })
+    assert.deepEqual(await linkDevPikku(project, dev), [])
+    assert.equal((await lstat(join(project, 'node_modules', '@pikku', 'core'))).isSymbolicLink(), false)
   })
 
   test('links cli and core, keeps the originals, leaves the rest alone', async () => {

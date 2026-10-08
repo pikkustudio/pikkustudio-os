@@ -87,12 +87,12 @@ export const impeccableSkill = () => {
 
 export const directionsSkill = () => writeDirectionsSkill(impeccableSkill())
 
-export function piArgs(options: { ai?: BuilderAi; skills: string; mode?: 'rpc'; session?: string; role?: 'explore' | 'inspect'; scope?: BuilderMode }): string[] {
+export function piArgs(options: { ai?: BuilderAi; skills: string; mode?: 'rpc'; session?: string; role?: 'explore' | 'inspect'; scope?: BuilderMode; briefing?: string }): string[] {
   const args: string[] = []
   if (options.mode) args.push('--mode', options.mode)
   if (options.role === 'inspect') args.push('--approve', '--no-skills', '--no-context-files', '--append-system-prompt', INSPECT_PROMPT)
   else if (options.role) args.push('--approve', '--no-skills', '--no-context-files', '--skill', directionsSkill(), '--append-system-prompt', EXPLORE_PROMPT)
-  else args.push('--approve', '--skill', options.skills, '--append-system-prompt', options.scope && options.scope !== 'build' ? MODE_PROMPTS[options.scope] : SYSTEM_PROMPT)
+  else args.push('--approve', '--skill', options.skills, '--append-system-prompt', options.scope && options.scope !== 'build' ? [MODE_PROMPTS[options.scope], options.briefing].filter(Boolean).join('\n\n') : SYSTEM_PROMPT)
   for (const path of extensionPaths()) args.push('-e', path)
   if (options.session) args.push('--session-id', options.session)
   if (options.ai?.proxy) args.push('--provider', 'pikku-proxy')

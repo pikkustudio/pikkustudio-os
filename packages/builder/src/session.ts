@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { createInterface } from 'node:readline'
 import { offerMessage, pikkuNext, routeMessage, writePikkuShim, type CommandRunner } from './changes.js'
+import { frontendBriefing } from './briefing.js'
 import { piArgs, piEnv, resolvePi, type BuilderAi, type BuilderMode } from './pi.js'
 import { builderHome, writeSkills } from './skills.js'
 
@@ -197,7 +198,8 @@ export class BuilderSession {
     const cwd = resolved.cwd
     const skills = await writeSkills(this.home)
     const shims = await writePikkuShim(this.home, queueHome)
-    const child = launch(process.execPath, [resolvePi(), ...piArgs({ ai, skills, mode: 'rpc', session: session ?? state.session, role, scope: mode })], {
+    const briefing = mode === 'frontend' && !role ? await frontendBriefing(cwd).catch(() => '') : undefined
+    const child = launch(process.execPath, [resolvePi(), ...piArgs({ ai, skills, mode: 'rpc', session: session ?? state.session, role, scope: mode, briefing })], {
       cwd,
       env: { ...process.env, ...env, ...piEnv(ai), PATH: `${shims}:${env.PATH ?? process.env.PATH ?? ''}` },
     })
@@ -259,7 +261,7 @@ export class BuilderSession {
     return this.roleTurn(key, message, 'explore', 'Say what you want explored first')
   }
 
-  private async runOnce(key: string, prompt: string, timeoutMs: number, role: 'explore' | 'inspect' = 'explore', label: string = role): Promise<{ ok: boolean; output: string }> {
+  private async runOnce(key: string, prompt: string, timeoutMs: number, role: 'explore' | 'inspect' = 'explore', label: string = role): Promise<{ ok: boolean; output: string; timedOut?: boolean }> {
     const startedAt = Date.now()
     const { cwd, ai, env = {}, launch = spawnPi } = await this.resolve(key)
     const skills = await writeSkills(this.home)
@@ -280,21 +282,24 @@ export class BuilderSession {
     })
     child.stdin?.end()
     let timedOut = false
+    let hardKill: ReturnType<typeof setTimeout> | undefined
     const timer = setTimeout(() => {
       timedOut = true
       child.kill()
+      hardKill = setTimeout(() => child.kill('SIGKILL'), Number(process.env.PIKKU_KILL_GRACE_MS) || 10_000)
     }, timeoutMs)
     const result = await new Promise<{ code: number | null; signal: NodeJS.Signals | null; error?: string }>((resolve) => {
       child.once('error', (error) => resolve({ code: 1, signal: null, error: error.message }))
       child.once('exit', (code, signal) => resolve({ code, signal }))
     })
     clearTimeout(timer)
+    clearTimeout(hardKill)
     const code = result.code
     if (logDir) {
       await mkdir(logDir, { recursive: true })
       await writeFile(join(logDir, `${key}-${label}-${startedAt}.log`), `label=${label} key=${key} start=${startedAt} ms=${Date.now() - startedAt} code=${code} signal=${result.signal} timedOut=${timedOut} error=${result.error ?? ''}\n${full}`).catch(() => undefined)
     }
-    return { ok: code === 0, output }
+    return { ok: code === 0, output, timedOut }
   }
 
   async inspect(key: string, files: { name: string; path: string }[]): Promise<boolean> {
@@ -312,7 +317,13 @@ export class BuilderSession {
     state.busy = true
     try {
       const full = context ? `${text}\n\n${context}` : text
-      const planned = await this.runOnce(key, PLAN_PROMPT(count, full), 3 * 60_000, 'explore', 'plan')
+      const planMs = Number(process.env.PIKKU_PLAN_TIMEOUT_MS) || 4 * 60_000
+      let planned = await this.runOnce(key, PLAN_PROMPT(count, full), planMs, 'explore', 'plan')
+      if (planned.timedOut) {
+        console.warn(`[builder] plan for ${key} timed out after ${planMs}ms, retrying once`)
+        planned = await this.runOnce(key, PLAN_PROMPT(count, full), planMs, 'explore', 'plan')
+        if (planned.timedOut) console.warn(`[builder] plan for ${key} timed out again, using the fallback briefs`)
+      }
       const briefs = (planned.ok ? parseBriefs(planned.output, count) : null) ?? FALLBACK_BRIEFS.slice(0, count)
       const made = await this.makeDirections(key, briefs, count, full)
       const ok = made.filter((r) => r.ok).length

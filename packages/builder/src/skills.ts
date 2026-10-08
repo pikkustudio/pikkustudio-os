@@ -1,8 +1,8 @@
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readFileSync, symlinkSync } from 'node:fs'
 import { mkdir, rename, rm, writeFile } from 'node:fs/promises'
 import { homedir } from 'node:os'
 import { dirname, join } from 'node:path'
-import { packageDir } from './pi.js'
+import { impeccableSkill, packageDir } from './pi.js'
 import { STUDIO_SKILLS } from './studio-skills.js'
 import { createHash } from 'node:crypto'
 import { listSkillFiles, listSkillNames, readSkillFile, SKILL_FILES } from '@pikku/skills'
@@ -11,7 +11,25 @@ const CLOUD_ONLY = /fabric/
 
 export const builderHome = () => process.env.PIKKU_BUILDER_HOME ?? join(homedir(), '.pikku', 'builder')
 
-const ownHash = () => createHash('sha256').update(JSON.stringify(STUDIO_SKILLS)).digest('hex').slice(0, 8)
+
+const DOCUMENT_SKILL = `---
+name: impeccable-document
+description: Use to write DESIGN.md at the project root from a finished design page.
+---
+
+Read [reference/document.md](reference/document.md) and follow it to write DESIGN.md from the page you are given.
+`
+
+const documentRef = (): string | null => {
+  try {
+    const from = join(impeccableSkill(), 'reference', 'document.md')
+    return existsSync(from) ? from : null
+  } catch {
+    return null
+  }
+}
+
+const ownHash = () => createHash('sha256').update(JSON.stringify(STUDIO_SKILLS)).update(DOCUMENT_SKILL).digest('hex').slice(0, 8)
 
 const skillsVersion = (): string => {
   try {
@@ -40,6 +58,12 @@ export async function writeSkills(home = builderHome()): Promise<string> {
     const target = join(staging, path)
     await mkdir(dirname(target), { recursive: true })
     await writeFile(target, text)
+  }
+  const ref = documentRef()
+  if (ref) {
+    await mkdir(join(staging, 'impeccable-document', 'reference'), { recursive: true })
+    await writeFile(join(staging, 'impeccable-document', 'SKILL.md'), DOCUMENT_SKILL)
+    symlinkSync(ref, join(staging, 'impeccable-document', 'reference', 'document.md'))
   }
   await mkdir(dirname(dir), { recursive: true })
   await rename(staging, dir).catch(async (error) => {

@@ -1,5 +1,10 @@
 import assert from 'node:assert'
+import { mkdir, mkdtemp, writeFile } from 'node:fs/promises'
 import { readFileSync } from 'node:fs'
+import { execFile } from 'node:child_process'
+import { promisify } from 'node:util'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { DatabaseSync } from 'node:sqlite'
 import { test } from 'node:test'
 import { createSqliteKysely } from '../../../../node_modules/@pikku/cli/dist/src/functions/db/sqlite/sqlite-kysely.js'
@@ -34,4 +39,15 @@ test('a slug is unique per owner, not globally', async () => {
 test('withSlugs gives each owner its own namespace and keeps existing slugs', async () => {
   const done = await withSlugs([{ id: 'a', path: '/x/ac', addedAt: 'x', slug: 'ac', owner: 'maya' }, { id: 'b', path: '/y/ac', addedAt: 'x' }, { id: 'c', path: '/z/ac', addedAt: 'x', owner: 'sam' }], 'maya')
   assert.deepStrictEqual(done.map((e) => `${e.owner}/${e.slug}`), ['maya/ac', 'maya/ac-2', 'sam/ac'])
+})
+
+test('withSlugs names an added folder after the project, not the folder or a template package name', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'slug-'))
+  const path = join(dir, 'main')
+  await mkdir(path)
+  await writeFile(join(path, 'package.json'), JSON.stringify({ name: '@project/root' }))
+  await promisify(execFile)('git', ['init', '-q', path])
+  await promisify(execFile)('git', ['-C', path, 'remote', 'add', 'origin', 'https://github.com/vlandor/seminarhof.git'])
+  const [entry] = await withSlugs([{ id: 'a', path, addedAt: 'x' }], 'maya')
+  assert.equal(entry.slug, 'seminarhof')
 })

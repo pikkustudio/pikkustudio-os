@@ -5,7 +5,7 @@ import { join } from 'node:path'
 const LINKED: Record<string, string> = { cli: 'packages/cli', core: 'packages/core', 'addon-console': 'packages/addon/pikku-console' }
 
 export async function linkDevPikku(projectDir: string, devRoot = process.env.PIKKU_DEV_LINK): Promise<string[]> {
-  if (!devRoot) return []
+  if (!devRoot || !existsSync(join(projectDir, '.studio', 'project.json'))) return []
   const linked: string[] = []
   for (const [name, path] of Object.entries(LINKED)) {
     const target = join(devRoot, path)
