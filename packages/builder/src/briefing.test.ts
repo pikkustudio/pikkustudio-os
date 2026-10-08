@@ -25,6 +25,25 @@ test('names the chosen direction and carries its files', async () => {
   expect(text).toContain('Existing mocks: reminders.list')
 })
 
+test('prefers the design language over the page html', async () => {
+  const dir = project()
+  writeFileSync(join(dir, 'artifacts/direction-2/DESIGN.md'), '---\nname: Bakery\n---\n## Overview')
+  const text = await frontendBriefing(dir)
+  expect(text).toContain('The design language of this app')
+  expect(text).toContain('## Overview')
+  expect(text).not.toContain('<h1>Bakery</h1>')
+  expect(text).toContain('artifacts/direction-2/index.html')
+})
+
+test('a root DESIGN.md wins over the direction one', async () => {
+  const dir = project()
+  writeFileSync(join(dir, 'artifacts/direction-2/DESIGN.md'), 'from direction')
+  writeFileSync(join(dir, 'DESIGN.md'), 'from root')
+  const text = await frontendBriefing(dir)
+  expect(text).toContain('from root')
+  expect(text).not.toContain('from direction')
+})
+
 test('tells the agent to leave stories for later', async () => {
   expect(await frontendBriefing(project())).toContain('Do not edit *.stories.tsx')
 })

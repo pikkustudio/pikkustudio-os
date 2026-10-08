@@ -45,11 +45,18 @@ export const chosenDirection = (cwd: string): string | undefined => {
   })
 }
 
+const design = async (cwd: string, direction?: string) => {
+  const language = (await read(cwd, 'DESIGN.md', 4000)) || (direction ? await read(cwd, `artifacts/${direction}/DESIGN.md`, 4000) : '')
+  const page = direction ? `The owner's chosen direction page is artifacts/${direction}/index.html; read it once for the layout when you build the home screen.\n` : ''
+  const fallback = !language && direction ? await read(cwd, `artifacts/${direction}/index.html`, 6000) : ''
+  return `${language ? `The design language of this app:\n${language}` : ''}${fallback}${page}`
+}
+
 export async function frontendBriefing(cwd: string): Promise<string> {
   const direction = chosenDirection(cwd)
   const parts = [
     'PROJECT BRIEFING (already gathered for you, so do not spend turns listing or reading these; read a file again only to edit it):',
-    direction ? `The chosen direction is artifacts/${direction}.\n${await read(cwd, `artifacts/${direction}/artifact.json`, 1500)}${await read(cwd, `artifacts/${direction}/index.html`, 14000)}` : '',
+    await design(cwd, direction),
     `Files under apps/app/src:\n${tree(join(cwd, 'apps/app/src')).join('\n')}\n`,
     await read(cwd, 'apps/app/src/routes/index.tsx', 2000),
     await read(cwd, 'apps/app/src/routes/app.index.tsx', 2000),
