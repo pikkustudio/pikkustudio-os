@@ -66,7 +66,7 @@ const movable: Record<Movable, { hue: Hue; Icon: LucideIcon; title: () => string
   translations: { hue: 'sea', Icon: Languages, title: () => m.explore_hub__translations_title(), text: () => m.explore_hub__translations_text() },
   artifacts: { hue: 'petrol', Icon: Layers, title: () => m.explore_hub__artifacts_title(), text: () => m.explore_hub__artifacts_text() },
   content: { hue: 'teal', Icon: FileText, title: () => m.explore_hub__content_title(), text: () => m.explore_hub__content_text() },
-  apps: { hue: 'sea', Icon: AppWindow, title: () => m.explore_hub__apps_title(), text: () => m.explore_hub__apps_text() },
+  'front-doors': { hue: 'sea', Icon: AppWindow, title: () => m.explore_hub__front_doors_title(), text: () => m.explore_hub__front_doors_text() },
 }
 
 export function ExploreHub() {

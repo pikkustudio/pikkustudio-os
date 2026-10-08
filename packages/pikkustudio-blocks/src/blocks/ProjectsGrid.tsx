@@ -15,12 +15,11 @@ const groups: Record<string, ProjectState[]> = {
   paused: ['paused'],
 }
 
-export function ProjectsGrid({ items, onRestore }: { items: Project[]; onRestore: (id: string) => void }) {
+export function ProjectsGrid({ items }: { items: Project[] }) {
   const [filter, setFilter] = useState('all')
   const [query, setQuery] = useState('')
   const [layout, setLayout] = useState('cards')
 
-  const restore = onRestore
   const reset = () => {
     setFilter('all')
     setQuery('')
@@ -54,13 +53,13 @@ export function ProjectsGrid({ items, onRestore }: { items: Project[]; onRestore
       {shown.length && layout === 'rows' ? (
         <ul className="m-0 flex list-none flex-col gap-2 p-0">
           {shown.map((p) => (
-            <ProjectRow key={p.id} item={p} onRestore={() => restore(p.id)} />
+            <ProjectRow key={p.id} item={p} />
           ))}
         </ul>
       ) : shown.length ? (
         <div className="grid grid-cols-1 gap-5 @min-[640px]:grid-cols-2 @min-[960px]:grid-cols-3">
           {shown.map((p) => (
-            <ProjectCard key={p.id} item={p} onRestore={() => restore(p.id)} />
+            <ProjectCard key={p.id} item={p} />
           ))}
         </div>
       ) : (

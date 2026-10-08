@@ -1,9 +1,12 @@
-import { useSearch } from '@tanstack/react-router'
+import { useParams, useSearch } from '@tanstack/react-router'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
+import { asI18n, type I18nString } from '@pikku/react'
+import { m } from '@/i18n/messages'
 
 export const useProjectSlug = () => {
   const { project } = useSearch({ strict: false })
-  return project ?? ''
+  const { key } = useParams({ strict: false }) as { key?: string }
+  return project ?? key ?? ''
 }
 
 export const useProjectKey = () => {
@@ -15,13 +18,14 @@ export const useProjectKey = () => {
   return (found.data as string | undefined) ?? ''
 }
 
-export const useProjectName = () => {
+export const useProjectName = (): I18nString => {
   const slug = useProjectSlug()
   const found = usePikkuQuery('studio:listProjects', {}, {
     enabled: !!slug,
     select: (d: { projects: { key: string; slug: string; owner?: string; name: string }[] }) => d.projects.find((p) => `${p.owner}/${p.slug}` === slug || p.slug === slug || p.key === slug)?.name ?? '',
   } as never)
-  return (found.data as string | undefined) || 'Your project'
+  const name = found.data as string | undefined
+  return name ? asI18n(name) : m.project__name_fallback()
 }
 
 export const useProjectMissing = () => {

@@ -54,9 +54,22 @@ export interface ProjectApp {
   slug: string
   url: string | null
   state: 'starting' | 'ready' | 'failed'
+  shot?: string | null
+  shotAt?: number | null
 }
 
-type RunningApp = ProjectApp & { child: ChildProcess | null }
+type RunningApp = ProjectApp & { child: ChildProcess | null; dir: string }
+
+const latestShot = (dir: string, slug: string): { shot: string; shotAt: number } | null => {
+  const folder = join(dir, '.pikku', 'builder', 'looks', slug, 'desktop')
+  try {
+    const files = readdirSync(folder).filter((f) => f.endsWith('.png')).sort()
+    const file = files.includes('index.png') ? 'index.png' : files[0]
+    return file ? { shot: `${slug}/desktop/${file}`, shotAt: statSync(join(folder, file)).mtimeMs } : null
+  } catch {
+    return null
+  }
+}
 
 const GENERATED_SECRETS = ['BETTER_AUTH_SECRET', 'SCENARIO_ACTOR_SECRET']
 
@@ -1205,7 +1218,10 @@ export class StudioProjectsService {
   }
 
   projectApps(key: string): ProjectApp[] {
-    return (this.apps.get(key) ?? []).map(({ slug, url, state }) => ({ slug, url, state }))
+    return (this.apps.get(key) ?? []).map(({ slug, url, state, dir }) => {
+      const look = latestShot(dir, slug)
+      return { slug, url, state, shot: look?.shot ?? null, shotAt: look?.shotAt ?? null }
+    })
   }
 
   async waitForApps(key: string, timeoutMs = 120_000): Promise<ProjectApp[]> {
@@ -1231,7 +1247,7 @@ export class StudioProjectsService {
         }
       })
       .map((dir) => ({ slug: dir, cwd: join(projectDir, 'apps', dir) }))
-    const apps: RunningApp[] = found.map(({ slug }) => ({ slug, url: null, state: 'starting', child: null }))
+    const apps: RunningApp[] = found.map(({ slug }) => ({ slug, url: null, state: 'starting', child: null, dir: projectDir }))
     this.apps.set(key, apps)
     for (const app of apps) {
       void (async () => {

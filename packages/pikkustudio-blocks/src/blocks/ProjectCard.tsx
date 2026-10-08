@@ -34,7 +34,7 @@ export const chips = (): Record<ProjectState, { text: string; icon: typeof Check
   paused: { text: m.project_card__paused(), icon: Pause, variant: 'pillMute' },
 })
 
-export function ProjectCard({ item, onRestore }: { item: Project; onRestore: () => void }) {
+export function ProjectCard({ item }: { item: Project }) {
   const chip = chips()[item.state]
   const Icon = chip.icon
   return (
@@ -71,7 +71,7 @@ export function ProjectCard({ item, onRestore }: { item: Project; onRestore: () 
           ) : null}
           {item.visitors ? <span>{m.project_card__visitors_this_week({ count: item.visitors })}</span> : null}
         </span>
-        <ProjectActions item={item} onRestore={onRestore} className="mt-auto flex flex-wrap items-center gap-2 pt-2" />
+        <ProjectActions item={item} className="mt-auto flex flex-wrap items-center gap-2 pt-2" />
       </div>
     </article>
   )

@@ -25,6 +25,7 @@ export function PreviewBar({
   onDevice,
   onTool,
   onReload,
+  onOpenTab,
   tools,
   actions,
   label,
@@ -40,6 +41,7 @@ export function PreviewBar({
   onDevice: (v: Device) => void
   onTool: (v: string) => void
   onReload: () => void
+  onOpenTab?: () => void
   tools?: string[]
   actions?: ReactNode
   label?: string
@@ -58,7 +60,7 @@ export function PreviewBar({
           <Button variant="bar" size="bar" type="button" aria-label={m.preview_bar__reload_preview()} title={m.preview_bar__reload_preview()} onClick={onReload}>
             <RotateCw className="size-4.5" />
           </Button>
-          <Button variant="bar" size="bar" type="button" aria-label={m.preview_bar__open_in_a_new()} title={m.preview_bar__open_in_a_new()}>
+          <Button variant="bar" size="bar" type="button" aria-label={m.preview_bar__open_in_a_new()} title={m.preview_bar__open_in_a_new()} onClick={onOpenTab} disabled={!onOpenTab}>
             <ExternalLink className="size-4.5" />
           </Button>
         </div>

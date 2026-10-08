@@ -1,8 +1,8 @@
+import { m } from '@/i18n/messages'
 import type { UseQueryResult } from '@tanstack/react-query'
-import { useEffect } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { FolderPlus, Plus } from 'lucide-react'
-import { usePikkuMutation } from '@project/functions-sdk/pikku/api.gen'
 import { Button } from '../ui/button'
 import { Page } from '../blocks/Page'
 import { PageHead } from '../blocks/PageHead'
@@ -34,7 +34,7 @@ const toCard = (p: ListedProject): Project => ({
   state: (p.missing || p.location === 'cloud' ? 'sketch' : p.busy ? 'progress' : p.open ? 'running' : 'paused') satisfies ProjectState,
 })
 
-const TeamSlug = () => <>{useTeamSlug()}</>
+const TeamSlug = ({ children }: { children: (name: string) => ReactNode }) => <>{children(useTeamSlug())}</>
 
 export function ProjectsScreen() {
   const team = useTeamProjects()
@@ -46,38 +46,36 @@ export function ProjectsScreen() {
   useEffect(() => {
     if (signedIn && projects.isSuccess && projects.data.length === 0) navigate({ to: '/new-project', search: ((prev: object) => prev) as never, replace: true })
   }, [signedIn, projects.isSuccess, projects.data?.length])
-  const reopen = usePikkuMutation('studio:openProject', { onSuccess: () => team.refetch() })
 
   return (
     <Page gap="snug">
       <PageHead
-        crumb={local ? 'On this computer' : <>In <TeamName /></>}
-        title="Projects"
-        text={local ? 'Everything you are making, kept on this computer. Open one to carry on where you stopped.' : <>Everything <TeamName /> is making, running on your computer or in the cloud. Open one to carry on where you stopped.</>}
+        crumb={local ? m.account_screen__on_this_computer() : <TeamName>{(team) => m.projects_screen__in_team({ team })}</TeamName>}
+        title={m.projects_screen__title()}
+        text={local ? m.projects_screen__lead_local() : <TeamName>{(team) => m.projects_screen__lead_team({ team })}</TeamName>}
         size="lead"
       >
         <Button asChild variant="default" size="page">
           <Link {...keep} to="/new-project">
             <Plus className="size-4.5" />
-            New project
+            {m.projects_screen__new_project()}
           </Link>
         </Button>
       </PageHead>
-      {reopen.isError ? <p role="alert" className="text-destructive-foreground">That project could not be opened. Try again.</p> : null}
       <QueryState
         query={projects}
         skeleton={<CardsSkeleton />}
         empty={(items) =>
           items.length ? null : (
-            <EmptyState layout="row" icon={FolderPlus} title="You have no projects yet." text="Start one and it will show up here.">
+            <EmptyState layout="row" icon={FolderPlus} title={m.projects_screen__none_title()} text={m.projects_screen__none_text()}>
               <Button asChild size="page">
-                <Link {...keep} to="/new-project">New project</Link>
+                <Link {...keep} to="/new-project">{m.projects_screen__new_project()}</Link>
               </Button>
             </EmptyState>
           )
         }
       >
-        {(items) => <ProjectsGrid items={items} onRestore={(id) => reopen.mutate({ key: id })} />}
+        {(items) => <ProjectsGrid items={items} />}
       </QueryState>
     </Page>
   )

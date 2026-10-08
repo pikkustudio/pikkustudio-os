@@ -1,14 +1,15 @@
-import { AiSpinner } from '../blocks/Spinner'
+import { MachineOpening, OpeningStage } from '../blocks/MachineOpening'
 import { EmptyState } from '../blocks/EmptyState'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { Button } from '../ui/button'
 import { Textarea } from '../ui/textarea'
-import { Input } from '../ui/input'
-import { ArrowRight, Check, CircleAlert, Sparkles, Lightbulb } from 'lucide-react'
+import { ArrowRight, ChevronRight, CircleAlert, FileSpreadsheet, FolderOpen, Globe, GitBranch, Lightbulb, Sparkles, Wand2, type LucideIcon } from 'lucide-react'
 import { OnbCtx } from './OnboardingLayout'
+import { ShellCtx } from '../lib/shell'
 import { NewProjectForm } from './NewProjectForm'
-import { useImportProject, type ProjectRun } from '../lib/onboarding'
+import { m } from '@/i18n/messages'
+import { type ProjectRun } from '../lib/onboarding'
 
 
 const sample = {
@@ -92,62 +93,44 @@ function progress(run?: ProjectRun) {
   return rows
 }
 
-const h1 = 'max-w-[15ch] text-[56px] leading-[1.04] tracking-[-0.02em] group-data-open/shell:text-[46px] @min-[1700px]/app:text-[66px] group-data-open/shell:@min-[1700px]/app:text-[54px] font-bold text-balance'
-const lead = 'mt-4 max-w-[52ch] text-[19px] leading-[1.55] text-hero-ink-2 @min-[1700px]/app:text-[21px] text-pretty'
-const row = 'mt-1 flex flex-wrap items-center gap-x-4 gap-y-3'
 
-function ImportProject() {
-  const navigate = useNavigate()
-  const bring = useImportProject()
-  const [url, setUrl] = useState('')
-  const ready = url.trim().length > 3 && !bring.isPending
-  const submit = () =>
-    bring.mutate(
-      { url: url.trim() },
-      {
-        onSuccess: (p) =>
-          navigate({ to: '/overview', search: ((prev: object) => ({ ...prev, project: p.slug })) as never }),
-      },
-    )
+type Tile = { hue: 'teal' | 'petrol' | 'sea'; Icon: LucideIcon; title: () => string; text: () => string; say: () => string }
+
+const TILES: Tile[] = [
+  { hue: 'teal', Icon: Wand2, title: () => m.new_project__vibe_title(), text: () => m.new_project__vibe_text(), say: () => m.new_project__vibe_say() },
+  { hue: 'petrol', Icon: GitBranch, title: () => m.new_project__import_title(), text: () => m.new_project__import_text(), say: () => m.new_project__import_say() },
+  { hue: 'sea', Icon: FileSpreadsheet, title: () => m.new_project__sheets_title(), text: () => m.new_project__sheets_text(), say: () => m.new_project__sheets_say() },
+  { hue: 'teal', Icon: Globe, title: () => m.new_project__site_title(), text: () => m.new_project__site_text(), say: () => m.new_project__site_say() },
+  { hue: 'petrol', Icon: FolderOpen, title: () => m.new_project__folder_title(), text: () => m.new_project__folder_text(), say: () => m.new_project__folder_say() },
+]
+
+function OtherWays() {
+  const { say } = useContext(ShellCtx)
   return (
-    <section aria-label="Bring in a project">
-      <div className="mb-4 flex items-baseline justify-between gap-4">
-        <h2 className="text-[26px] leading-[1.2] font-bold tracking-[-0.012em] text-balance">Or bring in a project you already have</h2>
-        <p className="text-[15px] text-muted-foreground text-pretty">Paste its git address. I will copy it here and keep it in step with where it lives.</p>
+    <section aria-label={m.new_project__more_label()}>
+      <div className="mb-4">
+        <h2 className="text-[26px] leading-[1.2] font-bold tracking-[-0.012em] text-balance">{m.new_project__more_title()}</h2>
+        <p className="mt-1 max-w-[62ch] text-[15px] text-muted-foreground text-pretty">{m.new_project__more_lead()}</p>
       </div>
-      <form
-        className="flex max-w-[720px] flex-col gap-3"
-        onSubmit={(e) => {
-          e.preventDefault()
-          if (ready) submit()
-        }}
-      >
-        <label className="sr-only" htmlFor="import-url">
-          Address of the project
-        </label>
-        <div className="flex flex-wrap items-center gap-3">
-          <Input
-            id="import-url"
-            shape="field"
-            className="min-w-60 flex-1"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            disabled={bring.isPending}
-            autoComplete="off"
-            spellCheck={false}
-            placeholder="git@github.com:your-team/your-project.git"
-          />
-          <Button type="submit" variant="bordered" size="compact" disabled={!ready}>
-            {bring.isPending ? 'Bringing it in…' : 'Bring it in'}
-          </Button>
-        </div>
-        {bring.isError ? (
-          <div role="alert" className="flex items-start gap-3 rounded-card border-[1.5px] border-destructive bg-card px-5 py-4">
-            <CircleAlert className="mt-0.5 size-5 shrink-0 text-destructive-foreground" />
-            <p className="text-[15px] text-ink-2 text-pretty">{bring.error.message}</p>
-          </div>
-        ) : null}
-      </form>
+      <div className="divide-y divide-border overflow-hidden rounded-[22px] border border-border bg-card">
+        {TILES.map((t) => (
+          <button
+            key={t.title()}
+            type="button"
+            onClick={() => say(t.say())}
+            className="flex w-full items-center gap-4 px-5 py-4 text-left transition-colors duration-140 hover:bg-secondary"
+          >
+            <span data-hue={t.hue} className="grid size-11 shrink-0 place-items-center rounded-xl bg-hero text-hero-ink">
+              <t.Icon className="size-5.5" aria-hidden="true" />
+            </span>
+            <span className="min-w-0 flex-1">
+              <b className="block text-[17px] leading-[1.3] text-foreground">{t.title()}</b>
+              <small className="block text-[14px] text-ink-2">{t.text()}</small>
+            </span>
+            <ChevronRight className="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+          </button>
+        ))}
+      </div>
     </section>
   )
 }
@@ -177,108 +160,61 @@ export function NewProjectScreen() {
 
   return (
     <div className="mx-auto flex max-w-[1160px] flex-col gap-10 @min-[1700px]/app:max-w-[1380px]">
-      <section
-        ref={hero}
-        data-hue="sea"
-        className="relative grid min-h-95 grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] overflow-hidden rounded-[30px] bg-hero text-hero-ink group-data-open/shell:grid-cols-[minmax(0,1.4fr)_minmax(0,0.6fr)] @min-[1700px]/app:min-h-110"
-        aria-label="Our recommendation"
-      >
-        <div className="relative z-1 flex flex-col justify-center gap-5 px-13 pt-13 pb-12 @min-[1700px]/app:p-16 group-data-open/shell:@min-[1700px]/app:p-13">
-          {loading ? (
+      <OpeningStage sectionRef={hero}>
+        {loading ? (
+          <MachineOpening
+            icon={<Sparkles className="mr-3 inline-block size-9 align-middle" aria-hidden="true" />}
+            title="Exploring some directions."
+            lead="This usually takes about two minutes. You can look around while you wait, and I will tell you the moment it is ready."
+            steps={progress(run).map((s) => ({ ...s, ai: s.label === LABELS['Ask for a first draft'] }))}
+            onCancel={cancel}
+          />
+        ) : null}
+        {error ? (
+          <div
+            role="alert"
+            className="grid max-w-[620px] grid-cols-[auto_minmax(0,1fr)] items-center gap-x-4 gap-y-1.5 rounded-card border-[1.5px] border-destructive bg-card px-6 py-5 text-foreground"
+          >
+            <CircleAlert className="size-7 text-destructive-foreground" />
             <div>
-              <h1 className={h1}>
-                <Sparkles className="mr-3 inline-block size-9 align-middle" aria-hidden="true" />
-                Exploring some directions.
-              </h1>
-              <p className={lead}>This usually takes about two minutes. You can look around while you wait, and I will tell you the moment it is ready.</p>
+              <b className="mb-0.5 block text-[17px]">{needsAi ? 'I need an AI to explore directions.' : 'I could not finish setting that up.'}</b>
+              <p className="text-[15px] text-ink-2 text-pretty">
+                {needsAi
+                  ? 'Your project is made, but no AI is chosen yet. Choose one, then try again. Your words are still here.'
+                  : 'I tried to fix it myself and could not. Your words are still here, and trying again picks up where I stopped.'}
+              </p>
+              {run?.error ? (
+                <details className="mt-2 text-[14px] text-ink-2">
+                  <summary className="cursor-pointer font-semibold">What went wrong</summary>
+                  <pre className="mt-1.5 max-h-40 overflow-auto whitespace-pre-wrap text-[13px]">{run.error}</pre>
+                </details>
+              ) : null}
             </div>
-          ) : null}
-          {error ? (
-            <div
-              role="alert"
-              className="grid max-w-[620px] grid-cols-[auto_minmax(0,1fr)] items-center gap-x-4 gap-y-1.5 rounded-card border-[1.5px] border-destructive bg-card px-6 py-5 text-foreground"
-            >
-              <CircleAlert className="size-7 text-destructive-foreground" />
-              <div>
-                <b className="mb-0.5 block text-[17px]">{needsAi ? 'I need an AI to explore directions.' : 'I could not finish setting that up.'}</b>
-                <p className="text-[15px] text-ink-2 text-pretty">
-                  {needsAi
-                    ? 'Your project is made, but no AI is chosen yet. Choose one, then try again. Your words are still here.'
-                    : 'I tried to fix it myself and could not. Your words are still here, and trying again picks up where I stopped.'}
-                </p>
-                {run?.error ? (
-                  <details className="mt-2 text-[14px] text-ink-2">
-                    <summary className="cursor-pointer font-semibold">What went wrong</summary>
-                    <pre className="mt-1.5 max-h-40 overflow-auto whitespace-pre-wrap text-[13px]">{run.error}</pre>
-                  </details>
-                ) : null}
-              </div>
-              <div className="col-span-full flex flex-wrap gap-2">
-                {needsAi ? (
-                  <Button variant="default" size="compact" type="button" onClick={() => navigate({ to: '/choose-ai', search: ((prev: object) => ({ ...prev, run: undefined })) as never })}>
-                    Choose your AI
-                  </Button>
-                ) : null}
-                <Button variant="bordered" size="compact" type="button" onClick={retry}>
-                  Try again
+            <div className="col-span-full flex flex-wrap gap-2">
+              {needsAi ? (
+                <Button variant="default" size="compact" type="button" onClick={() => navigate({ to: '/choose-ai', search: ((prev: object) => ({ ...prev, run: undefined })) as never })}>
+                  Choose your AI
                 </Button>
-              </div>
+              ) : null}
+              <Button variant="bordered" size="compact" type="button" onClick={retry}>
+                Try again
+              </Button>
             </div>
-          ) : null}
-          {loading ? (
-            <div>
-              <ul className="flex list-none flex-col gap-3.5 text-[19px] font-semibold" role="status">
-                {progress(run).map((s) => (
-                  <li key={s.label} className={`flex items-center gap-3.5 ${s.state === 'wait' ? 'opacity-60' : ''}`}>
-                    {s.state === 'done' ? (
-                      <span className="grid size-7.5 shrink-0 place-items-center rounded-full bg-hero-ink text-hero">
-                        <Check className="size-4" strokeWidth={3} />
-                      </span>
-                    ) : s.state === 'now' && s.label === LABELS['Ask for a first draft'] ? (
-                      <span className="grid size-7.5 shrink-0 place-items-center text-hero-ink">
-                        <AiSpinner className="size-7.5" />
-                      </span>
-                    ) : s.state === 'now' ? (
-                      <span className="size-7.5 shrink-0 animate-[spin_0.9s_linear_infinite] rounded-full border-[2.5px] border-hero-ink border-r-transparent" />
-                    ) : (
-                      <span className="size-7.5 shrink-0 rounded-full border-2 border-dashed border-hero-ink" />
-                    )}
-                    {s.label}
-                  </li>
-                ))}
-              </ul>
-              <div className={`${row} mt-6`}>
-                <Button variant="heroGhost" size="page" type="button" onClick={cancel}>
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <NewProjectForm idea={idea} setIdea={setIdea} uses={uses} setUses={setUses} files={files} setFiles={setFiles} ready={ready} go={go} />
-          )}
-        </div>
-        <div className="relative min-h-55 group-data-open/shell:min-h-0" aria-hidden="true">
-          <svg className="absolute inset-0 size-full" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice">
-            <circle cx="368" cy="48" r="248" className="fill-w1" />
-            <circle cx="16" cy="408" r="231" className="fill-w2" />
-            <circle cx="248" cy="440" r="160" className="fill-w3" opacity=".55" />
-            <rect x="70" y="80" width="260" height="56" rx="28" className="fill-w6" />
-            <rect x="110" y="156" width="230" height="56" rx="28" className="fill-w5" />
-            <rect x="70" y="232" width="190" height="56" rx="28" className="fill-w6" opacity=".92" />
-            <circle cx="330" cy="330" r="48" className="fill-coral" />
-            <circle cx="330" cy="330" r="62" fill="none" className="stroke-w6" strokeWidth="3" strokeDasharray="2 10" strokeLinecap="round" />
-          </svg>
-        </div>
-      </section>
+          </div>
+        ) : null}
+        {loading ? null : (
+          <NewProjectForm idea={idea} setIdea={setIdea} uses={uses} setUses={setUses} files={files} setFiles={setFiles} ready={ready} go={go} />
+        )}
+      </OpeningStage>
 
       {loading ? null : (
         <section aria-label="Starting ideas">
           <div className="mb-4 flex items-baseline justify-between gap-4">
-            <h2 className="text-[26px] leading-[1.2] font-bold tracking-[-0.012em] text-balance">Or begin from an idea</h2>
+            <h2 className="text-[26px] leading-[1.2] font-bold tracking-[-0.012em] text-balance">{m.new_project__ideas_title()}</h2>
             {empty ? null : <p className="text-[15px] text-muted-foreground text-pretty">Pick one and I will write the first sentence for you.</p>}
           </div>
           {empty ? (
-            <EmptyState icon={Lightbulb} title="No ideas to show right now." text="Ideas will appear here as I learn what you like to make. For now, describe it in your own words above, and I will take it from there." />
+            <EmptyState icon={Lightbulb} title={m.new_project_screen__no_ideas_title()} text={m.new_project_screen__no_ideas_text()} />
           ) : (
             <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-x-5 gap-y-6">
               {sample.ideas.map((t, i) => (
@@ -307,7 +243,7 @@ export function NewProjectScreen() {
           )}
         </section>
       )}
-      {loading ? null : <ImportProject />}
+      {loading ? null : <OtherWays />}
     </div>
   )
 }
