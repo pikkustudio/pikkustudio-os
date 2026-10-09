@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url'
 import type { SecretService } from '@pikku/core/services'
 import { VaultAdmin } from './admin.js'
 import { VaultClientSecretService } from './client.js'
-import { vaultPaths } from './server.js'
+import { startVault, vaultPaths } from './server.js'
 
 const live = (socket: string): Promise<boolean> =>
   new Promise((resolve) => {
@@ -17,6 +17,8 @@ const live = (socket: string): Promise<boolean> =>
     })
     probe.once('error', () => resolve(false))
   })
+
+export const isCompiled = (url: string = import.meta.url): boolean => url.includes('/$bunfs/') || url.includes('~BUN')
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
@@ -31,6 +33,9 @@ export const connectVault = async (
   fallback?: SecretService
 ): Promise<ConnectedVault> => {
   const paths = vaultPaths(home)
+  if (!(await live(paths.socket)) && isCompiled()) {
+    await startVault(home)
+  }
   if (!(await live(paths.socket))) {
     const runtime = (globalThis as { Bun?: unknown }).Bun ? process.execPath : 'bun'
     const entry = fileURLToPath(new URL('./main.ts', import.meta.url))
