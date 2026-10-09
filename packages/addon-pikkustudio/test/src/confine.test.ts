@@ -109,3 +109,23 @@ describe('confinedSpawn with only', { skip: !supported }, () => {
     assert.equal(existsSync(join(root, 'apps', 'app-prototype', 'screen')), true)
   })
 })
+
+describe('confinedSpawn runtime dir', { skip: !supported }, () => {
+  test('executes a shim inside home only when its folder is readable', async () => {
+    const base = await mkdtemp(join(tmpdir(), 'pikku-confine-'))
+    const home = join(base, 'home')
+    const root = join(home, 'worktree')
+    const runtime = join(home, '.pikkustudio', 'runtime', 'abc')
+    await mkdir(root, { recursive: true })
+    await mkdir(join(runtime, 'bin'), { recursive: true })
+    await writeFile(join(runtime, 'bin', 'npx'), '#!/bin/sh\nexit 0\n', { mode: 0o755 })
+    const script = `${join(runtime, 'bin', 'npx')}`
+    const spawnWith = (readable: string[]) =>
+      new Promise<number | null>((resolve) => {
+        const child = confinedSpawn('/bin/sh', ['-c', script], { root, home, readable }, { stdio: 'ignore' })
+        child.on('close', resolve)
+      })
+    assert.notStrictEqual(await spawnWith([]), 0)
+    assert.strictEqual(await spawnWith([runtime]), 0)
+  })
+})
