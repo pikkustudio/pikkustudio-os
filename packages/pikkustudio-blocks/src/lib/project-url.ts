@@ -8,7 +8,21 @@ import type { LocationRewrite } from '@tanstack/react-router'
 const GLOBAL = new Set(['claim-stripe', 'sign-in', 'your-name', 'choose-ai', 'new-team', 'accept-invite', 'account', 'app', 'login', 'signup'])
 // The team's own pages: no project in their URL.
 const TEAM_PAGES = new Set(['projects', 'secrets', 'studio-metrics', 'new-project'])
-const PAGES = new Set(['overview', 'resume', 'changes-directions', 'build', 'design', 'emails', 'translations', 'artifacts', 'knowledge', 'content', 'front-doors', 'code', 'audit', 'apps', 'publish', 'explore', 'logs', 'performance', 'metrics', 'assistants', 'virtual-users', 'routines', 'versions', 'lab', 'addons', 'add-ons', 'billing', 'team', 'settings', 'plans', 'ai', 'domains', 'mocks'])
+// Project pages. The value says whether the page reads the project's running app: those show the start screen until it is up.
+// Overview only adds counts from the app and falls back to none; Publish and Resume never call it; the rest are team pages.
+export const PAGES: Record<string, boolean> = {
+  overview: false, resume: false, publish: false, build: false, lab: false,
+  billing: false, team: false, settings: false, plans: false, ai: false, domains: false,
+  'changes-directions': true, design: true, emails: true, translations: true, artifacts: true, knowledge: true, content: true,
+  'front-doors': true, code: true, audit: true, apps: true, explore: true, logs: true, performance: true, metrics: true,
+  assistants: true, 'virtual-users': true, routines: true, versions: true, addons: true, 'add-ons': true, mocks: true, surface: true,
+}
+const isPage = (name: string) => Object.hasOwn(PAGES, name)
+
+export const pageNeedsApp = (pathname: string) => {
+  const first = pathname.split('/').filter(Boolean)[0]
+  return !!first && !GLOBAL.has(first) && !TEAM_PAGES.has(first) && PAGES[first] !== false
+}
 
 const unquote = (v: string) => v.replace(/^"(.*)"$/, '$1')
 // A project param from before teams were in the URL was `owner/slug`.
@@ -23,11 +37,11 @@ export const projectRewrite: LocationRewrite = {
   input: ({ url }) => {
     const [first, second, ...more] = url.pathname.split('/').filter(Boolean)
     // Unscoped paths pass through; the team guard adds the team.
-    if (!first || GLOBAL.has(first) || TEAM_PAGES.has(first) || PAGES.has(first)) return url
+    if (!first || GLOBAL.has(first) || TEAM_PAGES.has(first) || isPage(first)) return url
     url.searchParams.set('team', JSON.stringify(first))
     if (second === undefined) {
       url.pathname = '/projects'
-    } else if (TEAM_PAGES.has(second) || PAGES.has(second)) {
+    } else if (TEAM_PAGES.has(second) || isPage(second)) {
       url.pathname = `/${[second, ...more].join('/')}`
     } else {
       url.searchParams.set('project', JSON.stringify(second))

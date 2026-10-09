@@ -2,7 +2,7 @@ import type { I18nNode } from '@pikku/react'
 import { useState } from 'react'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { useProjectKey } from '../lib/project'
-import { AppNotRunning } from './AppNotRunning'
+import { AppNotRunning, startSteps } from './AppNotRunning'
 import { useTeamProjects } from './TeamProjects'
 
 type LiveApp = { slug: string; state: 'starting' | 'ready' | 'failed' }
@@ -22,11 +22,12 @@ export function ProjectRunGate({ children }: { children: I18nNode }) {
 
   if (!key || !project || project.location === 'cloud') return <>{children}</>
   const list = (apps.data as LiveApp[] | undefined) ?? []
+  const steps = startSteps(start.isSuccess, list)
   const broken = list.find((a) => a.state === 'failed')
   const name = broken ? label(broken.slug) : list[0] ? label(list[0].slug) : undefined
-  if (apps.isPending) return <AppNotRunning state="starting" name={name} onStart={() => undefined} />
-  if (broken || start.isError) return <AppNotRunning state="failed" name={name} onStart={() => restart.mutate({ key })} starting={restart.isPending || start.isPending} />
+  if (apps.isPending) return <AppNotRunning state="starting" name={name} steps={steps} onStart={() => undefined} />
+  if (broken || start.isError) return <AppNotRunning state="failed" name={name} error={start.error ?? restart.error} onStart={() => restart.mutate({ key })} starting={restart.isPending || start.isPending} />
   if (list.length === 0) return <AppNotRunning state="off" onStart={() => { setWanted(true); start.mutate({ key }) }} starting={wanted && start.isPending} />
-  if (list.some((a) => a.state !== 'ready')) return <AppNotRunning state="starting" name={name} onStart={() => undefined} />
+  if (list.some((a) => a.state !== 'ready')) return <AppNotRunning state="starting" name={name} steps={steps} onStart={() => undefined} />
   return <>{children}</>
 }

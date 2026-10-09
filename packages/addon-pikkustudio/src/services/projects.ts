@@ -1031,7 +1031,12 @@ export class StudioProjectsService {
     const readable = [join(homedir(), '.fabric', 'auth.json')]
     if (this.options.designEntry) readable.push(resolve(this.options.designEntry, '..', '..'))
     readable.push(...linkedRepos(worktree.path))
+    const runtime = process.env.PIKKU_STUDIO_RUNTIME_DIR
+    if (runtime) readable.push(runtime, dirname(process.execPath))
     const writable = design ? [dirname(design)] : []
+    for (const dir of [process.env.UV_CACHE_DIR, process.env.UV_PYTHON_INSTALL_DIR, process.env.UV_TOOL_DIR, process.env.UV_TOOL_BIN_DIR]) {
+      if (dir && existsSync(dir)) writable.push(dir)
+    }
     return {
       ...base,
       readable: [...(base.readable ?? []), ...readable, ...writable],

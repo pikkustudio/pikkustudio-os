@@ -7,7 +7,7 @@ import { m } from '@/i18n/messages'
 import { PinButton } from '../blocks/PinButton'
 import { PreviewBar } from '../blocks/PreviewBar'
 import { DesignInspector } from '../blocks/DesignInspector'
-import { AppNotRunning } from '../blocks/AppNotRunning'
+import { AppNotRunning, startSteps } from '../blocks/AppNotRunning'
 import { HintRow } from '../blocks/HintRow'
 import { LiveAppFrame, liveAppUrl } from '../blocks/LiveAppFrame'
 import { MockStatusBar } from '../blocks/MockStatusBar'
@@ -44,13 +44,13 @@ export function DesignScreen() {
   const app = current ? label(current.slug) : undefined
   let stage
   if (!key || apps.isPending) {
-    stage = <AppNotRunning state="starting" name={app} onStart={() => undefined} />
+    stage = <AppNotRunning state="starting" name={app} steps={startSteps(start.isSuccess, list)} onStart={() => undefined} />
   } else if (failed) {
-    stage = <AppNotRunning state="failed" name={app} onStart={() => restart.mutate({ key })} starting={restart.isPending || start.isPending} />
+    stage = <AppNotRunning state="failed" name={app} error={start.error ?? restart.error} onStart={() => restart.mutate({ key })} starting={restart.isPending || start.isPending} />
   } else if (list.length === 0) {
     stage = <AppNotRunning state="off" onStart={() => { setWanted(true); start.mutate({ key }) }} starting={wanted && start.isPending} />
   } else if (!current?.url || current.state !== 'ready') {
-    stage = <AppNotRunning state="starting" name={app} onStart={() => undefined} />
+    stage = <AppNotRunning state="starting" name={app} steps={startSteps(start.isSuccess, list)} onStart={() => undefined} />
   } else {
     stage = <LiveAppFrame url={current.url} device={device} reloadKey={reloadKey} title={label(current.slug)} />
   }
