@@ -1,5 +1,6 @@
 import { asI18n, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
+import { getLocale } from '@/paraglide/runtime.js'
 import { createContext, useCallback, useContext, useRef, useState } from 'react'
 
 export type ChatEvent = { type: string; [key: string]: unknown }
@@ -114,7 +115,8 @@ export const usePikkuChat = (projectKey: string) => {
   const send = useCallback(
     (text: string) => {
       push({ kind: 'me', text })
-      const context = projectKey ? `(The owner is working in the project with key ${projectKey}.) ` : ''
+      const language = new Intl.DisplayNames(['en'], { type: 'language' }).of(getLocale())
+      const context = `${projectKey ? `(The owner is working in the project with key ${projectKey}.) ` : ''}(The owner reads ${language}: answer in ${language}.) `
       return run('/rpc/agent/pikku/stream', { message: `${context}${text}`, threadId: thread.current, resourceId: 'studio' })
     },
     [push, run, projectKey],
