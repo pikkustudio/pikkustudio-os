@@ -11,27 +11,13 @@ import { ShellCtx } from '../lib/shell'
 import { itemsFrom, useSurfaceDoc, useSurfaceMeta, type Item, type SurfaceLeaf, type Way } from '../lib/surface'
 import { EmptyState } from '../blocks/EmptyState'
 import { ErrorState } from '../blocks/ErrorState'
-import { NextCard } from '../blocks/NextCard'
 import { Page } from '../blocks/Page'
-import { PageHead } from '../blocks/PageHead'
+import { SlimHead } from '../blocks/SlimHead'
 import { PikkuDot } from '../blocks/PikkuDot'
 import { CardsSkeleton, QueryState } from '../blocks/QueryState'
 import { RowCard, RowStack } from '../blocks/RowCard'
 import { SurfaceFunctionPanel, SurfaceItemPanel } from '../blocks/SurfacePanel'
 import { SurfaceLeafPanel, SurfaceReference } from '../blocks/SurfaceReference'
-
-function Art() {
-  return (
-    <>
-      <circle cx="230" cy="40" r="120" className="fill-w1" />
-      <circle cx="50" cy="190" r="100" className="fill-w2" />
-      <circle cx="170" cy="130" r="58" className="fill-w3" />
-      <circle cx="270" cy="165" r="9" className="fill-coral" />
-      <rect x="128" y="96" width="84" height="64" rx="12" className="fill-w6" opacity="0.92" />
-      <path d="M150 120l-12 12 12 12M190 120l12 12-12 12" className="stroke-w2" strokeWidth="6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-    </>
-  )
-}
 
 const ways = (): Array<{ way: Way; Icon: LucideIcon; title: I18nString; text: I18nString }> => [
   { way: 'web', Icon: Globe, title: m.surface__group_web(), text: m.surface__group_web_text() },
@@ -68,7 +54,19 @@ export function SurfaceScreen() {
   const current: Item | undefined = open?.kind === 'item' ? items.find((i) => i.id === open.id) : undefined
   const ask = () => say(m.surface__hero_say())
 
-  const head = <PageHead crumb={projectName} title={m.surface__title()} text={m.surface__lead({ name: projectName })} size="lead" />
+  const head = (
+    <SlimHead crumb={projectName} title={m.surface__title()}>
+      <label className="relative block w-64 max-w-full">
+        <span className="sr-only">{m.surface__search_label()}</span>
+        <Search className="pointer-events-none absolute start-3.5 top-1/2 size-4 -translate-y-1/2 text-ink-2" aria-hidden="true" />
+        <Input shape="field" className="h-10 w-full rounded-full ps-9" value={term} onChange={(e) => setTerm(e.target.value)} placeholder={m.surface__search_placeholder()} />
+      </label>
+      <Button variant="bordered" size="compact" type="button" onClick={ask}>
+        <PikkuDot />
+        {m.surface__hero_ask()}
+      </Button>
+    </SlimHead>
+  )
 
   if (meta.isError)
     return (
@@ -81,27 +79,6 @@ export function SurfaceScreen() {
   return (
     <Page gap="snug" width="full">
       {head}
-      <NextCard
-        label={m.surface__title()}
-        hue="petrol"
-        art={<Art />}
-        title={meta.isPending ? m.surface__hero_loading() : items.length ? m.surface__hero_ways({ count: items.length }) : m.surface__hero_none()}
-        why={items.length ? m.surface__hero_why({ name: projectName }) : m.surface__hero_why_none()}
-      >
-        <div>
-          <Button variant="hero" size="pageLg" type="button" onClick={ask}>
-            <PikkuDot />
-            {m.surface__hero_ask()}
-          </Button>
-        </div>
-      </NextCard>
-
-      <label className="relative block max-w-xl">
-        <span className="sr-only">{m.surface__search_label()}</span>
-        <Search className="pointer-events-none absolute start-4.5 top-1/2 size-4.5 -translate-y-1/2 text-ink-2" aria-hidden="true" />
-        <Input shape="field" className="h-12 w-full rounded-full ps-11" value={term} onChange={(e) => setTerm(e.target.value)} placeholder={m.surface__search_placeholder()} />
-      </label>
-
       {meta.isPending ? (
         <CardsSkeleton count={3} />
       ) : items.length === 0 ? (

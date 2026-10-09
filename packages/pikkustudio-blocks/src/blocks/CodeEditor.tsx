@@ -6,7 +6,7 @@ import type { OnMount } from '@monaco-editor/react'
 import { Button } from '../ui/button'
 import { EmptyState } from './EmptyState'
 import { FixNotice } from './FixNotice'
-import { CodeHero } from './CodeHero'
+import { SlimHead } from './SlimHead'
 import { CardsSkeleton, QueryState } from './QueryState'
 import { StatusLine } from './StatusLine'
 import { detailsOf, faultOf } from './ErrorState'
@@ -35,28 +35,26 @@ function Open({ projectKey, file, body, onBack }: { projectKey: string; file: st
   const back = () => (dirty ? setLeaving(true) : onBack())
 
   const status = save.isPending
-    ? <StatusLine tone="wait" onHero text={m.code_editor__saving()} />
+    ? <StatusLine tone="wait" text={m.code_editor__saving()} />
     : dirty
-      ? <StatusLine tone="bad" onHero text={m.code_editor__unsaved()} />
-      : <StatusLine tone="ok" onHero text={m.code_editor__all_saved()} />
+      ? <StatusLine tone="bad" text={m.code_editor__unsaved()} />
+      : <StatusLine tone="ok" text={m.code_editor__all_saved()} />
 
   return (
     <>
-      <CodeHero title={asI18n(nameOf(file))} why={editable ? m.code_editor__why({ path: asI18n(file) }) : m.code_editor__why_read_only({ path: asI18n(file) })}>
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
-          {editable ? (
-            <Button variant="hero" size="pageLg" type="button" disabled={!dirty || save.isPending} onClick={() => go.current()}>
-              <Save className="size-4.5" />
-              {m.code_editor__save()}
-            </Button>
-          ) : null}
-          <Button variant="heroGhost" size="pageLg" type="button" onClick={back}>
-            <ArrowLeft className="size-4.5 rtl:-scale-x-100" />
-            {m.code_editor__back()}
+      <SlimHead crumb={asI18n(file)} title={asI18n(nameOf(file))}>
+        {editable ? status : null}
+        <Button variant="bordered" size="compact" type="button" onClick={back}>
+          <ArrowLeft className="size-4 rtl:-scale-x-100" />
+          {m.code_editor__back()}
+        </Button>
+        {editable ? (
+          <Button variant="default" size="compact" type="button" disabled={!dirty || save.isPending} onClick={() => go.current()}>
+            <Save className="size-4" />
+            {m.code_editor__save()}
           </Button>
-          {editable ? status : null}
-        </div>
-      </CodeHero>
+        ) : null}
+      </SlimHead>
       {leaving ? (
         <div role="alert" className="flex flex-wrap items-center gap-3 rounded-card border border-warning bg-card px-4 py-3 shadow-card">
           <b className="flex-1 basis-56 text-px16">{m.code_editor__leave_ask()}</b>
