@@ -72,14 +72,14 @@ export function SurfaceScreen() {
 
   if (meta.isError)
     return (
-      <Page gap="snug">
+      <Page gap="snug" width="full">
         {head}
         <ErrorState error={meta.error} what={m.surface__title()} onRetry={() => void meta.refetch()} retrying={meta.isFetching} />
       </Page>
     )
 
   return (
-    <Page gap="snug">
+    <Page gap="snug" width="full">
       {head}
       <NextCard
         label={m.surface__title()}

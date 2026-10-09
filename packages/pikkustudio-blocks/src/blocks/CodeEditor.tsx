@@ -76,7 +76,7 @@ function Open({ projectKey, file, body, onBack }: { projectKey: string; file: st
       {body.binary ? (
         <EmptyState layout="row" icon={FileX} title={m.code_editor__not_text_title()} text={m.code_editor__not_text_text()} />
       ) : (
-        <div className="overflow-hidden rounded-card border border-border bg-card shadow-card" style={{ height: 'min(70vh, 720px)' }} dir="ltr">
+        <div className="min-h-[420px] flex-1 overflow-hidden rounded-card border border-border bg-card shadow-card" dir="ltr">
           <Suspense fallback={<div className="h-full animate-pulse bg-secondary" role="status" aria-busy="true" />}>
             <Monaco
               key={file}

@@ -20,7 +20,7 @@ export function CodeScreen() {
   const set = (patch: { file?: string; folder?: string }) => navigate({ to: '.', search: ((prev: object) => ({ ...prev, ...patch })) as never })
 
   return (
-    <Page gap="snug">
+    <Page gap="snug" width="full">
       <PageHead crumb={projectName} title={m.code_screen__title()} text={m.code_screen__text()} size="lead" />
       {file ? (
         <CodeEditor projectKey={key} file={file} onBack={() => set({ file: undefined, folder: parentOf(file) || undefined })} />
