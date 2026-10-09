@@ -1,4 +1,4 @@
-export const validateStudioSearch = (s: Record<string, unknown>): { size?: 'mobile' | 'tablet' | 'small' | 'big'; embed?: '1'; mock?: string; run?: string; team?: string; project?: string; view?: 'healthy' | 'empty' | 'problem' | 'loading' | 'error' | 'restore-error'; look?: 'light' | 'dark'; panel?: 'chat' | 'updates' | 'changes' | 'workspace' | 'provider' | 'diff' | 'why' | 'local' | 'accounts' | 'keys' | 'litellm' | 'pitch'; pitch?: 'a' | 'b'; via?: string; show?: 'done' | 'returning' | 'company' | 'empty' | 'loading' | 'error' | 'signin' | 'notin' | 'publishing' | 'live'; note?: string; email?: string; lang?: 'en' | 'de' | 'ar'; device?: 'phone' | 'text'; mode?: 'theme' | 'element' | 'component' | 'translations' | 'chat' | 'none'; screen?: 'tablet' | 'phone'; app?: 'staff'; pg?: string; item?: string; change?: string } => {
+export const validateStudioSearch = (s: Record<string, unknown>): { size?: 'mobile' | 'tablet' | 'small' | 'big'; embed?: '1'; mock?: string; run?: string; team?: string; project?: string; view?: 'healthy' | 'empty' | 'problem' | 'loading' | 'error' | 'restore-error'; look?: 'light' | 'dark'; panel?: 'chat' | 'updates' | 'changes' | 'workspace' | 'provider' | 'diff' | 'why' | 'local' | 'accounts' | 'keys' | 'litellm' | 'pitch'; pitch?: 'a' | 'b'; via?: string; show?: 'done' | 'returning' | 'company' | 'empty' | 'loading' | 'error' | 'signin' | 'notin' | 'publishing' | 'live'; note?: string; email?: string; lang?: 'en' | 'de' | 'ar'; device?: 'phone' | 'text'; mode?: 'theme' | 'element' | 'component' | 'translations' | 'chat' | 'none'; screen?: 'tablet' | 'phone'; app?: 'staff'; pg?: string; item?: string; change?: string; file?: string; folder?: string } => {
     const pick = <T extends string>(v: unknown, ok: readonly T[]) => (ok.includes(v as T) ? (v as T) : undefined)
     return {
       size: pick(s.size, ['mobile', 'tablet', 'small', 'big'] as const),
@@ -23,6 +23,8 @@ export const validateStudioSearch = (s: Record<string, unknown>): { size?: 'mobi
       pg: typeof s.pg === 'string' ? s.pg : undefined,
       item: typeof s.item === 'string' ? s.item : undefined,
       change: typeof s.change === 'string' && s.change ? s.change : undefined,
+      file: typeof s.file === 'string' && s.file ? s.file : undefined,
+      folder: typeof s.folder === 'string' && s.folder ? s.folder : undefined,
     }
   
 }
