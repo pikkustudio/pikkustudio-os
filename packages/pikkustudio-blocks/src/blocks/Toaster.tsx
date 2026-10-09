@@ -1,24 +1,35 @@
 import { m } from '@/i18n/messages'
 import { useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
+import { useRouter } from '@tanstack/react-router'
 import { X } from 'lucide-react'
+import { isAuthPath, isSessionError, signInPath, signInSearch } from '../lib/sign-in-redirect'
 import { dismiss, errorText, toast, useToasts } from '../lib/toast'
 
 export function Toaster() {
   const client = useQueryClient()
+  const router = useRouter()
   const items = useToasts()
   useEffect(() => {
+    const report = (error: unknown) => {
+      const here = router.state.location
+      if (isSessionError(error) && !isAuthPath(here.pathname)) {
+        router.navigate({ to: signInPath() as never, search: signInSearch(here.pathname + here.searchStr) as never, replace: true })
+        return
+      }
+      toast(errorText(error))
+    }
     const onQuery = client.getQueryCache().subscribe((e) => {
-      if (e.type === 'updated' && e.action.type === 'error') toast(errorText(e.action.error))
+      if (e.type === 'updated' && e.action.type === 'error') report(e.action.error)
     })
     const onMutation = client.getMutationCache().subscribe((e) => {
-      if (e.type === 'updated' && e.action.type === 'error' && !/runVirtualUser/.test(String((e.action.error as Error)?.message))) toast(errorText(e.action.error))
+      if (e.type === 'updated' && e.action.type === 'error' && !/runVirtualUser/.test(String((e.action.error as Error)?.message))) report(e.action.error)
     })
     return () => {
       onQuery()
       onMutation()
     }
-  }, [client])
+  }, [client, router])
   return (
     <div role="status" aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-6 z-60 flex flex-col items-center gap-2 px-4">
       {items.map((t) => (

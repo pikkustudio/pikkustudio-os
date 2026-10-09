@@ -1,5 +1,5 @@
 import { asI18n, asI18nStub, sep, type I18nString } from '@pikku/react'
-import { Outlet, useLocation, useNavigate, useSearch } from '@tanstack/react-router'
+import { Outlet, useLocation, useNavigate, useRouter, useSearch } from '@tanstack/react-router'
 import { Link } from '../blocks/Link'
 import { EmptyState } from '../blocks/EmptyState'
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
@@ -14,6 +14,7 @@ import { FabricPitch } from '../blocks/FabricPitch'
 import { PanelRow } from '../blocks/ShellAccount'
 import { useAccount, useProjectRun, useRecentProjects, useStartProjectRun, useAttachFile, newProjectName, type ProjectRun } from '../lib/onboarding'
 import { ArrowRight, Bell, Check, CircleAlert, FolderOpen, Laptop, MessageCircle, Pin, ShieldCheck, User, X, CheckCheck } from 'lucide-react'
+import { safeRedirect } from '../lib/sign-in-redirect'
 import { m } from '@/i18n/messages'
 
 // The onboarding layout: setup rail (Getting set up), Pikku button + bubble, side panels.
@@ -88,7 +89,8 @@ type Msg = { kind: 'me' | 'pikku'; text: I18nString }
 
 export function OnboardingLayout() {
   const navigate = useNavigate()
-  const q = useSearch({ strict: false }) as { look?: 'light' | 'dark'; panel?: PanelId; show?: string; pitch?: 'a' | 'b'; via?: string; run?: string }
+  const router = useRouter()
+  const q = useSearch({ strict: false }) as { redirect?: string; look?: 'light' | 'dark'; panel?: PanelId; show?: string; pitch?: 'a' | 'b'; via?: string; run?: string }
   const panel: PanelId | '' = q.panel ?? ''
   const { ShellAccount, WorkspaceAbout } = useSlots()
   const copy = useCopy()
@@ -170,12 +172,13 @@ export function OnboardingLayout() {
       first().then(() => land('/artifacts/explore' as never))
     })
   }, [done])
+  const back = safeRedirect(q.redirect)
   const go = () => {
     if (proj) return begin()
     setSt('loading')
     window.clearTimeout(timer.current)
     timer.current = window.setTimeout(
-      () => navigate({ to: proj ? '/overview' : choose ? '/new-project' : yourName || account.data?.name ? '/choose-ai' : '/your-name', search: ((prev: object) => prev) as never }),
+      () => back && (choose || (path === '/sign-in' && account.data?.name)) ? router.history.push(back) : navigate({ to: proj ? '/overview' : choose ? '/new-project' : yourName || account.data?.name ? '/choose-ai' : '/your-name', search: ((prev: object) => prev) as never }),
       proj ? 2600 : 1500,
     )
   }
