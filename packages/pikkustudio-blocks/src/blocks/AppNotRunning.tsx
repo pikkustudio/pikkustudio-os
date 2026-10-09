@@ -1,4 +1,4 @@
-import { asI18n, type I18nString } from '@pikku/react'
+import { asI18n, type I18nNode, type I18nString } from '@pikku/react'
 import { useContext, useState } from 'react'
 import { Check, ChevronDown, Copy, LoaderCircle, Play, RefreshCw } from 'lucide-react'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
@@ -6,7 +6,7 @@ import { m } from '@/i18n/messages'
 import { useProjectKey } from '../lib/project'
 import { ShellCtx } from '../lib/shell'
 import { Button } from '../ui/button'
-import { MachineOpening, OpeningStage, type OpeningStep } from './MachineOpening'
+import { MachineOpening, OpeningStage, openingH1, openingLead, type OpeningStep } from './MachineOpening'
 import { PikkuDot } from './PikkuDot'
 import { StateScreen } from './StateScreen'
 
@@ -86,6 +86,14 @@ function Art({ state }: { state: AppNotRunningState }) {
   )
 }
 
+function AppStage({ label, children }: { label: I18nString; children: I18nNode }) {
+  return (
+    <div className="mx-auto flex max-w-[1160px] flex-col gap-10 @min-[1700px]/app:max-w-[1380px]">
+      <OpeningStage label={label}>{children}</OpeningStage>
+    </div>
+  )
+}
+
 export function AppNotRunning({
   state,
   name,
@@ -122,51 +130,65 @@ export function AppNotRunning({
 
   if (state === 'starting' && steps) {
     return (
-      <div className="mx-auto flex max-w-[1160px] flex-col gap-10 @min-[1700px]/app:max-w-[1380px]">
-        <OpeningStage label={title}>
-          <MachineOpening title={title} lead={text} steps={steps} />
-        </OpeningStage>
-      </div>
+      <AppStage label={title}>
+        <MachineOpening title={title} lead={text} steps={steps} />
+      </AppStage>
+    )
+  }
+
+  if (state === 'failed') {
+    return (
+      <AppStage label={title}>
+        <div>
+          <h1 className={openingH1}>{title}</h1>
+          <p className={openingLead}>{text}</p>
+        </div>
+        <div className="flex flex-col gap-5">
+          <div role="status" aria-live="polite" className="sr-only">{title}</div>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+            <Button variant="hero" size="page" type="button" disabled={busy} aria-busy={busy} onClick={onStart}>
+              {busy ? <LoaderCircle className="size-5 animate-spin" aria-hidden="true" /> : <RefreshCw className="size-5" aria-hidden="true" />}
+              {busy ? m.app_not_running__starting_button() : m.app_not_running__try_again()}
+            </Button>
+            <button type="button" aria-expanded={explain} onClick={() => setExplain((v) => !v)} className="inline-flex items-center gap-1.5 text-px15 font-semibold text-hero-ink underline-offset-2 hover:underline">
+              <ChevronDown className={`size-4 transition-transform ${explain ? 'rotate-180' : ''}`} aria-hidden="true" />
+              {explain ? m.app_not_running__hide() : m.app_not_running__what_happened()}
+            </button>
+            <Button variant="heroGhost" size="page" type="button" onClick={() => say(m.app_not_running__fix_say({ name: who, log: asI18n(log) }))}>
+              <PikkuDot />
+              {m.app_not_running__ask_fix()}
+            </Button>
+          </div>
+          {explain ? (
+            <div className="rounded-xl bg-secondary p-4 text-start text-foreground">
+              <b className="mb-1.5 block text-px15">{m.app_not_running__details_title()}</b>
+              <pre dir="ltr" className="m-0 max-h-40 overflow-auto font-mono text-px13 whitespace-pre-wrap text-ink-2" data-testid="app-start-log">{asI18n(log || m.app_not_running__reason_none())}</pre>
+              <Button
+                variant="bordered"
+                size="compact"
+                type="button"
+                className="mt-3"
+                onClick={() => void navigator.clipboard?.writeText(log).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000) })}
+              >
+                {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
+                {copied ? m.app_not_running__copied() : m.app_not_running__copy_details()}
+              </Button>
+            </div>
+          ) : null}
+        </div>
+      </AppStage>
     )
   }
 
   return (
-    <StateScreen label={title} hue={state === 'failed' ? 'petrol' : 'teal'} art={<Art state={state} />} title={title} why={text}>
+    <StateScreen label={title} hue="teal" art={<Art state={state} />} title={title} why={text}>
       <div role="status" aria-live="polite" className="sr-only">{title}</div>
       <div className="mt-1 flex flex-wrap items-center gap-x-6 gap-y-3">
         <Button variant="hero" size="page" type="button" disabled={busy} aria-busy={busy} onClick={onStart}>
-          {busy ? <LoaderCircle className="size-5 animate-spin" aria-hidden="true" /> : state === 'failed' ? <RefreshCw className="size-5" aria-hidden="true" /> : <Play className="size-5" aria-hidden="true" />}
-          {busy ? m.app_not_running__starting_button() : state === 'failed' ? m.app_not_running__try_again() : m.app_not_running__start()}
+          {busy ? <LoaderCircle className="size-5 animate-spin" aria-hidden="true" /> : <Play className="size-5" aria-hidden="true" />}
+          {busy ? m.app_not_running__starting_button() : m.app_not_running__start()}
         </Button>
-        {state === 'failed' ? (
-          <button type="button" aria-expanded={explain} onClick={() => setExplain((v) => !v)} className="inline-flex items-center gap-1.5 text-px15 font-semibold text-hero-ink underline-offset-2 hover:underline">
-            <ChevronDown className={`size-4 transition-transform ${explain ? 'rotate-180' : ''}`} aria-hidden="true" />
-            {explain ? m.app_not_running__hide() : m.app_not_running__what_happened()}
-          </button>
-        ) : null}
-        {state === 'failed' ? (
-          <Button variant="heroGhost" size="page" type="button" onClick={() => say(m.app_not_running__fix_say({ name: who, log: asI18n(log) }))}>
-            <PikkuDot />
-            {m.app_not_running__ask_fix()}
-          </Button>
-        ) : null}
       </div>
-      {state === 'failed' && explain ? (
-        <div className="rounded-xl bg-secondary p-4 text-start text-foreground">
-          <b className="mb-1.5 block text-px15">{m.app_not_running__details_title()}</b>
-          <pre dir="ltr" className="m-0 max-h-48 overflow-auto font-mono text-px13 whitespace-pre-wrap text-ink-2" data-testid="app-start-log">{asI18n(log || m.app_not_running__reason_none())}</pre>
-          <Button
-            variant="bordered"
-            size="compact"
-            type="button"
-            className="mt-3"
-            onClick={() => void navigator.clipboard?.writeText(log).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000) })}
-          >
-            {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
-            {copied ? m.app_not_running__copied() : m.app_not_running__copy_details()}
-          </Button>
-        </div>
-      ) : null}
     </StateScreen>
   )
 }
