@@ -29,6 +29,8 @@
   "action_notice__hide": "إخفاء",
   "action_notice__ours": "المشكلة من جهة Pikku وليست في مشروعكم. لم يكتمل نسخ {what}، ولم يتغير أي شيء.",
   "action_notice__retrying": "جار المحاولة مرة أخرى…",
+  "action_notice__sign_in_again": "تسجيل الدخول مرة أخرى",
+  "action_notice__signed_out": "لم يعد Fabric يعرف هذا الحاسوب، لذلك تعذر نسخ {what}. سجلوا الدخول مرة أخرى ثم حاولوا من جديد.",
   "action_notice__tell_us": "هل تريدون إبلاغ Pikku بمثل هذه الأخطاء؟",
   "action_notice__title": "لم تنجح العملية.",
   "action_notice__told": "أبلغنا فريق Pikku بذلك.",

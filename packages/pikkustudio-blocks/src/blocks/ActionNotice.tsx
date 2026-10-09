@@ -1,6 +1,7 @@
 import { type I18nString, asI18n } from '@pikku/react'
 import { useEffect, useRef, useState } from 'react'
 import { Check, ChevronDown, Copy, LoaderCircle, RefreshCw, TriangleAlert } from 'lucide-react'
+import { useNavigate } from '@tanstack/react-router'
 import { m } from '@/i18n/messages'
 import { anonymise, useErrorReports } from '../lib/errorReports'
 import { Button } from '../ui/button'
@@ -8,6 +9,8 @@ import { ErrorReportDrawer } from './ErrorReportDrawer'
 import { detailsOf, faultOf, isPikkuFault } from './ErrorState'
 
 const denied = (f: ReturnType<typeof faultOf>) => f.status === 403 || /permission denied|forbidden/i.test(f.message ?? '')
+
+const signedOut = (f: ReturnType<typeof faultOf>) => /sign in to fabric/i.test(f.message ?? '')
 
 export function ActionNotice({ error, what, onRetry, retrying }: { error: unknown; what: I18nString; onRetry?: () => void; retrying?: boolean }) {
   const [open, setOpen] = useState(false)
@@ -17,7 +20,8 @@ export function ActionNotice({ error, what, onRetry, retrying }: { error: unknow
   const { choice, canSend, set, send } = useErrorReports()
   const fault = faultOf(error)
   const details = detailsOf(fault, what)
-  const ours = isPikkuFault(fault) && !denied(fault)
+  const ours = isPikkuFault(fault) && !denied(fault) && !signedOut(fault)
+  const navigate = useNavigate()
   const sentFor = useRef<unknown>(null)
 
   useEffect(() => {
@@ -26,7 +30,7 @@ export function ActionNotice({ error, what, onRetry, retrying }: { error: unknow
     void send(anonymise(fault)).then(setPassed)
   }, [ours, choice, canSend, error, send, fault])
 
-  const body = denied(fault) ? m.action_notice__denied_access({ what }) : ours ? m.action_notice__ours({ what }) : m.action_notice__generic({ what })
+  const body = signedOut(fault) ? m.action_notice__signed_out({ what }) : denied(fault) ? m.action_notice__denied_access({ what }) : ours ? m.action_notice__ours({ what }) : m.action_notice__generic({ what })
 
   return (
     <div role="alert" className="max-w-xl rounded-card bg-destructive-soft p-5 text-foreground" data-testid="action-notice">
@@ -41,6 +45,11 @@ export function ActionNotice({ error, what, onRetry, retrying }: { error: unknow
               <Button variant="default" size="compact" type="button" onClick={onRetry} disabled={retrying} aria-busy={retrying}>
                 {retrying ? <LoaderCircle className="size-4 animate-spin" /> : <RefreshCw className="size-4" />}
                 {retrying ? m.action_notice__retrying() : m.query_state__try_again()}
+              </Button>
+            ) : null}
+            {signedOut(fault) ? (
+              <Button variant="default" size="compact" type="button" onClick={() => void navigate({ to: '/account' as never })}>
+                {m.action_notice__sign_in_again()}
               </Button>
             ) : null}
             <button type="button" aria-expanded={open} onClick={() => setOpen((v) => !v)} className="inline-flex items-center gap-1.5 text-px15 font-semibold text-foreground underline-offset-2 hover:underline">
