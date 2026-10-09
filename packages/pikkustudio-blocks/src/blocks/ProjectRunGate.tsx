@@ -1,5 +1,5 @@
 import type { I18nNode } from '@pikku/react'
-import { useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { useProjectKey } from '../lib/project'
 import { AppNotRunning, startSteps } from './AppNotRunning'
@@ -11,7 +11,7 @@ const label = (slug: string) => slug.charAt(0).toUpperCase() + slug.slice(1).rep
 
 export function ProjectRunGate({ children }: { children: I18nNode }) {
   const key = useProjectKey()
-  const [wanted, setWanted] = useState(false)
+  const tried = useRef<string>('')
   const project = useTeamProjects().data?.find((p) => p.key === key)
   const apps = usePikkuQuery('studio:projectApps', { key }, {
     enabled: !!key && project?.location !== 'cloud',
@@ -20,14 +20,23 @@ export function ProjectRunGate({ children }: { children: I18nNode }) {
   const start = usePikkuMutation('studio:openProject', { onSuccess: () => apps.refetch() })
   const restart = usePikkuMutation('studio:closeProject', { onSuccess: () => start.mutate({ key }) })
 
-  if (!key || !project || project.location === 'cloud') return <>{children}</>
   const list = (apps.data as LiveApp[] | undefined) ?? []
+  const idle = !!key && !!project && project.location !== 'cloud' && apps.isSuccess && list.length === 0
+  useEffect(() => {
+    if (idle && tried.current !== key && !start.isPending) {
+      tried.current = key
+      start.mutate({ key })
+    }
+  }, [idle, key, start])
+
+  if (!key || !project || project.location === 'cloud') return <>{children}</>
   const steps = startSteps(start.isSuccess, list)
   const broken = list.find((a) => a.state === 'failed')
   const name = broken ? label(broken.slug) : list[0] ? label(list[0].slug) : undefined
   if (apps.isPending) return <AppNotRunning state="starting" name={name} steps={steps} onStart={() => undefined} />
   if (broken || start.isError) return <AppNotRunning state="failed" name={name} error={start.error ?? restart.error} onStart={() => restart.mutate({ key })} starting={restart.isPending || start.isPending} />
-  if (list.length === 0) return <AppNotRunning state="off" onStart={() => { setWanted(true); start.mutate({ key }) }} starting={wanted && start.isPending} />
+  if (list.length === 0 && (start.isPending || start.isSuccess || tried.current !== key)) return <AppNotRunning state="starting" name={name} steps={steps} onStart={() => undefined} />
+  if (list.length === 0) return <AppNotRunning state="off" onStart={() => start.mutate({ key })} starting={start.isPending} />
   if (list.some((a) => a.state !== 'ready')) return <AppNotRunning state="starting" name={name} steps={steps} onStart={() => undefined} />
   return <>{children}</>
 }
