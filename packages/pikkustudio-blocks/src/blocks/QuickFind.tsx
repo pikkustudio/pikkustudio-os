@@ -2,7 +2,7 @@ import { type I18nString, asI18n } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { Activity, BookOpen, Bot, Gauge, Compass, FileText, FolderOpen, Globe, Palette, KeyRound, LayoutGrid, Mail, ScrollText, Search, Smartphone, Upload, Users, UserRoundCheck, Workflow, History } from 'lucide-react'
+import { Activity, BookOpen, Bot, Gauge, Compass, FileCode, FileText, FolderOpen, Globe, Palette, KeyRound, LayoutGrid, Mail, ScrollText, Search, Smartphone, Upload, Users, UserRoundCheck, Workflow, History } from 'lucide-react'
 import { keep } from '../lib/links'
 
 type Hit = { key: string; label: string; hint: string; id: string; Icon: typeof Search }
@@ -20,6 +20,7 @@ const pages = (): Hit[] => (
     [m.quick_find__knowledge(), '/knowledge', BookOpen],
     [m.quick_find__front_doors(), '/front-doors', Smartphone],
     [m.quick_find__audit(), '/audit', History],
+    [m.code_screen__title(), '/code', FileCode],
     [m.quick_find__publish(), '/publish', Upload],
     [m.quick_find__assistants(), '/assistants', Users],
     [m.quick_find__virtual_users(), '/virtual-users', UserRoundCheck],

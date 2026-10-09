@@ -13,7 +13,10 @@ import { detailsOf, faultOf } from './ErrorState'
 import { languageOf, nameOf, type FileBody } from '../lib/code'
 import { useProjectAction, useProjectQuery } from '../lib/projectRpc'
 
-const Monaco = lazy(() => import('@monaco-editor/react'))
+const Monaco = lazy(async () => {
+  await import('../lib/monaco')
+  return import('@monaco-editor/react')
+})
 
 const dark = () => typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
 

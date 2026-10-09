@@ -179,7 +179,7 @@ export function ShellLayout() {
   }
   const detach = (label: I18nString) => setAttached((a) => a.filter((x) => x !== label))
   const fill = useLocation({ select: (l) => /\/(design|artifacts\/[^/]+|routines\/[^/]+)$/.test(l.pathname) || (l.pathname.endsWith('/emails') && !!(l.search as { email?: string }).email) })
-  const needsApp = useLocation({ select: (l) => /\/(design|knowledge|explore|logs|performance|metrics|front-doors|apps|assistants|virtual-users|routines|emails|translations|artifacts|content|versions|changes-directions|mocks)(\/|$)/.test(l.pathname) })
+  const needsApp = useLocation({ select: (l) => /\/(design|knowledge|explore|logs|performance|metrics|front-doors|code|apps|assistants|virtual-users|routines|emails|translations|artifacts|content|versions|changes-directions|mocks)(\/|$)/.test(l.pathname) })
   const onArtifacts = useLocation({ select: (l) => l.pathname.endsWith('/artifacts') })
   const onKnowledge = useLocation({ select: (l) => l.pathname.endsWith('/knowledge') })
   const knowledge = useProjectQuery<KnowledgeBundle | null>(projectKey, 'console:getKnowledge', {}, { enabled: onKnowledge, refetchInterval: 5000 })
