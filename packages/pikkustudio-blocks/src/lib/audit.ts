@@ -98,3 +98,14 @@ export const extras = (metadata: Record<string, unknown> | undefined): Array<{ l
   Object.entries(metadata ?? {})
     .filter(([, v]) => ['string', 'number', 'boolean'].includes(typeof v))
     .map(([k, v]) => ({ label: asI18n(label(k)), value: asI18n(String(v)) }))
+
+export type AuditProblem = 'not-running' | 'no-addon' | 'forbidden' | 'other'
+
+export const auditProblem = (error: unknown): AuditProblem => {
+  const e = (error ?? {}) as { status?: number; message?: string }
+  const text = e.message ?? ''
+  if (e.status === 403) return 'forbidden'
+  if (/local development|local environment|not running|ECONNREFUSED|fetch failed/i.test(text) || [502, 503, 504].includes(e.status ?? 0)) return 'not-running'
+  if (e.status === 404 || /not found|unknown rpc|no such/i.test(text)) return 'no-addon'
+  return 'other'
+}

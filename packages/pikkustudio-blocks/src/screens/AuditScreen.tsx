@@ -2,9 +2,9 @@ import { useContext, useMemo, useState } from 'react'
 import type { I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { asI18n } from '@pikku/react'
-import { History, LockKeyhole, SearchX } from 'lucide-react'
-import { keepPreviousData } from '@tanstack/react-query'
-import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
+import { History, LockKeyhole, Plug, SearchX } from 'lucide-react'
+import { useProjectQuery } from '../lib/projectRpc'
+import { useProjectKey, useProjectName } from '../lib/project'
 import { Button } from '../ui/button'
 import { Page } from '../blocks/Page'
 import { PageHead } from '../blocks/PageHead'
@@ -18,7 +18,10 @@ import { AuditEntryRow } from '../blocks/AuditEntryRow'
 import { AuditDetail } from '../blocks/AuditDetail'
 import { Art } from '../blocks/ExploreHub'
 import { ShellCtx } from '../lib/shell'
-import { dayGroup, type AuditEntry } from '../lib/audit'
+import { auditProblem, dayGroup, type AuditEntry, type AuditUser } from '../lib/audit'
+
+type Page = { events: AuditEntry[]; users: Record<string, AuditUser>; nextCursor: number | null; readable: boolean }
+type Filters = { users: Array<{ userId: string; name?: string; email?: string }>; types: string[] }
 
 const PAGE = 50
 type Range = 'today' | 'week' | 'all'
@@ -42,27 +45,25 @@ const since = (range: Range, now: number): string | undefined => {
 
 export function AuditScreen() {
   const { say } = useContext(ShellCtx)
+  const key = useProjectKey()
+  const projectName = useProjectName()
   const [who, setWho] = useState<string | null>(null)
   const [range, setRange] = useState<Range>('all')
   const [limit, setLimit] = useState(PAGE)
   const [open, setOpen] = useState<AuditEntry | null>(null)
   const [stamp] = useState(() => Date.now())
   const from = useMemo(() => since(range, stamp), [range, stamp])
-  const filters = usePikkuQuery('admin:getAuditFilters', null as never)
-  const audits = usePikkuQuery(
-    'admin:getAudits',
-    { limit, ...(who ? { userIds: [who] } : {}), ...(from ? { from } : {}) },
-    { placeholderData: keepPreviousData },
-  )
+  const filters = useProjectQuery<Filters>(key, 'admin:getAuditFilters', {})
+  const audits = useProjectQuery<Page>(key, 'admin:getAudits', { limit, ...(who ? { userIds: [who] } : {}), ...(from ? { from } : {}) })
   const now = audits.dataUpdatedAt || stamp
   const data = audits.data
   const entries = (data?.events ?? []) as AuditEntry[]
   const unreadable = !!data && !data.readable
   const filtered = !!who || range !== 'all'
-  const forbidden = (audits.error as { status?: number } | null)?.status === 403
+  const problem = audits.isError ? auditProblem(audits.error) : null
 
-  const heroTitle = unreadable ? m.audit_screen__hero_unreadable_title() : data && entries.length === 0 && !filtered ? m.audit_screen__hero_empty_title() : m.audit_screen__hero_title()
-  const heroText = unreadable ? m.audit_screen__hero_unreadable_text() : data && entries.length === 0 && !filtered ? m.audit_screen__hero_empty_text() : m.audit_screen__hero_text()
+  const heroTitle = problem && problem !== 'other' ? m.audit_screen__hero_unavailable_title() : unreadable ? m.audit_screen__hero_unreadable_title() : data && entries.length === 0 && !filtered ? m.audit_screen__hero_empty_title() : m.audit_screen__hero_title()
+  const heroText = problem && problem !== 'other' ? m.audit_screen__hero_unavailable_text() : unreadable ? m.audit_screen__hero_unreadable_text() : data && entries.length === 0 && !filtered ? m.audit_screen__hero_empty_text() : m.audit_screen__hero_text()
 
   const reset = () => {
     setWho(null)
@@ -78,7 +79,7 @@ export function AuditScreen() {
 
   return (
     <Page gap="snug">
-      <PageHead crumb={m.audit_screen__crumb()} title={m.audit_screen__title()} text={m.audit_screen__text()} size="lead" />
+      <PageHead crumb={projectName} title={m.audit_screen__title()} text={m.audit_screen__text()} size="lead" />
 
       <NextCard label={m.audit_screen__title()} hue="sea" art={<Art />} title={heroTitle} why={heroText}>
         <div>
@@ -89,7 +90,16 @@ export function AuditScreen() {
         </div>
       </NextCard>
 
-      {forbidden ? (
+      {problem === 'not-running' ? (
+        <EmptyState icon={Plug} title={m.audit_screen__not_running_title()} text={m.audit_screen__not_running_text()} />
+      ) : problem === 'no-addon' ? (
+        <EmptyState icon={History} title={m.audit_screen__no_addon_title()} text={m.audit_screen__no_addon_text()}>
+          <Button type="button" size="page" onClick={() => say(m.audit_screen__add_it_say())}>
+            <PikkuDot />
+            {m.audit_screen__add_it()}
+          </Button>
+        </EmptyState>
+      ) : problem === 'forbidden' ? (
         <EmptyState icon={LockKeyhole} title={m.audit_screen__cannot_see()} text={m.audit_screen__cannot_see_text()}>
           <Button type="button" size="page" onClick={() => say(m.audit_screen__ask_access_say())}>
             <PikkuDot />
@@ -97,7 +107,12 @@ export function AuditScreen() {
           </Button>
         </EmptyState>
       ) : unreadable ? (
-        <EmptyState icon={History} title={m.audit_screen__hero_unreadable_title()} text={m.audit_screen__hero_unreadable_text()} />
+        <EmptyState icon={History} title={m.audit_screen__hero_unreadable_title()} text={m.audit_screen__unreadable_text()}>
+          <Button type="button" size="page" onClick={() => say(m.audit_screen__unreadable_say())}>
+            <PikkuDot />
+            {m.audit_screen__ask_pikku_fix()}
+          </Button>
+        </EmptyState>
       ) : (
         <>
           <div className="flex flex-wrap items-center gap-3">
