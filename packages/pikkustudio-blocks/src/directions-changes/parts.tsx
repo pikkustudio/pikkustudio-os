@@ -3,6 +3,7 @@ import { asI18n, sep, type I18nNode, type I18nString } from '@pikku/react'
 import { Fragment, useState } from 'react'
 import { Check, CircleAlert, Image, Clock, Loader, MessageCircle, Minus, Send, Undo2 } from 'lucide-react'
 import { Button } from '../ui/button'
+import { ChatMarkdown } from '../blocks/ChatMarkdown'
 import { labelOf, REAL, type Change, type State } from './data'
 
 const TONE: Record<State, string> = {
@@ -80,7 +81,7 @@ export function Thread({ c, compact }: { c: Change; compact?: boolean }) {
       {c.thread.length + sent.length === 0 ? <p className="text-[15px] text-ink-2">{m.parts__nothing_said()}</p> : null}
       {c.thread.map((msg, i) => (
         <Bubble key={i} me={msg.who === 'you'} when={msg.when}>
-          {msg.text}
+          {msg.who === 'you' ? msg.text : <ChatMarkdown>{msg.text}</ChatMarkdown>}
         </Bubble>
       ))}
       {sent.map((t, i) => (
