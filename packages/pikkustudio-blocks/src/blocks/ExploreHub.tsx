@@ -3,7 +3,7 @@ import { m } from '@/i18n/messages'
 import { useContext } from 'react'
 import { Link } from './Link'
 import { useProjectName } from '../lib/project'
-import { AppWindow, Bot, ChevronRight, Clock, Database, FileText, HeartPulse, KeyRound, Languages, Layers, Plug, ScrollText, Search, Users, Wallet, type LucideIcon } from 'lucide-react'
+import { AppWindow, Bot, ChevronRight, Clock, Database, FileText, HeartPulse, History, KeyRound, Languages, Layers, Plug, ScrollText, Search, Users, Wallet, type LucideIcon } from 'lucide-react'
 import { Button } from '../ui/button'
 import { ShellCtx } from '../lib/shell'
 import { keep } from '../lib/links'
@@ -68,6 +68,7 @@ const movable: Record<Movable, { hue: Hue; Icon: LucideIcon; title: () => I18nSt
   artifacts: { hue: 'petrol', Icon: Layers, title: () => m.explore_hub__artifacts_title(), text: () => m.explore_hub__artifacts_text() },
   content: { hue: 'teal', Icon: FileText, title: () => m.explore_hub__content_title(), text: () => m.explore_hub__content_text() },
   'front-doors': { hue: 'sea', Icon: AppWindow, title: () => m.explore_hub__front_doors_title(), text: () => m.explore_hub__front_doors_text() },
+  audit: { hue: 'petrol', Icon: History, title: () => m.explore_hub__audit_title(), text: () => m.explore_hub__audit_text() },
 }
 
 export function ExploreHub() {

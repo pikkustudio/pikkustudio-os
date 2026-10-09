@@ -19,6 +19,7 @@ const pages = (): Hit[] => (
     [m.quick_find__artifacts(), '/artifacts', FileText],
     [m.quick_find__knowledge(), '/knowledge', BookOpen],
     [m.quick_find__front_doors(), '/front-doors', Smartphone],
+    [m.quick_find__audit(), '/audit', History],
     [m.quick_find__publish(), '/publish', Upload],
     [m.quick_find__assistants(), '/assistants', Users],
     [m.quick_find__virtual_users(), '/virtual-users', UserRoundCheck],
