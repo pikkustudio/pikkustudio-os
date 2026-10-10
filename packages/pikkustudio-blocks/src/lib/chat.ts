@@ -8,7 +8,8 @@ export type ChatTransport = (path: string, body: unknown) => AsyncIterable<ChatE
 
 export type ChatItem =
   | { id: string; kind: 'me' | 'pikku'; text: string }
-  | { id: string; kind: 'card'; toolCallId: string; runId: string; title: I18nString; detail: I18nString; state: 'ask' | 'working' | 'done' | 'declined'; yes?: I18nString; no?: I18nString }
+  | { id: string; kind: 'error'; detail: string; retry?: boolean }
+  | { id: string; kind: 'card'; toolCallId: string; runId: string; title: I18nString; detail: I18nString; state: 'ask' | 'working' | 'done' | 'declined'; yes?: I18nString; no?: I18nString; options?: I18nString[]; tone?: 'info' | 'attention' | 'danger' }
 
 export const fetchTransport = (base: string): ChatTransport =>
   async function* (path, body) {

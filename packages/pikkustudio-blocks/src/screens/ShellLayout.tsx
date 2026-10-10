@@ -23,15 +23,16 @@ import { useProjectQuery } from '../lib/projectRpc'
 import { MOVABLE, usePins, type Movable } from '../lib/pins'
 import { ShellCtx, type PanelId, type PublishNote, type View } from '../lib/shell'
 import { keep } from '../lib/links'
-import { newQuestions, answerPrompt, openQuestions, type KnowledgeBundle } from '../lib/knowledge'
 import { ChatMarkdown } from '../blocks/ChatMarkdown'
 import { AiSpinner } from '../blocks/Spinner'
 import { Button } from '../ui/button'
+import { SavedChats } from '../blocks/SavedChats'
 import { QuickFind } from '../blocks/QuickFind'
+import { SlashMenu, slashMatches, slashOptionId } from '../blocks/SlashMenu'
 import { UpdatesFeed } from '../blocks/UpdatesFeed'
 import { ProjectRunGate } from '../blocks/ProjectRunGate'
 import { Toaster } from '../blocks/Toaster'
-import { GitPullRequest, type LucideIcon, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, History, Home, Info, Compass, KeyRound, Search, Laptop, LayoutGrid, Mail, MessageCircle, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, User, UserRoundCheck, Wrench, X, CheckCheck } from 'lucide-react'
+import { GitPullRequest, Archive, type LucideIcon, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, History, Home, Info, Compass, KeyRound, Search, Laptop, LayoutGrid, Mail, MessageCircle, MessageCircleQuestion, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, User, UserRoundCheck, Wrench, X, CheckCheck } from 'lucide-react'
 
 // The app shell: rail, preview drawer (right edge), Pikku button + bubble, side panels.
 // Every screen route is a child of this layout. Page content lives in the route files.
@@ -71,6 +72,12 @@ function Avatar({ mood, size = 'lg', ring = true }: { mood: Mood; size?: 'lg' | 
       {ring ? <span className={`absolute rounded-full opacity-90 ${ringBox} ${RING[mood]}`} /> : null}
     </span>
   )
+}
+
+const ASK_TONE = {
+  info: { box: 'border-info', ic: 'bg-info text-white', label: 'text-info-foreground', hover: 'hover:border-info', badge: 'group-hover:bg-info group-hover:text-white', title: m.shell_layout__question_for_you },
+  attention: { box: 'border-warning', ic: 'bg-warning text-on-warning', label: 'text-warning-foreground', hover: 'hover:border-warning', badge: 'group-hover:bg-warning group-hover:text-on-warning', title: m.shell_layout__question_needs_you },
+  danger: { box: 'border-destructive', ic: 'bg-destructive text-white', label: 'text-destructive-foreground', hover: 'hover:border-destructive', badge: 'group-hover:bg-destructive group-hover:text-white', title: m.shell_layout__question_careful },
 }
 
 const KIND = {
@@ -155,9 +162,14 @@ export function ShellLayout() {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
   const [draft, setDraft] = useState('')
+  const [slashAt, setSlashAt] = useState(0)
+  const [slashOff, setSlashOff] = useState(false)
+  const slash = slashOff ? [] : slashMatches(draft)
+  const slashIdx = Math.min(slashAt, Math.max(slash.length - 1, 0))
   const [bubbleDraft, setBubbleDraft] = useState('')
   const projectKey = useProjectKey()
   const workMode = useLocation({ select: (l) => modeForPath(l.pathname) })
+  const [saved, setSaved] = useState<{ open: string | null } | null>(null)
   const guide = usePikkuChat(projectKey)
   const builder = useBuilderChat(projectKey, workMode)
   const onChanges = useLocation({ select: (l) => l.pathname.endsWith('/changes-directions') })
@@ -185,8 +197,6 @@ export function ShellLayout() {
   const needsApp = useLocation({ select: (l) => pageNeedsApp(l.pathname) })
   const onArtifacts = useLocation({ select: (l) => l.pathname.endsWith('/artifacts') })
   const onKnowledge = useLocation({ select: (l) => l.pathname.endsWith('/knowledge') })
-  const knowledge = useProjectQuery<KnowledgeBundle | null>(projectKey, 'console:getKnowledge', {}, { enabled: onKnowledge, refetchInterval: 5000 })
-  const questions = useMemo(() => openQuestions(knowledge.data ?? null).slice(0, 4), [knowledge.data])
   const onPublish = useLocation({ select: (l) => l.pathname.endsWith('/publish') })
   const { pins } = usePins()
   const onEmails = useLocation({ select: (l) => l.pathname.endsWith('/emails') })
@@ -203,8 +213,14 @@ export function ShellLayout() {
   }, [])
 
   const approve = () => setPanel('updates')
+  const lastAsked = chat.items.reduce<string | undefined>((found, it) => (it.kind === 'me' ? it.text : found), undefined)
   const say = (text: I18nString) => {
     setPanel('chat')
+    if (!workMode && /^\/experiment\s+\S/.test(text)) {
+      void builder.send(text)
+      navigate({ to: '/artifacts', search: ((prev: object) => prev) as never })
+      return
+    }
     void chat.send(text)
   }
   const pikkuSays = (text: I18nString) => {
@@ -473,9 +489,25 @@ export function ShellLayout() {
                 <div className="flex items-center gap-2 border-b border-border bg-secondary px-6 py-3 text-[14px] text-ink-2">
                   <FolderOpen className="size-4.5 text-accent-foreground" />
                   <span className="font-semibold text-muted-foreground">{m.shell_layout__about()}</span>
-                  <b className="text-foreground">{projectName}{aboutScreen ? <>{sep(', ')}{aboutScreen}</> : null}</b>
+                  <b className="min-w-0 flex-1 truncate text-foreground">{projectName}{aboutScreen ? <>{sep(', ')}{aboutScreen}</> : null}</b>
+                  {workMode ? (
+                    <>
+                      <Button variant="ghost" size="textTight" type="button" onClick={() => setSaved({ open: null })}>
+                        <History className="size-4" />
+                        {m.builder_chat__saved_chats()}
+                      </Button>
+                      <Button variant="ghost" size="textTight" type="button" disabled={!builder.canArchive} title={builder.busy ? m.builder_chat__busy_hint() : m.builder_chat__archive_hint()} onClick={() => void builder.archive()}>
+                        <Archive className="size-4" />
+                        {m.builder_chat__archive()}
+                      </Button>
+                    </>
+                  ) : null}
                 </div>
                 )}
+                {saved && workMode && !changeChat.change ? (
+                  <SavedChats projectKey={projectKey} openId={saved.open} onOpen={(open) => setSaved({ open })} onClose={() => setSaved(null)} avatar={<Avatar mood="calm" size="sm" />} />
+                ) : (
+                <>
                 <div className="flex min-h-0 flex-1 flex-col gap-4.5 overflow-auto px-6 py-5" tabIndex={0} aria-label={m.shell_layout__chat()} role="log">
                   {chat.items.map((it) =>
                     it.kind === 'me' ? (
@@ -484,6 +516,48 @@ export function ShellLayout() {
                           {asI18n(it.text)}
                         </div>
                       </div>
+                    ) : it.kind === 'error' ? (
+                      <div key={it.id} className="flex flex-col gap-1.5 rounded-xl border border-border bg-card px-3 py-2 text-[14px]">
+                        <div className="flex items-center gap-2">
+                          <CircleAlert className="size-4 shrink-0 text-warning-foreground" />
+                          <span className="font-semibold">{m.shell_layout__error_label()}</span>
+                          {it.retry ? (
+                            <Button variant="bordered" size="chip" className="ms-auto" type="button" disabled={chat.busy || !lastAsked} onClick={() => lastAsked && say(asI18n(lastAsked))}>
+                              {m.query_state__try_again()}
+                            </Button>
+                          ) : null}
+                        </div>
+                        {it.detail ? (
+                          <details className="text-ink-2">
+                            <summary className="cursor-pointer text-[13px]">{m.shell_layout__error_details()}</summary>
+                            <pre className="mt-1.5 max-h-48 overflow-auto rounded-lg bg-secondary p-2.5 text-[12px] leading-snug whitespace-pre-wrap">{it.detail}</pre>
+                          </details>
+                        ) : null}
+                      </div>
+                    ) : it.kind === 'card' && it.options && it.state === 'ask' ? (
+                      <article key={it.id} className={`flex flex-col gap-3 rounded-card border-[1.5px] bg-card p-4.5 shadow-card ${ASK_TONE[it.tone ?? 'info'].box}`} data-testid="ask-card">
+                        <div className="flex items-center gap-2.5">
+                          <span className={`grid size-9.5 shrink-0 place-items-center rounded-lg ${ASK_TONE[it.tone ?? 'info'].ic}`}>
+                            <MessageCircleQuestion className="size-5.25" />
+                          </span>
+                          <span className={`text-[14px] font-bold ${ASK_TONE[it.tone ?? 'info'].label}`}>{ASK_TONE[it.tone ?? 'info'].title()}</span>
+                        </div>
+                        <h3 className="font-sans text-[18px] leading-[1.3] font-bold tracking-normal text-balance">{it.title}</h3>
+                        {it.options.length ? (
+                          <ul className="flex flex-col gap-2" data-testid="ask-options">
+                            {it.options.map((o, n) => (
+                              <li key={o}>
+                                <button type="button" disabled={chat.busy} onClick={() => say(o)} className={`group flex w-full cursor-pointer items-center gap-3 rounded-xl border-[1.5px] border-input px-3.5 py-3 text-start text-[15px] leading-[1.4] text-foreground transition-colors hover:bg-secondary ${ASK_TONE[it.tone ?? 'info'].hover} focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none disabled:cursor-default disabled:opacity-45`}>
+                                  <span className={`grid size-6 shrink-0 place-items-center rounded-full bg-secondary text-[13px] font-semibold text-ink-2 ${ASK_TONE[it.tone ?? 'info'].badge}`}>{n + 1}</span>
+                                  <span className="min-w-0 flex-1 text-pretty">{o}</span>
+                                  <ArrowRight className="size-4 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 rtl:-scale-x-100" />
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : null}
+                        <p className="text-[13px] text-muted-foreground">{it.options.length ? m.shell_layout__ask_hint_options() : m.shell_layout__ask_hint_type()}</p>
+                      </article>
                     ) : it.kind === 'card' ? (
                       <Note key={it.id} kind={it.state === 'ask' ? 'needs' : 'fixed'} icon={it.state === 'ask' ? CircleAlert : Check} label={it.state === 'ask' ? m.shell_layout__needs_you() : it.state === 'declined' ? m.shell_layout__left_alone() : it.state === 'working' ? m.shell_layout__working_on_it() : m.shell_layout__done()} title={it.title} text={it.detail}>
                         {it.state === 'ask' ? (
@@ -524,22 +598,8 @@ export function ShellLayout() {
                     ))}
                   </div>
                 ) : null}
-                {onKnowledge ? (
-                  <div className="flex flex-wrap gap-2 border-t border-border bg-card px-5 pt-3" data-testid="knowledge-chips">
-                    {questions.map((q) => (
-                      <Button key={q.path} variant="bordered" size="chipSm" type="button" disabled={chat.busy} title={m.shell_layout__an_open_question_in_your()} onClick={() => say(answerPrompt(q))}>
-                        {q.title}
-                      </Button>
-                    ))}
-                    {newQuestions().slice(0, questions.length >= 3 ? 1 : 3).map((q) => (
-                      <Button key={q.label} variant="selected" size="chipSm" type="button" disabled={chat.busy} onClick={() => say(q.ask)}>
-                        {q.label}
-                      </Button>
-                    ))}
-                  </div>
-                ) : null}
                 <form
-                  className="flex items-end gap-2 border-t border-border bg-card px-5 pt-3.5 pb-4.5"
+                  className="relative flex items-end gap-2 border-t border-border bg-card px-5 pt-3.5 pb-4.5"
                   aria-label={m.shell_layout__message_pikku()}
                   onSubmit={(e) => {
                     e.preventDefault()
@@ -554,8 +614,34 @@ export function ShellLayout() {
                   <textarea
                     rows={1}
                     value={draft}
-                    onChange={(e) => setDraft(e.target.value)}
+                    onChange={(e) => {
+                      setDraft(e.target.value)
+                      setSlashAt(0)
+                      setSlashOff(false)
+                    }}
+                    role="combobox"
+                    aria-expanded={slash.length > 0}
+                    aria-controls="slash-menu"
+                    aria-autocomplete="list"
+                    aria-activedescendant={slash.length ? slashOptionId(slash[slashIdx].name) : undefined}
                     onKeyDown={(e) => {
+                      if (slash.length && !e.nativeEvent.isComposing) {
+                        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                          e.preventDefault()
+                          setSlashAt((slashIdx + (e.key === 'ArrowDown' ? 1 : slash.length - 1)) % slash.length)
+                          return
+                        }
+                        if (e.key === 'Escape') {
+                          e.preventDefault()
+                          setSlashOff(true)
+                          return
+                        }
+                        if ((e.key === 'Enter' && !e.shiftKey) || e.key === 'Tab') {
+                          e.preventDefault()
+                          setDraft(`/${slash[slashIdx].name} `)
+                          return
+                        }
+                      }
                       if (e.key !== 'Enter' || e.shiftKey || e.nativeEvent.isComposing) return
                       e.preventDefault()
                       e.currentTarget.form?.requestSubmit()
@@ -564,6 +650,7 @@ export function ShellLayout() {
                     placeholder={attached.length ? m.shell_layout__say_what_to_change() : m.shell_layout__ask_or_tell()}
                     className="max-h-35 min-h-12 flex-1 resize-none rounded-[24px] border-[1.5px] border-input bg-background px-4.5 py-3 text-[15px] leading-[1.4] text-foreground hover:border-muted-foreground focus:border-primary focus:ring-4 focus:ring-accent focus:outline-none"
                   />
+                  <SlashMenu items={slash} active={slashIdx} onHover={setSlashAt} onPick={(c) => setDraft(`/${c.name} `)} />
                   <button
                     type="submit"
                     aria-label={m.parts__send()}
@@ -573,6 +660,8 @@ export function ShellLayout() {
                     <ArrowRight className="rtl:-scale-x-100 size-5.5" />
                   </button>
                 </form>
+                </>
+                )}
               </div>
             ) : null}
 
