@@ -1,5 +1,4 @@
 import { asI18n } from '@pikku/react'
-import { listDevActors, signInAsPersona, type DevActor } from '@pikku/react'
 import { useCallback, useEffect, useState } from 'react'
 import { UserRound } from 'lucide-react'
 import { m } from '@/i18n/messages'
@@ -7,6 +6,23 @@ import { Button } from '../ui/button'
 import { HintRow } from './HintRow'
 
 type Who = { name: string } | null
+type Persona = { id: string; name: string; jobTitle: string | null }
+
+const listPersonas = async (apiUrl: string): Promise<Persona[]> => {
+  const response = await fetch(`${apiUrl}/auth/sign-in/personas`, { credentials: 'include' })
+  if (!response.ok) return []
+  return ((await response.json()) as { actors?: Persona[] }).actors ?? []
+}
+
+const signInAsPersona = async (apiUrl: string, id: string) => {
+  const response = await fetch(`${apiUrl}/auth/sign-in/persona`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ id }),
+  })
+  if (!response.ok) throw new Error(String(response.status))
+}
 
 const readWho = async (apiUrl: string): Promise<Who> => {
   try {
@@ -20,7 +36,7 @@ const readWho = async (apiUrl: string): Promise<Who> => {
 }
 
 export function ImpersonatePanel({ apiUrl, onSwitched }: { apiUrl: string; onSwitched: () => void }) {
-  const [actors, setActors] = useState<DevActor[] | null>(null)
+  const [actors, setActors] = useState<Persona[] | null>(null)
   const [who, setWho] = useState<Who>(null)
   const [busy, setBusy] = useState<string | null>(null)
   const [failed, setFailed] = useState(false)
@@ -31,7 +47,7 @@ export function ImpersonatePanel({ apiUrl, onSwitched }: { apiUrl: string; onSwi
 
   useEffect(() => {
     let live = true
-    listDevActors({ apiUrl })
+    listPersonas(apiUrl)
       .then((list) => live && setActors(list))
       .catch(() => live && setActors([]))
     refresh()
@@ -54,7 +70,7 @@ export function ImpersonatePanel({ apiUrl, onSwitched }: { apiUrl: string; onSwi
     }
   }
 
-  const switchTo = (id: string) => run(id, () => signInAsPersona({ apiUrl, id }))
+  const switchTo = (id: string) => run(id, () => signInAsPersona(apiUrl, id))
   const signOut = () =>
     run('out', async () => {
       const response = await fetch(`${apiUrl}/auth/sign-out`, {
