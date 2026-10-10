@@ -3265,5 +3265,15 @@
   "workflow_graph__wiring_mcp_tool": "MCP Tool",
   "workflow_graph__wiring_queue": "Queue",
   "workflow_graph__wiring_schedule": "Schedule",
-  "workflow_graph__wiring_trigger": "Trigger"
+  "workflow_graph__wiring_trigger": "Trigger",
+  "impersonate__title": "Try the app as someone else",
+  "impersonate__text": "Pick a person and the app opens as them, so you see what they see.",
+  "impersonate__loading": "Looking for people to try…",
+  "impersonate__empty": "This app has no people to try yet.",
+  "impersonate__viewing": "Viewing as {name}",
+  "impersonate__nobody": "Not signed in to the app yet.",
+  "impersonate__current": "Viewing",
+  "impersonate__switch": "View as",
+  "impersonate__sign_out": "Back to the sign-in screen",
+  "impersonate__failed": "That did not work. Check that the app is running, then try again."
 }

@@ -9,6 +9,7 @@ import { PreviewBar } from '../blocks/PreviewBar'
 import { DesignInspector } from '../blocks/DesignInspector'
 import { AppNotRunning, startSteps } from '../blocks/AppNotRunning'
 import { HintRow } from '../blocks/HintRow'
+import { ImpersonatePanel } from '../blocks/ImpersonatePanel'
 import { LiveAppFrame, liveAppUrl } from '../blocks/LiveAppFrame'
 import { MockStatusBar } from '../blocks/MockStatusBar'
 import { useProjectKey } from '../lib/project'
@@ -85,6 +86,13 @@ export function DesignScreen() {
           {tool !== 'none' && (
             <DesignInspector title={title} mode="theme" showModes={false} onMode={() => undefined} onClose={tool === 'design' ? undefined : () => set({ mode: 'none' })}>
               <HintRow icon={Icon}>{text}</HintRow>
+              {current?.url && current.state === 'ready' ? (
+                <section className="flex flex-col gap-2 border-t border-border pt-4" aria-labelledby="impersonate-title">
+                  <h3 id="impersonate-title" className="px-1 text-[15px] font-bold">{m.impersonate__title()}</h3>
+                  <p className="px-1 text-px15 text-ink-2">{m.impersonate__text()}</p>
+                  <ImpersonatePanel apiUrl={`${liveAppUrl(current.url)}api`} onSwitched={() => setReloadKey((k) => k + 1)} />
+                </section>
+              ) : null}
             </DesignInspector>
           )}
         </div>
