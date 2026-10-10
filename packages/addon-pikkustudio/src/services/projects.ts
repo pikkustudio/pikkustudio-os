@@ -6,7 +6,7 @@ import { connect, createServer } from 'node:net'
 import { homedir, userInfo } from 'node:os'
 import { builderHome, packageRoot, piPackageRoot, type BuilderMode, type Launcher } from '@pikku/builder'
 import { modeScope } from './builder-scope.js'
-import { basename, delimiter, dirname, join, resolve, sep } from 'node:path'
+import { basename, dirname, join, resolve, sep } from 'node:path'
 import { randomBytes, randomUUID } from 'node:crypto'
 import { ConflictError } from '@pikku/core/errors'
 import { generatedSource, projectSource, resolveEffective, setMany, toEnv, type ScopedSource } from '../lib/sources/index.js'
@@ -217,35 +217,6 @@ export const localAccount: AccountProvider = {
   async link() {
     return null
   },
-}
-
-const realNodeDir = (() => {
-  let cached: string | null | undefined
-  return (): string | null => {
-    if (cached !== undefined) return cached
-    cached = null
-    const real = (bin: string) => {
-      try {
-        const path = realpathSync(bin)
-        return basename(path).startsWith('node') && !/bun/i.test(bin) && !/bun/i.test(path) ? dirname(bin) : null
-      } catch {
-        return null
-      }
-    }
-    cached = basename(process.execPath).startsWith('node') ? real(process.execPath) : null
-    if (!cached) {
-      try {
-        const found = execFileSync('which', ['-a', 'node'], { encoding: 'utf8' }).split('\n').filter(Boolean)
-        for (const bin of found) if ((cached = real(bin))) break
-      } catch {}
-    }
-    return cached
-  }
-})()
-
-const withRealNode = (env: NodeJS.ProcessEnv): NodeJS.ProcessEnv => {
-  const dir = realNodeDir()
-  return dir ? { ...env, PATH: `${dir}${delimiter}${env.PATH ?? ''}` } : env
 }
 
 const freePort = () =>
@@ -1222,10 +1193,9 @@ export class StudioProjectsService {
         ...(await (this.options.env?.(key) ?? {})),
       },
     }
-    const devOptions = this.options.devCommand ? spawnOptions : { ...spawnOptions, env: withRealNode(spawnOptions.env) }
     const child = confinement
-      ? confinedSpawn(command, args, confinement, devOptions)
-      : spawn(command, args, devOptions)
+      ? confinedSpawn(command, args, confinement, spawnOptions)
+      : spawn(command, args, spawnOptions)
     closeSync(log)
     this.recordPid(key, child)
     const exited = new Promise<never>((_, reject) =>
