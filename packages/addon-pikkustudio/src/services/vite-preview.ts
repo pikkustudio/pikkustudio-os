@@ -226,6 +226,30 @@ if (window.self !== window.top) {
       applyMode(d.mode === 'design' || d.mode === 'i18n' ? d.mode : 'off')
     }
   })
+  window.addEventListener('message', async e => {
+    const d = e.data
+    if (!d || d.source !== 'fabric-console' || typeof d.type !== 'string' || d.type.indexOf('persona-') !== 0) return
+    const api = location.origin + '/api/auth'
+    const reply = body => window.parent.postMessage(Object.assign({ source: 'fabric-preview', type: 'persona-result', id: d.id }, body), '*')
+    try {
+      if (d.type === 'persona-list') {
+        const r = await fetch(api + '/sign-in/personas', { credentials: 'include' })
+        reply({ ok: r.ok, actors: r.ok ? ((await r.json()).actors || []) : [] })
+      } else if (d.type === 'persona-who') {
+        const r = await fetch(api + '/get-session', { credentials: 'include' })
+        const body = r.ok ? await r.json() : null
+        reply({ ok: r.ok, name: body && body.user ? (body.user.name || '') : null })
+      } else if (d.type === 'persona-switch') {
+        const r = await fetch(api + '/sign-in/persona', { method: 'POST', credentials: 'include', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: d.persona }) })
+        reply({ ok: r.ok })
+      } else if (d.type === 'persona-signout') {
+        const r = await fetch(api + '/sign-out', { method: 'POST', credentials: 'include', headers: { 'content-type': 'application/json' }, body: '{}' })
+        reply({ ok: r.ok })
+      }
+    } catch (err) {
+      reply({ ok: false })
+    }
+  })
   // Inspect mode is driven by the console's Design / i18n buttons — no key held.
   // While a mode is active we own the ENTIRE pointer/mouse interaction: swallow
   // every event of the sequence in the capture phase so no app handler ever runs
@@ -391,7 +415,17 @@ const scaffoldPlugin = {
     }
   },
   configureServer(server) {
-    server.middlewares.use((_req, res, next) => {
+    const cookieTag = 'better-auth-' + Math.abs(Array.from(cwd).reduce((h, c) => (h * 31 + c.charCodeAt(0)) | 0, 7)).toString(36) + '.'
+    server.middlewares.use((req, res, next) => {
+      if (req.headers.cookie) req.headers.cookie = req.headers.cookie.split(cookieTag).join('better-auth.')
+      const origSetHeader = res.setHeader
+      res.setHeader = function(name, value) {
+        if (String(name).toLowerCase() === 'set-cookie') {
+          const rename = c => String(c).replace(/^((?:__Secure-|__Host-)?)better-auth\\./, '$1' + cookieTag)
+          value = Array.isArray(value) ? value.map(rename) : rename(value)
+        }
+        return origSetHeader.call(this, name, value)
+      }
       const origEnd = res.end
       const origWrite = res.write
       let buf = []

@@ -89,7 +89,7 @@ export function DesignScreen() {
               {tool === 'impersonate' ? (
                 <>
                   <HintRow icon={UserRound}>{m.impersonate__text()}</HintRow>
-                  {current?.url && current.state === 'ready' ? <ImpersonatePanel apiUrl={`${liveAppUrl(current.url)}api`} onSwitched={() => setReloadKey((k) => k + 1)} /> : null}
+                  {current?.url && current.state === 'ready' ? <ImpersonatePanel onSwitched={() => setReloadKey((k) => k + 1)} /> : null}
                 </>
               ) : (
                 <HintRow icon={Icon}>{text}</HintRow>

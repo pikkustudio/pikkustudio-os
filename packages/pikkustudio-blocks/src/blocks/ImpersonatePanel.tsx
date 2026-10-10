@@ -7,61 +7,65 @@ import { HintRow } from './HintRow'
 
 type Who = { name: string } | null
 type Persona = { id: string; name: string; jobTitle: string | null }
+type Reply = { ok: boolean; actors?: Persona[]; name?: string | null }
 
-const listPersonas = async (apiUrl: string): Promise<Persona[]> => {
-  const response = await fetch(`${apiUrl}/auth/sign-in/personas`, { credentials: 'include' })
-  if (!response.ok) return []
-  return ((await response.json()) as { actors?: Persona[] }).actors ?? []
+let counter = 0
+
+const askUntilAnswered = async (type: string): Promise<Reply> => {
+  let reply: Reply = { ok: false }
+  for (let attempt = 0; attempt < 8 && !reply.ok; attempt++) reply = await ask(type)
+  return reply
 }
 
-const signInAsPersona = async (apiUrl: string, id: string) => {
-  const response = await fetch(`${apiUrl}/auth/sign-in/persona`, {
-    method: 'POST',
-    credentials: 'include',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ id }),
+const ask = (type: string, extra: Record<string, unknown> = {}): Promise<Reply> =>
+  new Promise((resolve) => {
+    const frame = document.querySelector<HTMLIFrameElement>('iframe[data-live-app]')
+    if (!frame?.contentWindow) return resolve({ ok: false })
+    const id = `persona-${++counter}`
+    const done = (reply: Reply) => {
+      window.removeEventListener('message', onMessage)
+      clearTimeout(timer)
+      resolve(reply)
+    }
+    const onMessage = (event: MessageEvent) => {
+      const data = event.data
+      if (event.source === frame.contentWindow && data?.source === 'fabric-preview' && data.type === 'persona-result' && data.id === id) done(data)
+    }
+    const timer = setTimeout(() => done({ ok: false }), 1500)
+    window.addEventListener('message', onMessage)
+    frame.contentWindow.postMessage({ source: 'fabric-console', type, id, ...extra }, '*')
   })
-  if (!response.ok) throw new Error(String(response.status))
+
+const readWho = async (): Promise<Who> => {
+  const reply = await ask('persona-who')
+  return reply.ok && reply.name != null ? { name: reply.name } : null
 }
 
-const readWho = async (apiUrl: string): Promise<Who> => {
-  try {
-    const response = await fetch(`${apiUrl}/auth/get-session`, { credentials: 'include' })
-    if (!response.ok) return null
-    const body = (await response.json()) as { user?: { name?: string } } | null
-    return body?.user ? { name: body.user.name ?? '' } : null
-  } catch {
-    return null
-  }
-}
-
-export function ImpersonatePanel({ apiUrl, onSwitched }: { apiUrl: string; onSwitched: () => void }) {
+export function ImpersonatePanel({ onSwitched }: { onSwitched: () => void }) {
   const [actors, setActors] = useState<Persona[] | null>(null)
   const [who, setWho] = useState<Who>(null)
   const [busy, setBusy] = useState<string | null>(null)
   const [failed, setFailed] = useState(false)
 
   const refresh = useCallback(async () => {
-    setWho(await readWho(apiUrl))
-  }, [apiUrl])
+    setWho(await readWho())
+  }, [])
 
   useEffect(() => {
     let live = true
-    listPersonas(apiUrl)
-      .then((list) => live && setActors(list))
-      .catch(() => live && setActors([]))
+    askUntilAnswered('persona-list').then((reply) => live && setActors(reply.actors ?? []))
     refresh()
     return () => {
       live = false
     }
-  }, [apiUrl, refresh])
+  }, [refresh])
 
-  const run = async (id: string, action: () => Promise<unknown>) => {
+  const run = async (id: string, action: () => Promise<unknown>, next: Who) => {
     setBusy(id)
     setFailed(false)
     try {
       await action()
-      await refresh()
+      setWho(next)
       onSwitched()
     } catch {
       setFailed(true)
@@ -70,17 +74,22 @@ export function ImpersonatePanel({ apiUrl, onSwitched }: { apiUrl: string; onSwi
     }
   }
 
-  const switchTo = (id: string) => run(id, () => signInAsPersona(apiUrl, id))
+  const switchTo = (actor: Persona) =>
+    run(
+      actor.id,
+      async () => {
+        if (!(await ask('persona-switch', { persona: actor.id })).ok) throw new Error('switch')
+      },
+      { name: actor.name },
+    )
   const signOut = () =>
-    run('out', async () => {
-      const response = await fetch(`${apiUrl}/auth/sign-out`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'content-type': 'application/json' },
-        body: '{}',
-      })
-      if (!response.ok) throw new Error(String(response.status))
-    })
+    run(
+      'out',
+      async () => {
+        if (!(await ask('persona-signout')).ok) throw new Error('signout')
+      },
+      null,
+    )
 
   if (actors === null) return <HintRow icon={UserRound}>{m.impersonate__loading()}</HintRow>
   if (actors.length === 0) return <HintRow icon={UserRound}>{m.impersonate__empty()}</HintRow>
@@ -103,7 +112,7 @@ export function ImpersonatePanel({ apiUrl, onSwitched }: { apiUrl: string; onSwi
               type="button"
               data-testid={`impersonate-persona-${actor.id}`}
               disabled={busy !== null}
-              onClick={() => switchTo(actor.id)}
+              onClick={() => switchTo(actor)}
             >
               {who?.name === actor.name ? m.impersonate__current() : m.impersonate__switch()}
             </Button>
