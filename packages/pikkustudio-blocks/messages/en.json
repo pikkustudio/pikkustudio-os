@@ -3440,5 +3440,17 @@
   "preview_bar__impersonate": "Impersonate",
   "slash_menu__label": "Commands",
   "slash_menu__experiment": "Experiment",
-  "slash_menu__experiment_hint": "Try different looks or ideas for your app. Nothing in your app changes until you choose one"
+  "slash_menu__experiment_hint": "Try different looks or ideas for your app. Nothing in your app changes until you choose one",
+  "new_project_form__interview_start": "Talk about your product first",
+  "new_project_form__interview_note": "Recommended. A short interview, so the designs fit your real product and not only your first line.",
+  "new_project_form__design_note": "Skip the questions and see the first designs from your idea.",
+  "new_project_screen__interview_title": "Getting your interview ready",
+  "new_project_screen__interview_lead": "Pikku is setting up a place to ask you about your product. This usually takes about a minute.",
+  "new_project_screen__interview_step_ready": "Get the questions ready",
+  "knowledge_interview__title": "Tell us about your product",
+  "knowledge_interview__lead": "Answer Pikku's questions in the chat, one at a time. When you have said enough, go on to the designs. You can leave at any time and come back to this later.",
+  "knowledge_interview__continue": "Continue to designs",
+  "knowledge_interview__going": "Starting your designs",
+  "knowledge_interview__first_message": "I have just started a new project. My idea: {idea}. Please interview me about my business and this product, one plain question at a time, and write what I tell you into the knowledge.",
+  "knowledge_interview__error": "The designs did not start. Nothing was lost. Try again."
 }

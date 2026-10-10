@@ -5,7 +5,7 @@ import { useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { Button } from '../ui/button'
 import { Textarea } from '../ui/textarea'
-import { ArrowRight, ChevronRight, CircleAlert, FileSpreadsheet, FolderOpen, Globe, GitBranch, Lightbulb, Sparkles, Wand2, type LucideIcon } from 'lucide-react'
+import { ArrowRight, ChevronRight, CircleAlert, FileSpreadsheet, FolderOpen, Globe, GitBranch, Lightbulb, MessageCircle, Sparkles, Wand2, type LucideIcon } from 'lucide-react'
 import { OnbCtx } from './OnboardingLayout'
 import { ShellCtx } from '../lib/shell'
 import { NewProjectForm } from './NewProjectForm'
@@ -139,10 +139,10 @@ function OtherWays() {
 }
 
 export function NewProjectScreen() {
-  const { st, go, retry, cancel, idea, setIdea, example, run, uses, setUses, files, setFiles } = useContext(OnbCtx)
+  const { st, go, goInterview, interview, retry, cancel, idea, setIdea, example, run, uses, setUses, files, setFiles } = useContext(OnbCtx)
   const [picked, setPicked] = useState(-1)
   const hero = useRef<HTMLElement>(null)
-  const loading = st === 'loading'
+  const loading = st === 'loading' || !!interview
   const error = st === 'error'
   const navigate = useNavigate()
   const needsAi = /Choose your AI/.test(run?.error ?? '')
@@ -164,7 +164,19 @@ export function NewProjectScreen() {
   return (
     <div className="mx-auto flex max-w-[1160px] flex-col gap-10 @min-[1700px]/app:max-w-[1380px]">
       <OpeningStage sectionRef={hero}>
-        {loading ? (
+        {interview ? (
+          <MachineOpening
+            icon={<MessageCircle className="me-3 inline-block size-9 align-middle" aria-hidden="true" />}
+            title={m.new_project_screen__interview_title()}
+            lead={m.new_project_screen__interview_lead()}
+            steps={[
+              { label: labels()['Make the project'], state: interview === 'making' ? 'now' : 'done' },
+              { label: labels()['Set up its workspace'], state: interview === 'making' ? 'wait' : 'now' },
+              { label: m.new_project_screen__interview_step_ready(), state: 'wait' },
+            ]}
+            onCancel={cancel}
+          />
+        ) : loading ? (
           <MachineOpening
             icon={<Sparkles className="me-3 inline-block size-9 align-middle" aria-hidden="true" />}
             title={m.new_project_screen__exploring_some_directions()}
@@ -208,7 +220,7 @@ export function NewProjectScreen() {
           </div>
         ) : null}
         {loading ? null : (
-          <NewProjectForm idea={idea} setIdea={setIdea} uses={uses} setUses={setUses} files={files} setFiles={setFiles} ready={ready} go={go} />
+          <NewProjectForm idea={idea} setIdea={setIdea} uses={uses} setUses={setUses} files={files} setFiles={setFiles} ready={ready} go={go} goInterview={goInterview} />
         )}
       </OpeningStage>
 

@@ -1,7 +1,7 @@
 import { asI18n, type I18nNode } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useRef, useState } from 'react'
-import { ArrowRight, Check, Monitor, Paperclip, Smartphone, Sparkles, X } from 'lucide-react'
+import { ArrowRight, Check, MessageCircle, Monitor, Paperclip, Smartphone, Sparkles, X } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Textarea } from '../ui/textarea'
 import type { Uses } from './OnboardingLayout'
@@ -35,6 +35,7 @@ export function NewProjectForm({
   setFiles,
   ready,
   go,
+  goInterview,
 }: {
   idea: string
   setIdea: (v: string) => void
@@ -44,6 +45,7 @@ export function NewProjectForm({
   setFiles: (v: File[]) => void
   ready: boolean
   go: () => void
+  goInterview?: () => void
 }) {
   const [tooBig, setTooBig] = useState(false)
   const [over, setOver] = useState(false)
@@ -107,11 +109,26 @@ export function NewProjectForm({
               </Pill>
             ))}
           </div>
-          <Button variant="hero" size="pageLg" type="button" disabled={!ready} onClick={go} className="ms-auto">
-            <Sparkles className="size-5.5" />
-            <span>{m.new_project_form__start()}</span>
-            <ArrowRight className="rtl:-scale-x-100 size-5.5" />
-          </Button>
+        </div>
+        <div className="flex flex-col gap-4">
+          {goInterview ? (
+            <div className="flex flex-col gap-2">
+              <Button variant="hero" size="pageLg" type="button" data-testid="start-interview" disabled={!ready} onClick={goInterview}>
+                <MessageCircle className="size-5.5" />
+                <span>{m.new_project_form__interview_start()}</span>
+                <ArrowRight className="rtl:-scale-x-100 size-5.5" />
+              </Button>
+              <p className="text-[14.5px] text-hero-ink-2">{m.new_project_form__interview_note()}</p>
+            </div>
+          ) : null}
+          <div className="flex flex-col gap-2">
+            <Button variant={goInterview ? 'heroGhost' : 'hero'} size="pageLg" type="button" data-testid="start-designing" disabled={!ready} onClick={go}>
+              <Sparkles className="size-5.5" />
+              <span>{m.new_project_form__start()}</span>
+              <ArrowRight className="rtl:-scale-x-100 size-5.5" />
+            </Button>
+            {goInterview ? <p className="text-[14.5px] text-hero-ink-2">{m.new_project_form__design_note()}</p> : null}
+          </div>
         </div>
         <p className="min-h-5 text-[14.5px] text-hero-ink-2">
           {uses.devices.length === 0

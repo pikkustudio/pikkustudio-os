@@ -1,9 +1,10 @@
 import { m } from '@/i18n/messages'
 import { useContext, useEffect, useState } from 'react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
-import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
+import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { ProjectRpcCtx } from '../lib/projectRpc'
 import { newProjectName, useAttachFile, useProjectRun, useStartProjectRun } from '../lib/onboarding'
+import { rememberInterview } from '../lib/interview'
 import { OnbCtx, type OnbState, type Uses } from './OnboardingLayout'
 import { NewProjectScreen } from './NewProjectScreen'
 
@@ -30,17 +31,48 @@ export function NewProjectRoute() {
   const set = (patch: Record<string, unknown>) =>
     navigate({ to: '.', search: ((prev: object) => ({ ...prev, ...patch })) as never, replace: true })
 
+  const upload = async () => {
+    const uploadId = files.length ? crypto.randomUUID() : undefined
+    for (const file of files) {
+      const bytes = new Uint8Array(await file.arrayBuffer())
+      let binary = ''
+      for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000))
+      await attach.mutateAsync({ uploadId: uploadId!, name: file.name, data: btoa(binary) })
+    }
+    return uploadId
+  }
+
+  const [interview, setInterview] = useState<'making' | 'opening' | null>(null)
+  const create = usePikkuMutation('studio:createProject' as never) as unknown as { mutateAsync: (input: object) => Promise<{ key: string }> }
+  const open = usePikkuMutation('studio:openProject' as never) as unknown as { mutateAsync: (input: object) => Promise<unknown> }
+  const listed = usePikkuQuery('studio:listProjects', {}, { enabled: false })
+
+  const beginInterview = async () => {
+    setInterview('making')
+    try {
+      const name = newProjectName()
+      const uploadId = await upload()
+      const surfaces = uses.surfaces
+      const devices = uses.surfaces.includes('screens') ? uses.devices : undefined
+      const made = await create.mutateAsync({ name, idea: idea.trim(), surfaces, ...(devices ? { devices } : {}) })
+      rememberInterview(made.key, { name, idea: idea.trim(), surfaces, devices: devices ?? [], ...(uploadId ? { uploadId } : {}) })
+      setInterview('opening')
+      await open.mutateAsync({ key: made.key }).catch(() => undefined)
+      const seen = (await listed.refetch()).data as { projects: { key: string; slug: string }[] } | undefined
+      const slug = seen?.projects.find((p) => p.key === made.key)?.slug ?? made.key
+      navigate({ to: '/knowledge', search: ((prev: object) => ({ ...prev, project: slug, interview: 'on', panel: 'chat' })) as never })
+    } catch {
+      setInterview(null)
+      setSt('error')
+    }
+  }
+
   const begin = async (key?: string) => {
     setSt('loading')
     const name = newProjectName()
-    const uploadId = files.length ? crypto.randomUUID() : undefined
+    let uploadId: string | undefined
     try {
-      for (const file of files) {
-        const bytes = new Uint8Array(await file.arrayBuffer())
-        let binary = ''
-        for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000))
-        await attach.mutateAsync({ uploadId: uploadId!, name: file.name, data: btoa(binary) })
-      }
+      uploadId = await upload()
     } catch {
       return setSt('error')
     }
@@ -77,9 +109,12 @@ export function NewProjectRoute() {
       value={{
         st,
         go: () => void begin(),
+        goInterview: () => void beginInterview(),
+        interview,
         retry: () => void begin(run.data?.key),
         open: () => {},
         cancel: () => {
+          setInterview(null)
           set({ run: undefined })
           setSt('normal')
         },

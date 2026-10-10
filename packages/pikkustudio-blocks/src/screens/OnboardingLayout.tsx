@@ -29,6 +29,8 @@ export type Uses = { audience: 'me' | 'others'; surfaces: string[]; devices: str
 export const OnbCtx = createContext<{
   st: OnbState
   go: () => void
+  goInterview?: () => void
+  interview?: 'making' | 'opening' | null
   retry: () => void
   open: (id: PanelId | '') => void
   cancel: () => void

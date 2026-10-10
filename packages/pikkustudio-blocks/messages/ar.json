@@ -3501,5 +3501,17 @@
   "preview_bar__impersonate": "العرض كشخص آخر",
   "slash_menu__label": "الأوامر",
   "slash_menu__experiment": "تجربة",
-  "slash_menu__experiment_hint": "جرّب مظاهر أو أفكارًا مختلفة لتطبيقك. لا يتغيّر شيء في تطبيقك حتى تختار واحدة"
+  "slash_menu__experiment_hint": "جرّب مظاهر أو أفكارًا مختلفة لتطبيقك. لا يتغيّر شيء في تطبيقك حتى تختار واحدة",
+  "new_project_form__interview_start": "لنتحدث عن منتجك أولًا",
+  "new_project_form__interview_note": "موصى به. مقابلة قصيرة لتناسب التصاميم منتجك الحقيقي لا سطرك الأول فقط.",
+  "new_project_form__design_note": "تجاوز الأسئلة وشاهد التصاميم الأولى من فكرتك مباشرة.",
+  "new_project_screen__interview_title": "نجهّز مقابلتك",
+  "new_project_screen__interview_lead": "يجهّز بيكو مكانًا ليسألك عن منتجك. يستغرق هذا عادةً نحو دقيقة.",
+  "new_project_screen__interview_step_ready": "تجهيز الأسئلة",
+  "knowledge_interview__title": "أخبرنا عن منتجك",
+  "knowledge_interview__lead": "أجب عن أسئلة بيكو في المحادثة، سؤالًا بعد سؤال. عندما تقول ما يكفي، انتقل إلى التصاميم. يمكنك المغادرة في أي وقت والعودة إلى هنا لاحقًا.",
+  "knowledge_interview__continue": "المتابعة إلى التصاميم",
+  "knowledge_interview__going": "نبدأ تصاميمك",
+  "knowledge_interview__first_message": "بدأت للتو مشروعًا جديدًا. فكرتي: {idea}. أرجو أن تجري معي مقابلة عن عملي وهذا المنتج، بسؤال بسيط واحد في كل مرة، وأن تدوّن ما أقوله لك في المعرفة.",
+  "knowledge_interview__error": "لم تبدأ التصاميم. لم يضع شيء. حاول مرة أخرى."
 }
