@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react'
 import { m } from '@/i18n/messages'
-import { asI18n } from '@pikku/react'
-import { ChevronDown } from 'lucide-react'
+import { asI18n, type I18nNode } from '@pikku/react'
+import { ChevronDown, ClipboardCheck } from 'lucide-react'
 import { Button } from '../ui/button'
 import { ShellCtx } from '../lib/shell'
 import { Dot } from './RowCard'
@@ -9,7 +9,7 @@ import { SidePanel } from './SidePanel'
 import { PikkuDot } from './PikkuDot'
 import { ago, exactTime, extras, outcomeOf, whatHappened, whoDid, type AuditEntry, type AuditUser } from '../lib/audit'
 
-function Fact({ label, children }: { label: ReturnType<typeof m.audit_screen__detail_who>; children: React.ReactNode }) {
+function Fact({ label, children }: { label: ReturnType<typeof m.audit_screen__detail_who>; children: I18nNode }) {
   return (
     <div className="flex flex-col gap-0.5">
       <dt className="text-px14 font-bold text-muted-foreground">{label}</dt>
@@ -25,7 +25,7 @@ export function AuditDetail({ entry, users, now, onClose }: { entry: AuditEntry;
   const more = extras(entry.metadata)
   const line = m.audit_screen__line({ who: whoDid(entry, users), did: whatHappened(entry.type) })
   return (
-    <SidePanel title={m.audit_screen__detail_title()} sub={line} onClose={onClose}>
+    <SidePanel icon={ClipboardCheck} label={m.audit_screen__detail_title()} title={m.audit_screen__detail_title()} sub={line} onClose={onClose}>
       <dl className="m-0 flex flex-col gap-4">
         <Fact label={m.audit_screen__detail_who()}>{whoDid(entry, users)}</Fact>
         <Fact label={m.audit_screen__detail_when()}>

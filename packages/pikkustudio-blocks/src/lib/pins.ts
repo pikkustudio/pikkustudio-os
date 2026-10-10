@@ -36,7 +36,7 @@ export function usePins() {
   return { pins, toggle }
 }
 
-export const FIXED = ['overview', 'design', 'changes-directions', 'emails', 'knowledge', 'publish'] as const
+export const FIXED = ['overview', 'design', 'changes', 'emails', 'knowledge', 'publish'] as const
 
 export const useCurrentFixed = (): boolean =>
   useLocation({ select: (l) => (FIXED as readonly string[]).some((id) => l.pathname.endsWith(`/${id}`)) })

@@ -45,7 +45,7 @@ export function SurfaceReference({ doc, usage, onOpen }: { doc: SurfaceDoc; usag
 export function SurfaceLeafPanel({ leaf, usage, onClose }: { leaf: SurfaceLeaf; usage: SurfaceUsage | undefined; onClose: () => void }) {
   const per = usage?.bySpecifier[leaf.specifier] ?? {}
   return (
-    <SidePanel title={asI18n(leaf.name)} sub={asI18n(leaf.summary)} onClose={onClose}>
+    <SidePanel icon={Package} label={asI18n(leaf.name)} title={asI18n(leaf.name)} sub={asI18n(leaf.summary)} onClose={onClose}>
       <code dir="ltr" className="font-mono text-px14 break-all">{asI18n(leaf.specifier)}</code>
       <ul className="m-0 flex list-none flex-col divide-y divide-border p-0">
         {leaf.symbols.map((s) => {

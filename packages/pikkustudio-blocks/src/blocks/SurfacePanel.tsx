@@ -1,7 +1,7 @@
 import { asI18n, type I18nNode, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useState } from 'react'
-import { ArrowLeft, Check, Copy, Lock, LockOpen } from 'lucide-react'
+import { ArrowLeft, Check, Copy, Lock, LockOpen, Package, Workflow } from 'lucide-react'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { fieldsOfSchema, fnOf, useSchema, type AllMeta, type Item } from '../lib/surface'
@@ -82,7 +82,7 @@ function Access({ auth, open, scopes }: { auth?: boolean; open?: boolean; scopes
 export function SurfaceItemPanel({ projectKey, meta, item, onFunction, onClose }: { projectKey: string; meta: AllMeta | undefined; item: Item; onFunction: (id: string) => void; onClose: () => void }) {
   const fn = fnOf(meta, item.funcId)
   return (
-    <SidePanel title={asI18n(item.title)} sub={item.about ? asI18n(item.about) : undefined} onClose={onClose}>
+    <SidePanel icon={Package} label={asI18n(item.title)} title={asI18n(item.title)} sub={item.about ? asI18n(item.about) : undefined} onClose={onClose}>
       <Block title={m.surface__panel_how()}>
         <Code>{item.line}</Code>
         <div>
@@ -139,7 +139,7 @@ export function SurfaceFunctionPanel({ projectKey, meta, id, onBack, onClose }: 
   const used = meta?.functionUsedBy?.[id]
   const where = fn?.sourceFile ? `${fn.sourceFile}${fn.exportedName ? ` (${fn.exportedName})` : ''}` : null
   return (
-    <SidePanel title={asI18n(fn?.name ?? id)} sub={m.surface__function_sub()} onClose={onClose}>
+    <SidePanel icon={Workflow} label={asI18n(fn?.name ?? id)} title={asI18n(fn?.name ?? id)} sub={m.surface__function_sub()} onClose={onClose}>
       <Button variant="ghost" size="compact" type="button" className="self-start" onClick={onBack}>
         <ArrowLeft className="size-4 rtl:-scale-x-100" />
         {m.surface__back()}

@@ -1,7 +1,7 @@
 import { m } from '@/i18n/messages'
 import { useContext, useState } from 'react'
 import { Link } from '../blocks/Link'
-import { ArrowLeft, ArrowLeftRight, Check, FileText, FlaskConical, KeyRound, Settings, ShieldCheck, TriangleAlert, Workflow, Undo2 } from 'lucide-react'
+import { ArrowLeft, ArrowLeftRight, Check, FileText, FlaskConical, KeyRound, Settings, ShieldCheck, TriangleAlert, Workflow, Undo2, History, Trash2 } from 'lucide-react'
 import { Button, buttonVariants } from '../ui/button'
 import { Input } from '../ui/input'
 import { Art } from '../blocks/ExploreHub'
@@ -276,12 +276,12 @@ function Detail({ v }: { v: Version }) {
       )}
 
       {panel === 'log' && (
-        <SidePanel title={m.routine_screen__what_happened()} sub={m.version_screen__the_record_from_building_and()} onClose={() => setPanel(null)}>
+        <SidePanel icon={History} label={m.routine_screen__what_happened()} title={m.routine_screen__what_happened()} sub={m.version_screen__the_record_from_building_and()} onClose={() => setPanel(null)}>
           <pre dir="ltr" className="overflow-auto rounded-card bg-secondary p-4 font-mono text-[13px] leading-[1.6] whitespace-pre-wrap">{asI18n(v.log)}</pre>
         </SidePanel>
       )}
       {panel === 'setting' && (
-        <SidePanel title={v.missing[0]?.name ?? m.version_screen__fill_it_in()} sub={v.missing[0]?.why} onClose={() => setPanel(null)}>
+        <SidePanel icon={FileText} label={v.missing[0]?.name ?? m.version_screen__fill_it_in()} title={v.missing[0]?.name ?? m.version_screen__fill_it_in()} sub={v.missing[0]?.why} onClose={() => setPanel(null)}>
           {v.missing.map((mi) => (
             <form
               key={mi.id}
@@ -305,7 +305,7 @@ function Detail({ v }: { v: Version }) {
         </SidePanel>
       )}
       {panel === 'back' && (
-        <SidePanel title={m.versions_screen__go_back_title()} sub={m.versions_screen__go_back_sub()} onClose={() => setPanel(null)}>
+        <SidePanel icon={Undo2} label={m.versions_screen__go_back_title()} title={m.versions_screen__go_back_title()} sub={m.versions_screen__go_back_sub()} onClose={() => setPanel(null)}>
           <p className="text-[16px] text-ink-2">
             {m.version_screen__go_back_detail({ title: v.title, liveTitle: live.title })}
           </p>
@@ -320,7 +320,7 @@ function Detail({ v }: { v: Version }) {
         </SidePanel>
       )}
       {panel === 'discard' && (
-        <SidePanel title={m.version_screen__discard_this_version()} sub={m.version_screen__it_leaves_your_history_the()} onClose={() => setPanel(null)}>
+        <SidePanel icon={Trash2} label={m.version_screen__discard_this_version()} title={m.version_screen__discard_this_version()} sub={m.version_screen__it_leaves_your_history_the()} onClose={() => setPanel(null)}>
           <div className="flex gap-3">
             <Button variant="destructive" size="page" onClick={() => (setPanel(null), say(m.version_screen__say_discard({ title: v.title })))}>
               {m.version_screen__yes_discard()}

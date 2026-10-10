@@ -3,7 +3,7 @@ import { m } from '@/i18n/messages'
 import { useContext } from 'react'
 import { Link } from './Link'
 import { useProjectName } from '../lib/project'
-import { AppWindow, Bot, ChevronRight, Clock, Database, FileCode, FileText, HeartPulse, History, KeyRound, Languages, Layers, Plug, ScrollText, Search, Users, Wallet, type LucideIcon } from 'lucide-react'
+import { AppWindow, Bot, ClipboardCheck, ChevronRight, Clock, Database, FileCode, FileText, HeartPulse, History, KeyRound, Languages, Layers, Plug, ScrollText, Search, Users, Wallet, type LucideIcon } from 'lucide-react'
 import { Button } from '../ui/button'
 import { ShellCtx } from '../lib/shell'
 import { keep } from '../lib/links'
@@ -112,6 +112,7 @@ export function ExploreHub() {
         <div className="divide-y divide-border overflow-hidden rounded-[22px] border border-border bg-card">
           <HubRow hue="petrol" Icon={FileCode} title={m.code_screen__title()} text={m.explore_hub__code_text()} to="/code" />
           <HubRow hue="teal" Icon={Layers} title={m.surface__title()} text={m.explore_hub__surface_text()} to="/surface" />
+          <HubRow hue="teal" Icon={ClipboardCheck} title={m.scorers_screen__title()} text={m.explore_hub__scorers_text()} to="/scorers" />
         </div>
       </Section>
 

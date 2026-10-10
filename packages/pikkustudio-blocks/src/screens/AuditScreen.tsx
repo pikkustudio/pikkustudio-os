@@ -1,5 +1,5 @@
 import { useContext, useMemo, useState } from 'react'
-import type { I18nString } from '@pikku/react'
+import type { I18nNode, I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { asI18n } from '@pikku/react'
 import { History, LockKeyhole, Plug, SearchX } from 'lucide-react'
@@ -28,7 +28,7 @@ type Range = 'today' | 'week' | 'all'
 
 const skeleton = <div className="h-24 animate-pulse rounded-card border border-border bg-secondary" />
 
-const Group = ({ title, children }: { title: I18nString; children: React.ReactNode }) => (
+const Group = ({ title, children }: { title: I18nString; children: I18nNode }) => (
   <section className="flex flex-col gap-2" aria-label={title}>
     <h2 className="px-1 pt-2 text-px14 font-bold text-muted-foreground">{title}</h2>
     {children}

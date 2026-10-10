@@ -1,3 +1,4 @@
+import { Compass } from 'lucide-react'
 import { useState } from 'react'
 import { SetupColumn } from '../blocks/SetupsCompare'
 import { Page } from '../blocks/Page'
@@ -37,7 +38,7 @@ export function ExploreSetupsScreen() {
         ))}
       </div>
       {picked ? (
-        <SidePanel title={m.explore_setups_screen__set_up_as({ name: picked.name })} sub={m.explore_setups_screen__this_creates_one_change_with()} onClose={() => setPicked(null)}>
+        <SidePanel icon={Compass} label={m.explore_setups_screen__set_up_as({ name: picked.name })} title={m.explore_setups_screen__set_up_as({ name: picked.name })} sub={m.explore_setups_screen__this_creates_one_change_with()} onClose={() => setPicked(null)}>
           <ul className="flex flex-col gap-2">
             {(Object.keys(rowLabels) as RowKey[]).map((r) => (
               <li key={r} className="rounded-card border border-border bg-card px-3.5 py-3 shadow-card">

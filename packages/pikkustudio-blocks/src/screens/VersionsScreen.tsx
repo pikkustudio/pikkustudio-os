@@ -1,7 +1,7 @@
 import { m } from '@/i18n/messages'
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { Link } from '../blocks/Link'
-import { Check, Search, Pencil } from 'lucide-react'
+import { Check, Search, Pencil, Undo2, Upload } from 'lucide-react'
 import { Button, buttonVariants } from '../ui/button'
 import { Input } from '../ui/input'
 import { Art } from '../blocks/ExploreHub'
@@ -203,7 +203,7 @@ export function VersionsScreen() {
       </Section>
 
       {panel?.kind === 'back' && (
-        <SidePanel title={m.versions_screen__go_back_title()} sub={m.versions_screen__go_back_sub()} onClose={() => setPanel(null)}>
+        <SidePanel icon={Undo2} label={m.versions_screen__go_back_title()} title={m.versions_screen__go_back_title()} sub={m.versions_screen__go_back_sub()} onClose={() => setPanel(null)}>
           <p className="text-[16px] text-ink-2">
             {m.version_screen__go_back_detail({ title: panel.v.title, liveTitle: live?.title ?? '' })}
           </p>
@@ -224,7 +224,7 @@ export function VersionsScreen() {
 
 function PublishPanel({ heads, onClose, onGo }: { heads: Head[]; onClose: () => void; onGo: (title: string) => void }) {
   return (
-    <SidePanel title={m.versions_screen__publish_title({ count: heads.length })} sub={m.versions_screen__publish_sub()} onClose={onClose}>
+    <SidePanel icon={Upload} label={m.versions_screen__publish_title({ count: heads.length })} title={m.versions_screen__publish_title({ count: heads.length })} sub={m.versions_screen__publish_sub()} onClose={onClose}>
       <RowStack>
         {heads.map((h) => (
           <RowCard key={h.sha} tile={<Pencil className="size-5" />} title={h.title} caption={m.versions_screen__by_when({ by: h.by, when: h.when })} />

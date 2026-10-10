@@ -1,9 +1,8 @@
 import { asI18n, sep, type I18nNode, type I18nString } from '@pikku/react'
 import { PikkuMark } from '../blocks/PikkuMark'
-import { ChangesPanel } from '../directions-changes/ChangesPanel'
+import { ChangesPanel } from '../changes-panel/ChangesPanel'
 import { EmptyState } from '../blocks/EmptyState'
 import { NotFoundState } from '../blocks/NotFoundState'
-import { useChangeChat } from '../directions-changes/useChangeChat'
 import { Outlet, useLocation, useNavigate, useSearch } from '@tanstack/react-router'
 import { Link } from '../blocks/Link'
 import { useEffect, useMemo, useState, type ComponentType, type ReactNode } from 'react'
@@ -160,9 +159,7 @@ export function ShellLayout() {
   const workMode = useLocation({ select: (l) => modeForPath(l.pathname) })
   const guide = usePikkuChat(projectKey)
   const builder = useBuilderChat(projectKey, workMode)
-  const onChanges = useLocation({ select: (l) => l.pathname.endsWith('/changes-directions') })
-  const changeChat = useChangeChat(onChanges ? q.change : undefined)
-  const chat = changeChat.change ? changeChat : workMode ? builder : guide
+  const chat = workMode ? builder : guide
   const changesQ = useProjectQuery<{ changes: { changeId: string; title: string; body: string | null; status: string; createdAt: string }[] }>(projectKey, 'console:listStudioChanges', { status: ['open', 'claimed', 'needs_answer', 'in_progress'] }, { refetchInterval: 6000 })
   const pending = (changesQ.data?.changes ?? []).map((c) => {
     const title = asI18n(c.title)
@@ -220,7 +217,7 @@ export function ShellLayout() {
   const bubbleIsOpen = bubbleOpen ?? false
   const unread = needsPerson && isDismissed
 
-  const panelTitle: Record<PanelId, I18nString> = { chat: changeChat.change ? m.shell_layout__this_change() : workMode ? agentName(workMode) : m.parts__talk_to_pikku(), updates: m.shell_layout__updates(), changes: m.shell_layout__changes(), workspace: m.shell_layout__your_workspace(), account: m.shell_layout__your_account() }
+  const panelTitle: Record<PanelId, I18nString> = { chat: workMode ? agentName(workMode) : m.parts__talk_to_pikku(), updates: m.shell_layout__updates(), changes: m.shell_layout__changes(), workspace: m.shell_layout__your_workspace(), account: m.shell_layout__your_account() }
   const aboutScreen: I18nString | null = onEmails || fill ? null : onArtifacts ? SCREEN_NAME.artifacts() : onKnowledge ? SCREEN_NAME.knowledge() : onPublish ? m.shell_layout__publish() : m.shell_layout__overview()
   const bubbleActions: { label: I18nString; yes: boolean; run: () => void }[] = pending.length
     ? [
@@ -304,7 +301,7 @@ export function ShellLayout() {
                 <LayoutGrid className="size-5" />
                 {m.shell_layout__overview()}
               </Link>
-              <Link {...keep} to={'/changes-directions' as never} className={navItem}>
+              <Link {...keep} to={'/changes' as never} className={navItem}>
                 <GitPullRequest className="size-5" />
                 {m.shell_layout__changes()}
               </Link>
@@ -461,21 +458,11 @@ export function ShellLayout() {
 
             {panel === 'chat' ? (
               <div className="flex min-h-0 flex-1 flex-col">
-                {changeChat.change ? (
-                  <div className="flex items-center gap-3 border-b border-border bg-secondary px-6 py-3 text-[14px] text-ink-2">
-                    <button type="button" onClick={() => set({ change: undefined, panel: 'changes' })} className="inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-2.5 py-1 font-bold text-accent-foreground hover:bg-surface-3">
-                      <ArrowLeft className="rtl:-scale-x-100 size-4.5" />
-                      {m.shell_layout__changes()}
-                    </button>
-                    <b className="min-w-0 flex-1 truncate text-foreground">{changeChat.change.title}</b>
-                  </div>
-                ) : (
                 <div className="flex items-center gap-2 border-b border-border bg-secondary px-6 py-3 text-[14px] text-ink-2">
                   <FolderOpen className="size-4.5 text-accent-foreground" />
                   <span className="font-semibold text-muted-foreground">{m.shell_layout__about()}</span>
                   <b className="text-foreground">{projectName}{aboutScreen ? <>{sep(', ')}{aboutScreen}</> : null}</b>
                 </div>
-                )}
                 <div className="flex min-h-0 flex-1 flex-col gap-4.5 overflow-auto px-6 py-5" tabIndex={0} aria-label={m.shell_layout__chat()} role="log">
                   {chat.items.map((it) =>
                     it.kind === 'me' ? (

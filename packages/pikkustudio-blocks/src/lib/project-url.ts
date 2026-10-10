@@ -5,16 +5,16 @@ import type { LocationRewrite } from '@tanstack/react-router'
 // search params, so routes stay /projects and /overview.
 
 // Not scoped by a team: onboarding, your own account, and the signed-in template app at /app.
-const GLOBAL = new Set(['claim-stripe', 'sign-in', 'your-name', 'choose-ai', 'new-team', 'accept-invite', 'account', 'app', 'login', 'signup'])
+const GLOBAL = new Set(['claim-stripe', 'sign-in', 'your-name', 'choose-ai', 'new-team', 'profile', 'accept-invite', 'account', 'app', 'login', 'signup'])
 // The team's own pages: no project in their URL.
 const TEAM_PAGES = new Set(['projects', 'secrets', 'studio-metrics', 'new-project'])
 // Project pages. The value says whether the page reads the project's running app: those show the start screen until it is up.
 // Overview only adds counts from the app and falls back to none; Publish and Resume never call it; the rest are team pages.
 export const PAGES: Record<string, boolean> = {
-  overview: false, resume: false, publish: false, build: false, lab: false,
-  billing: false, team: false, settings: false, plans: false, ai: false, domains: false,
-  'changes-directions': true, design: true, emails: true, translations: true, artifacts: true, knowledge: true, content: true,
-  'front-doors': true, code: true, audit: true, apps: true, explore: true, logs: true, performance: true, metrics: true,
+  overview: false, review: false, 'review-ui': false, 'review-fixes': false, resume: false, publish: false, build: false, lab: false,
+  billing: false, team: false, settings: false, plans: false, ai: false, domains: false, 'secret-access': false,
+  'changes': true, design: true, emails: true, translations: true, artifacts: true, knowledge: true, content: true,
+  'front-doors': true, code: true, audit: true, apps: true, explore: true, logs: true, performance: true, metrics: true, scorers: true,
   assistants: true, 'virtual-users': true, routines: true, versions: true, addons: true, 'add-ons': true, mocks: true, surface: true,
 }
 const isPage = (name: string) => Object.hasOwn(PAGES, name)
@@ -35,6 +35,7 @@ export const isTeamScoped = (pathname: string) => {
 
 export const projectRewrite: LocationRewrite = {
   input: ({ url }) => {
+    url.pathname = url.pathname.replace(/\/changes-directions(?=\/|$)/, '/changes')
     const [first, second, ...more] = url.pathname.split('/').filter(Boolean)
     // Unscoped paths pass through; the team guard adds the team.
     if (!first || GLOBAL.has(first) || TEAM_PAGES.has(first) || isPage(first)) return url

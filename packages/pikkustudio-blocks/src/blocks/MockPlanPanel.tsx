@@ -37,7 +37,7 @@ export function MockPlanPanel({ onClose }: { onClose: () => void }) {
   const data = plan.data as Plan | undefined
   const total = data ? data.added.length + data.changed.length + data.invalid.length : 0
   return (
-    <SidePanel title={m.mock_plan__title()} sub={m.mock_plan__sub()} onClose={onClose}>
+    <SidePanel icon={Hammer} label={m.mock_plan__title()} title={m.mock_plan__title()} sub={m.mock_plan__sub()} onClose={onClose}>
       <div data-testid="mock-plan" aria-busy={plan.isFetching} className="flex flex-col gap-5">
         {plan.isError || (data && !data.available) ? (
           <ErrorState error={plan.error ?? new Error('The project could not read its sample data.')} what={m.mock_plan__what()} onRetry={() => plan.refetch()} retrying={plan.isFetching} />

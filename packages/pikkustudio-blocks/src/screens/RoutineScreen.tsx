@@ -267,7 +267,7 @@ function Detail({ r }: { r: Routine }) {
       )}
 
       {hist && (
-        <SidePanel title={m.routine_screen__past_runs()} sub={m.routine_screen__past_runs_sub()} onClose={() => setHist(false)}>
+        <SidePanel icon={History} label={m.routine_screen__past_runs()} title={m.routine_screen__past_runs()} sub={m.routine_screen__past_runs_sub()} onClose={() => setHist(false)}>
           <RowStack>
             <RowCard tile={<Workflow className="size-5" />} on={runId === null} title={m.routine_screen__just_routine()} caption={m.routine_screen__no_run()}>
               <Button variant={runId === null ? 'default' : 'bordered'} size="compact" aria-pressed={runId === null} onClick={() => choose(null)}>
@@ -295,7 +295,7 @@ function Detail({ r }: { r: Routine }) {
       )}
 
       {step && (
-        <SidePanel title={step.title} sub={step.by ? m.routine_screen__done_by({ by: step.by }) : undefined} onClose={() => setPick(null)}>
+        <SidePanel icon={Workflow} label={step.title} title={step.title} sub={step.by ? m.routine_screen__done_by({ by: step.by }) : undefined} onClose={() => setPick(null)}>
           <p className="text-[16px] text-ink-2">{step.says}</p>
           {step.ifNot && <p className="text-[15px] text-ink-2">{m.routine_screen__if_not({ ifNot: step.ifNot })}</p>}
           {run ? (
