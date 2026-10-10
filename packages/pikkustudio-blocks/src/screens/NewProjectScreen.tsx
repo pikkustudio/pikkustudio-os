@@ -81,13 +81,13 @@ const labels = (): Record<string, I18nString> => ({
 })
 const PLAN = ['Make the project', 'Set up its workspace', 'Set up its database', 'Start it', 'Ask for a first draft']
 
-function progress(run?: ProjectRun) {
+function progress(run?: ProjectRun, interview?: boolean) {
   const LABELS = labels()
   const seen = (run?.steps ?? []).filter((s) => LABELS[s.name])
   const names = new Set(seen.map((s) => s.name))
   const rows = [
     ...seen.map((s) => ({ label: LABELS[s.name], state: s.status === 'succeeded' ? 'done' : 'now' })),
-    ...PLAN.filter((n) => !names.has(n)).map((n) => ({ label: LABELS[n], state: 'wait' })),
+    ...(interview ? PLAN.slice(0, -1) : PLAN).filter((n) => !names.has(n)).map((n) => ({ label: LABELS[n], state: 'wait' })),
   ]
   if (!rows.some((r) => r.state === 'now') && run?.status !== 'completed') {
     const first = rows.findIndex((r) => r.state === 'wait')
@@ -142,7 +142,7 @@ export function NewProjectScreen() {
   const { st, go, goInterview, interview, retry, cancel, idea, setIdea, example, run, uses, setUses, files, setFiles } = useContext(OnbCtx)
   const [picked, setPicked] = useState(-1)
   const hero = useRef<HTMLElement>(null)
-  const loading = st === 'loading' || !!interview
+  const loading = st === 'loading'
   const error = st === 'error'
   const navigate = useNavigate()
   const needsAi = /Choose your AI/.test(run?.error ?? '')
@@ -164,24 +164,12 @@ export function NewProjectScreen() {
   return (
     <div className="mx-auto flex max-w-[1160px] flex-col gap-10 @min-[1700px]/app:max-w-[1380px]">
       <OpeningStage sectionRef={hero}>
-        {interview ? (
+        {loading ? (
           <MachineOpening
-            icon={<MessageCircle className="me-3 inline-block size-9 align-middle" aria-hidden="true" />}
-            title={m.new_project_screen__interview_title()}
-            lead={m.new_project_screen__interview_lead()}
-            steps={[
-              { label: labels()['Make the project'], state: interview === 'making' ? 'now' : 'done' },
-              { label: labels()['Set up its workspace'], state: interview === 'making' ? 'wait' : 'now' },
-              { label: m.new_project_screen__interview_step_ready(), state: 'wait' },
-            ]}
-            onCancel={cancel}
-          />
-        ) : loading ? (
-          <MachineOpening
-            icon={<Sparkles className="me-3 inline-block size-9 align-middle" aria-hidden="true" />}
-            title={m.new_project_screen__exploring_some_directions()}
-            lead={m.new_project_screen__this_usually_takes_about_two()}
-            steps={progress(run).map((s) => ({ ...s, ai: s.label === labels()['Ask for a first draft'] }))}
+            icon={interview ? <MessageCircle className="me-3 inline-block size-9 align-middle" aria-hidden="true" /> : <Sparkles className="me-3 inline-block size-9 align-middle" aria-hidden="true" />}
+            title={interview ? m.new_project_screen__interview_title() : m.new_project_screen__exploring_some_directions()}
+            lead={interview ? m.new_project_screen__interview_lead() : m.new_project_screen__this_usually_takes_about_two()}
+            steps={progress(run, interview).map((s) => ({ ...s, ai: s.label === labels()['Ask for a first draft'] }))}
             onCancel={cancel}
           />
         ) : null}

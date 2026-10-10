@@ -6,7 +6,7 @@ import { connect, createServer } from 'node:net'
 import { homedir, userInfo } from 'node:os'
 import { builderHome, packageRoot, piPackageRoot, type BuilderMode, type Launcher } from '@pikku/builder'
 import { modeScope } from './builder-scope.js'
-import { basename, dirname, join, resolve, sep } from 'node:path'
+import { basename, delimiter, dirname, join, resolve, sep } from 'node:path'
 import { randomBytes, randomUUID } from 'node:crypto'
 import { ConflictError } from '@pikku/core/errors'
 import { generatedSource, projectSource, resolveEffective, setMany, toEnv, type ScopedSource } from '../lib/sources/index.js'
@@ -28,6 +28,16 @@ const projectSlug = (text: string) =>
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
+
+export type StartPath = 'interview' | 'design'
+
+export interface Intake {
+  path: StartPath
+  done: boolean
+  idea: string | null
+  surfaces: string[]
+  devices: string[]
+}
 
 export interface StudioProject {
   key: string
@@ -207,6 +217,35 @@ export const localAccount: AccountProvider = {
   async link() {
     return null
   },
+}
+
+const realNodeDir = (() => {
+  let cached: string | null | undefined
+  return (): string | null => {
+    if (cached !== undefined) return cached
+    cached = null
+    const real = (bin: string) => {
+      try {
+        const path = realpathSync(bin)
+        return basename(path).startsWith('node') && !/bun/i.test(bin) && !/bun/i.test(path) ? dirname(bin) : null
+      } catch {
+        return null
+      }
+    }
+    cached = basename(process.execPath).startsWith('node') ? real(process.execPath) : null
+    if (!cached) {
+      try {
+        const found = execFileSync('which', ['-a', 'node'], { encoding: 'utf8' }).split('\n').filter(Boolean)
+        for (const bin of found) if ((cached = real(bin))) break
+      } catch {}
+    }
+    return cached
+  }
+})()
+
+const withRealNode = (env: NodeJS.ProcessEnv): NodeJS.ProcessEnv => {
+  const dir = realNodeDir()
+  return dir ? { ...env, PATH: `${dir}${delimiter}${env.PATH ?? ''}` } : env
 }
 
 const freePort = () =>
@@ -635,7 +674,7 @@ export class StudioProjectsService {
     return (await this.list()).find((p) => p.key === id)!
   }
 
-  async create({ name, idea, surfaces, devices }: { name: string; idea?: string; surfaces?: string[]; devices?: string[] }): Promise<StudioProject> {
+  async create({ name, idea, surfaces, devices, path }: { name: string; idea?: string; surfaces?: string[]; devices?: string[]; path?: StartPath }): Promise<StudioProject> {
     if (await this.nameTaken(name)) throw new ConflictError(`You already have a project called ${name}`)
     const id = randomUUID().slice(0, 8)
     const root = join(this.projectsDir, id)
@@ -663,6 +702,7 @@ export class StudioProjectsService {
       throw error
     }
     await rm(staging, { recursive: true, force: true })
+    await writeFile(join(root, 'intake.json'), JSON.stringify({ path: path ?? 'design', done: false, idea: idea ?? null, surfaces: surfaces ?? [], devices: devices ?? [] }) + '\n')
     return this.register(root, id, name)
   }
 
@@ -742,6 +782,23 @@ export class StudioProjectsService {
     if (!remote) return { pushed: false, remote: '', branches: [] }
     await run('git', ['push', '-u', 'origin', '--all'], bare)
     return { pushed: true, remote, branches: [MAIN, ...(await listWorktrees(root))] }
+  }
+
+  private intakeFile(key: string) {
+    return join(this.projectsDir, splitSessionKey(key).id, 'intake.json')
+  }
+
+  async intake(key: string): Promise<Intake | null> {
+    try {
+      return JSON.parse(await readFile(this.intakeFile(key), 'utf8')) as Intake
+    } catch {
+      return null
+    }
+  }
+
+  async finishIntake(key: string): Promise<void> {
+    const found = await this.intake(key)
+    if (found) await writeFile(this.intakeFile(key), JSON.stringify({ ...found, done: true }) + '\n')
   }
 
   private async entry(key: string): Promise<RegistryEntry> {
@@ -1165,9 +1222,10 @@ export class StudioProjectsService {
         ...(await (this.options.env?.(key) ?? {})),
       },
     }
+    const devOptions = this.options.devCommand ? spawnOptions : { ...spawnOptions, env: withRealNode(spawnOptions.env) }
     const child = confinement
-      ? confinedSpawn(command, args, confinement, spawnOptions)
-      : spawn(command, args, spawnOptions)
+      ? confinedSpawn(command, args, confinement, devOptions)
+      : spawn(command, args, devOptions)
     closeSync(log)
     this.recordPid(key, child)
     const exited = new Promise<never>((_, reject) =>

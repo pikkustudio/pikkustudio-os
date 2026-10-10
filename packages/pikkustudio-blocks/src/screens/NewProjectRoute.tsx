@@ -1,16 +1,15 @@
 import { m } from '@/i18n/messages'
 import { useContext, useEffect, useState } from 'react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
-import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
+import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { ProjectRpcCtx } from '../lib/projectRpc'
 import { newProjectName, useAttachFile, useProjectRun, useStartProjectRun } from '../lib/onboarding'
-import { rememberInterview } from '../lib/interview'
 import { OnbCtx, type OnbState, type Uses } from './OnboardingLayout'
 import { NewProjectScreen } from './NewProjectScreen'
 
 export function NewProjectRoute() {
   const navigate = useNavigate()
-  const q = useSearch({ strict: false }) as { show?: string; run?: string }
+  const q = useSearch({ strict: false }) as { show?: string; run?: string; path?: string }
   const run = useProjectRun(q.run)
   const base: OnbState =
     q.show === 'empty' || q.show === 'loading' || q.show === 'error'
@@ -42,32 +41,9 @@ export function NewProjectRoute() {
     return uploadId
   }
 
-  const [interview, setInterview] = useState<'making' | 'opening' | null>(null)
-  const create = usePikkuMutation('studio:createProject' as never) as unknown as { mutateAsync: (input: object) => Promise<{ key: string }> }
-  const open = usePikkuMutation('studio:openProject' as never) as unknown as { mutateAsync: (input: object) => Promise<unknown> }
-  const listed = usePikkuQuery('studio:listProjects', {}, { enabled: false })
+  const interview = q.path === 'interview'
 
-  const beginInterview = async () => {
-    setInterview('making')
-    try {
-      const name = newProjectName()
-      const uploadId = await upload()
-      const surfaces = uses.surfaces
-      const devices = uses.surfaces.includes('screens') ? uses.devices : undefined
-      const made = await create.mutateAsync({ name, idea: idea.trim(), surfaces, ...(devices ? { devices } : {}) })
-      rememberInterview(made.key, { name, idea: idea.trim(), surfaces, devices: devices ?? [], ...(uploadId ? { uploadId } : {}) })
-      setInterview('opening')
-      await open.mutateAsync({ key: made.key }).catch(() => undefined)
-      const seen = (await listed.refetch()).data as { projects: { key: string; slug: string }[] } | undefined
-      const slug = seen?.projects.find((p) => p.key === made.key)?.slug ?? made.key
-      navigate({ to: '/knowledge', search: ((prev: object) => ({ ...prev, project: slug, interview: 'on', panel: 'chat' })) as never })
-    } catch {
-      setInterview(null)
-      setSt('error')
-    }
-  }
-
-  const begin = async (key?: string) => {
+  const begin = async (key?: string, path?: 'interview') => {
     setSt('loading')
     const name = newProjectName()
     let uploadId: string | undefined
@@ -77,8 +53,8 @@ export function NewProjectRoute() {
       return setSt('error')
     }
     start.mutate(
-      { name, idea: idea.trim(), ...(uploadId ? { uploadId } : {}), ...(key ? { key } : {}), surfaces: uses.surfaces, ...(uses.surfaces.includes('screens') ? { devices: uses.devices } : {}) },
-      { onSuccess: (r: { runId: string }) => set({ run: r.runId }), onError: () => setSt('error') },
+      { name, idea: idea.trim(), ...(uploadId ? { uploadId } : {}), ...(key ? { key } : {}), surfaces: uses.surfaces, ...(uses.surfaces.includes('screens') ? { devices: uses.devices } : {}), ...(path ? { path } : {}) },
+      { onSuccess: (r: { runId: string }) => set({ run: r.runId, path }), onError: () => setSt('error') },
     )
   }
 
@@ -88,6 +64,10 @@ export function NewProjectRoute() {
   useEffect(() => {
     if (!done) return
     made.refetch().then((r) => {
+      if (interview) {
+        const there = (r.data as { projects: { key: string; slug: string }[] } | undefined)?.projects.find((p) => p.key === run.data?.key)
+        return navigate({ to: '/knowledge', search: ((prev: object) => ({ ...prev, run: undefined, path: undefined, project: there?.slug ?? run.data?.key, panel: 'chat' })) as never })
+      }
       const found = (r.data as { projects: { key: string; slug: string }[] } | undefined)?.projects.find((p) => p.key === run.data?.key)
       const slug = found?.slug
       const land = (to: '/projects' | '/artifacts/explore') =>
@@ -109,13 +89,12 @@ export function NewProjectRoute() {
       value={{
         st,
         go: () => void begin(),
-        goInterview: () => void beginInterview(),
+        goInterview: () => void begin(undefined, 'interview'),
         interview,
-        retry: () => void begin(run.data?.key),
+        retry: () => void begin(run.data?.key, interview ? 'interview' : undefined),
         open: () => {},
         cancel: () => {
-          setInterview(null)
-          set({ run: undefined })
+          set({ run: undefined, path: undefined })
           setSt('normal')
         },
         idea,

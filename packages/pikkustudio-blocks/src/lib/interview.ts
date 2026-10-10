@@ -1,33 +1,6 @@
 import type { KnowledgeBundle } from './knowledge'
 
-export type Interview = { name: string; idea: string; surfaces: string[]; devices: string[]; uploadId?: string; started?: boolean }
-
-const slot = (key: string) => `studio.interview.${key}`
-
-export const recallInterview = (key: string): Interview | null => {
-  try {
-    const raw = localStorage.getItem(slot(key))
-    return raw ? (JSON.parse(raw) as Interview) : null
-  } catch {
-    return null
-  }
-}
-
-export const rememberInterview = (key: string, value: Interview) => {
-  try {
-    localStorage.setItem(slot(key), JSON.stringify(value))
-  } catch {
-    return
-  }
-}
-
-export const forgetInterview = (key: string) => {
-  try {
-    localStorage.removeItem(slot(key))
-  } catch {
-    return
-  }
-}
+export type Intake = { path: 'interview' | 'design' | null; done: boolean; idea: string | null; surfaces: string[]; devices: string[] }
 
 const LIMIT = 8000
 

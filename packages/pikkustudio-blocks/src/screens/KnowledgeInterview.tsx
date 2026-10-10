@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { usePikkuMutation } from '@project/functions-sdk/pikku/api.gen'
+import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { ArrowRight, CircleAlert } from 'lucide-react'
 import { m } from '@/i18n/messages'
 import { PageHead } from '../blocks/PageHead'
@@ -8,7 +8,7 @@ import { Button } from '../ui/button'
 import { useProjectKey, useProjectName } from '../lib/project'
 import { ProjectRpcCtx } from '../lib/projectRpc'
 import { useStartProjectRun } from '../lib/onboarding'
-import { forgetInterview, ideaWithInterview, recallInterview, rememberInterview } from '../lib/interview'
+import { ideaWithInterview, type Intake } from '../lib/interview'
 import type { KnowledgeBundle } from '../lib/knowledge'
 
 export function KnowledgeInterview() {
@@ -22,31 +22,32 @@ export function KnowledgeInterview() {
   const [failed, setFailed] = useState(false)
   const asked = useRef('')
 
+  const intake = usePikkuQuery('studio:projectIntake' as never, { key } as never, { enabled: !!key } as never) as unknown as { data?: Intake }
+  const state = usePikkuQuery('studio:builderState', { key, specialist: 'knowledge' } as never, { enabled: !!key } as never) as unknown as { data?: { items: unknown[] }; isSuccess: boolean }
+
   useEffect(() => {
-    const saved = key ? recallInterview(key) : null
-    if (!key || !saved || saved.started || asked.current === key) return
+    if (!key || !intake.data?.idea || !state.isSuccess || state.data?.items.length || asked.current === key) return
     asked.current = key
-    rememberInterview(key, { ...saved, started: true })
-    prompt.mutateAsync({ key, mode: 'knowledge', message: m.knowledge_interview__first_message({ idea: saved.idea }) }).catch(() => rememberInterview(key, { ...saved, started: false }))
-  }, [key])
+    prompt.mutateAsync({ key, mode: 'knowledge', message: m.knowledge_interview__first_message({ idea: intake.data.idea }) }).catch(() => {
+      asked.current = ''
+    })
+  }, [key, intake.data?.idea, state.isSuccess, state.data?.items.length])
 
   const next = async () => {
     setGoing(true)
     setFailed(false)
     try {
-      const saved = recallInterview(key)
+      const saved = intake.data
       const bundle = (await invoke(key, 'console:getKnowledge', {}).catch(() => null)) as KnowledgeBundle | null
       const base = saved?.idea || String(name)
       const { runId } = await start.mutateAsync({
-        name: saved?.name ?? String(name),
+        name: String(name),
         idea: ideaWithInterview(base, bundle),
         key,
-        surfaces: saved?.surfaces ?? ['screens'],
-        ...(saved?.devices.length ? { devices: saved.devices } : {}),
-        ...(saved?.uploadId ? { uploadId: saved.uploadId } : {}),
+        surfaces: saved?.surfaces?.length ? saved.surfaces : ['screens'],
+        ...(saved?.devices?.length ? { devices: saved.devices } : {}),
       })
-      forgetInterview(key)
-      navigate({ to: '/new-project', search: ((prev: object) => ({ ...prev, run: runId, project: undefined, interview: undefined, panel: undefined })) as never })
+      navigate({ to: '/new-project', search: ((prev: object) => ({ ...prev, run: runId, project: undefined, panel: undefined })) as never })
     } catch {
       setFailed(true)
       setGoing(false)

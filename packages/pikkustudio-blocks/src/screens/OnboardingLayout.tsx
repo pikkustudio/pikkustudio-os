@@ -30,7 +30,7 @@ export const OnbCtx = createContext<{
   st: OnbState
   go: () => void
   goInterview?: () => void
-  interview?: 'making' | 'opening' | null
+  interview?: boolean
   retry: () => void
   open: (id: PanelId | '') => void
   cancel: () => void
