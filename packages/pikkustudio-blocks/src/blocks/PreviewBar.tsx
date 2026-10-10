@@ -1,6 +1,6 @@
 import type { I18nNode, I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
-import { ExternalLink, Globe, Monitor, MousePointer2, Palette, PanelRightClose, RotateCw, Smartphone, Tablet } from 'lucide-react'
+import { ExternalLink, Globe, Monitor, MousePointer2, Palette, PanelRightClose, RotateCw, Smartphone, Tablet, UserRound } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Badge } from '../ui/badge'
 import { Card } from '../ui/card'
@@ -68,7 +68,7 @@ export function PreviewBar({
           <PageBreadcrumb groups={groups} app={app} page={page} onPick={onPick} kind={kind} />
         </div>
         <div className="flex items-center justify-end gap-2">
-          {tools && tools.length === 0 ? null : <Segmented label={m.preview_bar__what_to_do_on()} value={tool} onChange={onTool} options={([['design', withIcon(Palette, m.preview_bar__design()), false, m.preview_bar__design()], ['translations', withIcon(Globe, m.preview_bar__translations()), false, m.preview_bar__translations()], ['chat', withIcon(MousePointer2, m.preview_bar__select_for_chat()), false, m.preview_bar__select_for_chat()], ['none', withIcon(PanelRightClose, m.preview_bar__none()), false, m.preview_bar__none_close()]] as Array<[string, I18nNode, boolean?, I18nString?]>).filter(([id]) => !tools || tools.includes(id))} />}
+          {tools && tools.length === 0 ? null : <Segmented label={m.preview_bar__what_to_do_on()} value={tool} onChange={onTool} options={([['design', withIcon(Palette, m.preview_bar__design()), false, m.preview_bar__design()], ['translations', withIcon(Globe, m.preview_bar__translations()), false, m.preview_bar__translations()], ['chat', withIcon(MousePointer2, m.preview_bar__select_for_chat()), false, m.preview_bar__select_for_chat()], ['impersonate', withIcon(UserRound, m.preview_bar__impersonate()), false, m.preview_bar__impersonate()], ['none', withIcon(PanelRightClose, m.preview_bar__none()), false, m.preview_bar__none_close()]] as Array<[string, I18nNode, boolean?, I18nString?]>).filter(([id]) => !tools || tools.includes(id))} />}
         {actions}
         </div>
       </div>

@@ -3395,5 +3395,16 @@
   "scorers_screen__tests_only": "only in tests with an answer key",
   "scorers_screen__off": "Off for live answers",
   "scorers_screen__unattached": "Not checking any assistant",
-  "scorers_screen__checking": "Watching {count} of your assistants"
+  "scorers_screen__checking": "Watching {count} of your assistants",
+  "impersonate__title": "Try the app as someone else",
+  "impersonate__text": "Pick a person and the app opens as them, so you see what they see.",
+  "impersonate__loading": "Looking for people to try…",
+  "impersonate__empty": "This app has no people to try yet.",
+  "impersonate__viewing": "Viewing as {name}",
+  "impersonate__nobody": "Not signed in to the app yet.",
+  "impersonate__current": "Viewing",
+  "impersonate__switch": "View as",
+  "impersonate__sign_out": "Back to the sign-in screen",
+  "impersonate__failed": "That did not work. Check that the app is running, then try again.",
+  "preview_bar__impersonate": "Impersonate"
 }

@@ -919,6 +919,16 @@
   "golive__step3_sub": "انشروا التطبيق حين تكونون راضين عنه.",
   "golive__title": "لننشره على الإنترنت.",
   "golive__why": "ثلاث خطوات قصيرة. أنتم الآن في الأولى.",
+  "impersonate__current": "قيد العرض",
+  "impersonate__empty": "لا يوجد في هذا التطبيق أشخاص للتجربة بعد.",
+  "impersonate__failed": "لم ينجح ذلك. تأكدوا من أن التطبيق يعمل ثم أعيدوا المحاولة.",
+  "impersonate__loading": "جارٍ البحث عن أشخاص للتجربة…",
+  "impersonate__nobody": "لم يتم تسجيل الدخول إلى التطبيق بعد.",
+  "impersonate__sign_out": "العودة إلى شاشة تسجيل الدخول",
+  "impersonate__switch": "العرض كـ",
+  "impersonate__text": "اختاروا شخصًا وسيفتح التطبيق باسمه، لتروا ما يراه.",
+  "impersonate__title": "جرّبوا التطبيق كشخص آخر",
+  "impersonate__viewing": "العرض كـ {name}",
   "knowledge__answer_prompt": "لنجب عن هذا السؤال المفتوح من قاعدة المعرفة: \"{title}\" ({path}). اسألني عما تحتاج إلى معرفته، سؤالا تلو الآخر. وبعد أن أجيب، اكتب الإجابة في تلك الملاحظة، وضع عليها علامة أنها أجيب عنها، وأضف أي ميزات جديدة تترتب عليها.",
   "knowledge__issue_missing": "“{title}” تشير إلى “{target}” التي لم تكتب بعد.",
   "knowledge__issue_unlinked": "لا توجد ملاحظة أخرى تشير إلى “{title}”، لذا لن يعثر عليها أحد أثناء التصفح.",
@@ -3456,5 +3466,6 @@
   "scorers_screen__tests_only": "في الاختبارات ذات مفتاح الإجابة فقط",
   "scorers_screen__off": "متوقف للإجابات المباشرة",
   "scorers_screen__unattached": "لا يفحص أي مساعد",
-  "scorers_screen__checking": "يراقب {count} من مساعديك"
+  "scorers_screen__checking": "يراقب {count} من مساعديك",
+  "preview_bar__impersonate": "العرض كشخص آخر"
 }
