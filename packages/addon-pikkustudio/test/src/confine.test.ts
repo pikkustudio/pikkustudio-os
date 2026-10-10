@@ -94,19 +94,19 @@ describe('confinedSpawn with only', { skip: !supported }, () => {
     const base = await mkdtemp(join(tmpdir(), 'pikku-confine-'))
     const home = join(base, 'home')
     const root = join(home, 'worktree')
-    await mkdir(join(root, 'apps', 'app-prototype'), { recursive: true })
+    await mkdir(join(root, 'apps', 'emails'), { recursive: true })
     await mkdir(join(root, 'apps', 'app'), { recursive: true })
-    const only = ['apps/app-prototype']
+    const only = ['apps/emails']
     const go = (script: string) =>
       new Promise<number | null>((resolve) => {
         const child = confinedSpawn('/bin/sh', ['-c', script], { root, home, only }, { stdio: 'ignore' })
         child.on('close', resolve)
       })
-    assert.equal(await go(`echo hi > ${root}/apps/app-prototype/screen`), 0)
+    assert.equal(await go(`echo hi > ${root}/apps/emails/screen`), 0)
     assert.notEqual(await go(`echo hi > ${root}/apps/app/screen`), 0)
     assert.notEqual(await go(`echo hi > ${root}/package.json`), 0)
     assert.equal(existsSync(join(root, 'apps', 'app', 'screen')), false)
-    assert.equal(existsSync(join(root, 'apps', 'app-prototype', 'screen')), true)
+    assert.equal(existsSync(join(root, 'apps', 'emails', 'screen')), true)
   })
 })
 

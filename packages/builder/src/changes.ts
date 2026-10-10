@@ -9,6 +9,7 @@ export type CommandRunner = (cwd: string, args: string[], env?: Record<string, s
 export interface NextRoute {
   agent: 'changes' | 'intake' | 'knowledge' | 'upgrade' | null
   skill: string | null
+  specialist?: string | null
   refs: string[]
   reason: string
   context: string | null

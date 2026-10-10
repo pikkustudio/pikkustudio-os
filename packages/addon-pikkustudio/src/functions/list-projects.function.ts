@@ -11,6 +11,6 @@ export const listProjects = pikkuSessionlessFunc({
   description: 'Every project Studio knows, local and in Fabric, or one team\'s.',
   input: ListProjectsInput,
   func: async ({ studioProjects, studioHooks, studioBuilder }, { team }) => ({
-    projects: (await studioProjects.list(team)).map((project) => ({ ...studioHooks.decorate(project), busy: studioBuilder.isBusy(project.key) })),
+    projects: (await studioProjects.list(team)).map((project) => ({ ...studioHooks.decorate(project), busy: studioBuilder.isProjectBusy(project.key) })),
   }),
 })

@@ -148,7 +148,10 @@ fn main() {
             let handle = app.handle().clone();
             app.deep_link().on_open_url(move |_| show_window(&handle));
 
-            *studio.child.lock().unwrap() = Some(start_server(studio.port)?);
+            let app_url = std::env::var("STUDIO_APP_URL").ok().filter(|u| !u.is_empty());
+            if app_url.is_none() {
+                *studio.child.lock().unwrap() = Some(start_server(studio.port)?);
+            }
 
             let window = WebviewWindowBuilder::new(app, "main", WebviewUrl::App("index.html".into()))
                 .title("Pikku Studio")
@@ -182,12 +185,16 @@ fn main() {
             let port = studio.port;
             let handle = app.handle().clone();
             thread::spawn(move || {
-                if !wait_for_port(port, Duration::from_secs(180)) {
+                if let Some(url) = app_url {
+                    let _ = window.navigate(url.parse().unwrap());
+                } else if !wait_for_port(port, Duration::from_secs(180)) {
                     let _ = window.eval("document.body.textContent = 'Pikku Studio could not start. Check that Node.js is installed.'");
                     return;
                 }
-                let url = format!("http://127.0.0.1:{port}/console/");
-                let _ = window.navigate(url.parse().unwrap());
+                else {
+                    let url = format!("http://127.0.0.1:{port}/console/");
+                    let _ = window.navigate(url.parse().unwrap());
+                }
                 let mut shown: Option<Vec<(String, String)>> = None;
                 loop {
                     let running = running_projects(port);

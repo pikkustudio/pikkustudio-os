@@ -1,12 +1,12 @@
 import { spawn, type ChildProcess } from 'node:child_process'
 import { existsSync } from 'node:fs'
-import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises'
+import { appendFile, mkdir, mkdtemp, readFile, readdir, rename, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { createInterface } from 'node:readline'
 import { offerMessage, pikkuNext, routeMessage, writePikkuShim, type CommandRunner } from './changes.js'
 import { frontendBriefing } from './briefing.js'
-import { piArgs, piEnv, resolvePi, type BuilderAi, type BuilderMode } from './pi.js'
+import { SPECIALISTS, piArgs, piEnv, resolvePi, projectKey, slotKey, slotSlug, type BuilderAi, type BuilderMode } from './pi.js'
 import { builderHome, writeSkills } from './skills.js'
 
 const routerEnv = (launch: { env?: Record<string, string>; queueHome?: string }) => (launch.queueHome ? { ...launch.env, HOME: launch.queueHome } : launch.env)
@@ -104,14 +104,25 @@ const HEAL_PROMPT = 'This project will not start. Get it running again as fast a
 
 export class BuilderSession {
   private states = new Map<string, BuilderState>()
+  private writes = 0
   private turns = new Map<string, Turn>()
   private drives = new Map<string, Drive>()
   private modes = new Map<string, BuilderMode>()
 
   constructor(
-    private resolve: (key: string, mode?: BuilderMode) => Promise<BuilderLaunch>,
+    private launcher: (key: string, mode?: BuilderMode) => Promise<BuilderLaunch>,
     private home = builderHome()
   ) {}
+
+  private resolve(key: string, mode?: BuilderMode) {
+    return this.launcher(projectKey(key), mode)
+  }
+
+  private async logCrash(key: string, what: string, output: string) {
+    const dir = join(this.home, 'logs')
+    await mkdir(dir, { recursive: true }).catch(() => undefined)
+    await appendFile(join(dir, `${key}.log`), `\n[${new Date().toISOString()}] ${what}\n${output.trim()}\n`).catch(() => undefined)
+  }
 
   private file(key: string) {
     return join(this.home, 'transcripts', `${key}.json`)
@@ -121,12 +132,16 @@ export class BuilderSession {
     return this.states.get(key)?.busy ?? false
   }
 
+  isProjectBusy(key: string): boolean {
+    return [key, ...SPECIALISTS.filter((s) => s !== 'build').map((s) => slotKey(key, s))].some((k) => this.states.get(k)?.busy)
+  }
+
   async state(key: string): Promise<BuilderState> {
     const cached = this.states.get(key)
     if (cached) return cached
     const path = this.file(key)
     const saved = existsSync(path) ? JSON.parse(await readFile(path, 'utf8')) : {}
-    const state: BuilderState = { busy: false, items: saved.items ?? [], session: saved.session ?? `pikku-${key}` }
+    const state: BuilderState = { busy: false, items: saved.items ?? [], session: saved.session ?? `pikku-${slotSlug(key)}` }
     this.states.set(key, state)
     return state
   }
@@ -134,7 +149,9 @@ export class BuilderSession {
   private async save(key: string) {
     const state = await this.state(key)
     await mkdir(join(this.home, 'transcripts'), { recursive: true })
-    await writeFile(this.file(key), JSON.stringify({ session: state.session, items: state.items }))
+    const tmp = `${this.file(key)}.${process.pid}.${++this.writes}.tmp`
+    await writeFile(tmp, JSON.stringify({ session: state.session, items: state.items }))
+    await rename(tmp, this.file(key))
   }
 
   private drive(key: string): Drive {
@@ -143,7 +160,8 @@ export class BuilderSession {
     return drive
   }
 
-  async prompt(key: string, message: string, context?: string, mode: BuilderMode = 'build', offer = false): Promise<BuilderState> {
+  async prompt(project: string, message: string, context?: string, mode: BuilderMode = 'build', offer = false): Promise<BuilderState> {
+    const key = slotKey(project, mode)
     const text = message.trim()
     if (!text) throw new Error('Say what you want built first')
     const state = await this.state(key)
@@ -163,6 +181,7 @@ export class BuilderSession {
       await this.send(key, request)
       return state
     }
+    await this.save(key)
     this.modes.set(key, mode)
     this.drives.set(key, { gen: this.drive(key).gen + 1, turns: 0, quiet: 0, report: '', repeats: 0 })
     state.busy = true
@@ -207,16 +226,16 @@ export class BuilderSession {
     this.turns.set(key, turn)
     state.busy = true
     let stderr = ''
-    child.stderr?.on('data', (chunk) => (stderr = (stderr + chunk).slice(-4000)))
+    child.stderr?.on('data', (chunk) => (stderr = (stderr + chunk).slice(-20000)))
     createInterface({ input: child.stdout! }).on('line', (line) => this.onEvent(key, line))
     child.once('error', (error) => this.push(key, `The builder could not start: ${error.message}`))
     child.once('exit', (code, signal) => {
       if (this.turns.get(key) === turn) this.turns.delete(key)
       state.busy = false
       if (code && state.items.at(-1)?.kind !== 'error') {
-        const lines = stderr.trim().split('\n')
-        const text = (lines.length > 8 ? [...lines.slice(0, 3), '...', ...lines.slice(-4)] : lines).join('\n')
-        console.error(`[builder] ${key} exited code=${code} signal=${signal ?? ''}: ${stderr.trim().slice(-500)}`)
+        const text = stderr.trim().slice(-4000)
+        console.error(`[builder] ${key} exited code=${code} signal=${signal ?? ''}: ${stderr.trim()}`)
+        void this.logCrash(key, `exit ${code}${signal ? ` (${signal})` : ''}`, stderr)
         this.push(key, `${text ? `${text}\n` : ''}The builder stopped (exit ${code}).`)
       }
       for (const item of state.items) if (item.kind === 'tool' && item.status === 'running') item.status = 'error'
@@ -240,6 +259,7 @@ export class BuilderSession {
     }
     if (state.busy || this.turns.has(key)) throw new Error('The builder is already working')
     state.items.push({ kind: 'user', text, at: Date.now() })
+    await this.save(key)
     state.busy = true
     try {
       await this.send(key, text, `pikku-${role}-${key}-${Date.now()}`, role)
@@ -309,11 +329,13 @@ export class BuilderSession {
   }
 
   async directions(key: string, idea: string, count = 4, context?: string): Promise<number> {
-    const text = idea.trim()
+    const shown = idea.trim()
+    const text = shown.replace(/^\/experiment\s+/, '')
     if (!text) throw new Error('Say what you want explored first')
     const state = await this.state(key)
     if (state.busy || this.turns.has(key)) throw new Error('The builder is already working')
-    state.items.push({ kind: 'user', text, at: Date.now() })
+    state.items.push({ kind: 'user', text: shown, at: Date.now() })
+    await this.save(key)
     state.busy = true
     try {
       const full = context ? `${text}\n\n${context}` : text
@@ -547,7 +569,7 @@ export class BuilderSession {
   async clear(key: string, keep = true) {
     this.cancel(key)
     if (keep) await this.stash(key)
-    this.states.set(key, { busy: false, items: [], session: `pikku-${key}-${Date.now()}` })
+    this.states.set(key, { busy: false, items: [], session: `pikku-${slotSlug(key)}-${Date.now()}` })
     await this.save(key)
   }
 }
