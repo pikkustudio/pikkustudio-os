@@ -28,6 +28,7 @@ import { ChatMarkdown } from '../blocks/ChatMarkdown'
 import { AiSpinner } from '../blocks/Spinner'
 import { Button } from '../ui/button'
 import { QuickFind } from '../blocks/QuickFind'
+import { UpdatesFeed } from '../blocks/UpdatesFeed'
 import { ProjectRunGate } from '../blocks/ProjectRunGate'
 import { Toaster } from '../blocks/Toaster'
 import { GitPullRequest, type LucideIcon, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, History, Home, Info, Compass, KeyRound, Search, Laptop, LayoutGrid, Mail, MessageCircle, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, User, UserRoundCheck, Wrench, X, CheckCheck } from 'lucide-react'
@@ -451,6 +452,10 @@ export function ShellLayout() {
                 {!pending.length && !pub ? (
                   <EmptyState icon={CheckCheck} title={m.shell_layout__caught_up_title()} text={m.shell_layout__caught_up_text()} />
                 ) : null}
+                <section className="mt-5 flex flex-col gap-3.5 border-t border-border pt-5">
+                  <h3 className="text-[18px] font-bold tracking-[-0.012em] text-balance">{m.shell_layout__what_has_happened()}</h3>
+                  <UpdatesFeed projectKey={projectKey} />
+                </section>
               </div>
             ) : null}
 
@@ -612,15 +617,7 @@ export function ShellLayout() {
                 />
                 <section className="flex flex-col gap-3.5">
                   <h3 className="text-[18px] font-bold tracking-[-0.012em] text-balance">{m.shell_layout__what_has_happened()}</h3>
-                  <ol className="ms-1.5 flex flex-col border-s-2 border-border">
-                    {pending.map((c) => [when(c.createdAt), c.title]).map(([time, text]) => (
-                      <li key={time + text} className="relative flex flex-col gap-0.5 pb-3.5 ps-4.5 text-[15px] text-foreground">
-                        <span className="absolute top-1.5 -start-1.75 size-3 rounded-full border-2 border-input bg-card" />
-                        <span className="text-[13px] font-semibold text-muted-foreground">{time}</span>
-                        <span>{text}</span>
-                      </li>
-                    ))}
-                  </ol>
+                  <UpdatesFeed projectKey={projectKey} />
                 </section>
               </div>
             ) : null}

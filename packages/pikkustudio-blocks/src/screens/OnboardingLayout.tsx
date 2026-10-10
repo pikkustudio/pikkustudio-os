@@ -1,4 +1,4 @@
-import { asI18n, asI18nStub, sep, type I18nString } from '@pikku/react'
+import { asI18n, sep, type I18nString } from '@pikku/react'
 import { PikkuMark } from '../blocks/PikkuMark'
 import { Outlet, useLocation, useNavigate, useRouter, useSearch } from '@tanstack/react-router'
 import { Link } from '../blocks/Link'
@@ -11,6 +11,7 @@ import { Button } from '../ui/button'
 import { AiLitellmPanel, AiProviderPanel, providers } from '../blocks/AiConnectPanels'
 import { useSlots } from '../lib/slots'
 import { useCopy } from '../lib/copy'
+import { UpdatesFeed } from '../blocks/UpdatesFeed'
 import { FabricPitch } from '../blocks/FabricPitch'
 import { PanelRow } from '../blocks/ShellAccount'
 import { useAccount, useProjectRun, useRecentProjects, useStartProjectRun, useAttachFile, newProjectName, type ProjectRun } from '../lib/onboarding'
@@ -668,28 +669,7 @@ export function OnboardingLayout() {
                 </section>
                 <section className="flex flex-col gap-3.5">
                   <h3 className="text-[18px] font-bold tracking-[-0.012em] text-balance">{m.shell_layout__what_has_happened()}</h3>
-                  <ol className="ms-1.5 flex flex-col border-s-2 border-border">
-                    {(proj
-                      ? [
-                          [asI18nStub('Today, 9:40 am'), asI18nStub('Pikku asked to connect card payments. Waiting for you.')],
-                          [asI18nStub('Today, 9:31 am'), asI18nStub('Pikku put together the first draft of Sunrise Bakery Classes.')],
-                          [asI18nStub('Today, 9:29 am'), asI18nStub('You asked for a booking page for baking classes.')],
-                          [asI18nStub('Today, 9:26 am'), asI18nStub('You chose your own AI.')],
-                          [asI18nStub('Tuesday, 3:12 am'), asI18nStub('Pikku made one photo smaller so the home page opens quickly again.')],
-                          [asI18nStub('Today, 9:02 am'), copy.openedHistory()],
-                        ]
-                      : [
-                          [asI18nStub('Today, 9:02 am'), copy.openedHistory()],
-                          [asI18nStub('Today, 9:03 am'), asI18nStub('Nothing has been changed on your behalf yet.')],
-                        ]
-                    ).map(([time, text]) => (
-                      <li key={time + text} className="relative flex flex-col gap-0.5 pb-3.5 ps-4.5 text-[15px] text-foreground">
-                        <span className="absolute top-1.5 -start-1.75 size-3 rounded-full border-2 border-input bg-card" />
-                        <span className="text-[13px] font-semibold text-muted-foreground">{time}</span>
-                        <span>{text}</span>
-                      </li>
-                    ))}
-                  </ol>
+                  <UpdatesFeed projectKey="" />
                 </section>
               </div>
             ) : null}
