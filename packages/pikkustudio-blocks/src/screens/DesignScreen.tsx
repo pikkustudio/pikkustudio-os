@@ -1,7 +1,7 @@
 import { asI18n, type I18nString } from '@pikku/react'
 import { useState } from 'react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
-import { Globe, MousePointer2, Palette } from 'lucide-react'
+import { Globe, MousePointer2, Palette, UserRound } from 'lucide-react'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { m } from '@/i18n/messages'
 import { PinButton } from '../blocks/PinButton'
@@ -39,7 +39,7 @@ export function DesignScreen() {
   const list = ((apps.data as LiveApp[] | undefined) ?? [])
   const current = list.find((a) => a.slug === q.app) ?? list[0]
   const device: Device = q.screen ?? 'computer'
-  const tool = q.mode === 'translations' || q.mode === 'chat' || q.mode === 'none' ? q.mode : 'design'
+  const tool = q.mode === 'translations' || q.mode === 'chat' || q.mode === 'impersonate' || q.mode === 'none' ? q.mode : 'design'
   const failed = list.some((a) => a.state === 'failed') || start.isError
 
   const app = current ? label(current.slug) : undefined
@@ -60,6 +60,7 @@ export function DesignScreen() {
     design: [m.design_live__look_title(), Palette, m.design_live__look_text()],
     translations: [m.design_live__words_title(), Globe, m.design_live__words_text()],
     chat: [m.design_live__chat_title(), MousePointer2, m.design_live__chat_text()],
+    impersonate: [m.impersonate__title(), UserRound, m.impersonate__text()],
   } as const
   const [title, Icon, text] = panel[tool === 'none' ? 'design' : tool]
 
@@ -85,14 +86,14 @@ export function DesignScreen() {
           {stage}
           {tool !== 'none' && (
             <DesignInspector title={title} mode="theme" showModes={false} onMode={() => undefined} onClose={tool === 'design' ? undefined : () => set({ mode: 'none' })}>
-              <HintRow icon={Icon}>{text}</HintRow>
-              {current?.url && current.state === 'ready' ? (
-                <section className="flex flex-col gap-2 border-t border-border pt-4" aria-labelledby="impersonate-title">
-                  <h3 id="impersonate-title" className="px-1 text-[15px] font-bold">{m.impersonate__title()}</h3>
-                  <p className="px-1 text-px15 text-ink-2">{m.impersonate__text()}</p>
-                  <ImpersonatePanel apiUrl={`${liveAppUrl(current.url)}api`} onSwitched={() => setReloadKey((k) => k + 1)} />
-                </section>
-              ) : null}
+              {tool === 'impersonate' ? (
+                <>
+                  <HintRow icon={UserRound}>{m.impersonate__text()}</HintRow>
+                  {current?.url && current.state === 'ready' ? <ImpersonatePanel apiUrl={`${liveAppUrl(current.url)}api`} onSwitched={() => setReloadKey((k) => k + 1)} /> : null}
+                </>
+              ) : (
+                <HintRow icon={Icon}>{text}</HintRow>
+              )}
             </DesignInspector>
           )}
         </div>

@@ -3275,5 +3275,6 @@
   "impersonate__current": "Viewing",
   "impersonate__switch": "View as",
   "impersonate__sign_out": "Back to the sign-in screen",
-  "impersonate__failed": "That did not work. Check that the app is running, then try again."
+  "impersonate__failed": "That did not work. Check that the app is running, then try again.",
+  "preview_bar__impersonate": "Impersonate"
 }

@@ -3360,5 +3360,6 @@
   "workflow_graph__wiring_mcp_tool": "MCP Tool",
   "workflow_graph__wiring_queue": "قائمة الانتظار",
   "workflow_graph__wiring_schedule": "جدولة",
-  "workflow_graph__wiring_trigger": "مشغل"
+  "workflow_graph__wiring_trigger": "مشغل",
+  "preview_bar__impersonate": "العرض كشخص آخر"
 }

@@ -3088,5 +3088,6 @@
   "workflow_graph__wiring_mcp_tool": "MCP Tool",
   "workflow_graph__wiring_queue": "Warteschlange",
   "workflow_graph__wiring_schedule": "Zeitplan",
-  "workflow_graph__wiring_trigger": "Auslöser"
+  "workflow_graph__wiring_trigger": "Auslöser",
+  "preview_bar__impersonate": "Als jemand ansehen"
 }

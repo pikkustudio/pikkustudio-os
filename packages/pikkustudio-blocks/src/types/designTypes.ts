@@ -1,4 +1,4 @@
-export type Mode = 'theme' | 'element' | 'component' | 'translations' | 'chat' | 'none'
+export type Mode = 'theme' | 'element' | 'component' | 'translations' | 'chat' | 'impersonate' | 'none'
 export type Device = 'computer' | 'tablet' | 'phone'
 export type Kind = 'button' | 'heading' | 'text' | 'card'
 export type Theme = {
