@@ -1171,8 +1171,12 @@ export class StudioProjectsService {
     const { entry, worktree } = await this.prepare(key)
     const port = await freePort()
     const token = randomBytes(32).toString('hex')
+    const pikkuBin = join(worktree.projectDir, 'node_modules', '.bin', 'pikku')
     const { command, args } = (this.options.devCommand ??
-      ((p) => ({ command: 'npx', args: ['pikku', 'dev', '--port', String(p)] })))(port)
+      ((p) =>
+        existsSync(pikkuBin)
+          ? { command: process.execPath, args: [pikkuBin, 'dev', '--port', String(p)] }
+          : { command: 'npx', args: ['pikku', 'dev', '--port', String(p)] }))(port)
     const design = await this.designCopy(key)
     const confinement = this.confinement(worktree, design)
     const logPath = this.logFile(key, 'server', true)
