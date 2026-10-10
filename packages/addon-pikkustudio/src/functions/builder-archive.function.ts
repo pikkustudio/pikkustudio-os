@@ -15,7 +15,7 @@ export const builderArchive = pikkuSessionlessFunc({
     if (state.busy) throw new Error('Pikku is still working. Stop it or wait for it to finish before saving this chat.')
     const { cwd } = await studioProjects.builderLaunch(key)
     await archiveChat(cwd, state.session, state.items, specialist)
-    await studioBuilder.clear(slot, false)
+    await studioBuilder.clear(slot)
     return studioBuilder.state(slot)
   },
 })

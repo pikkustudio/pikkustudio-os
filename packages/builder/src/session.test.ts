@@ -65,6 +65,7 @@ describe('BuilderSession', () => {
     const other = (await builder.conversations('shop'))[1]!.session
     await builder.forget('shop', other)
     assert.equal((await builder.conversations('shop')).length, 1)
+    assert.equal((await readdir(join(home, 'transcripts', 'shop', 'removed'))).length, 2)
     await assert.rejects(builder.resume('shop', '../../etc'), /Unknown conversation/)
   })
 

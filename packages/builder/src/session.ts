@@ -1,6 +1,6 @@
 import { spawn, type ChildProcess } from 'node:child_process'
 import { existsSync } from 'node:fs'
-import { appendFile, mkdir, mkdtemp, readFile, readdir, rename, rm, writeFile } from 'node:fs/promises'
+import { appendFile, mkdir, mkdtemp, readFile, readdir, rename, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { createInterface } from 'node:readline'
@@ -554,7 +554,7 @@ export class BuilderSession {
     const saved = JSON.parse(await readFile(path, 'utf8'))
     await this.stash(key)
     this.cancel(key)
-    await rm(path)
+    await this.retire(key, session)
     this.states.set(key, { busy: false, items: saved.items ?? [], session: saved.session })
     await this.save(key)
     return this.state(key)
@@ -562,8 +562,16 @@ export class BuilderSession {
 
   async forget(key: string, session: string) {
     const state = await this.state(key)
-    if (session === state.session) return this.clear(key, false)
-    await rm(this.archive(key, session), { force: true })
+    if (session === state.session) return this.clear(key)
+    await this.retire(key, session)
+  }
+
+  private async retire(key: string, session: string) {
+    const from = this.archive(key, session)
+    if (!existsSync(from)) return
+    const dir = join(this.archive(key), 'removed')
+    await mkdir(dir, { recursive: true })
+    await rename(from, join(dir, `${session}-${Date.now()}.json`))
   }
 
   async clear(key: string, keep = true) {
