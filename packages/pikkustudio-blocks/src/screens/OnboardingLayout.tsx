@@ -11,7 +11,6 @@ import { Button } from '../ui/button'
 import { AiLitellmPanel, AiProviderPanel, providers } from '../blocks/AiConnectPanels'
 import { useSlots } from '../lib/slots'
 import { useCopy } from '../lib/copy'
-import { UpdatesFeed } from '../blocks/UpdatesFeed'
 import { FabricPitch } from '../blocks/FabricPitch'
 import { PanelRow } from '../blocks/ShellAccount'
 import { useAccount, useProjectRun, useRecentProjects, useStartProjectRun, useAttachFile, newProjectName, type ProjectRun } from '../lib/onboarding'
@@ -666,10 +665,6 @@ export function OnboardingLayout() {
                       <p className="text-[15px] text-ink-2 text-pretty">{m.shell_layout__pikku_scope()}</p>
                     </div>
                   </div>
-                </section>
-                <section className="flex flex-col gap-3.5">
-                  <h3 className="text-[18px] font-bold tracking-[-0.012em] text-balance">{m.shell_layout__what_has_happened()}</h3>
-                  <UpdatesFeed projectKey="" />
                 </section>
               </div>
             ) : null}

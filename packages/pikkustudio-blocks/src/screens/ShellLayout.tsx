@@ -615,10 +615,6 @@ export function ShellLayout() {
                     </div>
                   }
                 />
-                <section className="flex flex-col gap-3.5">
-                  <h3 className="text-[18px] font-bold tracking-[-0.012em] text-balance">{m.shell_layout__what_has_happened()}</h3>
-                  <UpdatesFeed projectKey={projectKey} />
-                </section>
               </div>
             ) : null}
           </aside>
