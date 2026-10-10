@@ -8,7 +8,6 @@ import { builderHome, packageRoot, piPackageRoot, type Launcher } from '@pikku/b
 import { basename, dirname, join, resolve, sep } from 'node:path'
 import { randomBytes, randomUUID } from 'node:crypto'
 import {
-  deriveConsoleUrl,
   getFabricRPC,
   matchRemoteProjects,
   readAuthFile,
@@ -18,6 +17,7 @@ import {
   writeConfigProjectId,
   type FabricProjectRow,
 } from '@pikku/cli/fabric'
+import { studioUrl } from './studio-url.js'
 import { commitPaths, ensureWorktree, keepChanges, keepStatus, worktreeConfinement, type KeepResult, type KeepStatus, type StudioWorktree } from './worktree.js'
 import { canConfine, confinedSpawn, type Confinement } from './confine.js'
 import { previewViteConfig } from './vite-preview.js'
@@ -118,7 +118,7 @@ export const fabricAccount: FabricAccount = {
     return {
       signedIn: !!ctx.token,
       apiUrl: ctx.apiUrl,
-      consoleUrl: deriveConsoleUrl(ctx.apiUrl).replace(/\/$/, ''),
+      consoleUrl: studioUrl(ctx.apiUrl),
     }
   },
   async projects() {
@@ -152,7 +152,7 @@ export const fabricAccount: FabricAccount = {
     return {
       code,
       expiresAt: new Date(expiresAt).toISOString(),
-      url: `${deriveConsoleUrl(ctx.apiUrl).replace(/\/$/, '')}/cli-auth`,
+      url: `${studioUrl(ctx.apiUrl)}/cli-auth`,
     }
   },
   async pollSignIn(code) {
