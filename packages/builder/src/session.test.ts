@@ -1,7 +1,7 @@
 import assert from 'node:assert'
 import { spawn } from 'node:child_process'
 import { existsSync } from 'node:fs'
-import { mkdtemp } from 'node:fs/promises'
+import { mkdtemp, readdir, readFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, test } from 'node:test'
@@ -159,5 +159,19 @@ describe('BuilderSession', () => {
       items.filter((i) => i.kind === 'loop').map((i) => (i as { text: string }).text),
       ['1 open change(s)', 'Merged Contact page → main @ abc1234']
     )
+  })
+
+  test('saves the owner message before the builder starts, so a restart cannot lose it', async () => {
+    const home = await mkdtemp(join(tmpdir(), 'pikku-builder-'))
+    const stuck = new BuilderSession(() => new Promise(() => undefined), home)
+    void stuck.prompt('shop', 'No, nothing else')
+    await until(async () => existsSync(join(home, 'transcripts')) && (await readdir(join(home, 'transcripts'))).length > 0)
+    const [file] = await readdir(join(home, 'transcripts'))
+    const saved = JSON.parse(await readFile(join(home, 'transcripts', file!), 'utf8'))
+    assert.equal(saved.items.at(-1).kind, 'user')
+    const reloaded = new BuilderSession(async () => ({ cwd: home, run }), home)
+    const { items } = await reloaded.state('shop')
+    assert.equal(items.at(-1)?.kind, 'user')
+    assert.equal((items.at(-1) as { text: string }).text, 'No, nothing else')
   })
 })

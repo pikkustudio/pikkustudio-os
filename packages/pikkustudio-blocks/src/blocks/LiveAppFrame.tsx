@@ -38,7 +38,7 @@ export function LiveAppFrame({ url, device, reloadKey, title }: { url: string; d
   if (!size) {
     return (
       <div className="relative flex min-h-0 items-stretch justify-center overflow-auto rounded-card bg-card">
-        <iframe key={reloadKey} title={name} src={src} className="block size-full min-h-[480px] border-0 bg-white" />
+        <iframe data-live-app key={reloadKey} title={name} src={src} className="block size-full min-h-[480px] border-0 bg-white" />
       </div>
     )
   }
@@ -46,6 +46,7 @@ export function LiveAppFrame({ url, device, reloadKey, title }: { url: string; d
     <div ref={ref} className="relative flex min-h-0 justify-center overflow-auto rounded-card bg-surface-3 p-4.5">
       <div style={{ width: size.width * scale, height: size.height * scale }} className="m-auto shrink-0 transition-[width,height] duration-420 ease-[cubic-bezier(.16,1,.3,1)]">
         <iframe
+          data-live-app
           key={reloadKey}
           title={name}
           src={src}

@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { pikkuSessionlessFunc } from '#pikku/addon/function'
+import { slotKey } from '@pikku/builder'
 import { listArtifacts } from '../services/artifacts.js'
 import { languageRule } from '../services/language.js'
 
@@ -20,8 +21,8 @@ export const builderPrompt = pikkuSessionlessFunc({
       : undefined
     const spoken = languageRule(language ?? http?.request?.header('x-studio-locale') ?? undefined)
     if (explore) {
-      await studioBuilder.directions(key, message, DIRECTIONS, [spoken, context].filter(Boolean).join('\n\n') || undefined)
-      return studioBuilder.state(key)
+      await studioBuilder.directions(slotKey(key, mode), message, DIRECTIONS, [spoken, context].filter(Boolean).join('\n\n') || undefined)
+      return studioBuilder.state(slotKey(key, mode))
     }
     const state = await studioBuilder.prompt(key, message, [profile, spoken, context].filter(Boolean).join('\n\n') || undefined, mode, offer)
     if (!failOnError) return state
@@ -31,7 +32,7 @@ export const builderPrompt = pikkuSessionlessFunc({
     while (Date.now() - started < DRAFT_TIMEOUT_MS) {
       const made = (await listArtifacts(cwd)).length
       if (made >= DIRECTIONS) return state
-      const now = await studioBuilder.state(key)
+      const now = await studioBuilder.state(slotKey(key, mode))
       const failed = now.items.slice(-3).find((item) => item.kind === 'error')
       if (failed) throw new Error(failed.text.replace(/^Pikku could not take the request: /, ''))
       idle = now.busy ? 0 : idle + 1
