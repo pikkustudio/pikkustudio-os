@@ -555,6 +555,11 @@ export function ShellLayout() {
                     rows={1}
                     value={draft}
                     onChange={(e) => setDraft(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key !== 'Enter' || e.shiftKey || e.nativeEvent.isComposing) return
+                      e.preventDefault()
+                      e.currentTarget.form?.requestSubmit()
+                    }}
                     aria-label={m.shell_layout__message_pikku()}
                     placeholder={attached.length ? m.shell_layout__say_what_to_change() : m.shell_layout__ask_or_tell()}
                     className="max-h-35 min-h-12 flex-1 resize-none rounded-[24px] border-[1.5px] border-input bg-background px-4.5 py-3 text-[15px] leading-[1.4] text-foreground hover:border-muted-foreground focus:border-primary focus:ring-4 focus:ring-accent focus:outline-none"
