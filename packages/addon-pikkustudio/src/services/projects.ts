@@ -562,7 +562,7 @@ export class StudioProjectsService {
           key: entry.id,
           owner: entry.owner ?? '',
           slug: entry.slug ?? entry.id,
-          name: match?.name ?? (missing ? basename(entry.path) : await projectName(entry.path)),
+          name: match?.name ?? entry.name ?? (missing ? basename(entry.path) : await projectName(entry.path)),
           location: match ? 'both' : 'local',
           path: entry.path,
           fabricProjectId: match?.projectId ?? linkedId,
