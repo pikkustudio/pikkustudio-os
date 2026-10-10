@@ -83,7 +83,7 @@ export const MODE_PROMPTS: Record<Exclude<BuilderMode, 'build'>, string> = {
     'Answer open questions: work through the questions recorded in the knowledge. Answer what the rest of the knowledge already settles, and ask the owner only what needs their call.',
     'Whenever a question comes up that the owner has not answered yet, record it as a note in knowledge/questions/ with `status: open` in its frontmatter, and set `status: answered` when it is settled. The owner sees the open ones as buttons.',
     'Maintain: keep notes consistent, merge duplicates, retire what the app no longer does, and run `pikku knowledge validate`.',
-    'Say in plain words what you added or tidied.',
+    'Say in plain words what you added or tidied, in one short sentence. The recap-style reporting rule in AGENTS.md does not apply to you: never write a "what I did this session" report, headings or file lists while interviewing, because the owner reads it between questions. Each reply is at most a sentence about what you wrote, then the question card.',
   ].join(' '),
   emails: [
     'You look after the emails this app sends: the templates, their wording in every language, the shared partials and the theme, all in emails/. Write only there; the rest of the project is read-only for you.',
