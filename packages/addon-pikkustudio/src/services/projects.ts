@@ -31,12 +31,27 @@ const projectSlug = (text: string) =>
 
 export type StartPath = 'interview' | 'design'
 
+export const QUESTIONS = 5
+
+export type ChecklistStepId = 'questions' | 'explore' | 'frontend' | 'backend' | 'tests' | 'publish'
+
+export interface IntakeAnswer {
+  question: string
+  answer: string
+  skipped: boolean
+}
+
 export interface Intake {
   path: StartPath
   done: boolean
   idea: string | null
   surfaces: string[]
   devices: string[]
+  answers: IntakeAnswer[]
+  skipped: ChecklistStepId[]
+  run: { id: string; at: number } | null
+  jobs: Partial<Record<'frontend' | 'backend' | 'tests' | 'prep', number>>
+  samples: boolean
 }
 
 export interface StudioProject {
@@ -674,7 +689,7 @@ export class StudioProjectsService {
       throw error
     }
     await rm(staging, { recursive: true, force: true })
-    await writeFile(join(root, 'intake.json'), JSON.stringify({ path: path ?? 'design', done: false, idea: idea ?? null, surfaces: surfaces ?? [], devices: devices ?? [] }) + '\n')
+    await writeFile(join(root, 'intake.json'), JSON.stringify({ path: path ?? 'design', done: false, idea: idea ?? null, surfaces: surfaces ?? [], devices: devices ?? [], answers: [], skipped: path === 'interview' ? [] : ['questions'], run: null, jobs: {}, samples: false }) + '\n')
     return this.register(root, id, name)
   }
 
@@ -762,15 +777,63 @@ export class StudioProjectsService {
 
   async intake(key: string): Promise<Intake | null> {
     try {
-      return JSON.parse(await readFile(this.intakeFile(key), 'utf8')) as Intake
+      const raw = JSON.parse(await readFile(this.intakeFile(key), 'utf8')) as Partial<Intake> & { path: StartPath }
+      return {
+        path: raw.path,
+        done: raw.done ?? false,
+        idea: raw.idea ?? null,
+        surfaces: raw.surfaces ?? [],
+        devices: raw.devices ?? [],
+        answers: raw.answers ?? [],
+        skipped: raw.skipped ?? [],
+        run: raw.run ?? null,
+        jobs: raw.jobs ?? {},
+        samples: raw.samples ?? false,
+      }
     } catch {
       return null
     }
   }
 
-  async finishIntake(key: string): Promise<void> {
+  async updateIntake(key: string, change: (found: Intake) => Intake): Promise<Intake | null> {
     const found = await this.intake(key)
-    if (found) await writeFile(this.intakeFile(key), JSON.stringify({ ...found, done: true }) + '\n')
+    if (!found) return null
+    const next = change(found)
+    await writeFile(this.intakeFile(key), JSON.stringify(next) + '\n')
+    return next
+  }
+
+  async finishIntake(key: string): Promise<void> {
+    await this.updateIntake(key, (found) => ({ ...found, done: true }))
+  }
+
+  async recordAnswer(key: string, question: string, answer: string, skipped = false): Promise<number> {
+    const next = await this.updateIntake(key, (found) => {
+      if (found.answers.length >= QUESTIONS) return found
+      const answers = [...found.answers, { question, answer, skipped }]
+      return { ...found, answers, done: answers.length >= QUESTIONS ? true : found.done }
+    })
+    return next?.answers.length ?? 0
+  }
+
+  async setSkipped(key: string, step: ChecklistStepId, skipped: boolean): Promise<void> {
+    await this.updateIntake(key, (found) => ({ ...found, skipped: skipped ? [...new Set([...found.skipped, step])] : found.skipped.filter((s) => s !== step) }))
+  }
+
+  async noteRun(key: string, id: string): Promise<void> {
+    await this.updateIntake(key, (found) => ({ ...found, run: { id, at: Date.now() } }))
+  }
+
+  async noteJob(key: string, job: 'frontend' | 'backend' | 'tests' | 'prep'): Promise<void> {
+    await this.updateIntake(key, (found) => ({ ...found, jobs: { ...found.jobs, [job]: Date.now() } }))
+  }
+
+  async reopenQuestions(key: string): Promise<void> {
+    await this.updateIntake(key, (found) => ({ ...found, path: 'interview', done: false, answers: [], skipped: found.skipped.filter((s) => s !== 'questions') }))
+  }
+
+  async setSamples(key: string, samples: boolean): Promise<void> {
+    await this.updateIntake(key, (found) => ({ ...found, samples }))
   }
 
   private async entry(key: string): Promise<RegistryEntry> {

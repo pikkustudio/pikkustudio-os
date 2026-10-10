@@ -8,6 +8,7 @@ export const SCREEN_NAME: Record<WorkMode, () => I18nString> = {
   artifacts: m.screen_names__artifacts,
   knowledge: m.screen_names__knowledge,
   emails: m.screen_names__emails,
+  project: m.screen_names__project,
 }
 
 const AGENT: Record<WorkMode, () => I18nString> = {
@@ -16,6 +17,7 @@ const AGENT: Record<WorkMode, () => I18nString> = {
   artifacts: m.screen_names__agent_artifacts,
   knowledge: m.screen_names__agent_knowledge,
   emails: m.screen_names__agent_emails,
+  project: m.screen_names__agent_project,
 }
 
 export const agentName = (mode: WorkMode): I18nString => AGENT[mode]()

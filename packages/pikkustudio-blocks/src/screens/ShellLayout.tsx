@@ -31,7 +31,7 @@ import { SlashMenu, slashMatches, slashOptionId } from '../blocks/SlashMenu'
 import { UpdatesFeed } from '../blocks/UpdatesFeed'
 import { ProjectRunGate } from '../blocks/ProjectRunGate'
 import { Toaster } from '../blocks/Toaster'
-import { GitPullRequest, Archive, type LucideIcon, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, History, Home, Info, Compass, KeyRound, Search, Laptop, LayoutGrid, Mail, MessageCircle, MessageCircleQuestion, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, User, UserRoundCheck, Wrench, X, CheckCheck } from 'lucide-react'
+import { GitPullRequest, Archive, type LucideIcon, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, History, Home, Info, Compass, KeyRound, ListChecks, Search, Laptop, LayoutGrid, Mail, MessageCircle, MessageCircleQuestion, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, User, UserRoundCheck, Wrench, X, CheckCheck } from 'lucide-react'
 
 // The app shell: rail, preview drawer (right edge), Pikku button + bubble, side panels.
 // Every screen route is a child of this layout. Page content lives in the route files.
@@ -195,6 +195,7 @@ export function ShellLayout() {
   const onArtifacts = useLocation({ select: (l) => l.pathname.endsWith('/artifacts') })
   const onKnowledge = useLocation({ select: (l) => l.pathname.endsWith('/knowledge') })
   const onPublish = useLocation({ select: (l) => l.pathname.endsWith('/publish') })
+  const onProject = useLocation({ select: (l) => l.pathname.endsWith('/project') })
   const { pins } = usePins()
   const onEmails = useLocation({ select: (l) => l.pathname.endsWith('/emails') })
   const [pub, setPublish] = useState<PublishNote | null>(null)
@@ -234,7 +235,7 @@ export function ShellLayout() {
   const unread = needsPerson && isDismissed
 
   const panelTitle: Record<PanelId, I18nString> = { chat: workMode ? agentName(workMode) : m.parts__talk_to_pikku(), updates: m.shell_layout__updates(), changes: m.shell_layout__changes(), workspace: m.shell_layout__your_workspace(), account: m.shell_layout__your_account() }
-  const aboutScreen: I18nString | null = onEmails || fill ? null : onArtifacts ? SCREEN_NAME.artifacts() : onKnowledge ? SCREEN_NAME.knowledge() : onPublish ? m.shell_layout__publish() : m.shell_layout__overview()
+  const aboutScreen: I18nString | null = onEmails || fill ? null : onArtifacts ? SCREEN_NAME.artifacts() : onKnowledge ? SCREEN_NAME.knowledge() : onProject ? SCREEN_NAME.project() : onPublish ? m.shell_layout__publish() : m.shell_layout__overview()
   const bubbleActions: { label: I18nString; yes: boolean; run: () => void }[] = pending.length
     ? [
         { label: m.shell_layout__tell_me_more(), yes: true, run: () => setPanel('updates') },
@@ -312,6 +313,10 @@ export function ShellLayout() {
               <Link {...keep} to={'/explore' as never} className={navItem}>
                 <Compass className="size-5" />
                 {m.shell_layout__explore()}
+              </Link>
+              <Link {...keep} to={'/project' as never} className={navItem} data-testid="nav-project">
+                <ListChecks className="size-5" />
+                {SCREEN_NAME.project()}
               </Link>
               <Link {...keep} to="/overview" className={navItem}>
                 <LayoutGrid className="size-5" />
@@ -544,6 +549,13 @@ export function ShellLayout() {
                           </ul>
                         ) : null}
                         <p className="text-[13px] text-muted-foreground">{it.options.length ? m.shell_layout__ask_hint_options() : m.shell_layout__ask_hint_type()}</p>
+                        {it.skip ? (
+                          <div>
+                            <Button variant="ghost" size="compactTight" type="button" disabled={chat.busy} onClick={() => void builder.skipQuestion()} data-testid="ask-skip">
+                              {m.project_flow__skip_question()}
+                            </Button>
+                          </div>
+                        ) : null}
                       </article>
                     ) : it.kind === 'card' ? (
                       <Note key={it.id} kind={it.state === 'ask' ? 'needs' : 'fixed'} icon={it.state === 'ask' ? CircleAlert : Check} label={it.state === 'ask' ? m.shell_layout__needs_you() : it.state === 'declined' ? m.shell_layout__left_alone() : it.state === 'working' ? m.shell_layout__working_on_it() : m.shell_layout__done()} title={it.title} text={it.detail}>
@@ -558,12 +570,18 @@ export function ShellLayout() {
                           </>
                         ) : null}
                       </Note>
+                    ) : it.quiet ? (
+                      <p key={it.id} className="flex items-center gap-2 ps-12 text-[13px] text-muted-foreground" data-testid="progress-note">
+                        <span className="size-1.5 shrink-0 rounded-full bg-muted-foreground/60" aria-hidden="true" />
+                        {it.text}
+                      </p>
                     ) : (
-                      <div key={it.id} className="flex min-w-0 items-start gap-3">
+                      <div key={it.id} className="flex min-w-0 items-start gap-3" data-testid="chat-reply">
                         <span className="mt-0.5">
                           <Avatar mood="calm" size="sm" />
                         </span>
                         <div className="flex min-w-0 flex-col gap-2 text-[16px] leading-[1.5] text-foreground">
+                          {it.agent ? <small className="text-[12px] font-semibold text-muted-foreground" data-testid="chat-agent">{it.agent}</small> : null}
                           <ChatMarkdown>{it.text}</ChatMarkdown>
                         </div>
                       </div>

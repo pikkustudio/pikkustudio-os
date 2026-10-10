@@ -7,9 +7,10 @@ export type ChatEvent = { type: string; [key: string]: unknown }
 export type ChatTransport = (path: string, body: unknown) => AsyncIterable<ChatEvent>
 
 export type ChatItem =
-  | { id: string; kind: 'me' | 'pikku'; text: string }
+  | { id: string; kind: 'me'; text: string }
+  | { id: string; kind: 'pikku'; text: string; agent?: I18nString; quiet?: boolean }
   | { id: string; kind: 'error'; detail: string; retry?: boolean }
-  | { id: string; kind: 'card'; toolCallId: string; runId: string; title: I18nString; detail: I18nString; state: 'ask' | 'working' | 'done' | 'declined'; yes?: I18nString; no?: I18nString; options?: I18nString[]; tone?: 'info' | 'attention' | 'danger' }
+  | { id: string; kind: 'card'; toolCallId: string; runId: string; title: I18nString; detail: I18nString; state: 'ask' | 'working' | 'done' | 'declined'; yes?: I18nString; no?: I18nString; options?: I18nString[]; tone?: 'info' | 'attention' | 'danger'; skip?: boolean }
 
 export const fetchTransport = (base: string): ChatTransport =>
   async function* (path, body) {

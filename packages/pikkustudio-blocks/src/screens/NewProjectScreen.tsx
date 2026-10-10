@@ -67,7 +67,7 @@ const sample = () => ({
 })
 
 /** What each step of making the project is called while it runs; a function so the words follow the language. */
-const labels = (): Record<string, I18nString> => ({
+export const labels = (): Record<string, I18nString> => ({
   'Make the project': m.new_project_screen__step_make_the_project(),
   'Look through your files': m.new_project_screen__step_look_through_your_files(),
   'Set up its workspace': m.new_project_screen__step_set_up_its_workspace(),

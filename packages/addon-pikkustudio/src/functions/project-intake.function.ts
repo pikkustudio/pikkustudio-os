@@ -8,6 +8,11 @@ export const ProjectIntakeOutput = z.object({
   idea: z.string().nullable(),
   surfaces: z.array(z.string()),
   devices: z.array(z.string()),
+  answers: z.array(z.object({ question: z.string(), answer: z.string(), skipped: z.boolean() })),
+  skipped: z.array(z.string()),
+  run: z.object({ id: z.string(), at: z.number() }).nullable(),
+  jobs: z.record(z.string(), z.number()),
+  samples: z.boolean(),
 })
 
 export const projectIntake = pikkuSessionlessFunc({
@@ -17,7 +22,7 @@ export const projectIntake = pikkuSessionlessFunc({
   output: ProjectIntakeOutput,
   func: async ({ studioProjects }, { key }) => {
     const found = await studioProjects.intake(key)
-    return found ?? { path: null, done: true, idea: null, surfaces: [], devices: [] }
+    return found ?? { path: null, done: true, idea: null, surfaces: [], devices: [], answers: [], skipped: [], run: null, jobs: {}, samples: false }
   },
 })
 

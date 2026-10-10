@@ -1,9 +1,9 @@
 import { m } from '@/i18n/messages'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
-import { ProjectRpcCtx } from '../lib/projectRpc'
 import { newProjectName, useAttachFile, useProjectRun, useStartProjectRun } from '../lib/onboarding'
+import { useNoteRun } from '../lib/project-flow'
 import { OnbCtx, type OnbState, type Uses } from './OnboardingLayout'
 import { NewProjectScreen } from './NewProjectScreen'
 
@@ -58,31 +58,19 @@ export function NewProjectRoute() {
     )
   }
 
-  const done = run.data?.status === 'completed'
-  const invoke = useContext(ProjectRpcCtx)
   const made = usePikkuQuery('studio:listProjects', {}, { enabled: false })
+  const noteRun = useNoteRun()
+  const key = run.data?.key
+  const gone = useRef('')
   useEffect(() => {
-    if (!done) return
-    made.refetch().then((r) => {
-      if (interview) {
-        const there = (r.data as { projects: { key: string; slug: string }[] } | undefined)?.projects.find((p) => p.key === run.data?.key)
-        return navigate({ to: '/knowledge', search: ((prev: object) => ({ ...prev, run: undefined, path: undefined, project: there?.slug ?? run.data?.key, panel: 'chat' })) as never })
-      }
-      const found = (r.data as { projects: { key: string; slug: string }[] } | undefined)?.projects.find((p) => p.key === run.data?.key)
-      const slug = found?.slug
-      const land = (to: '/projects' | '/artifacts/explore') =>
-        navigate({ to, search: ((prev: object) => ({ ...prev, run: undefined, project: slug })) as never })
-      if (!slug) return land('/projects')
-      const first = async () => {
-        for (let i = 0; i < 90; i++) {
-          const got = await invoke(run.data!.key!, 'console:listArtifacts').catch(() => null)
-          if (got?.artifacts?.length) return got.artifacts[0].id as string
-          await new Promise((res) => setTimeout(res, 2000))
-        }
-      }
-      first().then(() => land('/artifacts/explore'))
+    if (!key || !q.run || gone.current === q.run) return
+    gone.current = q.run
+    made.refetch().then(async (r) => {
+      const found = (r.data as { projects: { key: string; slug: string }[] } | undefined)?.projects.find((p) => p.key === key)
+      if (!interview) await noteRun.mutateAsync({ key, runId: q.run! }).catch(() => {})
+      navigate({ to: '/project' as never, search: ((prev: object) => ({ ...prev, run: undefined, path: undefined, project: found?.slug ?? key, panel: 'chat' })) as never })
     })
-  }, [done])
+  }, [key, q.run])
 
   return (
     <OnbCtx.Provider

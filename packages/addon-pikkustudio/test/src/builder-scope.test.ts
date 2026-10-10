@@ -7,6 +7,7 @@ describe('modeScope', () => {
     assert.deepEqual(modeScope('artifacts'), { only: ['artifacts'] })
     assert.deepEqual(modeScope('knowledge'), { only: ['knowledge'] })
     assert.deepEqual(modeScope('emails'), { only: ['emails'] })
+    assert.deepEqual(modeScope('project'), { only: ['knowledge'] })
   })
 
   test('frontend writes only the frontends, mocks and generated sdk', () => {

@@ -87,6 +87,14 @@ describe('builder modes', () => {
     assert.ok(args.some((a) => a.includes(MODE_PROMPTS.knowledge)))
     assert.ok(!piArgs({ skills: '/skills', scope: 'build' }).some((a) => a.includes(MODE_PROMPTS.knowledge)))
   })
+
+  test('the project guide knows the six steps, the five-question limit and the shortcut card', () => {
+    const prompt = MODE_PROMPTS.project
+    assert.match(prompt, /Five questions, Explore direction, Build the frontend, Build the backend, Tests and docs, Publish/)
+    assert.match(prompt, /never a sixth/)
+    assert.ok(prompt.includes('[[do:'))
+    assert.ok(piArgs({ skills: '/skills', scope: 'project' }).some((a) => a.includes(prompt)))
+  })
 })
 
 describe('specialist slots', () => {

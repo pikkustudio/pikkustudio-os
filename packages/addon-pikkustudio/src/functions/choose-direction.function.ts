@@ -23,6 +23,7 @@ export const chooseDirection = pikkuSessionlessFunc({
     const metaPath = join(cwd, 'artifacts', artifactId, 'artifact.json')
     const meta = existsSync(metaPath) ? JSON.parse(await readFile(metaPath, 'utf8')) : {}
     await writeFile(metaPath, JSON.stringify({ ...meta, chosen: true }, null, 2) + '\n')
+    await studioProjects.noteJob(key, 'frontend')
     await studioBuilder.prompt(key, BUILD_CHOSEN(artifactId), undefined, 'frontend')
     await studioBuilder.prompt(key, EMAILS_CHOSEN(artifactId), undefined, 'emails')
     return { artifactId }
