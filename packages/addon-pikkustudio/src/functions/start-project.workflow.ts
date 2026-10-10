@@ -19,6 +19,7 @@ export const startProject = pikkuWorkflowFunc({
     if (data.key && data.path !== 'interview') await workflow.do('Keep your start', 'finishIntake', { key }, { retries: 0 })
     const adopted = data.uploadId ? await workflow.do('Keep your files', 'adoptUploads', { key, uploadId: data.uploadId }, { retries: 0 }) : { names: [] as string[] }
     const inspected = adopted.names.length ? await workflow.do('Look through your files', 'inspectFiles', { key, names: adopted.names }, { retries: 0 }) : { summary: '' }
+    if (data.path === 'interview') return { key }
     await workflow.do('Set up its workspace', 'prepareProject', { key })
     const data1 = await workflow.do('Set up its database', 'setUpDatabase', { key }, { retries: 0 })
     let data2: { ok: boolean; problem?: string } | undefined
@@ -34,7 +35,6 @@ export const startProject = pikkuWorkflowFunc({
       again = await workflow.do('Start it again', 'startAndWait', { key }, { retries: 0 })
       if (!again.ok) await workflow.do('Give up starting', 'failProject', { problem: again.problem ?? 'It would not start.' }, { retries: 0 })
     }
-    if (data.path === 'interview') return { key }
     const phones = data.devices?.includes('phones')
     const where = phones
       ? data.devices?.includes('browser')

@@ -7,5 +7,9 @@ export const createProject = pikkuSessionlessFunc({
   expose: true,
   description: 'Create a new project from an idea.',
   input: CreateProjectInput,
-  func: async ({ studioProjects }, input) => studioProjects.create(input),
+  func: async ({ studioProjects }, input) => {
+    const made = await studioProjects.create(input)
+    if (input.path === 'interview') void studioProjects.open(made.key).catch(() => {})
+    return made
+  },
 })

@@ -652,13 +652,14 @@ export class StudioProjectsService {
     const staging = join(root, '.scaffold')
     await mkdir(staging, { recursive: true })
     try {
-      const { command, args } = (this.options.createCommand ??
-        ((n) => {
-          const starter = process.env.PIKKU_STARTER_TEMPLATE
-          if (starter && existsSync(starter)) return { command: 'cp', args: ['-R', starter, join(staging, n)] }
-          return { command: 'npx', args: ['-y', 'create-pikku@latest', '--template', 'fabric', '--name', n, '--skip-install'] }
-        }))(slugify(name))
-      await run(command, args, staging)
+      const starter = process.env.PIKKU_STARTER_TEMPLATE
+      if (!this.options.createCommand && starter && existsSync(starter)) {
+        await cp(starter, join(staging, slugify(name)), { recursive: true, filter: (path) => basename(path) !== 'node_modules' })
+      } else {
+        const { command, args } = (this.options.createCommand ??
+          ((n) => ({ command: 'npx', args: ['-y', 'create-pikku@latest', '--template', 'fabric', '--name', n, '--skip-install'] })))(slugify(name))
+        await run(command, args, staging)
+      }
       const scaffold = join(staging, slugify(name))
       await mkdir(join(scaffold, '.studio'), { recursive: true })
       await writeFile(
@@ -1125,8 +1126,15 @@ export class StudioProjectsService {
   }
 
   private prepared = new Set<string>()
+  private preparing = new Map<string, Promise<{ entry: RegistryEntry; worktree: StudioWorktree }>>()
 
-  async prepare(key: string) {
+  prepare(key: string) {
+    const pending = this.preparing.get(key) ?? this.prepareOnce(key).finally(() => this.preparing.delete(key))
+    this.preparing.set(key, pending)
+    return pending
+  }
+
+  private async prepareOnce(key: string) {
     const entry = await this.entry(key)
     const worktree = await ensureWorktree(entry.path, this.home, entry.id, splitSessionKey(key).worktree)
     if (!this.prepared.has(key)) {
@@ -1217,6 +1225,7 @@ export class StudioProjectsService {
         this.forgetPid(key)
       }
     })
+    if (this.options.startApps !== false) this.startApps(key, worktree.projectDir, port, confinement, spawnOptions.env)
     try {
       await Promise.race([(this.options.waitForPort ?? waitForPort)(port), exited])
     } catch (error) {
@@ -1225,7 +1234,6 @@ export class StudioProjectsService {
       if (message.startsWith('The project stopped')) throw error
       throw new Error(`${message}:\n${await tail(logPath)}`)
     }
-    if (this.options.startApps !== false) this.startApps(key, worktree.projectDir, port, confinement, spawnOptions.env)
     return { port, token, worktree: worktree.projectDir }
   }
 
