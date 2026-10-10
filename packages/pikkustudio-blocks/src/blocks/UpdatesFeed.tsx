@@ -11,7 +11,7 @@ import { groupByDay, type DayGroup, type FeedActor, type FeedItem, type Phrase }
 const who = (actor: FeedActor): I18nString =>
   actor.kind === 'you' ? m.updates_feed__you() : actor.kind === 'app' ? m.updates_feed__your_app() : actor.kind === 'pikku' ? m.parts__pikku() : asI18n(actor.name)
 
-const did: Record<Exclude<Phrase, 'unknown' | 'change_asked' | 'change_working' | 'change_needs_answer' | 'change_done'>, () => I18nString> = {
+const did: Record<Exclude<Phrase, 'unknown' | 'ai_own' | 'ai_fabric' | 'account_sign_in' | 'account_sign_out' | 'publish' | 'change_asked' | 'change_working' | 'change_needs_answer' | 'change_done'>, () => I18nString> = {
   secret_read: () => m.audit_screen__did_secret_read(),
   secret_write: () => m.audit_screen__did_secret_write(),
   secret_delete: () => m.audit_screen__did_secret_delete(),
@@ -46,6 +46,16 @@ export const sentence = (item: FeedItem): I18nString => {
     case 'secret_delete':
       if (name) return m.updates_feed__secret_delete({ who: by, name })
       break
+    case 'ai_own':
+      return m.updates_feed__ai_own({ who: by })
+    case 'ai_fabric':
+      return m.updates_feed__ai_fabric({ who: by })
+    case 'account_sign_in':
+      return m.updates_feed__sign_in({ who: by })
+    case 'account_sign_out':
+      return m.updates_feed__sign_out({ who: by })
+    case 'publish':
+      return m.updates_feed__publish({ who: by })
     case 'change_asked':
       return m.updates_feed__change_asked({ who: by, name: name ?? m.updates_feed__a_change() })
     case 'change_working':

@@ -20,6 +20,11 @@ export type Phrase =
   | 'group_remove'
   | 'connection_set'
   | 'connection_delete'
+  | 'ai_own'
+  | 'ai_fabric'
+  | 'account_sign_in'
+  | 'account_sign_out'
+  | 'publish'
   | 'change_asked'
   | 'change_working'
   | 'change_needs_answer'
@@ -113,6 +118,23 @@ export const vaultEvent = (event: RawVault, index: number): FeedItem => ({
   actor: event.who === 'admin' ? { kind: 'you' } : event.who.startsWith('project:') ? { kind: 'app' } : { kind: 'pikku' },
   subject: event.key,
   outcome: toneOf(event.outcome === 'success' ? undefined : event.outcome),
+})
+
+export type RawStudio = { at: string; type: string; subject: string | null; project: string | null; outcome: 'success' | 'failed' }
+
+const STUDIO: Record<string, Phrase> = {
+  'account.sign_in': 'account_sign_in',
+  'account.sign_out': 'account_sign_out',
+  'project.publish': 'publish',
+}
+
+export const studioEvent = (event: RawStudio, index: number): FeedItem => ({
+  id: `studio:${event.at}:${index}`,
+  at: event.at,
+  phrase: event.type === 'ai.choose' ? (event.subject === 'fabric' ? 'ai_fabric' : 'ai_own') : (STUDIO[event.type] ?? 'unknown'),
+  actor: event.type === 'project.publish' ? { kind: 'pikku' } : { kind: 'you' },
+  subject: null,
+  outcome: event.outcome === 'failed' ? 'bad' : 'ok',
 })
 
 const CHANGE: Record<string, Phrase> = {
