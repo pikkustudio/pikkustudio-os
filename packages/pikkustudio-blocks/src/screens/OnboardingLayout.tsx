@@ -1,4 +1,5 @@
 import { asI18n, asI18nStub, sep, type I18nString } from '@pikku/react'
+import { PikkuMark } from '../blocks/PikkuMark'
 import { Outlet, useLocation, useNavigate, useRouter, useSearch } from '@tanstack/react-router'
 import { Link } from '../blocks/Link'
 import { EmptyState } from '../blocks/EmptyState'
@@ -283,13 +284,7 @@ export function OnboardingLayout() {
             aria-label={m.onboarding_layout__getting_set_up()}
           >
             <Link {...keep} to="/sign-in" className="flex items-center gap-2.5 px-2 py-1 font-heading text-[24px] font-extrabold tracking-[-0.02em] no-underline">
-              <svg viewBox="0 0 100 100" fill="none" className="size-8 shrink-0" role="img" aria-label={copy.brandLabel()}>
-                <g className="stroke-brand-mark" strokeWidth={17} strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M23 48H63" />
-                  <path d="M35.5 14V64C35.5 78 49 86 63 86" />
-                  <path d="M23 22H77" />
-                </g>
-              </svg>
+              <PikkuMark label={copy.brandLabel()} />
               {copy.brandName()}
             </Link>
             {projects.data?.length ? null : <div>

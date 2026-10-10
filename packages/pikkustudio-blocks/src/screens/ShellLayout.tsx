@@ -1,4 +1,5 @@
 import { asI18n, sep, type I18nNode, type I18nString } from '@pikku/react'
+import { PikkuMark } from '../blocks/PikkuMark'
 import { ChangesPanel } from '../directions-changes/ChangesPanel'
 import { EmptyState } from '../blocks/EmptyState'
 import { NotFoundState } from '../blocks/NotFoundState'
@@ -249,13 +250,7 @@ export function ShellLayout() {
             aria-label={m.shell_layout__studio()}
           >
             <Link {...keep} to="/overview" className="flex items-center gap-2.5 px-2 py-1 font-heading text-[24px] font-extrabold tracking-[-0.02em] no-underline">
-              <svg viewBox="0 0 100 100" fill="none" className="size-8 shrink-0" role="img" aria-label={m.shell_layout__studio()}>
-                <g className="stroke-brand-mark" strokeWidth={17} strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M23 48H63" />
-                  <path d="M35.5 14V64C35.5 78 49 86 63 86" />
-                  <path d="M23 22H77" />
-                </g>
-              </svg>
+              <PikkuMark label={m.shell_layout__studio()} />
               {m.shell_layout__studio()}
             </Link>
             <Button asChild variant="default" size="page" className="mx-1">
