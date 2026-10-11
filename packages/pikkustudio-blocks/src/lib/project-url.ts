@@ -5,7 +5,7 @@ import type { LocationRewrite } from '@tanstack/react-router'
 // search params, so routes stay /projects and /overview.
 
 // Not scoped by a team: onboarding, your own account, and the signed-in template app at /app.
-const GLOBAL = new Set(['claim-stripe', 'sign-in', 'your-name', 'choose-ai', 'new-team', 'profile', 'accept-invite', 'account', 'app', 'login', 'signup'])
+const GLOBAL = new Set(['claim-stripe', 'sign-in', 'your-name', 'choose-ai', 'new-team', 'profile', 'accept-invite', 'account', 'app', 'login', 'signup', 'admin'])
 // The team's own pages: no project in their URL.
 const TEAM_PAGES = new Set(['projects', 'secrets', 'studio-metrics', 'new-project'])
 // Project pages. The value says whether the page reads the project's running app: those show the start screen until it is up.
