@@ -74,7 +74,7 @@ describe('the six steps', () => {
     assert.equal(deriveChecklist({ ...base, designed: true }).handoff, true)
   })
 
-  const built = (patch: Partial<Signals> & { intake?: Partial<Intake> } = {}) => {
+  const built = (patch: Omit<Partial<Signals>, 'intake'> & { intake?: Partial<Intake> } = {}) => {
     const { intake: i, ...rest } = patch
     return signals({ intake: intake({ answers: answered(5), done: true, ...i }), directions: { total: 4, chosen: true }, designed: true, samples: 3, ...rest })
   }

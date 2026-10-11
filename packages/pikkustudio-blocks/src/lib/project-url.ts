@@ -11,7 +11,7 @@ const TEAM_PAGES = new Set(['projects', 'secrets', 'studio-metrics', 'new-projec
 // Project pages. The value says whether the page reads the project's running app: those show the start screen until it is up.
 // Overview only adds counts from the app and falls back to none; Publish and Resume never call it; the rest are team pages.
 export const PAGES: Record<string, boolean> = {
-  overview: false, review: false, 'review-ui': false, 'review-fixes': false, resume: false, publish: false, build: false, lab: false,
+  overview: false, project: false, review: false, 'review-ui': false, 'review-fixes': false, resume: false, publish: false, build: false, lab: false,
   billing: false, team: false, settings: false, plans: false, ai: false, domains: false, 'secret-access': false,
   'changes': true, design: true, emails: true, translations: true, artifacts: true, knowledge: true, content: true,
   'front-doors': true, code: true, audit: true, apps: true, explore: true, logs: true, performance: true, metrics: true, scorers: true,

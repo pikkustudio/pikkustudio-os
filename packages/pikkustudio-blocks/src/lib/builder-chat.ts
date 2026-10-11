@@ -81,6 +81,8 @@ type Timed = { at: number; item: ChatItem }
 
 const KICKOFF_TAG = '[[kickoff]]'
 const SKIP_TAG = '[[skip]]'
+const HIDDEN_TAGS = [KICKOFF_TAG, '[[greet]]', '[[changed:']
+const changedTag = (step: string, state: string) => `[[changed:${step}:${state}]]`
 
 const toChat = (all: BuilderItem[], prefix: string, agent?: I18nString): Timed[] => {
   const closing = (index: number) => {
@@ -95,7 +97,7 @@ const toChat = (all: BuilderItem[], prefix: string, agent?: I18nString): Timed[]
     const id = `${prefix}${index}`
     if (item.kind === 'assistant' && !closing(index)) return []
     if (item.kind === 'user') {
-      if (item.text.startsWith(KICKOFF_TAG)) return []
+      if (HIDDEN_TAGS.some((tag) => item.text!.startsWith(tag))) return []
       return [{ at: item.at, item: { id, kind: 'me', text: item.text.startsWith(SKIP_TAG) ? m.project_flow__skipped_bubble() : item.text } }]
     }
     if (item.kind === 'assistant') {
@@ -114,7 +116,7 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
   const list: Checklist | undefined = guideMode ? checklist.data : undefined
   const design = usePikkuQuery('studio:builderState', { key, specialist: 'frontend' }, { enabled: guideMode && !!key && !!list?.handoff, refetchInterval: 2000 } as never)
   const prompt = usePikkuMutation('studio:builderPrompt')
-  const guideSay = usePikkuMutation('studio:projectGuideSay' as never) as unknown as UseMutationResult<unknown, Error, { key: string; message?: string; kickoff?: boolean; skip?: boolean }>
+  const guideSay = usePikkuMutation('studio:projectGuideSay' as never) as unknown as UseMutationResult<unknown, Error, { key: string; message?: string; kickoff?: boolean; greet?: boolean; changed?: { step: string; state: string }; skip?: boolean }>
   const guideAct = useGuideAct()
   const archiveChat = usePikkuMutation('studio:builderArchive')
   const [local, setLocal] = useState<Timed[]>([])
@@ -122,6 +124,7 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
   const [dismissed, setDismissed] = useState('')
   const noted = useRef({ seen: new Set<string>(), last: 0 })
   const kicked = useRef('')
+  const seen = useRef<{ key: string; states: Record<string, string> }>({ key: '', states: {} })
   useEffect(() => setLocal([]), [mode])
   useEffect(() => {
     noted.current = { seen: new Set(), last: 0 }
@@ -214,6 +217,31 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
         kicked.current = ''
       })
   }, [guideMode, key, state.isSuccess, list?.questionsOpen, data?.items.length, data?.busy])
+
+  useEffect(() => {
+    if (!guideMode || !key || !state.isSuccess || !list || kicked.current === key) return
+    const questions = list.steps[0]
+    if (list.questionsOpen || questions.state !== 'skipped' || (data?.items.length ?? 0) > 0 || data?.busy) return
+    kicked.current = key
+    guideSay.mutateAsync({ key, greet: true })
+      .then(() => state.refetch())
+      .catch(() => {
+        kicked.current = ''
+      })
+  }, [guideMode, key, state.isSuccess, list?.questionsOpen, list?.steps[0]?.state, data?.items.length, data?.busy])
+
+  useEffect(() => {
+    if (!guideMode || !key || !list || !state.isSuccess) return
+    const now = Object.fromEntries(list.steps.map((s) => [s.id, s.state])) as Record<string, string>
+    const before = seen.current
+    seen.current = { key, states: now }
+    if (before.key !== key || data?.busy) return
+    const changed = list.steps.find((s) => before.states[s.id] === 'working' && (s.state === 'done' || s.state === 'needs-you'))
+    if (!changed) return
+    const tag = changedTag(changed.id, changed.state)
+    if ((data?.items ?? []).some((i) => i.kind === 'user' && i.text?.startsWith(tag))) return
+    guideSay.mutateAsync({ key, changed: { step: changed.id, state: changed.state } }).then(() => state.refetch()).catch(() => undefined)
+  }, [guideMode, key, list])
 
   useEffect(() => {
     if (!guideMode || !list) return
