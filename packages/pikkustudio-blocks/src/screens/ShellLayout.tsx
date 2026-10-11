@@ -141,7 +141,7 @@ export function ShellLayout() {
   const q = useSearch({ strict: false }) as { view?: View; look?: 'light' | 'dark'; panel?: PanelId; show?: 'done'; project?: string; change?: string }
   const path = useLocation({ select: (l) => l.pathname })
   const project = useLocation({ select: (l) => (l.search as { project?: string }).project })
-  const needsProject = !project && !/\/(projects|secrets|account|studio-metrics|new-project|sign-in|your-name|choose-ai)$/.test(path)
+  const needsProject = !project && !/\/(projects|secrets|account|studio-metrics|new-project|sign-in|your-name|choose-ai)$/.test(path) && !/^\/admin(\/|$)/.test(path)
   useEffect(() => {
     if (needsProject) navigate({ to: '/projects', search: ((prev: object) => prev) as never, replace: true })
   }, [needsProject])
@@ -295,13 +295,13 @@ export function ShellLayout() {
             </nav>
             {addonNav ? (
               <div className="flex flex-col gap-0.5 px-1">
-                <Link {...keep} to="/overview" className={`${navItem} mb-1`}>
+                <Link {...keep} to={(addonNav.back?.to ?? '/overview') as never} className={`${navItem} mb-1`}>
                   <ArrowLeft className="rtl:-scale-x-100 size-5" />
-                  {m.shell_layout__back_to({ project: projectName })}
+                  {addonNav.back ? asI18n(addonNav.back.label) : m.shell_layout__back_to({ project: projectName })}
                 </Link>
                 <div className="mb-1.5 px-3 text-[13px] font-semibold text-muted-foreground">{asI18n(addonNav.title)}</div>
                 {addonNav.items.map((n) => (
-                  <Link {...keep} key={n.splat} to={'/addons/$' as never} params={{ _splat: n.splat } as never} activeOptions={{ exact: true }} aria-current={n.splat === addonNav.current || (n.splat.includes('/') && addonNav.current.startsWith(`${n.splat}/`)) ? 'page' : 'false'} className={navItem}>
+                  <Link {...keep} key={n.splat} to={(n.to ?? '/addons/$') as never} params={(n.to ? undefined : { _splat: n.splat }) as never} activeOptions={{ exact: true }} aria-current={n.splat === addonNav.current || (n.splat.includes('/') && addonNav.current.startsWith(`${n.splat}/`)) ? 'page' : 'false'} className={navItem}>
                     <LayoutGrid className="size-5" />
                     {asI18n(n.label)}
                   </Link>
