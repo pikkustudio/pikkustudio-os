@@ -9,6 +9,7 @@ export function Hero({
   actions,
   hint,
   thumb,
+  side,
   notice,
   children,
 }: {
@@ -19,6 +20,7 @@ export function Hero({
   actions?: I18nNode
   hint?: I18nString
   thumb?: I18nNode
+  side?: I18nNode
   notice?: I18nNode
   children?: I18nNode
 }) {
@@ -42,7 +44,7 @@ export function Hero({
         {notice}
       </div>
       <div className="relative hidden min-h-55 md:block" aria-hidden="true">
-        <HeroArt art={art} thumb={thumb} />
+        {side ?? <HeroArt art={art} thumb={thumb} />}
       </div>
     </section>
   )

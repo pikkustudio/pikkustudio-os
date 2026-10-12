@@ -4,7 +4,7 @@ import { m } from '@/i18n/messages'
 import { Button } from '../ui/button'
 import { Hero } from '../blocks/Hero'
 import { Page } from '../blocks/Page'
-import { ProjectThumbShapes } from '../blocks/ProjectThumb'
+import { BlobStage, type BlobStep } from '../blocks/BlobStage'
 import { NeedsALook, WhatIsOnline, WorkingNow } from '../blocks/ProjectNow'
 import { GoLiveSteps } from '../blocks/GoLiveSteps'
 import { ProjectWays } from '../blocks/ProjectWays'
@@ -27,6 +27,8 @@ export function ProjectLandingScreen({ home, onAct, busy, notice }: { home: Proj
       : (inCloud ? m.project_landing__people_one_cloud({ who: first }) : m.project_landing__people_one_project({ who: first }))
     : null
 
+  const step: BlobStep = notice ? 'error' : busy ? 'sending' : isLive ? 'connected' : golive ? 'question' : plan.disabled || !home.online ? 'notStarted' : 'choosing'
+
   return (
     <Page>
       <div>
@@ -35,7 +37,7 @@ export function ProjectLandingScreen({ home, onAct, busy, notice }: { home: Proj
       <Hero
         hue={plan.hue}
         art={plan.art}
-        thumb={<ProjectThumbShapes look={home.look} />}
+        side={<BlobStage step={step} />}
         title={isLive ? m.project_live__title() : golive ? m.golive__title() : plan.title}
         why={isLive ? m.project_live__why() : golive ? m.golive__why() : plan.why}
         notice={notice}

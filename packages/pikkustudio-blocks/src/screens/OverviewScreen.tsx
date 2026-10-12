@@ -1,5 +1,6 @@
 import { m } from '@/i18n/messages'
 import type { I18nString } from '@pikku/react'
+import { BlobStage } from '../blocks/BlobStage'
 import { PinButton } from '../blocks/PinButton'
 import { EmptyState } from '../blocks/EmptyState'
 import { Link } from '../blocks/Link'
@@ -146,14 +147,8 @@ export function OverviewScreen() {
           )}
           <StatusLine status={checked} />
         </div>
-        <div className="relative min-h-42.5">
-          <svg viewBox="0 0 300 200" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 size-full" aria-hidden="true">
-            <circle cx="230" cy="40" r="120" className="fill-w1" />
-            <circle cx="70" cy="190" r="110" className="fill-w2" />
-            <circle cx="170" cy="120" r="64" className="fill-w3" />
-            <circle cx="262" cy="150" r="9" className="fill-coral" />
-            <circle cx="40" cy="40" r="26" fill="none" className="stroke-w5" strokeWidth="3" strokeDasharray="3 9" strokeLinecap="round" />
-          </svg>
+        <div className="relative min-h-68">
+          <BlobStage step={checking ? 'checking' : pending.length ? 'question' : 'choosing'} size={224} />
         </div>
       </section>
 
