@@ -4,7 +4,7 @@ export type ColorMode = 'light' | 'dark' | 'system'
 
 export const PALETTE_KEY = 'pikku-palette'
 export const SCHEME_KEY = 'app-color-scheme'
-export const DEFAULT_PALETTE = 'paper'
+export const DEFAULT_PALETTE = 'studio'
 
 export const palettes: PaletteInfo[] = [
   { id: 'paper', label: 'Paper', light: { bg: '#f4ecdd', primary: '#ba3e0d', hero: '#942d03' }, dark: { bg: '#15110d', primary: '#e0a06a', hero: '#781e00' } },
@@ -24,4 +24,4 @@ export const palettes: PaletteInfo[] = [
   { id: 'orchard', label: 'Apricot orchard', group: 'new', light: { bg: '#fceddf', primary: '#9e4e00', hero: '#874400' }, dark: { bg: '#1a120c', primary: '#f7ab5d', hero: '#6e3200' } },
 ]
 
-export const paletteScript = `try{var p=localStorage.getItem('${PALETTE_KEY}');if(p&&${JSON.stringify(palettes.map((x) => x.id))}.indexOf(p)>-1)document.documentElement.setAttribute('data-palette',p)}catch(e){}`
+export const paletteScript = `try{var p=localStorage.getItem('${PALETTE_KEY}');if(!p)p='${DEFAULT_PALETTE}';if(p&&${JSON.stringify(palettes.map((x) => x.id))}.indexOf(p)>-1)document.documentElement.setAttribute('data-palette',p)}catch(e){}`
