@@ -147,8 +147,8 @@ export function OverviewScreen() {
           )}
           <StatusLine status={checked} />
         </div>
-        <div className="relative min-h-68">
-          <BlobStage step={checking ? 'checking' : pending.length ? 'question' : 'choosing'} size={224} />
+        <div className="relative min-h-88">
+          <BlobStage step={checking ? 'checking' : pending.length ? 'question' : 'choosing'} size={420} />
         </div>
       </section>
 

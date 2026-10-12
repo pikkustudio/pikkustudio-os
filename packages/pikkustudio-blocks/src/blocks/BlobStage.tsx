@@ -45,7 +45,7 @@ function Layer({ pose, size, out }: { pose: BlobPoseName; size: number; out?: bo
   )
 }
 
-export function BlobStage({ step, size = 240, className = '' }: { step: BlobStep; size?: number; className?: string }) {
+export function BlobStage({ step, size = 420, className = '' }: { step: BlobStep; size?: number; className?: string }) {
   const pose = BLOB_STEP_POSE[step]
   const [prev, setPrev] = useState<BlobPoseName | null>(null)
   const last = useRef(pose)
@@ -59,7 +59,7 @@ export function BlobStage({ step, size = 240, className = '' }: { step: BlobStep
     return () => clearTimeout(id)
   }, [pose])
   return (
-    <div className={`relative size-full min-h-[17rem] text-hero-ink ${className}`} aria-hidden="true">
+    <div className={`relative size-full min-h-[22rem] text-hero-ink ${className}`} aria-hidden="true">
       {prev ? <Layer key={`out-${prev}`} pose={prev} size={size} out /> : null}
       <Layer key={`in-${pose}`} pose={pose} size={size} />
     </div>
