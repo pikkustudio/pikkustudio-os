@@ -294,7 +294,7 @@ export function CustomizeAside({ enabled = true, labels = englishLabels, extraIt
   const Shell = shell
   return (
     <div className="flex h-dvh w-full overflow-hidden" style={{ ['--cz-aside-w' as string]: open ? '26rem' : '0px' }}>
-      <div className="relative min-w-0 flex-1 overflow-auto [contain:layout]">{children}</div>
+      <div data-cz-column="" className="relative min-w-0 flex-1 overflow-auto [contain:layout]">{children}</div>
       {tabButton}
       <div
         inert={!open}

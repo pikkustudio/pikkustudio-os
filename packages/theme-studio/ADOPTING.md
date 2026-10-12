@@ -44,3 +44,5 @@ Props: `labels` (translated `CustomizeLabels`), `extraItems`, `shell` (replace t
 - Colour mode: `localStorage['app-color-scheme']` = `light` or `dark`; key absent means Auto.
 - Studio only: language `app-locale`, Pikku animation `pikku-blob-motion` (`on`, `off`, absent = follow system).
 - Same origin or a shared parent cookie is not used, so the website and Studio on different hosts keep their own choice.
+
+The page column carries `data-cz-column`; select it for scroll resets and smooth-scroll rules instead of class names.
