@@ -4,7 +4,7 @@ export type ColorMode = 'light' | 'dark' | 'system'
 
 export const PALETTE_KEY = 'pikku-palette'
 export const SCHEME_KEY = 'app-color-scheme'
-export const DEFAULT_PALETTE = 'studio'
+export const DEFAULT_PALETTE = 'paper'
 
 export const palettes: PaletteInfo[] = [
   { id: 'paper', label: 'Paper', light: { bg: '#f4ecdd', primary: '#ba3e0d', hero: '#942d03' }, dark: { bg: '#15110d', primary: '#e0a06a', hero: '#781e00' } },
