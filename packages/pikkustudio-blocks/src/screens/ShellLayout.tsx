@@ -232,6 +232,7 @@ export function ShellLayout() {
   const bubbleKey = pending.map((c) => c.changeId).join(',')
   const isDismissed = dismissed === bubbleKey
   const bubbleIsOpen = bubbleOpen ?? false
+  const [helperHot, setHelperHot] = useState(false)
   const unread = needsPerson && isDismissed
 
   const panelTitle: Record<PanelId, I18nString> = { chat: workMode ? agentName(workMode) : m.parts__talk_to_pikku(), updates: m.shell_layout__updates(), changes: m.shell_layout__changes(), workspace: m.shell_layout__your_workspace(), account: m.shell_layout__your_account() }
@@ -808,10 +809,13 @@ export function ShellLayout() {
                 aria-label={m.shell_layout__your_helper()}
                 aria-expanded={bubbleIsOpen}
                 onClick={() => (fill ? setPanel(panel === 'chat' ? '' : 'chat') : setBubbleOpen(!bubbleIsOpen))}
+                onPointerEnter={() => setHelperHot(true)}
+                onPointerLeave={() => setHelperHot(false)}
+                onFocus={() => setHelperHot(true)}
+                onBlur={() => setHelperHot(false)}
                 className="group relative grid size-17 place-items-center rounded-full cursor-pointer text-foreground transition-[transform,color] duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 hover:scale-125 hover:text-primary focus-visible:text-primary focus-visible:ring-2 focus-visible:ring-primary active:scale-95"
               >
-                <span className="grid place-items-center transition-opacity duration-500 ease-in-out group-hover:opacity-0 group-focus-visible:opacity-0"><Avatar mood={mood} size="lg" ring={false} /></span>
-                <span className="absolute inset-0 grid place-items-center opacity-0 transition-opacity duration-500 ease-in-out group-hover:opacity-100 group-focus-visible:opacity-100"><Blob pose="ask" className="size-20" /></span>
+                <Blob pose={helperHot ? 'ask' : POSE[mood]} className="size-20" />
                 {needsCount > 0 && !bubbleIsOpen ? <span className="absolute -top-1 -end-1 grid h-6 min-w-6 place-items-center rounded-full bg-warning px-1.5 text-[13px] font-bold text-on-warning ring-2 ring-card">{needsCount}</span> : null}
               </button>
             </div>

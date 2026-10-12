@@ -1,0 +1,19 @@
+{
+  "name": "@pikku/blob-studio",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "license": "BUSL-1.1",
+  "exports": {
+    ".": "./src/index.ts",
+    "./core": "./src/core.ts",
+    "./render": "./src/render.ts",
+    "./motion": "./src/motion.ts"
+  },
+  "files": [
+    "src"
+  ],
+  "peerDependencies": {
+    "react": "^19.0.0"
+  }
+}
