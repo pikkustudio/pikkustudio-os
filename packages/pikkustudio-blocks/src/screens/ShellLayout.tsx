@@ -808,9 +808,9 @@ export function ShellLayout() {
                 aria-label={m.shell_layout__your_helper()}
                 aria-expanded={bubbleIsOpen}
                 onClick={() => (fill ? setPanel(panel === 'chat' ? '' : 'chat') : setBubbleOpen(!bubbleIsOpen))}
-                className="relative grid size-17 place-items-center rounded-full border border-border bg-card shadow-[0_6px_20px_-4px_rgba(8,40,52,0.16),0_2px_4px_rgba(8,40,52,0.06)] cursor-pointer transition-all duration-140 hover:-translate-y-0.5 hover:scale-105 hover:border-primary hover:shadow-[0_10px_26px_-4px_rgba(8,40,52,0.28),0_2px_4px_rgba(8,40,52,0.08)] focus-visible:ring-2 focus-visible:ring-primary active:scale-95"
+                className="relative grid size-17 place-items-center rounded-full cursor-pointer transition-transform duration-140 hover:-translate-y-0.5 hover:scale-105 focus-visible:ring-2 focus-visible:ring-primary active:scale-95"
               >
-                <Avatar mood={mood} size="lg" />
+                <Avatar mood={mood} size="lg" ring={false} />
                 {needsCount > 0 && !bubbleIsOpen ? <span className="absolute -top-1 -end-1 grid h-6 min-w-6 place-items-center rounded-full bg-warning px-1.5 text-[13px] font-bold text-on-warning ring-2 ring-card">{needsCount}</span> : null}
               </button>
             </div>
