@@ -22,9 +22,15 @@ Add `"@pikku/theme-studio": "workspace:*"` to the app, run the workspace install
 ## The mount
 
 Early, in `<head>`: `<script dangerouslySetInnerHTML={{ __html: earlyThemeScript }} />`
-In the body, once: `<CustomizeHost />`
+Around the app body, once: `<CustomizeAside>{the whole page}</CustomizeAside>`. Nothing else to mount.
 
-Optional props: `labels` (translated `CustomizeLabels`), `extraItems`, `shell` (replace the default right-hand panel, Studio passes its `SidePanel`), `enabled={false}` to switch it off, `tabClassName`.
+`CustomizeAside` is a layout wrapper, not an overlay. It renders a full-height flex row: the page in a `min-w-0 flex-1` column that scrolls on its own, and the Customize panel as an aside beside it. Closed, the aside is 0 wide; open, it is 26rem, animated with a width transition (off under reduced motion). The page shrinks to what is left, so every layout inside reflows, including `fixed` and `absolute` chrome: the column uses `contain: layout`, so `fixed inset-0` roots and `fixed` drawers position against the column, not the viewport. The width is exposed as `--cz-aside-w` (`0px` or `26rem`) on the wrapper for anything that needs it.
+
+Below 768px the aside is an overlay on top of the page (pushing would crush it). The entry tab sits on the right edge while closed; open, the panel header has the close button. Escape or the button closes it and focus returns to the tab.
+
+Notes for the host page: do not give `body` its own scroll or `min-h-screen` layout assumptions; the column is the scroller (`h-dvh`). Code reading `window.scrollY` or using `window` as an observer root must use the column instead. Portalled UI (menus, dialogs) still renders on `body`, above the aside.
+
+Props: `labels` (translated `CustomizeLabels`), `extraItems`, `shell` (replace the panel chrome, Studio passes its `SidePanel` with `inline`; the shell receives `inline: true` and must fill its parent instead of using `fixed`), `enabled={false}` renders only the children. `CustomizeHost` is still exported as the old overlay (tab plus fixed panel) for pages that cannot be wrapped.
 
 ## What the website maps
 

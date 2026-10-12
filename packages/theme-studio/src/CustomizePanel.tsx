@@ -3,7 +3,25 @@ import { palettes, type ColorMode } from './palettes'
 import { customizeItems, customizeSections, englishLabels, type CustomizeIcon, type CustomizeItem, type CustomizeLabels } from './registry'
 import { applyColorMode, notifyCustomize, subscribeCustomize } from './store'
 
-export type CustomizePanelShell = (props: { title: string; sub: string; closeLabel: string; onClose: () => void; children: ReactNode }) => ReactNode
+export type CustomizePanelShell = (props: { title: string; sub: string; closeLabel: string; inline: boolean; onClose: () => void; children: ReactNode }) => ReactNode
+
+let openState = false
+const openListeners = new Set<() => void>()
+function setOpenState(next: boolean) {
+  if (openState === next) return
+  openState = next
+  openListeners.forEach((l) => l())
+}
+function useOpenState(): boolean {
+  return useSyncExternalStore(
+    (cb) => {
+      openListeners.add(cb)
+      return () => openListeners.delete(cb)
+    },
+    () => openState,
+    () => false,
+  )
+}
 
 const ICONS: Record<CustomizeIcon | 'sliders', ReactNode> = {
   sliders: (
@@ -183,14 +201,14 @@ function Sections({ items, labels }: { items: CustomizeItem[]; labels: Customize
   )
 }
 
-const plainShell: CustomizePanelShell = ({ title, sub, closeLabel, onClose, children }) => {
+const plainShell: CustomizePanelShell = ({ title, sub, closeLabel, inline, onClose, children }) => {
   useEffect(() => {
     const onKey = (e: globalThis.KeyboardEvent) => e.key === 'Escape' && onClose()
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [onClose])
   return (
-    <aside role="dialog" aria-label={title} className="fixed inset-y-0 end-0 z-50 flex w-[26rem] max-w-full flex-col border-s border-[var(--cz-line,#ccc)] bg-[var(--cz-surface,#fff)] text-[var(--cz-ink,inherit)] shadow-2xl">
+    <aside role="dialog" aria-label={title} className={`${inline ? 'h-full w-full' : 'fixed inset-y-0 end-0 z-50 w-[26rem] max-w-full shadow-2xl'} flex flex-col border-s border-[var(--cz-line,#ccc)] bg-[var(--cz-surface,#fff)] text-[var(--cz-ink,inherit)]`}>
       <header className="flex items-center gap-3 border-b border-[var(--cz-line,#ccc)] px-5 py-4">
         <span className="min-w-0 flex-1">
           <h2 className="text-[20px] font-bold leading-tight">{title}</h2>
@@ -207,28 +225,12 @@ const plainShell: CustomizePanelShell = ({ title, sub, closeLabel, onClose, chil
   )
 }
 
-export function CustomizeHost({
-  enabled = true,
-  labels = englishLabels,
-  extraItems = [],
-  shell = plainShell,
-  tabClassName = '',
-}: {
-  enabled?: boolean
-  labels?: CustomizeLabels
-  extraItems?: CustomizeItem[]
-  shell?: CustomizePanelShell
-  tabClassName?: string
-}) {
-  const [open, setOpen] = useState(false)
-  const tab = useRef<HTMLButtonElement>(null)
-  const items = [...customizeItems, ...extraItems]
+function useSystemMode() {
   const mode = useSyncExternalStore(
     subscribeCustomize,
     () => customizeItems[1].read(),
     () => 'system',
   )
-
   useEffect(() => {
     if (mode !== 'system') return
     const mq = matchMedia('(prefers-color-scheme: dark)')
@@ -236,34 +238,75 @@ export function CustomizeHost({
     mq.addEventListener('change', on)
     return () => mq.removeEventListener('change', on)
   }, [mode])
+}
 
+function useCustomize(labels: CustomizeLabels) {
+  const open = useOpenState()
+  const tab = useRef<HTMLButtonElement>(null)
+  useSystemMode()
   const close = useCallback(() => {
-    setOpen(false)
+    if (!openState) return
+    setOpenState(false)
     requestAnimationFrame(() => tab.current?.focus())
   }, [])
+  const tabButton = open ? null : (
+    <button
+      ref={tab}
+      type="button"
+      aria-label={labels.open}
+      title={labels.open}
+      aria-haspopup="dialog"
+      onClick={() => setOpenState(true)}
+      className={`fixed end-0 top-1/2 z-40 flex -translate-y-1/2 items-center rounded-s-xl border border-e-0 border-[var(--cz-line,#ccc)] bg-[var(--cz-surface,#fff)] px-1.5 py-3 text-[var(--cz-ink-2,inherit)] shadow-lg hover:text-[var(--cz-ink,inherit)] ${ring}`}
+    >
+      <CustomizeIconSvg name="sliders" />
+    </button>
+  )
+  return { open, close, tabButton }
+}
 
+type HostProps = {
+  enabled?: boolean
+  labels?: CustomizeLabels
+  extraItems?: CustomizeItem[]
+  shell?: CustomizePanelShell
+}
+
+export function CustomizeHost({ enabled = true, labels = englishLabels, extraItems = [], shell = plainShell }: HostProps) {
+  const { open, close, tabButton } = useCustomize(labels)
   if (!enabled) return null
   const Shell = shell
   return (
     <>
-      {open ? null : (
-        <button
-          ref={tab}
-          type="button"
-          aria-label={labels.open}
-          title={labels.open}
-          aria-haspopup="dialog"
-          onClick={() => setOpen(true)}
-          className={`fixed end-0 top-1/2 z-40 flex -translate-y-1/2 items-center rounded-s-xl border border-e-0 border-[var(--cz-line,#ccc)] bg-[var(--cz-surface,#fff)] px-1.5 py-3 text-[var(--cz-ink-2,inherit)] shadow-lg hover:text-[var(--cz-ink,inherit)] ${ring} ${tabClassName}`}
-        >
-          <CustomizeIconSvg name="sliders" />
-        </button>
-      )}
+      {tabButton}
       {open ? (
-        <Shell title={labels.title} sub={labels.sub} closeLabel={labels.close} onClose={close}>
-          <Sections items={items} labels={labels} />
+        <Shell title={labels.title} sub={labels.sub} closeLabel={labels.close} inline={false} onClose={close}>
+          <Sections items={[...customizeItems, ...extraItems]} labels={labels} />
         </Shell>
       ) : null}
     </>
+  )
+}
+
+export function CustomizeAside({ enabled = true, labels = englishLabels, extraItems = [], shell = plainShell, children }: HostProps & { children: ReactNode }) {
+  const { open, close, tabButton } = useCustomize(labels)
+  if (!enabled) return <>{children}</>
+  const Shell = shell
+  return (
+    <div className="flex h-dvh w-full overflow-hidden" style={{ ['--cz-aside-w' as string]: open ? '26rem' : '0px' }}>
+      <div className="relative min-w-0 flex-1 overflow-auto [contain:layout]">{children}</div>
+      {tabButton}
+      <div
+        inert={!open}
+        aria-hidden={!open}
+        className={`max-md:fixed max-md:inset-y-0 max-md:end-0 max-md:z-50 max-md:max-w-full md:relative md:w-[var(--cz-aside-w)] md:shrink-0 md:overflow-hidden md:transition-[width] md:duration-300 md:ease-out motion-reduce:transition-none ${open ? '' : 'max-md:hidden'}`}
+      >
+        <div className="h-full w-[26rem] max-w-full md:max-w-none">
+          <Shell title={labels.title} sub={labels.sub} closeLabel={labels.close} inline onClose={close}>
+            <Sections items={[...customizeItems, ...extraItems]} labels={labels} />
+          </Shell>
+        </div>
+      </div>
+    </div>
   )
 }
