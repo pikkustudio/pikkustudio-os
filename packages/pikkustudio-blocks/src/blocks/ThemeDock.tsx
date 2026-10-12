@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react'
+import { Fragment, useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { Monitor, Moon, Sun } from 'lucide-react'
 import { DEFAULT_PALETTE, PALETTE_KEY, SCHEME_KEY, palettes, type ColorMode } from '../lib/palettes'
 
@@ -100,8 +100,8 @@ export function ThemeDock() {
     e.preventDefault()
     const next = (index + step + count) % count
     choose(next)
-    const group = e.currentTarget.parentElement
-    ;(group?.children[next] as HTMLElement | undefined)?.focus()
+    const items = e.currentTarget.closest('[role=radiogroup]')?.querySelectorAll<HTMLElement>('[role=radio]')
+    items?.[next]?.focus()
   }
 
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -130,14 +130,20 @@ export function ThemeDock() {
       onKeyDown={onKeyDown}
     >
       {open ? (
-        <div className="mr-2 flex w-48 flex-col gap-3 rounded-card border border-border bg-card p-3 text-card-foreground shadow-deep">
-          <div role="radiogroup" aria-label="Palette" className="flex flex-col gap-1">
+        <div className="mr-2 flex w-56 flex-col gap-3 rounded-card border border-border bg-card p-3 text-card-foreground shadow-deep">
+          <div role="radiogroup" aria-label="Palette" className="flex max-h-[60vh] flex-col gap-1 overflow-y-auto overscroll-contain">
             {palettes.map((p, i) => {
               const s = dark ? p.dark : p.light
               const on = p.id === palette
+              const firstNew = p.group === 'new' && palettes[i - 1]?.group !== 'new'
               return (
+                <Fragment key={p.id}>
+                  {firstNew ? (
+                    <div role="presentation" className="mt-2 border-t border-border px-3 pb-0.5 pt-2 text-px13 font-bold text-ink-2">
+                      New
+                    </div>
+                  ) : null}
                 <button
-                  key={p.id}
                   type="button"
                   role="radio"
                   aria-checked={on}
@@ -153,6 +159,7 @@ export function ThemeDock() {
                   </span>
                   {p.label}
                 </button>
+                </Fragment>
               )
             })}
           </div>
