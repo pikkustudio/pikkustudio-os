@@ -455,6 +455,17 @@ const outermostNodeModules = (path: string) => {
   return at === -1 ? path : path.slice(0, at + `${sep}node_modules`.length)
 }
 
+const hoistedNodeModules = (packageDir: string) => {
+  let dir = dirname(packageDir)
+  for (;;) {
+    const candidate = join(dir, 'node_modules')
+    if (basename(dir) !== 'node_modules' && existsSync(candidate)) return candidate
+    const parent = dirname(dir)
+    if (parent === dir) return undefined
+    dir = parent
+  }
+}
+
 export const STUDIO_KEY = 'studio'
 
 export class StudioProjectsService {
@@ -1179,8 +1190,12 @@ export class StudioProjectsService {
       recursive: true,
       filter: (path) => path !== join(source, 'workspace'),
     })
-    const modules = join(source, '..', 'node_modules')
-    if (existsSync(modules)) await symlink(modules, join(copy, 'node_modules'), 'dir')
+    const modules = hoistedNodeModules(source)
+    if (modules) {
+      const link = join(dirname(copy), 'node_modules')
+      await rm(link, { force: true })
+      await symlink(modules, link, 'dir').catch(() => {})
+    }
     return join(copy, basename(entry))
   }
 
@@ -1189,7 +1204,11 @@ export class StudioProjectsService {
     if (this.options.confine) return this.options.confine(worktree)
     const base = worktreeConfinement(worktree)
     const readable = [join(homedir(), '.fabric', 'auth.json')]
-    if (this.options.designEntry) readable.push(resolve(this.options.designEntry, '..', '..'))
+    if (this.options.designEntry) {
+      readable.push(resolve(this.options.designEntry, '..', '..'))
+      const modules = hoistedNodeModules(dirname(this.options.designEntry))
+      if (modules) readable.push(modules)
+    }
     readable.push(...linkedRepos(worktree.path))
     const runtime = process.env.PIKKU_STUDIO_RUNTIME_DIR
     if (runtime) readable.push(runtime, dirname(process.execPath))

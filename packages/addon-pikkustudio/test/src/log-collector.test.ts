@@ -1,6 +1,6 @@
 import assert from 'node:assert'
 import { afterEach, beforeEach, test } from 'node:test'
-import { appendFileSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { appendFileSync, existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { LogCollector } from '../../src/services/log-collector.js'
@@ -76,4 +76,15 @@ test('metrics written to a project .pikku/runs are ingested once, under the proj
   } finally {
     rmSync(project, { recursive: true, force: true })
   }
+})
+
+test('pruning leaves loose files in the logs directory alone', async () => {
+  const store = memoryLogStore()
+  const design = join(home, 'logs', 'k1-design.log')
+  writeFileSync(design, 'design up\n')
+  writeFileSync(join(home, 'logs', 'k1', 'aaa.server.log'), 'one\n')
+  mkdirSync(join(home, 'logs', 'gone'), { recursive: true })
+  await new LogCollector(home, store, async () => ['k1']).sweep()
+  assert.ok(existsSync(design))
+  assert.ok(!existsSync(join(home, 'logs', 'gone')))
 })

@@ -201,12 +201,15 @@ export class LogCollector {
     const known = await this.projects()
     if (known.length) {
       await this.store.trim({ known, olderThan: Date.now() - KEEP_DAYS * 86_400_000, perProject: KEEP_ROWS })
-      for (const key of readdirSync(root)) if (!known.includes(key)) rmSync(join(root, key), { recursive: true, force: true })
+      for (const key of readdirSync(root)) {
+        if (known.includes(key) || !statSync(join(root, key)).isDirectory()) continue
+        rmSync(join(root, key), { recursive: true, force: true })
+      }
     }
     const gone: string[] = []
     for (const key of readdirSync(root)) {
       const dir = join(root, key)
-      if (!existsSync(dir)) continue
+      if (!existsSync(dir) || !statSync(dir).isDirectory()) continue
       const runs = new Map<string, number>()
       for (const file of readdirSync(dir)) {
         const match = file.match(RUN_FILE)
