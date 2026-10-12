@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { changesReport } from '@pikku/builder'
+import { changesReport } from '@pikkustudio/builder'
 import { pikkuSessionlessFunc } from '#pikku/addon/function'
 
 export const ChangesInput = z.object({ key: z.string() })

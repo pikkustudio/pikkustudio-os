@@ -1,4 +1,4 @@
-import { DEFAULT_LOGO, logoGeometry, logoSvg } from '@pikku/blob-studio/core'
+import { DEFAULT_LOGO, logoGeometry, logoSvg } from '@pikkustudio/blob/core'
 
 export const BLOB_LOGO = logoGeometry(DEFAULT_LOGO)
 

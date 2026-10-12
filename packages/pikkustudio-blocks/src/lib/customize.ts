@@ -1,6 +1,6 @@
 import { SlidersHorizontal } from 'lucide-react'
-import { BLOB_MOTION_KEY, getBlobMotion, setBlobMotion, type BlobMotionPref } from '@pikku/blob-studio'
-import { languageItem as sharedLanguageItem, englishLabels, type CustomizeItem, type CustomizeLabels } from '@pikku/theme-studio'
+import { BLOB_MOTION_KEY, getBlobMotion, setBlobMotion, type BlobMotionPref } from '@pikkustudio/blob'
+import { languageItem as sharedLanguageItem, englishLabels, type CustomizeItem, type CustomizeLabels } from '@pikkustudio/theme'
 import { m } from '@/i18n/messages'
 
 export const CUSTOMIZE_ENABLED = true

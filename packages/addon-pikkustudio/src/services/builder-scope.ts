@@ -1,7 +1,7 @@
 import { mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 
-import type { BuilderMode } from '@pikku/builder'
+import type { BuilderMode } from '@pikkustudio/builder'
 
 export const BUILDER_MODES: BuilderMode[] = ['build', 'frontend', 'artifacts', 'knowledge', 'emails', 'project']
 

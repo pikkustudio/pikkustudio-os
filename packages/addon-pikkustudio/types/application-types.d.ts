@@ -10,7 +10,7 @@ import type { StudioProjectsService } from '../src/services/projects.js'
 import type { LogStore } from '../src/services/log-store.js'
 import type { StudioPublisher } from '../src/services/publish.js'
 import type { StudioSettingsFile } from '../src/services/settings.js'
-import type { BuilderSession } from '@pikku/builder'
+import type { BuilderSession } from '@pikkustudio/builder'
 import type { BetterAuthInstance } from '@pikku/better-auth'
 import type { Kysely } from 'kysely'
 

@@ -1,4 +1,4 @@
-# Adopting @pikku/theme-studio
+# Adopting @pikkustudio/theme
 
 One package holds the theme and the Customize panel for Studio and the website.
 
@@ -13,11 +13,11 @@ One package holds the theme and the Customize panel for Studio and the website.
 ## Import paths
 
 ```ts
-import { CustomizeHost, earlyThemeScript, englishLabels } from '@pikku/theme-studio'
-import '@pikku/theme-studio/palettes.css'
+import { CustomizeHost, earlyThemeScript, englishLabels } from '@pikkustudio/theme'
+import '@pikkustudio/theme/palettes.css'
 ```
 
-Add `"@pikku/theme-studio": "workspace:*"` to the app, run the workspace install, and add `@source '<path>/packages/theme-studio/src';` to the Tailwind entry CSS so the panel classes are generated.
+Add `"@pikkustudio/theme": "workspace:*"` to the app, run the workspace install, and add `@source '<path>/packages/theme-studio/src';` to the Tailwind entry CSS so the panel classes are generated.
 
 ## The mount
 

@@ -12,7 +12,7 @@ import { extname, join, normalize, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { StudioProjectsService, studioHome } from './projects.js'
 import { StudioPublisher } from './publish.js'
-import { BuilderSession, changesReport } from '@pikku/builder'
+import { BuilderSession, changesReport } from '@pikkustudio/builder'
 import { KEY_PROVIDERS, StudioAi, SUBSCRIPTION_PROVIDERS, type AiInput } from './ai.js'
 
 export type SignInChoice = 'local' | 'fabric'
@@ -41,7 +41,7 @@ export const resolveConsoleApp = () =>
   resolve(fileURLToPath(import.meta.resolve('@pikku/cli/fabric')), '..', '..', '..', '..', 'console-app')
 
 export const resolveDesignEntry = () =>
-  fileURLToPath(import.meta.resolve('@pikku/design-server'))
+  fileURLToPath(import.meta.resolve('@pikkustudio/design-server'))
 
 class StudioSettingsFile {
   constructor(private path: string) {}

@@ -1,0 +1,20 @@
+{
+  "name": "@pikkustudio/supervisor",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "license": "BUSL-1.1",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "tsc": "tsc --noEmit",
+    "test": "node --import tsx --test 'test/**/*.test.ts'"
+  },
+  "devDependencies": {
+    "@types/node": "^24"
+  }
+}

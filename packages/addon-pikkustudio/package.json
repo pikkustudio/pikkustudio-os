@@ -1,5 +1,5 @@
 {
-  "name": "@pikku/addon-pikkustudio",
+  "name": "@pikkustudio/addon",
   "version": "0.0.1",
   "description": "Studio addon for Pikku — the local backend behind Pikku Studio",
   "type": "module",
@@ -35,7 +35,7 @@
     "kysely": "^0.29.0"
   },
   "dependencies": {
-    "@pikku/builder": "workspace:*",
+    "@pikkustudio/builder": "workspace:*",
     "@pikku/cli": "^0.12.179",
     "@pikku/kysely": "^0.13.34",
     "vite": "^7.0.0"

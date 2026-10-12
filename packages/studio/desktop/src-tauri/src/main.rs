@@ -34,7 +34,7 @@ fn studio_command(port: u16) -> String {
     });
     match bin {
         Some(bin) => format!("exec node '{}' --port {}", bin.replace('\'', "'\\''"), port),
-        None => format!("exec npx -y @pikku/studio@latest --port {}", port),
+        None => format!("exec npx -y @pikkustudio/studio@latest --port {}", port),
     }
 }
 

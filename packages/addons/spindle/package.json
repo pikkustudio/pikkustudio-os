@@ -33,7 +33,7 @@
     "zod": "^4",
     "kysely": "*",
     "@pikku/react": "*",
-    "@pikku/pikkustudio-blocks": "*",
+    "@pikkustudio/blocks": "*",
     "lucide-react": "*"
   },
   "devDependencies": {

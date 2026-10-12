@@ -1,4 +1,4 @@
-# @pikku/studio-workflow-graph
+# @pikkustudio/workflow-graph
 Renders a Pikku workflow as an interactive xyflow graph (elkjs layout) with plain React and Tailwind v4 classes.
 Use `WorkflowGraphView` with `workflow`, `direction`, `onPaneClick` and `host` (click actions, highlight, run painting).
 

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { pikkuSessionlessFunc } from '#pikku/addon/function'
-import { slotKey } from '@pikku/builder'
+import { slotKey } from '@pikkustudio/builder'
 import { listArtifacts } from '../services/artifacts.js'
 import { languageRule } from '../services/language.js'
 

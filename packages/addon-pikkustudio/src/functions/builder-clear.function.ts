@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { pikkuSessionlessFunc } from '#pikku/addon/function'
-import { SPECIALISTS, slotKey } from '@pikku/builder'
+import { SPECIALISTS, slotKey } from '@pikkustudio/builder'
 
 export const BuilderClearInput = z.object({ key: z.string(), specialist: z.enum(SPECIALISTS).optional() })
 

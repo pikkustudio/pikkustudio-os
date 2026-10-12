@@ -1,5 +1,5 @@
 {
-  "name": "@pikku/pikkustudio-blocks",
+  "name": "@pikkustudio/blocks",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -41,8 +41,8 @@
     "@tanstack/react-table": "^9.2.5",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
-    "@pikku/studio-workflow-graph": "workspace:*",
-    "@pikku/blob-studio": "workspace:*",
-    "@pikku/theme-studio": "workspace:*"
+    "@pikkustudio/workflow-graph": "workspace:*",
+    "@pikkustudio/blob": "workspace:*",
+    "@pikkustudio/theme": "workspace:*"
   }
 }

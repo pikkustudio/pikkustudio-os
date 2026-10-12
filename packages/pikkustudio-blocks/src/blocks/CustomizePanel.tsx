@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
-import { CustomizeAside, type CustomizePanelShell } from '@pikku/theme-studio'
+import { CustomizeAside, type CustomizePanelShell } from '@pikkustudio/theme'
 import { CUSTOMIZE_ENABLED, SlidersHorizontal, blobMotionItem, studioLabels } from '../lib/customize'
-import type { CustomizeItem } from '@pikku/theme-studio'
+import type { CustomizeItem } from '@pikkustudio/theme'
 import { SidePanel } from './SidePanel'
 
 const shell: CustomizePanelShell = ({ title, sub, inline, onClose, children }) => (

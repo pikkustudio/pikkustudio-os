@@ -1,6 +1,6 @@
 import { existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
-import { slotKey, type BuilderSession } from '@pikku/builder'
+import { slotKey, type BuilderSession } from '@pikkustudio/builder'
 import { listArtifacts } from './artifacts.js'
 import { latestActivity, type RunState, type Signals } from '../lib/project-checklist.js'
 import type { StudioProjectsService } from './projects.js'

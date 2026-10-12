@@ -1,1 +1,1 @@
-export * from '@pikku/theme-studio/palettes'
+export * from '@pikkustudio/theme/palettes'

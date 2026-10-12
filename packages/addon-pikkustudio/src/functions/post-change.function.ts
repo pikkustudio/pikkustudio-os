@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { runPikku } from '@pikku/builder'
+import { runPikku } from '@pikkustudio/builder'
 import { pikkuSessionlessFunc } from '#pikku/addon/function'
 
 export const PostChangeInput = z.object({

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { pikkuSessionlessFunc } from '#pikku/addon/function'
-import { SPECIALISTS } from '@pikku/builder'
+import { SPECIALISTS } from '@pikkustudio/builder'
 import { listChats } from '../services/chats.js'
 
 export const BuilderChatsInput = z.object({ key: z.string(), specialist: z.enum(SPECIALISTS).optional() })

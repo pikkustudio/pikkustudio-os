@@ -4,7 +4,7 @@ import { closeSync, existsSync, lstatSync, openSync, readFileSync, readdirSync, 
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { connect, createServer } from 'node:net'
 import { homedir } from 'node:os'
-import { builderHome, packageRoot, piPackageRoot, type Launcher } from '@pikku/builder'
+import { builderHome, packageRoot, piPackageRoot, type Launcher } from '@pikkustudio/builder'
 import { basename, dirname, join, resolve, sep } from 'node:path'
 import { randomBytes, randomUUID } from 'node:crypto'
 import {

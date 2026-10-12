@@ -10,7 +10,7 @@ export type { ScopedSource } from '../lib/sources/cascade.js'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { BuilderSession } from '@pikku/builder'
+import { BuilderSession } from '@pikkustudio/builder'
 import { StudioAi } from './ai.js'
 import { StudioHooks } from './hooks.js'
 import { LogCollector, forwardFromEnv } from './log-collector.js'
@@ -48,7 +48,7 @@ export interface StudioServicesOptions {
 
 const resolveDesignEntry = () => {
   try {
-    const entry = fileURLToPath(import.meta.resolve('@pikku/studio/design'))
+    const entry = fileURLToPath(import.meta.resolve('@pikkustudio/studio/design'))
     return existsSync(entry) ? entry : undefined
   } catch {
     return undefined

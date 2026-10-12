@@ -1,11 +1,11 @@
 import { asI18n } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useState } from 'react'
-import { Page } from '@pikku/pikkustudio-blocks/blocks/Page'
-import { PageHead } from '@pikku/pikkustudio-blocks/blocks/PageHead'
-import { InlineAlert } from '@pikku/pikkustudio-blocks/blocks/InlineAlert'
-import { Button } from '@pikku/pikkustudio-blocks/ui/button'
-import { Input } from '@pikku/pikkustudio-blocks/ui/input'
+import { Page } from '@pikkustudio/blocks/blocks/Page'
+import { PageHead } from '@pikkustudio/blocks/blocks/PageHead'
+import { InlineAlert } from '@pikkustudio/blocks/blocks/InlineAlert'
+import { Button } from '@pikkustudio/blocks/ui/button'
+import { Input } from '@pikkustudio/blocks/ui/input'
 import { useRpc, useBusy, type ScreenProps } from './shared.js'
 
 export default function NewCollection({ navigate }: ScreenProps) {

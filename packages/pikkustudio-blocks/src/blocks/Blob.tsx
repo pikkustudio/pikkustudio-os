@@ -1,4 +1,4 @@
-import { Blob, type BlobPoseName, type BlobProps } from '@pikku/blob-studio'
+import { Blob, type BlobPoseName, type BlobProps } from '@pikkustudio/blob'
 import { BLOB_LOGO } from '../lib/blobPoses'
 
 export { Blob }
