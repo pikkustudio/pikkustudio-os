@@ -11,9 +11,12 @@ export interface PublishTarget {
   deploy(from: string, run: Runner, onLine: (line: string) => void): Promise<void>
 }
 
+export type PublishPhase = 'checks' | 'save' | 'send' | 'deploy'
+
 export interface PublishJob {
   state: 'idle' | 'running' | 'done' | 'failed'
-  url: string | null
+  startedAt: string | null
+  phase: PublishPhase | null
   error: string | null
   log: string[]
 }
@@ -119,7 +122,7 @@ export class StudioPublisher {
   }
 
   status(key: string): PublishJob {
-    return this.jobs.get(key) ?? { state: 'idle', url: null, error: null, log: [] }
+    return this.jobs.get(key) ?? { state: 'idle', startedAt: null, phase: null, error: null, log: [] }
   }
 
   async deploy(key: string, targetId: string): Promise<PublishJob> {
@@ -129,13 +132,11 @@ export class StudioPublisher {
     const { targets } = await this.options(key)
     if (targets[targetId] !== 'ready') throw new Error('This project is not ready to publish there yet')
     const { worktree } = await this.projects.open(key)
-    const job: PublishJob = { state: 'running', url: null, error: null, log: [] }
+    const job: PublishJob = { state: 'running', startedAt: new Date().toISOString(), phase: 'checks', error: null, log: [] }
     this.jobs.set(key, job)
     const onLine = (line: string) => {
       job.log.push(line)
       if (job.log.length > 200) job.log.shift()
-      const url = line.match(/https:\/\/\S+/)?.[0]
-      if (url) job.url = url
     }
     const steps: [string, string[]][] = [
       ['git', ['add', '-A']],
@@ -145,11 +146,14 @@ export class StudioPublisher {
       try {
         const blocked = await publishBlockers(worktree, this.mocks)
         if (blocked) throw new Error(blocked)
+        job.phase = 'save'
         await trackLargeFiles(worktree).catch(() => [])
         for (const [command, args] of steps) await this.run(command, args, worktree, onLine)
         const main = await this.projects.prepareMain(key)
         const from = main?.dir ?? worktree
+        job.phase = 'send'
         await this.run('git', ['push', '-u', 'origin', main ? 'main' : 'HEAD'], from, onLine)
+        job.phase = 'deploy'
         await target.deploy(from, this.run, onLine)
         job.state = 'done'
       } catch (error) {

@@ -92,7 +92,8 @@ describe('StudioPublisher', () => {
     projects.closeAll()
     const job = publisher.status(key)
     assert.equal(job.state, 'done')
-    assert.equal(job.url, 'https://shop-main.pikku.app')
+    assert.equal(job.phase, 'deploy')
+    assert.ok(job.startedAt)
     assert.deepEqual(calls.map((c) => c.split(' ').slice(0, 2).join(' ')), ['git add', 'git -c', 'git push', 'npx pikku'])
     assert.equal(calls[3], 'npx pikku fabric deploy apply -y')
   })
@@ -105,7 +106,7 @@ describe('StudioPublisher', () => {
     await publisher.deploy(key, 'fabric')
     await until(() => publisher.status(key).state !== 'running')
     projects.closeAll()
-    assert.deepEqual([publisher.status(key).state, publisher.status(key).error], ['failed', 'push rejected'])
+    assert.deepEqual([publisher.status(key).state, publisher.status(key).error, publisher.status(key).phase], ['failed', 'push rejected', 'save'])
   })
 
   test('every other cloud gets a setup prompt naming its adapter', () => {
