@@ -16,12 +16,6 @@ export const palettes: PaletteInfo[] = [
   { id: 'sand', label: 'Sand', light: { bg: '#f3efeb', primary: '#25211d', hero: '#37322c' }, dark: { bg: '#151311', primary: '#ebe7e1', hero: '#25211c' } },
   { id: 'dusk', label: 'Dusk', light: { bg: '#f2eef7', primary: '#9e4600', hero: '#563576' }, dark: { bg: '#140e1d', primary: '#f6ab6b', hero: '#42245e' } },
   { id: 'saffron', label: 'Saffron', light: { bg: '#f4f0e1', primary: '#8b5600', hero: '#7b4d00' }, dark: { bg: '#171309', primary: '#eebc4a', hero: '#643b00' } },
-  { id: 'kitchen', label: 'Lived-in kitchen', group: 'new', light: { bg: '#f5f0e4', primary: '#3f611b', hero: '#426323' }, dark: { bg: '#19120b', primary: '#9ec773', hero: '#324f14' } },
-  { id: 'linen', label: 'Linen and oak', group: 'new', light: { bg: '#f4efe7', primary: '#5d3820', hero: '#663c23' }, dark: { bg: '#19120c', primary: '#dbba66', hero: '#4f2a14' } },
-  { id: 'library', label: 'Reading room', group: 'new', light: { bg: '#f4f0e3', primary: '#104f32', hero: '#1a5439' }, dark: { bg: '#12150e', primary: '#7ecb9f', hero: '#094029' } },
-  { id: 'shed', label: 'Garden shed', group: 'new', light: { bg: '#ecf2eb', primary: '#a0421d', hero: '#8e3510' }, dark: { bg: '#101511', primary: '#ee9972', hero: '#742400' } },
-  { id: 'morning', label: 'Morning bedroom', group: 'new', light: { bg: '#f4efeb', primary: '#934950', hero: '#873e45' }, dark: { bg: '#191211', primary: '#eba0a2', hero: '#6e2d34' } },
-  { id: 'orchard', label: 'Apricot orchard', group: 'new', light: { bg: '#fceddf', primary: '#9e4e00', hero: '#874400' }, dark: { bg: '#1a120c', primary: '#f7ab5d', hero: '#6e3200' } },
 ]
 
 export const paletteScript = `try{var p=localStorage.getItem('${PALETTE_KEY}');if(!p)p='${DEFAULT_PALETTE}';if(p&&${JSON.stringify(palettes.map((x) => x.id))}.indexOf(p)>-1)document.documentElement.setAttribute('data-palette',p)}catch(e){}`

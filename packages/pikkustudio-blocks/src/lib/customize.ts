@@ -33,12 +33,6 @@ export function studioLabels(): CustomizeLabels {
       sand: m.customize__palette_sand(),
       dusk: m.customize__palette_dusk(),
       saffron: m.customize__palette_saffron(),
-      kitchen: m.customize__palette_kitchen(),
-      linen: m.customize__palette_linen(),
-      library: m.customize__palette_library(),
-      shed: m.customize__palette_shed(),
-      morning: m.customize__palette_morning(),
-      orchard: m.customize__palette_orchard(),
     },
   }
 }
