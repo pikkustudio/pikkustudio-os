@@ -1,0 +1,22 @@
+{
+  "name": "@pikku/theme-studio",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "license": "BUSL-1.1",
+  "exports": {
+    ".": "./src/index.ts",
+    "./palettes": "./src/palettes.ts",
+    "./store": "./src/store.ts",
+    "./registry": "./src/registry.ts",
+    "./panel": "./src/CustomizePanel.tsx",
+    "./palettes.css": "./src/palettes.css"
+  },
+  "files": [
+    "src",
+    "ADOPTING.md"
+  ],
+  "peerDependencies": {
+    "react": "^19.0.0"
+  }
+}
