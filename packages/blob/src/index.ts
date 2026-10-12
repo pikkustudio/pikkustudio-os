@@ -1,5 +1,6 @@
 export * from './core'
 export * from './render'
 export * from './motion'
-export { Blob } from './Blob'
+export { Blob, BLOB_MOTION_KEY, getBlobMotion, setBlobMotion } from './Blob'
+export type { BlobMotionPref } from './Blob'
 export type { BlobProps } from './Blob'

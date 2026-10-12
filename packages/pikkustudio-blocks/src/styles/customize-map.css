@@ -1,0 +1,10 @@
+:root {
+  --cz-surface: var(--card);
+  --cz-ink: var(--foreground);
+  --cz-ink-2: var(--ink-2);
+  --cz-line: var(--border);
+  --cz-accent: var(--accent);
+  --cz-accent-ink: var(--accent-foreground);
+  --cz-hover: var(--secondary);
+  --cz-ring: var(--ring);
+}

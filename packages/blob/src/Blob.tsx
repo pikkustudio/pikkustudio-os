@@ -43,8 +43,39 @@ let pointer: [number, number] | null = null
 let probe: HTMLElement | null = null
 let reducedQuery: MediaQueryList | null = null
 
+export type BlobMotionPref = 'system' | 'on' | 'off'
+export const BLOB_MOTION_KEY = 'pikku-blob-motion'
+
+let motionPref: BlobMotionPref | null = null
+
+export function getBlobMotion(): BlobMotionPref {
+  if (motionPref) return motionPref
+  let saved: string | null = null
+  try {
+    saved = typeof localStorage === 'undefined' ? null : localStorage.getItem(BLOB_MOTION_KEY)
+  } catch {}
+  const pref: BlobMotionPref = saved === 'on' || saved === 'off' ? saved : 'system'
+  if (typeof window !== 'undefined') motionPref = pref
+  return pref
+}
+
+export function setBlobMotion(next: BlobMotionPref) {
+  motionPref = next
+  try {
+    if (next === 'system') localStorage.removeItem(BLOB_MOTION_KEY)
+    else localStorage.setItem(BLOB_MOTION_KEY, next)
+  } catch {}
+  insts.forEach((i) => {
+    i.dirty = true
+  })
+  wake()
+}
+
 const reduced = () => {
   if (typeof window === 'undefined') return true
+  const pref = getBlobMotion()
+  if (pref === 'on') return false
+  if (pref === 'off') return true
   reducedQuery ??= window.matchMedia('(prefers-reduced-motion: reduce)')
   return reducedQuery.matches
 }

@@ -42,6 +42,7 @@
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
     "@pikku/studio-workflow-graph": "workspace:*",
-    "@pikku/blob-studio": "workspace:*"
+    "@pikku/blob-studio": "workspace:*",
+    "@pikku/theme-studio": "workspace:*"
   }
 }
