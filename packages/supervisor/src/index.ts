@@ -1,4 +1,4 @@
-export { Supervisor } from './supervisor.ts'
+export { Supervisor } from './supervisor.js'
 export type {
   ServiceSpec,
   ServiceState,
@@ -6,4 +6,4 @@ export type {
   SupervisorEvent,
   SupervisorOptions,
   SpawnFn,
-} from './supervisor.ts'
+} from './supervisor.js'

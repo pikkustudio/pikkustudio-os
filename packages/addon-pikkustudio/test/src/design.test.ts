@@ -1,0 +1,132 @@
+import assert from 'node:assert'
+import { execFileSync } from 'node:child_process'
+import { existsSync, readFileSync } from 'node:fs'
+import { mkdir, mkdtemp, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import { describe, test } from 'node:test'
+import { StudioProjectsService, type AccountProvider } from '../../src/services/projects.js'
+
+const account: AccountProvider = {
+  account: async () => ({ signedIn: false, apiUrl: '', consoleUrl: '' }),
+  projects: async () => [],
+  startSignIn: async () => ({ code: '', url: '', expiresAt: new Date().toISOString() }),
+  pollSignIn: async () => 'confirmed',
+  locate: async () => null,
+  adopt: async () => {},
+  signOut: async () => {},
+}
+
+const git = (cwd: string, ...args: string[]) =>
+  execFileSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', ...args], { cwd, stdio: 'pipe' })
+
+const until = async (check: () => boolean, ms = 8000) => {
+  const end = Date.now() + ms
+  while (!check()) {
+    if (Date.now() > end) throw new Error('timed out')
+    await new Promise((r) => setTimeout(r, 25))
+  }
+}
+
+const alive = (pid: number) => {
+  try {
+    process.kill(pid, 0)
+    return true
+  } catch {
+    return false
+  }
+}
+
+const setup = async (entrySource: string) => {
+  const base = await mkdtemp(join(tmpdir(), 'pikku-studio-design-'))
+  const source = join(base, 'design-src')
+  await mkdir(source, { recursive: true })
+  await writeFile(join(source, 'design.mjs'), entrySource)
+  const path = join(base, 'shop')
+  await mkdir(path, { recursive: true })
+  await writeFile(join(path, 'package.json'), JSON.stringify({ name: 'shop' }))
+  git(path, 'init', '-q', '-b', 'main')
+  git(path, 'add', '-A')
+  git(path, 'commit', '-qm', 'init')
+  const service = new StudioProjectsService({
+    account,
+    home: join(base, 'studio'),
+    projectsDir: join(base, 'studio', 'local'),
+    designEntry: join(source, 'design.mjs'),
+    devCommand: () => ({ command: 'sh', args: ['-c', 'echo "$PIKKU_DESIGN_SERVER_URL" > url.txt; env | grep -c PIKKU_STUDIO_DESIGN > legacy.txt; sleep 30'] }),
+    installCommand: () => null,
+    waitForPort: async () => {},
+    confine: false,
+  })
+  const added = await service.add(path)
+  return { service, key: added.key }
+}
+
+const listening = `
+import { createServer } from 'node:net'
+import { parseArgs } from 'node:util'
+import { writeFileSync } from 'node:fs'
+const { values } = parseArgs({ options: { root: { type: 'string' }, port: { type: 'string' } } })
+writeFileSync(values.root + '/design-args.txt', process.argv.slice(2).join(' '))
+createServer().listen(Number(values.port), '127.0.0.1')
+console.log('design up')
+`
+
+describe('design server', () => {
+  test('starts beside the dev server and the dev server is told where it is', async () => {
+    const { service, key } = await setup(listening)
+    try {
+      const opened = await service.open(key)
+      await until(() => service.designStatus(key)?.state === 'ready')
+      const design = service.designStatus(key)!
+      await until(() => existsSync(join(opened.worktree, 'url.txt')))
+      assert.equal(readFileSync(join(opened.worktree, 'url.txt'), 'utf8').trim(), design.url)
+      assert.match(design.url, /^http:\/\/127\.0\.0\.1:\d+\/$/)
+      assert.match(readFileSync(join(opened.worktree, 'legacy.txt'), 'utf8').trim(), /^0$/)
+      const args = readFileSync(join(opened.worktree, 'design-args.txt'), 'utf8')
+      assert.ok(args.includes(`--root ${opened.worktree}`))
+      assert.ok(args.includes(`--port ${new URL(design.url).port}`))
+    } finally {
+      service.killAll()
+    }
+  })
+
+  test('a design server that crashes does not stop the project from opening', async () => {
+    const { service, key } = await setup(`console.error('design exploded'); process.exit(1)`)
+    try {
+      const opened = await service.open(key)
+      assert.ok(opened.port)
+      await until(() => service.designStatus(key)?.state === 'failed')
+      const design = service.designStatus(key)!
+      assert.match(design.logTail, /design exploded/)
+      assert.equal(design.lastExit?.code, 1)
+      assert.ok(service.runningProject(key))
+    } finally {
+      service.killAll()
+    }
+  })
+
+  test('closing the project stops the design server', async () => {
+    const { service, key } = await setup(listening)
+    try {
+      await service.open(key)
+      await until(() => service.designStatus(key)?.state === 'ready')
+      const pid = (service as any).supervisor.status(key, 'design').pid as number
+      assert.ok(alive(pid))
+      service.close(key)
+      await until(() => !alive(pid))
+      assert.equal(service.designStatus(key), null)
+    } finally {
+      service.killAll()
+    }
+  })
+
+  test('killAll takes the design server down with Studio', async () => {
+    const { service, key } = await setup(listening)
+    await service.open(key)
+    await until(() => service.designStatus(key)?.state === 'ready')
+    const pid = (service as any).supervisor.status(key, 'design').pid as number
+    service.killAll()
+    await until(() => !alive(pid))
+  })
+})

@@ -48,7 +48,7 @@ export interface StudioServicesOptions {
 
 const resolveDesignEntry = () => {
   try {
-    const entry = fileURLToPath(import.meta.resolve('@pikkustudio/studio/design'))
+    const entry = fileURLToPath(import.meta.resolve('@pikkustudio/design-server'))
     return existsSync(entry) ? entry : undefined
   } catch {
     return undefined

@@ -12,6 +12,7 @@ import { ConflictError } from '@pikku/core/errors'
 import { generatedSource, projectSource, resolveEffective, setMany, toEnv, type ScopedSource } from '../lib/sources/index.js'
 import { DEVELOP, MAIN, addWorktree, listWorktrees, layoutRoot, sessionKey, splitSessionKey, cloneLayout, commitPaths, createLayout, ensureWorktree, saveWorktrees, keepChanges, mainEnv, keepStatus, listVersions, listThemes, type ProjectTheme, type VersionCommit, worktreeConfinement, type KeepResult, type KeepStatus, type StudioWorktree } from './worktree.js'
 import { canConfine, confinedSpawn, type Confinement } from './confine.js'
+import { Supervisor, type ServiceSpec, type ServiceStatus } from '@pikkustudio/supervisor'
 import { diskUsage } from './disk.js'
 import { linkDevPikku } from './dev-link.js'
 import { previewViteConfig } from './vite-preview.js'
@@ -81,6 +82,14 @@ export interface ProjectApp {
   state: 'starting' | 'ready' | 'failed'
   shot?: string | null
   shotAt?: number | null
+}
+
+export interface ProjectDesign {
+  state: ServiceStatus['state']
+  url: string
+  restarts: number
+  lastExit: ServiceStatus['lastExit']
+  logTail: string
 }
 
 type RunningApp = ProjectApp & { child: ChildProcess | null; dir: string }
@@ -298,6 +307,8 @@ const tail = async (path: string, lines = 20) => {
   return text.trimEnd().split('\n').slice(-lines).join('\n')
 }
 
+const designUrl = (port: number) => `http://127.0.0.1:${port}/`
+
 const waitForPort = async (port: number, timeoutMs = 180_000) => {
   const deadline = Date.now() + timeoutMs
   while (Date.now() < deadline) {
@@ -447,7 +458,38 @@ export class StudioProjectsService {
   constructor(private options: StudioProjectsOptions = {}) {
     this.account = options.account ?? localAccount
     this.home = options.home ?? studioHome()
+    this.supervisor = new Supervisor({ pidFile: join(this.home, 'supervisor.pids.json') })
     process.once('exit', () => this.killAll())
+  }
+
+  private supervisor: Supervisor
+  private designSpecs = new Map<string, ServiceSpec>()
+
+  designStatus(key: string): ProjectDesign | null {
+    const spec = this.designSpecs.get(key)
+    if (!spec) return null
+    const status = this.supervisor.status(key, 'design')
+    if (!status) return { state: 'starting', url: designUrl(spec.port), restarts: 0, lastExit: null, logTail: '' }
+    return { state: status.state, url: designUrl(spec.port), restarts: status.restarts, lastExit: status.lastExit, logTail: status.logTail }
+  }
+
+  async restartDesign(key: string): Promise<ProjectDesign | null> {
+    const spec = this.designSpecs.get(key)
+    if (!spec) return null
+    await this.supervisor.stop(key, 'design')
+    await this.supervisor.start(key, spec).catch(() => {})
+    return this.designStatus(key)
+  }
+
+  private async startDesign(key: string, spec: ServiceSpec) {
+    this.designSpecs.set(key, spec)
+    await this.supervisor.start(key, spec).catch(() => {})
+    if (this.designSpecs.get(key) !== spec) await this.supervisor.stopAll(key)
+  }
+
+  private stopDesign(key: string) {
+    this.designSpecs.delete(key)
+    return this.supervisor.stopAll(key)
   }
 
   private get pidDir() {
@@ -473,6 +515,15 @@ export class StudioProjectsService {
   }
 
   killAll() {
+    for (const key of [...this.designSpecs.keys()]) {
+      const pids = this.supervisor.list(key).map((status) => status.pid)
+      void this.stopDesign(key)
+      for (const pid of pids) {
+        try {
+          if (pid) process.kill(-pid, 'SIGKILL')
+        } catch {}
+      }
+    }
     for (const [key, running] of this.running) {
       signalTree(running.child, 'SIGKILL')
       for (const app of this.apps.get(key) ?? []) if (app.child) signalTree(app.child, 'SIGKILL')
@@ -1050,7 +1101,10 @@ export class StudioProjectsService {
     this.running.delete(key)
     this.apps.delete(key)
     this.forgetPid(key)
-    await Promise.all([running?.child ?? null, ...apps.map((app) => app.child)].map((child) => stopGracefully(child, timeoutMs)))
+    await Promise.all([
+      this.stopDesign(key),
+      ...[running?.child ?? null, ...apps.map((app) => app.child)].map((child) => stopGracefully(child, timeoutMs)),
+    ])
   }
 
   async projectDir(key: string): Promise<string> {
@@ -1253,6 +1307,7 @@ export class StudioProjectsService {
     const logPath = this.logFile(key, 'server', true)
     const log = openSync(logPath, 'a')
     await this.reapStrays()
+    const designPort = design ? await freePort() : 0
     const spawnOptions = {
       cwd: worktree.projectDir,
       detached: true,
@@ -1263,7 +1318,7 @@ export class StudioProjectsService {
         PIKKU_LOG_FORMAT: 'json',
         PIKKU_STUDIO_TOKEN: token,
         PIKKU_CONSOLE_TOKEN: token,
-        ...(design ? { PIKKU_STUDIO_DESIGN: design } : {}),
+        ...(design ? { PIKKU_DESIGN_SERVER_URL: designUrl(designPort) } : {}),
         ...(await this.projectEnv(key, entry.path)),
         ...(await (this.options.env?.(key) ?? {})),
       },
@@ -1288,6 +1343,19 @@ export class StudioProjectsService {
         this.forgetPid(key)
       }
     })
+    if (design) {
+      void this.startDesign(key, {
+        name: 'design',
+        command: process.execPath,
+        args: [design, '--root', worktree.projectDir, '--port', String(designPort)],
+        cwd: worktree.projectDir,
+        env: spawnOptions.env as Record<string, string>,
+        port: designPort,
+        logPath: join(this.home, 'logs', `${key}-design.log`),
+        restart: 'on-crash',
+        spawn: confinement ? (command, commandArgs, options) => confinedSpawn(command, commandArgs, confinement, options) : undefined,
+      })
+    }
     if (this.options.startApps !== false) this.startApps(key, worktree.projectDir, port, confinement, spawnOptions.env)
     try {
       await Promise.race([(this.options.waitForPort ?? waitForPort)(port), exited])
@@ -1323,6 +1391,7 @@ export class StudioProjectsService {
     this.forgetPid(key)
     for (const app of this.apps.get(key) ?? []) if (app.child) signalTree(app.child, 'SIGTERM')
     this.apps.delete(key)
+    void this.stopDesign(key)
   }
 
   projectApps(key: string): ProjectApp[] {
