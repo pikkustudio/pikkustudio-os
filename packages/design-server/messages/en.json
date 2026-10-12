@@ -42,5 +42,6 @@
   "artifact_device_tablet": "Tablet width",
   "artifact_device_mobile": "Phone width",
   "artifact_options": "Options",
-  "artifact_version": "Version"
+  "artifact_version": "Version",
+  "artifact_delete_confirm": "Delete this version of \"{name}\"? This removes artifacts/{file}."
 }

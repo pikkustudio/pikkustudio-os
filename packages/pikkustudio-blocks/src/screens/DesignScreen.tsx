@@ -1,5 +1,5 @@
 import { asI18n, type I18nString } from '@pikku/react'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { Globe, MousePointer2, Palette, UserRound } from 'lucide-react'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
@@ -11,11 +11,15 @@ import { AppNotRunning, startSteps } from '../blocks/AppNotRunning'
 import { HintRow } from '../blocks/HintRow'
 import { ImpersonatePanel } from '../blocks/ImpersonatePanel'
 import { LiveAppFrame, liveAppUrl } from '../blocks/LiveAppFrame'
+import { DesignPartsFrame, type PartsCatalog, type PartsLens } from '../blocks/DesignPartsFrame'
+import { Segmented } from '../blocks/Segmented'
+import { StatusLine } from '../blocks/StatusLine'
 import { MockStatusBar } from '../blocks/MockStatusBar'
 import { useProjectKey } from '../lib/project'
 import type { Device, Mode } from '../types/designTypes'
 
 type LiveApp = { slug: string; url: string | null; state: 'starting' | 'ready' | 'failed' }
+type DesignPreview = { state: 'starting' | 'ready' | 'restarting' | 'failed' | 'stopped'; url: string; restarts: number; logTail: string } | null
 
 const label = (slug: string): I18nString => {
   const text = slug.charAt(0).toUpperCase() + slug.slice(1).replace(/[-_]+/g, ' ')
@@ -23,7 +27,7 @@ const label = (slug: string): I18nString => {
 }
 
 export function DesignScreen() {
-  const q = useSearch({ strict: false }) as { mode?: Mode; screen?: 'tablet' | 'phone'; app?: string }
+  const q = useSearch({ strict: false }) as { mode?: Mode; screen?: 'tablet' | 'phone'; app?: string; parts?: PartsLens; part?: string }
   const navigate = useNavigate()
   const set = (patch: Record<string, unknown>) => navigate({ to: '.', search: ((prev: object) => ({ ...prev, ...patch })) as never, replace: true })
   const key = useProjectKey()
@@ -38,13 +42,42 @@ export function DesignScreen() {
 
   const list = ((apps.data as LiveApp[] | undefined) ?? [])
   const current = list.find((a) => a.slug === q.app) ?? list[0]
+  const parts = q.parts === 'library' || q.parts === 'app' ? q.parts : null
+  const [catalog, setCatalog] = useState<PartsCatalog>({ library: [], app: [] })
+  const onCatalog = useCallback((next: PartsCatalog) => setCatalog(next), [])
+  const preview = usePikkuQuery('studio:getDesignPreview', { key }, {
+    enabled: !!key && !!parts,
+    refetchInterval: (query: { state: { data?: DesignPreview } }) => (query.state.data?.state === 'ready' ? 15000 : 2000),
+  } as never)
+  const restartPreview = usePikkuMutation('studio:restartDesignPreview', { onSuccess: () => preview.refetch() })
+  const startPreview = usePikkuMutation('studio:openProject', { onSuccess: () => preview.refetch() })
+  const entries = parts ? catalog[parts] : []
+  const section = parts ? (q.part && entries.some((e) => e.key === q.part) ? q.part : (entries[0]?.key ?? null)) : null
+  const partGroups = parts
+    ? [...new Set(entries.map((e) => e.group))].map((group) => ({ app: group, label: asI18n(group), pages: entries.filter((e) => e.group === group).map((e) => ({ id: e.key, name: asI18n(e.title), text: asI18n(group) })) }))
+    : []
+  const design = preview.data as DesignPreview | undefined
+
   const device: Device = q.screen ?? 'computer'
   const tool = q.mode === 'translations' || q.mode === 'chat' || q.mode === 'impersonate' || q.mode === 'none' ? q.mode : 'design'
   const failed = list.some((a) => a.state === 'failed') || start.isError
 
   const app = current ? label(current.slug) : undefined
   let stage
-  if (!key || apps.isPending) {
+  if (parts) {
+    const url = design?.url
+    if (!key || preview.isPending) {
+      stage = <PartsWaiting text={m.design_parts__starting()} />
+    } else if (design === null) {
+      stage = <AppNotRunning state="off" name={m.design_parts__name()} what={m.design_parts__what_default()} onStart={() => start_parts()} starting={startPreview.isPending} />
+    } else if (design?.state === 'failed' || design?.state === 'stopped' || (design?.state === 'ready' && !url)) {
+      stage = <AppNotRunning state="failed" name={m.design_parts__name()} reason={design.state === 'stopped' ? m.design_parts__reason_stopped() : m.design_parts__reason_failed()} logText={design.logTail} fixSay={(log) => m.design_parts__fix_say({ log: asI18n(log) })} onStart={() => restartPreview.mutate({ key })} starting={restartPreview.isPending} />
+    } else if (design?.state === 'ready' && url) {
+      stage = <DesignPartsFrame url={url} lens={parts} section={section} reloadKey={reloadKey} onCatalog={onCatalog} />
+    } else {
+      stage = <PartsWaiting text={design?.state === 'restarting' ? m.design_parts__restarting() : m.design_parts__starting()} />
+    }
+  } else if (!key || apps.isPending) {
     stage = <AppNotRunning state="starting" name={app} steps={startSteps(start.isSuccess, list)} onStart={() => undefined} />
   } else if (failed) {
     stage = <AppNotRunning state="failed" name={app} error={start.error ?? restart.error} onStart={() => restart.mutate({ key })} starting={restart.isPending || start.isPending} />
@@ -54,6 +87,11 @@ export function DesignScreen() {
     stage = <AppNotRunning state="starting" name={app} steps={startSteps(start.isSuccess, list)} onStart={() => undefined} />
   } else {
     stage = <LiveAppFrame url={current.url} device={device} reloadKey={reloadKey} title={label(current.slug)} />
+  }
+
+  function start_parts() {
+    setWanted(true)
+    startPreview.mutate({ key })
   }
 
   const panel = {
@@ -70,21 +108,28 @@ export function DesignScreen() {
       <div className="flex min-h-0 flex-1 flex-col gap-3">
         <PreviewBar
           app="live"
-          page={current?.slug ?? ''}
-          groups={[{ app: 'live', label: m.design_live__apps(), pages: list.map((a) => ({ id: a.slug, name: label(a.slug), text: a.state === 'ready' ? m.design_live__running() : m.design_live__starting_short() })) }]}
+          page={parts ? (section ?? '') : (current?.slug ?? '')}
+          groups={parts ? partGroups : [{ app: 'live', label: m.design_live__apps(), pages: list.map((a) => ({ id: a.slug, name: label(a.slug), text: a.state === 'ready' ? m.design_live__running() : m.design_live__starting_short() })) }]}
           device={device}
           tool={tool}
-          kind="app"
-          onPick={(_a, p) => set({ app: p })}
+          tools={parts ? [] : undefined}
+          hideDevice={!!parts}
+          kind={parts ? 'part' : 'app'}
+          onPick={(_a, p) => set(parts ? { part: p } : { app: p })}
           onDevice={(d) => set({ screen: d === 'computer' ? undefined : d })}
           onTool={(t) => set({ mode: t === 'design' ? undefined : t })}
           onReload={() => setReloadKey((k) => k + 1)}
-          onOpenTab={current?.url ? () => window.open(liveAppUrl(current.url!), '_blank', 'noopener') : undefined}
-          actions={<PinButton variant="bar" />}
+          onOpenTab={parts ? (design?.url ? () => window.open(liveAppUrl(design.url), '_blank', 'noopener') : undefined) : current?.url ? () => window.open(liveAppUrl(current.url!), '_blank', 'noopener') : undefined}
+          actions={
+            <>
+              <Segmented label={m.design_parts__what()} value={parts ?? 'live'} onChange={(v) => set({ parts: v === 'live' ? undefined : v, part: undefined })} options={[['live', m.design_parts__live()], ['library', m.design_parts__library()], ['app', m.design_parts__sections()]]} />
+              <PinButton variant="bar" />
+            </>
+          }
         />
-        <div className={`grid min-h-0 flex-1 gap-3.5 ${tool === 'none' ? 'grid-cols-1' : 'grid-cols-[minmax(0,1fr)_340px]'}`}>
+        <div className={`grid min-h-0 flex-1 gap-3.5 ${tool === 'none' || parts ? 'grid-cols-1' : 'grid-cols-[minmax(0,1fr)_340px]'}`}>
           {stage}
-          {tool !== 'none' && (
+          {tool !== 'none' && !parts && (
             <DesignInspector title={title} mode="theme" showModes={false} onMode={() => undefined} onClose={tool === 'design' ? undefined : () => set({ mode: 'none' })}>
               {tool === 'impersonate' ? (
                 <>
@@ -98,6 +143,14 @@ export function DesignScreen() {
           )}
         </div>
       </div>
+    </div>
+  )
+}
+
+function PartsWaiting({ text }: { text: I18nString }) {
+  return (
+    <div className="flex min-h-[320px] items-center justify-center rounded-card bg-card">
+      <StatusLine text={text} tone="wait" />
     </div>
   )
 }

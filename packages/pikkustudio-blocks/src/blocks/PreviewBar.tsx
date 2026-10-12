@@ -45,7 +45,7 @@ export function PreviewBar({
   tools?: string[]
   actions?: I18nNode
   label?: I18nString
-  kind?: 'page' | 'email' | 'artifact' | 'app'
+  kind?: 'page' | 'email' | 'artifact' | 'app' | 'part'
   hideDevice?: boolean
 }) {
   return (

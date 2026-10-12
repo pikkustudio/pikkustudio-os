@@ -3338,5 +3338,21 @@
   "project_flow__note_emails": "Die E-Mail „{name}“ wird geschrieben",
   "project_flow__note_emails_plain": "Eine E-Mail wird geschrieben",
   "project_flow__note_publish": "Wird veröffentlicht",
-  "project_flow__note_check": "Es wird geprüft, ob alles noch funktioniert"
+  "project_flow__note_check": "Es wird geprüft, ob alles noch funktioniert",
+  "design_parts__what": "Was du dir ansiehst",
+  "design_parts__live": "Deine App",
+  "design_parts__library": "Grundbausteine",
+  "design_parts__sections": "Deine Bereiche",
+  "design_parts__frame": "Deine Bausteine, so wie sie aussehen werden",
+  "design_parts__starting": "Deine Bausteine werden vorbereitet…",
+  "design_parts__restarting": "Deine Bausteine werden aufgefrischt…",
+  "design_parts__name": "Die Bausteinansicht",
+  "design_parts__what_default": "deine Bausteine",
+  "design_parts__reason_failed": "Die Vorschau deiner Bausteine hat angehalten und kam nicht von selbst zurück. Ein neuer Versuch hilft meistens. Das Letzte, was sie gesagt hat, steht unter den Details.",
+  "design_parts__reason_stopped": "Die Vorschau deiner Bausteine ist ausgeschaltet. Versuche es erneut, um sie zurückzuholen.",
+  "design_parts__fix_say": "Die Bausteinansicht meines Projekts hat nicht gestartet. Bitte finde heraus, warum, und behebe es. Schreib „change request“ in deine Antwort und sag mir dann in einfachen Worten, was du geändert hast.\n\nWas sie gesagt hat:\n{log}",
+  "design_parts__empty": "Hier gibt es noch nichts zu zeigen. Bitte Pikku im Chat, etwas zu zeichnen.",
+  "page_breadcrumb__browse_part": "Bausteine durchsuchen",
+  "page_breadcrumb__menu_part": "Bausteine",
+  "page_breadcrumb__trigger_part": "Baustein: {name}. Bausteine durchsuchen"
 }

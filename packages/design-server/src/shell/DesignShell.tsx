@@ -137,7 +137,7 @@ export function DesignShell({
   // sandbox socket). Its `artifact-deleted` ack just re-reads the directory. One
   // VERSION, never the slug — the older ones are what the user was shown before.
   const onDeleteArtifact = (file: string, name: string) => {
-    if (!window.confirm(`Delete this version of "${name}"? This removes artifacts/${file}.`)) {
+    if (!window.confirm(m.artifact_delete_confirm({ name, file }))) {
       return
     }
     requestDeleteArtifact(file)

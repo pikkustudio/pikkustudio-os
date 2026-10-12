@@ -3549,5 +3549,21 @@
   "project_flow__note_emails": "Writing the {name} email",
   "project_flow__note_emails_plain": "Writing an email",
   "project_flow__note_publish": "Putting it online",
-  "project_flow__note_check": "Checking that everything still works"
+  "project_flow__note_check": "Checking that everything still works",
+  "design_parts__what": "What to look at",
+  "design_parts__live": "Your app",
+  "design_parts__library": "Basic parts",
+  "design_parts__sections": "Your sections",
+  "design_parts__frame": "Your building blocks, as they will look",
+  "design_parts__starting": "Getting your building blocks ready…",
+  "design_parts__restarting": "Refreshing your building blocks…",
+  "design_parts__name": "The parts view",
+  "design_parts__what_default": "your building blocks",
+  "design_parts__reason_failed": "The preview of your building blocks stopped and could not come back by itself. Trying again usually fixes it. The last thing it said is under the details.",
+  "design_parts__reason_stopped": "The preview of your building blocks is switched off. Try again to bring it back.",
+  "design_parts__fix_say": "The parts view of my project did not start. Please find out why and fix it. Say \"change request\" in your reply, then tell me in plain words what you changed.\n\nWhat it said:\n{log}",
+  "design_parts__empty": "Nothing to show here yet. Ask Pikku in the chat to draw some.",
+  "page_breadcrumb__browse_part": "Browse parts",
+  "page_breadcrumb__menu_part": "Parts",
+  "page_breadcrumb__trigger_part": "Part: {name}. Browse parts"
 }

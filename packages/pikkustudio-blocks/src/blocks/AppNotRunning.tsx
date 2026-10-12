@@ -102,6 +102,9 @@ export function AppNotRunning({
   starting = false,
   steps,
   error,
+  reason,
+  logText,
+  fixSay,
 }: {
   state: AppNotRunningState
   name?: string
@@ -110,11 +113,15 @@ export function AppNotRunning({
   starting?: boolean
   steps?: OpeningStep[]
   error?: unknown
+  reason?: I18nString
+  logText?: string
+  fixSay?: (log: string) => I18nString
 }) {
   const { say } = useContext(ShellCtx)
   const [explain, setExplain] = useState(false)
   const [copied, setCopied] = useState(false)
-  const log = useFailureLog(state === 'failed', error)
+  const fetched = useFailureLog(state === 'failed' && logText === undefined, error)
+  const log = logText ?? fetched
   const who = name ?? m.app_not_running__your_app()
   const thing = what ?? m.app_not_running__what_default()
   const busy = state === 'starting' || starting
@@ -123,7 +130,7 @@ export function AppNotRunning({
     state === 'failed' ? m.app_not_running__failed_title({ name: who }) : busy ? m.app_not_running__starting_title({ name: who }) : m.app_not_running__off_title({ name: who })
   const text =
     state === 'failed'
-      ? reasonOf(log)
+      ? (reason ?? reasonOf(log))
       : busy
           ? m.app_not_running__starting_text({ what: thing })
           : m.app_not_running__off_text({ what: thing })
@@ -154,7 +161,7 @@ export function AppNotRunning({
               <ChevronDown className={`size-4 transition-transform ${explain ? 'rotate-180' : ''}`} aria-hidden="true" />
               {explain ? m.app_not_running__hide() : m.app_not_running__what_happened()}
             </button>
-            <Button variant="heroGhost" size="page" type="button" onClick={() => say(m.app_not_running__fix_say({ name: who, log: asI18n(log) }))}>
+            <Button variant="heroGhost" size="page" type="button" onClick={() => say(fixSay ? fixSay(log) : m.app_not_running__fix_say({ name: who, log: asI18n(log) }))}>
               <PikkuDot />
               {m.app_not_running__ask_fix()}
             </Button>

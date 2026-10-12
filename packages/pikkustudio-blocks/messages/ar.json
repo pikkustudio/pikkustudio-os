@@ -3610,5 +3610,21 @@
   "project_flow__note_emails": "كتابة رسالة {name}",
   "project_flow__note_emails_plain": "كتابة رسالة بريد",
   "project_flow__note_publish": "جارٍ النشر",
-  "project_flow__note_check": "التحقق من أن كل شيء ما زال يعمل"
+  "project_flow__note_check": "التحقق من أن كل شيء ما زال يعمل",
+  "design_parts__what": "ما الذي تريد أن تراه",
+  "design_parts__live": "تطبيقك",
+  "design_parts__library": "الأجزاء الأساسية",
+  "design_parts__sections": "أقسامك",
+  "design_parts__frame": "عناصرك كما ستبدو",
+  "design_parts__starting": "جارٍ تجهيز عناصرك…",
+  "design_parts__restarting": "جارٍ تحديث عناصرك…",
+  "design_parts__name": "عرض الأجزاء",
+  "design_parts__what_default": "عناصرك",
+  "design_parts__reason_failed": "توقفت معاينة عناصرك ولم تعد من تلقاء نفسها. تنجح المحاولة مرة أخرى عادةً. آخر ما قالته تجده تحت التفاصيل.",
+  "design_parts__reason_stopped": "معاينة عناصرك متوقفة. جرّب مرة أخرى لإعادتها.",
+  "design_parts__fix_say": "لم يبدأ عرض الأجزاء في مشروعي. اكتشف السبب وأصلحه من فضلك. اكتب \"change request\" في ردك، ثم أخبرني بكلمات بسيطة بما غيّرته.\n\nما قاله:\n{log}",
+  "design_parts__empty": "لا يوجد ما يُعرض هنا بعد. اطلب من بيكو في المحادثة أن يرسم بعض الأشياء.",
+  "page_breadcrumb__browse_part": "تصفّح الأجزاء",
+  "page_breadcrumb__menu_part": "الأجزاء",
+  "page_breadcrumb__trigger_part": "الجزء: {name}. تصفّح الأجزاء"
 }

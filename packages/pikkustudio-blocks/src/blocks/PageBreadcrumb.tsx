@@ -9,11 +9,12 @@ const words = {
   email: { trigger: m.page_breadcrumb__trigger_email, browse: m.page_breadcrumb__browse_email, menu: m.page_breadcrumb__menu_email },
   artifact: { trigger: m.page_breadcrumb__trigger_artifact, browse: m.page_breadcrumb__browse_artifact, menu: m.page_breadcrumb__menu_artifact },
   app: { trigger: m.page_breadcrumb__trigger_app, browse: m.page_breadcrumb__browse_app, menu: m.page_breadcrumb__menu_app },
+  part: { trigger: m.page_breadcrumb__trigger_part, browse: m.page_breadcrumb__browse_part, menu: m.page_breadcrumb__menu_part },
 }
 
 export type PageGroup = { app: string; label: I18nString; pages: { id: string; name: I18nString; text: I18nString }[] }
 
-export function PageBreadcrumb({ groups, app, page, onPick, kind = 'page', icon, align = 'center' }: { groups: PageGroup[]; app: string; page: string; onPick: (app: string, page: string) => void; kind?: 'page' | 'email' | 'artifact' | 'app'; icon?: I18nNode; align?: 'start' | 'center' }) {
+export function PageBreadcrumb({ groups, app, page, onPick, kind = 'page', icon, align = 'center' }: { groups: PageGroup[]; app: string; page: string; onPick: (app: string, page: string) => void; kind?: 'page' | 'email' | 'artifact' | 'app' | 'part'; icon?: I18nNode; align?: 'start' | 'center' }) {
   const [open, setOpen] = useState(false)
   const root = useRef<HTMLDivElement>(null)
   const trigger = useRef<HTMLButtonElement>(null)
