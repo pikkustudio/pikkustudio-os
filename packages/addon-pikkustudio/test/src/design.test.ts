@@ -37,7 +37,7 @@ const alive = (pid: number) => {
   }
 }
 
-const setup = async (entrySource: string) => {
+const setup = async (entrySource: string, env?: () => Record<string, string>) => {
   const base = await mkdtemp(join(tmpdir(), 'pikku-studio-design-'))
   const source = join(base, 'design-src')
   await mkdir(source, { recursive: true })
@@ -53,8 +53,9 @@ const setup = async (entrySource: string) => {
     home: join(base, 'studio'),
     projectsDir: join(base, 'studio', 'local'),
     designEntry: join(source, 'design.mjs'),
-    devCommand: () => ({ command: 'sh', args: ['-c', 'echo "$PIKKU_DESIGN_SERVER_URL" > url.txt; env | grep -c PIKKU_STUDIO_DESIGN > legacy.txt; sleep 30'] }),
+    devCommand: () => ({ command: 'sh', args: ['-c', 'echo "$PIKKU_DESIGN_SERVER_URL" > url.txt; env > project-env.txt; env | grep -c PIKKU_STUDIO_DESIGN > legacy.txt; sleep 30'] }),
     installCommand: () => null,
+    env,
     waitForPort: async () => {},
     confine: false,
   })
@@ -72,7 +73,43 @@ createServer().listen(Number(values.port), '127.0.0.1')
 console.log('design up')
 `
 
+const dumpEnv = `
+import { createServer } from 'node:net'
+import { parseArgs } from 'node:util'
+import { writeFileSync } from 'node:fs'
+const { values } = parseArgs({ options: { root: { type: 'string' }, port: { type: 'string' } } })
+writeFileSync(values.root + '/design-env.json', JSON.stringify(process.env))
+createServer().listen(Number(values.port), '127.0.0.1')
+`
+
 describe('design server', () => {
+  test('gets a minimal env: no studio token, no project env, no ambient credentials', async () => {
+    const saved = { ...process.env }
+    process.env.PIKKU_DESIGN_ORIGIN = 'https://design.example'
+    process.env.AWS_SECRET_ACCESS_KEY = 'ambient-secret'
+    const { service, key } = await setup(dumpEnv, () => ({ FAKE_AI_KEY: 'sk-fake-secret' }))
+    try {
+      const opened = await service.open(key)
+      await until(() => existsSync(join(opened.worktree, 'design-env.json')))
+      const design = JSON.parse(readFileSync(join(opened.worktree, 'design-env.json'), 'utf8')) as Record<string, string>
+      assert.equal(design.PIKKU_STUDIO_TOKEN, undefined)
+      assert.equal(design.PIKKU_CONSOLE_TOKEN, undefined)
+      assert.equal(design.FAKE_AI_KEY, undefined)
+      assert.equal(design.AWS_SECRET_ACCESS_KEY, undefined)
+      assert.equal(design.PIKKU_DESIGN_ORIGIN, 'https://design.example')
+      assert.ok(design.PATH)
+      assert.ok(!JSON.stringify(design).includes('sk-fake-secret'))
+      await until(() => existsSync(join(opened.worktree, 'project-env.txt')))
+      const project = readFileSync(join(opened.worktree, 'project-env.txt'), 'utf8')
+      assert.match(project, /^PIKKU_STUDIO_TOKEN=/m)
+      assert.match(project, /^FAKE_AI_KEY=sk-fake-secret$/m)
+    } finally {
+      service.killAll()
+      for (const k of Object.keys(process.env)) if (!(k in saved)) delete process.env[k]
+      Object.assign(process.env, saved)
+    }
+  })
+
   test('starts beside the dev server and the dev server is told where it is', async () => {
     const { service, key } = await setup(listening)
     try {

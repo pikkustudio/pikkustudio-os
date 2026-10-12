@@ -214,6 +214,20 @@ export const fileProjectStore = (home: string): ProjectStore => {
 // The team of the work that is only on this computer, and the only team without Fabric.
 export const LOCAL_TEAM = 'local'
 
+const DESIGN_ENV_KEYS = ['PATH', 'HOME', 'USER', 'LOGNAME', 'SHELL', 'TMPDIR', 'TMP', 'TEMP', 'LANG', 'LC_ALL', 'LC_CTYPE', 'TZ', 'TERM', 'NODE_ENV', 'NODE_OPTIONS', 'SystemRoot']
+
+const designEnv = (): Record<string, string> => {
+  const env: Record<string, string> = {}
+  for (const key of DESIGN_ENV_KEYS) {
+    const value = process.env[key]
+    if (value !== undefined) env[key] = value
+  }
+  for (const [key, value] of Object.entries(process.env)) {
+    if (key.startsWith('PIKKU_DESIGN_') && value !== undefined && key !== 'PIKKU_DESIGN_SERVER_URL') env[key] = value
+  }
+  return env
+}
+
 export const studioHome = () =>
   process.env.PIKKU_STUDIO_HOME ?? join(homedir(), '.pikkustudio')
 
@@ -1349,7 +1363,7 @@ export class StudioProjectsService {
         command: process.execPath,
         args: [design, '--root', worktree.projectDir, '--port', String(designPort)],
         cwd: worktree.projectDir,
-        env: spawnOptions.env as Record<string, string>,
+        env: designEnv(),
         port: designPort,
         logPath: join(this.home, 'logs', `${key}-design.log`),
         restart: 'on-crash',
