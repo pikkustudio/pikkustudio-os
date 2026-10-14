@@ -5,3 +5,11 @@ target
 gen
 *.log
 .DS_Store
+*.gen.ts
+*.gen.js
+*.gen.json
+*.gen.mjs
+.tanstack
+.vite
+.env
+.deploy

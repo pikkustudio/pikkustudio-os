@@ -1,4 +1,5 @@
 import { m } from '@/i18n/messages'
+import { CloudOffer } from '../blocks/CloudPanel'
 import { useContext } from 'react'
 import { Button } from '../ui/button'
 import { ArrowRight, Cloud, Server } from 'lucide-react'
@@ -76,7 +77,7 @@ export function ChooseAiScreen() {
         <div className="grid grid-cols-1 gap-4">
           {st === 'normal' || st === 'error' ? (
             <>
-              {Offer ? <Offer open={open} /> : null}
+              {Offer ? <Offer open={open} /> : <CloudOffer open={open} />}
               <div className="flex flex-col gap-4 rounded-[22px] border border-border bg-card px-7 py-6.5 shadow-card">
                 <div className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-5">
                   <span className="grid size-14 place-items-center rounded-2xl bg-accent text-accent-foreground">

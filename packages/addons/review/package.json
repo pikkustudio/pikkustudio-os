@@ -82,6 +82,7 @@
   },
   "scripts": {
     "prebuild": "pikku all && pikku db export",
+    "build": "tsc && pikku dist",
     "pikku": "pikku all && pikku db export",
     "score": "bun bin/score.ts",
     "test": "bun test",

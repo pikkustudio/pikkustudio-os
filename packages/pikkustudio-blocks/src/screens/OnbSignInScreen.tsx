@@ -10,6 +10,7 @@ import { OnbCtx } from './OnboardingLayout'
 import { useAccount, useRecentProjects, useSignOut, useUseLocally } from '../lib/onboarding'
 import { asI18n } from '@pikku/react'
 import { m } from '@/i18n/messages'
+import { CloudOffer } from '../blocks/CloudPanel'
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -150,7 +151,7 @@ function SignInChoices() {
         </section>
       ) : null}
 
-      {st !== 'error' && Offer ? <Offer loading={loading} open={open} done={go} /> : null}
+      {st !== 'error' ? Offer ? <Offer loading={loading} open={open} done={go} /> : <CloudOffer open={open} /> : null}
       <p className="text-[13px] text-muted-foreground text-pretty">{m.onb_sign_in_screen__never_read()}</p>
     </div>
   )

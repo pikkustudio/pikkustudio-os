@@ -1,0 +1,8 @@
+.pikku
+*.gen.ts
+*.gen.json
+*.gen.css
+*.gen.d.ts
+.vite
+.pikku-preview*
+.pikku-runtime

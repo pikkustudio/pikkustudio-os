@@ -8,6 +8,7 @@ import { PageHead } from '../blocks/PageHead'
 import { PublishHosts } from '../blocks/PublishHosts'
 import { useSlots } from '../lib/slots'
 import { ShellCtx } from '../lib/shell'
+import { CloudOffer } from '../blocks/CloudPanel'
 
 
 export function PublishScreen() {
@@ -35,7 +36,9 @@ export function PublishScreen() {
         </EmptyState>
       ) : Target ? (
         <Target />
-      ) : null}
+      ) : (
+        <CloudOffer open={open} />
+      )}
       <PublishHosts />
     </div>
   )

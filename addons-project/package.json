@@ -1,0 +1,14 @@
+{
+  "name": "@studio/addons-project",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#pikku/*.js": "./.pikku/*.ts",
+    "#pikku/*": "./.pikku/*/index.ts"
+  },
+  "dependencies": {
+    "@pikku/addon-spindle": "*",
+    "@pikku/kysely": "^0.13.34"
+  }
+}

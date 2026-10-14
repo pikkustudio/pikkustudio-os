@@ -3354,5 +3354,7 @@
   "design_parts__empty": "Hier gibt es noch nichts zu zeigen. Bitte Pikku im Chat, etwas zu zeichnen.",
   "page_breadcrumb__browse_part": "Bausteine durchsuchen",
   "page_breadcrumb__menu_part": "Bausteine",
-  "page_breadcrumb__trigger_part": "Baustein: {name}. Bausteine durchsuchen"
+  "page_breadcrumb__trigger_part": "Baustein: {name}. Bausteine durchsuchen",
+  "cloud_panel__title": "Pikku Cloud",
+  "cloud_panel__open": "Sehen, was Pikku Cloud dazu bringt"
 }

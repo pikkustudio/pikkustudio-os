@@ -1,5 +1,5 @@
 {
-  "extends": "../../apps/app/tsconfig.json",
+  "extends": "../../apps/studio/tsconfig.json",
   "compilerOptions": {
     "paths": {
       "react": ["../../node_modules/@types/react"],

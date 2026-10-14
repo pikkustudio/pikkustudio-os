@@ -22,7 +22,7 @@ export function useUpdatesFeed(projectKey: string) {
     dataUpdatedAt: number
   }
 
-  const stage = usePikkuQuery('fabricStageAudit', { key: projectKey, limit: 30 }, { enabled: !!projectKey, refetchInterval: EVERY } as never) as unknown as {
+  const stage = usePikkuQuery('fabricStageAudit' as never, { key: projectKey, limit: 30 } as never, { enabled: !!projectKey, refetchInterval: EVERY } as never) as unknown as {
     data?: StageAudit
   }
   const studio = usePikkuQuery('studioActivity', { limit: 30, ...(projectKey ? { key: projectKey } : {}) }, { refetchInterval: EVERY } as never) as unknown as {

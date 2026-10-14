@@ -12,7 +12,7 @@ import { Button } from '../ui/button'
 import { AiLitellmPanel, AiProviderPanel, providers } from '../blocks/AiConnectPanels'
 import { useSlots } from '../lib/slots'
 import { useCopy } from '../lib/copy'
-import { FabricPitch } from '../blocks/FabricPitch'
+import { CloudPanel } from '../blocks/CloudPanel'
 import { PanelRow } from '../blocks/ShellAccount'
 import { useAccount, useProjectRun, useRecentProjects, useStartProjectRun, useAttachFile, newProjectName, type ProjectRun } from '../lib/onboarding'
 import { ArrowRight, Bell, Check, CircleAlert, FolderOpen, Laptop, MessageCircle, Pin, ShieldCheck, User, X, CheckCheck } from 'lucide-react'
@@ -459,9 +459,7 @@ export function OnboardingLayout() {
               </div>
             ) : null}
 
-            {panel === 'pitch' && (account.data?.consoleUrl ?? copy.pitchHref) ? (
-              <FabricPitch href={account.data?.consoleUrl ?? copy.pitchHref ?? ''} variant={q.pitch} avatar={<Avatar mood="calm" size="md" />} onClose={() => open('')} />
-            ) : null}
+            {panel === 'pitch' ? <CloudPanel variant={q.pitch} avatar={<Avatar mood="calm" size="md" />} onClose={() => open('')} /> : null}
 
             {panel === 'provider' ? <AiProviderPanel provider={q.via ?? ''} onDone={() => { open(''); go() }} onBack={() => open('')} /> : null}
 

@@ -1,8 +1,8 @@
 {
-  "extends": "../../apps/app/tsconfig.json",
+  "extends": "../../apps/studio/tsconfig.json",
   "compilerOptions": {
     "paths": {
-      "@/*": ["../../apps/app/src/*"],
+      "@/*": ["../../apps/studio/src/*"],
       "kysely": ["../../node_modules/kysely"],
       "kysely/*": ["../../node_modules/kysely/*"],
       "zod": ["../../node_modules/zod"],
@@ -29,7 +29,6 @@
       "@better-auth/core/*": ["../../node_modules/@better-auth/core/*"],
       "react": ["../../node_modules/@types/react"],
       "react/*": ["../../node_modules/@types/react/*"],
-      "@fabric/sdk/*": ["../../../../../fabric/fabric/packages/fabric-sdk/src/pikku/*"]
     }
   },
   "include": ["src"],

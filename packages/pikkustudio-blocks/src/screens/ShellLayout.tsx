@@ -2,6 +2,7 @@ import { asI18n, sep, type I18nNode, type I18nString } from '@pikku/react'
 import { Blob, type BlobPoseName } from '../blocks/Blob'
 import { PikkuMark } from '../blocks/PikkuMark'
 import { ChangesPanel } from '../changes-panel/ChangesPanel'
+import { CloudPanel } from '../blocks/CloudPanel'
 import { EmptyState } from '../blocks/EmptyState'
 import { NotFoundState } from '../blocks/NotFoundState'
 import { Outlet, useLocation, useNavigate, useSearch } from '@tanstack/react-router'
@@ -235,7 +236,7 @@ export function ShellLayout() {
   const [helperHot, setHelperHot] = useState(false)
   const unread = needsPerson && isDismissed
 
-  const panelTitle: Record<PanelId, I18nString> = { chat: workMode ? agentName(workMode) : m.parts__talk_to_pikku(), updates: m.shell_layout__updates(), changes: m.shell_layout__changes(), workspace: m.shell_layout__your_workspace(), account: m.shell_layout__your_account() }
+  const panelTitle: Record<PanelId, I18nString> = { chat: workMode ? agentName(workMode) : m.parts__talk_to_pikku(), updates: m.shell_layout__updates(), changes: m.shell_layout__changes(), workspace: m.shell_layout__your_workspace(), account: m.shell_layout__your_account(), pitch: m.cloud_panel__title() }
   const aboutScreen: I18nString | null = onEmails || fill ? null : onArtifacts ? SCREEN_NAME.artifacts() : onKnowledge ? SCREEN_NAME.knowledge() : onProject ? SCREEN_NAME.project() : onPublish ? m.shell_layout__publish() : m.shell_layout__overview()
   const bubbleActions: { label: I18nString; yes: boolean; run: () => void }[] = pending.length
     ? [
@@ -694,6 +695,8 @@ export function ShellLayout() {
                 <SignOutSection />
               </div>
             ) : null}
+
+            {panel === 'pitch' ? <CloudPanel avatar={<Avatar mood="calm" size="md" />} onClose={() => setPanel('')} /> : null}
 
             {panel === 'workspace' ? (
               <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-auto px-6 pt-5 pb-7">

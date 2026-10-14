@@ -1,0 +1,103 @@
+{
+  "tools": [
+    {
+      "id": "chromium",
+      "name": "Chromium (headless shell)",
+      "find": { "command": ["chrome-headless-shell", "--version"], "version": "(\\d+\\.\\d+\\.\\d+\\.\\d+)" },
+      "versions": [
+        {
+          "version": "154.0.8037.92",
+          "default": true,
+          "artifacts": {
+            "darwin-arm64": {
+              "url": "https://storage.googleapis.com/chrome-for-testing-public/154.0.8037.92/mac-arm64/chrome-headless-shell-mac-arm64.zip",
+              "sha256": "77da14e75d7f2568e6f7898d3df7cdc6faac74b15e903b2c9d486ebb6ca9b929",
+              "size": 99221129,
+              "format": "zip",
+              "bin": ["chrome-headless-shell-mac-arm64/chrome-headless-shell"]
+            },
+            "darwin-x64": {
+              "url": "https://storage.googleapis.com/chrome-for-testing-public/154.0.8037.92/mac-x64/chrome-headless-shell-mac-x64.zip",
+              "sha256": "a54292aaacbb77f76f6ef47558e7c51ab884044e0adacca315567f83c060bcc4",
+              "size": 104748425,
+              "format": "zip",
+              "bin": ["chrome-headless-shell-mac-x64/chrome-headless-shell"]
+            },
+            "linux-arm64": {
+              "url": "https://storage.googleapis.com/chrome-for-testing-public/154.0.8037.92/linux-arm64/chrome-headless-shell-linux-arm64.zip",
+              "sha256": "0ed0e47d9e9f639197f508d62ada09e5c6b4c4c60edab3160a9312a733091df6",
+              "size": 121182296,
+              "format": "zip",
+              "bin": ["chrome-headless-shell-linux-arm64/chrome-headless-shell"]
+            },
+            "linux-x64": {
+              "url": "https://storage.googleapis.com/chrome-for-testing-public/154.0.8037.92/linux64/chrome-headless-shell-linux64.zip",
+              "sha256": "636aa5c79f2693632e9921b8bbb050038ba11672e02346c06c20f991aed096f9",
+              "size": 120477194,
+              "format": "zip",
+              "bin": ["chrome-headless-shell-linux64/chrome-headless-shell"]
+            }
+          }
+        }
+      ],
+      "env": { "PIKKU_CHROMIUM": "${bin}" },
+      "get": {
+        "command": "npx @puppeteer/browsers install chrome-headless-shell@stable",
+        "link": "https://googlechromelabs.github.io/chrome-for-testing/"
+      }
+    },
+    {
+      "id": "xcode",
+      "name": "Xcode",
+      "platforms": ["darwin"],
+      "find": { "command": ["xcodebuild", "-version"], "version": "Xcode (\\d+(?:\\.\\d+)*)" },
+      "versions": [],
+      "env": {},
+      "get": { "link": "https://apps.apple.com/app/xcode/id497799835" }
+    },
+    {
+      "id": "ollama",
+      "name": "Ollama",
+      "find": {
+        "endpoint": "http://127.0.0.1:11434/api/version",
+        "command": ["ollama", "--version"],
+        "version": "(\\d+\\.\\d+\\.\\d+)"
+      },
+      "versions": [],
+      "env": {},
+      "get": { "brew": "brew install ollama", "link": "https://ollama.com/download" }
+    },
+    {
+      "id": "lmstudio",
+      "name": "LM Studio",
+      "find": { "endpoint": "http://127.0.0.1:1234/v1/models", "command": ["lms", "version"], "version": "(\\d+\\.\\d+\\.\\d+)" },
+      "versions": [],
+      "env": {},
+      "get": { "brew": "brew install --cask lm-studio", "link": "https://lmstudio.ai/download" }
+    },
+    {
+      "id": "ffmpeg",
+      "name": "FFmpeg (with ffprobe)",
+      "find": { "command": ["ffmpeg", "-version"], "version": "ffmpeg version (\\S+)" },
+      "versions": [],
+      "env": {},
+      "get": { "brew": "brew install ffmpeg", "apt": "sudo apt-get install -y ffmpeg", "link": "https://ffmpeg.org/download.html" }
+    },
+    {
+      "id": "whisper-cli",
+      "name": "whisper.cpp (whisper-cli)",
+      "find": { "command": ["whisper-cli", "--help"], "version": "(whisper-cli)" },
+      "versions": [],
+      "env": {},
+      "get": { "brew": "brew install whisper-cpp", "link": "https://github.com/ggml-org/whisper.cpp" }
+    },
+    {
+      "id": "pdftotext",
+      "name": "Poppler (pdftotext)",
+      "find": { "command": ["pdftotext", "-v"], "version": "version (\\d+\\.\\d+(?:\\.\\d+)?)" },
+      "versions": [],
+      "env": {},
+      "get": { "brew": "brew install poppler", "apt": "sudo apt-get install -y poppler-utils", "link": "https://poppler.freedesktop.org" }
+    }
+  ]
+}
