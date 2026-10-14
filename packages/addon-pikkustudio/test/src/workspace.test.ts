@@ -1,5 +1,6 @@
 import assert from 'node:assert'
 import { execFileSync } from 'node:child_process'
+import { createServer, type IncomingMessage } from 'node:http'
 import { mkdir, mkdtemp, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -58,5 +59,25 @@ describe('workspaces', () => {
     const listed = await service.list()
     assert.deepStrictEqual(listed.map((p) => p.key), ['app'])
     await assert.rejects(service.open('other'), /single project/)
+  })
+
+  test('a cloud project is reached through its workspace link with the link\'s bearer', async () => {
+    const seen: { url?: string; auth?: string }[] = []
+    const server = createServer((req: IncomingMessage, res) => {
+      seen.push({ url: req.url, auth: req.headers.authorization })
+      res.setHeader('content-type', 'application/json')
+      res.end(JSON.stringify({ projects: [{ key: 'app' }] }))
+    })
+    await new Promise<void>((done) => server.listen(0, '127.0.0.1', done))
+    const port = (server.address() as { port: number }).port
+    const base = await mkdtemp(join(tmpdir(), 'pikku-studio-ws-'))
+    let state: 'starting' | 'ready' = 'starting'
+    const provider: AccountProvider = { ...account([]), workspaceLink: async () => (state === 'ready' ? { state, url: `http://127.0.0.1:${port}`, token: 'tok' } : { state, url: '' }) }
+    const service = new StudioProjectsService({ account: provider, home: join(base, 'studio'), startApps: false })
+    assert.deepStrictEqual(await service.workspaceTarget('cloud:p1'), { state: 'starting' })
+    state = 'ready'
+    assert.deepStrictEqual(await service.workspaceTarget('cloud:p1'), { state: 'ready', url: `http://127.0.0.1:${port}`, headers: { authorization: 'Bearer tok' }, remoteKey: 'app' })
+    assert.deepStrictEqual(seen, [{ url: '/studio/listProjects', auth: 'Bearer tok' }])
+    server.close()
   })
 })

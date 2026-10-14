@@ -17,6 +17,21 @@ export const projectProxy = pikkuSessionlessFunc({
     const incoming = toWebRequest(http!.request!, `http://127.0.0.1:${live?.port ?? 0}`)
     const url = new URL(incoming.url)
     url.pathname = url.pathname.slice(`/p/${key}`.length) || '/'
+    if (key.startsWith('cloud:')) {
+      const target = await studioProjects.workspaceTarget(key)
+      if (target.state === 'starting') return Response.json({ state: 'starting' }, { status: 503, headers: { 'retry-after': '3' } })
+      const remote = new URL(`${target.url}/p/${target.remoteKey}${url.pathname === '/' ? '' : url.pathname}`)
+      remote.search = url.search
+      const headers = new Headers(incoming.headers)
+      headers.delete('host')
+      headers.delete('cookie')
+      for (const [name, value] of Object.entries(target.headers)) headers.set(name, value)
+      try {
+        return studioHooks.proxied(await fetch(remote, { method: incoming.method, headers, body: incoming.body, redirect: 'manual', ...({ duplex: 'half' } as object) }))
+      } catch (error) {
+        return Response.json({ error: (error as Error).message }, { status: 502 })
+      }
+    }
     const own = incoming.method === 'POST' ? url.pathname.match(/^\/rpc\/console:(listArtifacts|getArtifact|listStudioChanges)$/)?.[1] : undefined
     if (own) {
       if (own === 'listStudioChanges') return Response.json({ changes: [] })

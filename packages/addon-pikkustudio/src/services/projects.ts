@@ -156,6 +156,15 @@ export interface WorkspaceLink {
   token?: string
 }
 
+export interface WorkspaceTarget {
+  state: 'ready'
+  url: string
+  headers: Record<string, string>
+  remoteKey: string
+}
+
+const WORKSPACE_TARGET_TTL = 30_000
+
 export interface AccountLink {
   apiUrl: string
   token: string
@@ -1401,6 +1410,24 @@ export class StudioProjectsService {
     if (!key.startsWith('cloud:')) throw new Error('Only a cloud project has a workspace link')
     if (!this.account.workspaceLink) throw new Error('Cloud workspaces are not part of this edition')
     return this.account.workspaceLink(key.slice('cloud:'.length))
+  }
+
+  private workspaceTargets = new Map<string, { at: number; target: WorkspaceTarget }>()
+
+  async workspaceTarget(key: string): Promise<WorkspaceTarget | { state: 'starting' }> {
+    const cached = this.workspaceTargets.get(key)
+    if (cached && Date.now() - cached.at < WORKSPACE_TARGET_TTL) return cached.target
+    const link = await this.workspaceLink(key)
+    if (link.state !== 'ready' || !link.url) return { state: 'starting' }
+    const headers: Record<string, string> = link.token ? { authorization: `Bearer ${link.token}` } : {}
+    const res = await fetch(`${link.url}/studio/listProjects`, { method: 'POST', headers: { ...headers, 'content-type': 'application/json' }, body: '{}' })
+    if (res.status === 503) return { state: 'starting' }
+    if (!res.ok) throw new Error(`The workspace answered ${res.status}`)
+    const remoteKey = ((await res.json()) as { projects?: { key: string }[] }).projects?.[0]?.key
+    if (!remoteKey) throw new Error('The workspace has no project yet')
+    const target: WorkspaceTarget = { state: 'ready', url: link.url, headers, remoteKey }
+    this.workspaceTargets.set(key, { at: Date.now(), target })
+    return target
   }
 
   async open(key: string): Promise<RunningProject> {
