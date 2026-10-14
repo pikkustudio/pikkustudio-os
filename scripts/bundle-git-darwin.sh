@@ -41,7 +41,7 @@ bundle() {
 bundle "$out/bin/git" bin
 bundle "$out/libexec/git-core/git-remote-http" libexec
 find "$out" -type f \( -perm -u+x -o -name '*.dylib' \) | while read -r f; do
-  file "$f" | grep -q Mach-O && codesign --force --sign - "$f" >/dev/null
+  if file "$f" | grep -q Mach-O; then codesign --force --sign - "$f" >/dev/null; fi
 done
 "$out/bin/git" --version
 du -sh "$out"

@@ -35,8 +35,8 @@ const scan = (rel, text) => {
 }
 
 for (const file of walk(path.join(pkg, 'src'))) {
-  const rel = path.relative(pkg, file)
-  if (PITCH_FILE.test(file) || !/\.(tsx?|css|json)$/.test(file)) continue
+  const rel = path.relative(pkg, file).split(path.sep).join('/')
+  if (PITCH_FILE.test(file.split(path.sep).join('/')) || !/\.(tsx?|css|json)$/.test(file)) continue
   scan(rel, fs.readFileSync(file, 'utf8'))
 }
 
