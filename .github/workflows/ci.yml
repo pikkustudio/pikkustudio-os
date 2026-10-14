@@ -17,6 +17,6 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun run check:fabric-boundary
       - run: bun run check:independence
-      - run: bun run --filter '*' --if-present prebuild
+      - run: bun run prebuild
       - run: bun run tsc
       - run: bun run test
