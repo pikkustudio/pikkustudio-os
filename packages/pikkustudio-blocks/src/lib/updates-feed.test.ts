@@ -48,7 +48,7 @@ test('the feed is newest first and grouped by day', () => {
 test('studio events become sentences about you and Pikku', () => {
   const t = at('2026-10-10T09:00:00')
   expect(studioEvent({ at: t, type: 'ai.choose', subject: 'key', project: null, outcome: 'success' }, 0)).toMatchObject({ phrase: 'ai_own', actor: { kind: 'you' } })
-  expect(studioEvent({ at: t, type: 'ai.choose', subject: 'fabric', project: null, outcome: 'success' }, 0).phrase).toBe('ai_fabric')
+  expect(studioEvent({ at: t, type: 'ai.choose', subject: 'fabric', project: null, outcome: 'success' }, 0).phrase).toBe('ai_hosted')
   expect(studioEvent({ at: t, type: 'account.sign_in', subject: null, project: null, outcome: 'success' }, 0).phrase).toBe('account_sign_in')
   expect(studioEvent({ at: t, type: 'project.publish', subject: null, project: 'p', outcome: 'failed' }, 0)).toMatchObject({ phrase: 'publish', actor: { kind: 'pikku' }, outcome: 'bad' })
   expect(studioEvent({ at: t, type: 'something.new', subject: null, project: null, outcome: 'success' }, 0).phrase).toBe('unknown')

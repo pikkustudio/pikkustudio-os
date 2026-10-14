@@ -55,7 +55,7 @@ export type Fix = {
 
 export type Fixes = { fixes: Fix[]; total: number; stale: number }
 
-/** Hosted projects are keyed `cloud:<id>`; Fabric knows them by the bare id. Local ones use their own key. */
+/** Hosted projects are keyed `cloud:<id>`; the host knows them by the bare id. Local ones use their own key. */
 export const reviewProjectId = (key: string) => (key.startsWith('cloud:') ? key.slice('cloud:'.length) : key)
 
 export const candidateKey = (c: Pick<Candidate, 'pikkuFuncId' | 'implementationHash'>) => `${c.pikkuFuncId}\u0000${c.implementationHash ?? ''}`

@@ -30,7 +30,7 @@
   "action_notice__ours": "Das liegt auf Pikkus Seite, nicht in deinem Projekt. Das Kopieren von {what} wurde nicht abgeschlossen, und es wurde nichts geändert.",
   "action_notice__retrying": "Neuer Versuch…",
   "action_notice__sign_in_again": "Neu anmelden",
-  "action_notice__signed_out": "Fabric kennt diesen Computer nicht mehr, deshalb konnte {what} nicht kopiert werden. Melde dich neu an und versuche es dann noch einmal.",
+  "action_notice__signed_out": "Dieser Computer ist nicht mehr angemeldet, deshalb konnte {what} nicht kopiert werden. Melde dich neu an und versuche es dann noch einmal.",
   "action_notice__tell_us": "Soll Pikku von solchen Fehlern erfahren?",
   "action_notice__title": "Das hat nicht geklappt.",
   "action_notice__told": "Wir haben das an das Pikku-Team weitergegeben.",

@@ -4,6 +4,7 @@ import { History } from 'lucide-react'
 import { Link } from './Link'
 import { ErrorState } from './ErrorState'
 import { keep } from '../lib/links'
+import { useCopy, type Copy } from '../lib/copy'
 import { ago } from '../lib/audit'
 import { useUpdatesFeed, type UpdatesNote } from '../lib/updates'
 import { groupByDay, type DayGroup, type FeedActor, type FeedItem, type Phrase } from '../lib/updates-feed'
@@ -11,7 +12,7 @@ import { groupByDay, type DayGroup, type FeedActor, type FeedItem, type Phrase }
 const who = (actor: FeedActor): I18nString =>
   actor.kind === 'you' ? m.updates_feed__you() : actor.kind === 'app' ? m.updates_feed__your_app() : actor.kind === 'pikku' ? m.parts__pikku() : asI18n(actor.name)
 
-const did: Record<Exclude<Phrase, 'unknown' | 'ai_own' | 'ai_fabric' | 'account_sign_in' | 'account_sign_out' | 'publish' | 'change_asked' | 'change_working' | 'change_needs_answer' | 'change_done'>, () => I18nString> = {
+const did: Record<Exclude<Phrase, 'unknown' | 'ai_own' | 'ai_hosted' | 'account_sign_in' | 'account_sign_out' | 'publish' | 'change_asked' | 'change_working' | 'change_needs_answer' | 'change_done'>, () => I18nString> = {
   secret_read: () => m.audit_screen__did_secret_read(),
   secret_write: () => m.audit_screen__did_secret_write(),
   secret_delete: () => m.audit_screen__did_secret_delete(),
@@ -33,7 +34,7 @@ const did: Record<Exclude<Phrase, 'unknown' | 'ai_own' | 'ai_fabric' | 'account_
   connection_delete: () => m.audit_screen__did_connection_delete(),
 }
 
-export const sentence = (item: FeedItem): I18nString => {
+export const sentence = (item: FeedItem, copy: Copy): I18nString => {
   const by = who(item.actor)
   const name = item.subject ? asI18n(item.subject) : null
   switch (item.phrase) {
@@ -48,12 +49,12 @@ export const sentence = (item: FeedItem): I18nString => {
       break
     case 'ai_own':
       return m.updates_feed__ai_own({ who: by })
-    case 'ai_fabric':
-      return m.updates_feed__ai_fabric({ who: by })
+    case 'ai_hosted':
+      return copy.aiHostedChosen({ who: by })
     case 'account_sign_in':
-      return m.updates_feed__sign_in({ who: by })
+      return copy.signInNote({ who: by })
     case 'account_sign_out':
-      return m.updates_feed__sign_out({ who: by })
+      return copy.signOutNote({ who: by })
     case 'publish':
       return m.updates_feed__publish({ who: by })
     case 'change_asked':
@@ -93,6 +94,7 @@ const HistoryLink = () => (
 
 export function UpdatesFeed({ projectKey }: { projectKey: string }) {
   const { items, note, failure, loading, now } = useUpdatesFeed(projectKey)
+  const copy = useCopy()
 
   if (loading && items.length === 0) {
     return (
@@ -123,7 +125,7 @@ export function UpdatesFeed({ projectKey }: { projectKey: string }) {
               return (
                 <li key={item.id} className="relative flex flex-col gap-0.5 pb-3 ps-4.5 text-[15px] text-foreground">
                   <span className="absolute top-1.5 -start-1.75 size-3 rounded-full border-2 border-input bg-card" />
-                  <span className="text-pretty">{sentence(item)}</span>
+                  <span className="text-pretty">{sentence(item, copy)}</span>
                   <span className="text-[13px] text-muted-foreground">
                     <time dateTime={item.at}>{ago(item.at, now)}</time>
                     {outcome ? <>{sep(' · ')}{outcome}</> : null}

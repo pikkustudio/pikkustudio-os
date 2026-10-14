@@ -40,6 +40,13 @@ export type Copy = {
   publishSignInTitle: () => I18nString
   publishSignInText: () => I18nString
   publishSignInButton: () => I18nString
+  /** Matches the server message that means this computer is signed out of the host. */
+  signedOutMatch?: RegExp
+  noticeDenied: (p: { what: I18nString }) => I18nString
+  noticeSignedOut: (p: { what: I18nString }) => I18nString
+  aiHostedChosen: (p: { who: I18nString }) => I18nString
+  signInNote: (p: { who: I18nString }) => I18nString
+  signOutNote: (p: { who: I18nString }) => I18nString
 }
 
 export const defaultCopy: Copy = {
@@ -63,6 +70,11 @@ export const defaultCopy: Copy = {
   publishSignInTitle: m.copy__publish_sign_in_title,
   publishSignInText: m.copy__publish_sign_in_text,
   publishSignInButton: m.copy__publish_sign_in_button,
+  noticeDenied: m.action_notice__denied_access,
+  noticeSignedOut: m.action_notice__signed_out,
+  aiHostedChosen: m.updates_feed__ai_hosted,
+  signInNote: m.updates_feed__sign_in,
+  signOutNote: m.updates_feed__sign_out,
 }
 
 export const useCopy = (): Copy => ({ ...defaultCopy, ...useSlots().copy })
