@@ -48,7 +48,7 @@ const view = async (studio: Studio, workflows: Workflows | undefined, key: strin
   const run = await runOf(workflows, intake?.run?.id)
   const signals = await readSignals(studio, key, run)
   if (!signals) throw new Error('That project is not here any more')
-  return { list: deriveChecklist(signals), chosenId: signals.directions.chosenId ?? null, publishUrl: (signals.publish as { url?: string }).url ?? null, idea: signals.intake.idea ?? '' }
+  return { list: deriveChecklist(signals), chosenId: signals.directions.chosenId ?? null, publishUrl: signals.publish.url ?? null, idea: signals.intake.idea ?? '' }
 }
 
 const out = (v: Awaited<ReturnType<typeof view>>) => ({ ...v.list, chosenId: v.chosenId, publishUrl: v.publishUrl })

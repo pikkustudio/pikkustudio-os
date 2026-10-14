@@ -20,7 +20,7 @@ Vault: `vaultSecrets`, `vaultActivity`, `putVaultSecret`, `deleteVaultSecret`.
 
 Content: `contentOverview`, `listContentFolder`, `contentUploadUrl`, `contentDownloadUrl`, `deleteContentFile`, `deleteContentFolder`.
 
-Host only: `fabricStageAudit` (whitelisted in `scripts/check-fabric-boundary.mjs`). The updates feed ignores the query when the consumer has no such function, so OS omits it.
+Optional slot `useStageAudit(projectKey, refetchInterval)`: the host supplies the deployed copy's history; without it the feed makes no request and omits that source.
 
 `admin:getAudits` and `console:listStudioChanges` are reached through `useProjectQuery` against the opened project, not the consumer's SDK.
 

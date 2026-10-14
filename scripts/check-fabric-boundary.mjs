@@ -16,7 +16,6 @@ const WIRE = [
   { file: 'src/lib/seal.ts', line: /^const SALT = 'pikkufabric\/sealed-box\/v1'$/, why: 'HKDF salt shared with the unsealing server; changing it makes existing sealed values unreadable' },
   { file: 'src/blocks/ImpersonatePanel.tsx', line: /data\?\.source === 'fabric-preview'/, why: 'postMessage source stamped by the preview script injected into running apps (addon-pikkustudio vite-preview); apps already running would stop answering if it changed' },
   { file: 'src/blocks/ImpersonatePanel.tsx', line: /postMessage\(\{ source: 'fabric-console'/, why: 'postMessage source the injected preview script and apps/app check on every incoming message' },
-  { file: 'src/lib/updates.ts', line: /usePikkuQuery\('fabricStageAudit'/, why: 'RPC name of the host audit function in the composing app; the query only yields data where that function exists' },
   { file: 'src/lib/updates-feed.ts', line: /event\.subject === 'fabric'/, why: 'subject the studio audit records for ai.choose when the hosted AI is picked; stored rows already carry it' },
   { file: 'src/lib/updates-feed.test.ts', line: /subject: 'fabric'/, why: 'same stored ai.choose subject, as a fixture' },
 ]

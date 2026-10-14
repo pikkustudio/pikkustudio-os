@@ -16,7 +16,7 @@ export interface Signals {
   designed: boolean
   samples: number
   busy: { frontend: boolean; build: boolean }
-  publish: { state: 'idle' | 'running' | 'done' | 'failed' }
+  publish: { state: 'idle' | 'running' | 'done' | 'failed'; url?: string }
   run: RunState
   activity: Activity | null
   now: number

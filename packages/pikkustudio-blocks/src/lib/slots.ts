@@ -2,10 +2,17 @@ import type { PanelId } from '../screens/OnboardingLayout'
 import type { WorkspaceAboutProps } from '../blocks/ShellAccount'
 import type { TeamScopeProps } from './team'
 import type { Copy } from './copy'
+import type { RawAudit, RawPerson } from './updates-feed'
 import type { I18nNode } from '@pikku/react'
 import { createContext, useContext, type ComponentType, type ReactNode } from 'react'
 
 export type Open = (panel: PanelId | '') => void
+
+export type StageAuditPage = {
+  readable: boolean
+  events: RawAudit[]
+  users: Record<string, RawPerson>
+}
 
 export type Slots = {
   SignInHero?: ComponentType<{ st: string; loading: boolean; open: Open; done: () => void }>
@@ -20,6 +27,8 @@ export type Slots = {
   AccountName?: ComponentType
   TeamName?: ComponentType<{ children: (name: string) => ReactNode }>
   TeamScope?: ComponentType<TeamScopeProps>
+  /** History of the deployed copy of a project; absent where nothing deploys. A hook, called every render. */
+  useStageAudit?: (projectKey: string, refetchInterval: number) => { data?: StageAuditPage }
 }
 
 export const SlotsCtx = createContext<Slots>({})
