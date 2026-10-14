@@ -14,7 +14,7 @@ const withMeta = async (meta: unknown) => {
 test('reads the verbose meta of the project worktree', async () => {
   const dir = await withMeta({ hello: { pikkuFuncId: 'hello' } })
   const source = worktreeMetaSource(async () => dir)
-  expect(await source.read({ projectId: 'p1', gitSha: null })).toEqual({ hello: { pikkuFuncId: 'hello' } })
+  expect(await source.read({ projectId: 'p1', gitSha: null })).toEqual({ hello: { pikkuFuncId: 'hello' } } as never)
 })
 
 test('returns null when the worktree has no generated meta', async () => {

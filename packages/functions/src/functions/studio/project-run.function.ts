@@ -16,14 +16,14 @@ export const startProjectRun = pikkuSessionlessFunc({
   output: StartProjectRunOutput,
   func: async ({ workflowService }, data, { rpc }) => {
     if (!workflowService) throw new Error('workflowService is required')
-    const { runId } = await rpc.startWorkflow('studio:startProject', data)
+    const { runId } = await (rpc as unknown as { startWorkflow: (name: string, data: unknown) => Promise<{ runId: string }> }).startWorkflow('studio:startProject', data)
     return { runId }
   },
 })
 
 export const ProjectRunInput = z.object({ runId: z.string() })
 export const ProjectRunOutput = z.object({
-  status: z.enum(['running', 'suspended', 'completed', 'failed', 'cancelled']),
+  status: z.enum(['running', 'suspended', 'completed', 'failed', 'cancelled', 'compensating', 'compensated', 'compensation_failed']),
   steps: z.array(z.object({ name: z.string(), status: z.string() })),
   key: z.string().optional(),
   error: z.string().optional(),

@@ -19,7 +19,7 @@ const releaseFetch = (tag: string, files: Record<string, Uint8Array>, calls: str
       })
     }
     const file = files[url.replace('https://assets.test/', '')]
-    return file ? new Response(file) : new Response('missing', { status: 404 })
+    return file ? new Response(file as BodyInit) : new Response('missing', { status: 404 })
   }) as typeof fetch
 
 describe('compareVersions', () => {

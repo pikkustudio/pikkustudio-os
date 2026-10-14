@@ -29,7 +29,7 @@ export const studioLocalSignIn = () =>
         const found = await ctx.context.internalAdapter.findUserByEmail(STUDIO_OWNER.email)
         const user =
           found?.user ??
-          (await ctx.context.internalAdapter.createUser({ ...STUDIO_OWNER, emailVerified: true }))
+          (await ctx.context.internalAdapter.createUser({ ...STUDIO_OWNER, emailVerified: true }, { method: 'local' }))
         if (!user) throw new APIError('INTERNAL_SERVER_ERROR', { message: 'Could not create the Studio owner' })
         const session = await ctx.context.internalAdapter.createSession(user.id)
         if (!session) throw new APIError('INTERNAL_SERVER_ERROR', { message: 'Could not start a session' })
