@@ -8,7 +8,7 @@ export const ListProjectsInput = z.object({
 
 export const listProjects = pikkuSessionlessFunc({
   expose: true,
-  description: 'Every project Studio knows, local and in Fabric, or one team\'s.',
+  description: 'Every project Studio knows, local and in Pikku Studio Cloud, or one team\'s.',
   input: ListProjectsInput,
   func: async ({ studioProjects, studioHooks, studioBuilder }, { team }) => ({
     projects: (await studioProjects.list(team)).map((project) => ({ ...studioHooks.decorate(project), busy: studioBuilder.isProjectBusy(project.key) })),

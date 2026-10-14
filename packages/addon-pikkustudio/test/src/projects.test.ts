@@ -10,9 +10,9 @@ import { StudioProjectsService, cloneProblem, linkedRepos, repoName, type CloudP
 import { symlink } from 'node:fs/promises'
 
 const fakeAccount = (projects: CloudProject[]): AccountProvider => ({
-  account: async () => ({ signedIn: projects.length > 0, apiUrl: 'http://fabric', consoleUrl: 'http://fabric' }),
+  account: async () => ({ signedIn: projects.length > 0, apiUrl: 'http://cloud', consoleUrl: 'http://cloud' }),
   projects: async () => projects,
-  startSignIn: async () => ({ code: 'ABCD', url: 'http://fabric/cli-auth', expiresAt: new Date().toISOString() }),
+  startSignIn: async () => ({ code: 'ABCD', url: 'http://cloud/cli-auth', expiresAt: new Date().toISOString() }),
   pollSignIn: async () => 'confirmed',
   locate: async (path, cloud) => {
     try {
@@ -283,7 +283,7 @@ describe('StudioProjectsService', () => {
     const by = Object.fromEntries(projects.map((p) => [p.name, p]))
     assert.equal(by.notes.location, 'local')
     assert.equal(by.Shop.location, 'both')
-    assert.equal(by.Shop.fabricProjectId, 'p-shop')
+    assert.equal(by.Shop.cloudProjectId, 'p-shop')
     assert.equal(by.Blog.location, 'cloud')
     assert.equal(by.Blog.path, null)
     assert.equal(projects.length, 3)
@@ -410,7 +410,7 @@ describe('StudioProjectsService', () => {
     const opened = await service.open(project.key)
     assert.match(await readFile(join(opened.worktree, 'pikku.config.json'), 'utf8'), /p-blog/)
     service.close(project.key)
-    assert.equal((await service.list()).filter((p) => p.fabricProjectId === 'p-blog').length, 1)
+    assert.equal((await service.list()).filter((p) => p.cloudProjectId === 'p-blog').length, 1)
   })
 
   test('opens a project in a subfolder of a bigger repo at that subfolder', async () => {

@@ -24,8 +24,8 @@ export function ProjectHomeGate() {
   if (!project || project.location !== 'cloud' || awake) return <OverviewScreen />
   const current = homeStates.some(([id]) => id === state) ? (state as HomeState) : 'new'
   const copy = () => {
-    if (!project.fabricProjectId || clone.isPending) return
-    clone.mutate({ fabricProjectId: project.fabricProjectId } as never, { onSuccess: () => client.invalidateQueries({ queryKey: ['studio:listProjects'] }) })
+    if (!project.cloudProjectId || clone.isPending) return
+    clone.mutate({ cloudProjectId: project.cloudProjectId } as never, { onSuccess: () => client.invalidateQueries({ queryKey: ['studio:listProjects'] }) })
   }
   const wake = async () => {
     if (waking) return

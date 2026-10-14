@@ -17,7 +17,7 @@ const JSX_FILE = /\.[jt]sx$/
  * NOT `apply: 'serve'`: scenarios drive the built sandbox app as well as the dev server, so
  * a dev-only stamp would leave every deployed app unaddressable.
  *
- * The source anchors ride along on the same parse, but only when fabric asks
+ * The source anchors ride along on the same parse, but only when the cloud asks
  * for them — they put the app's file layout in view-source, and the panel that
  * reads them is gated on the same flag.
  */

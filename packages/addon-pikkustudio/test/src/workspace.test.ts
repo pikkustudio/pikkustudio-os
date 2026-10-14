@@ -10,9 +10,9 @@ import { StudioProjectsService, type AccountProvider, type CloudProject } from '
 const cloud: CloudProject = { projectId: 'p1', name: 'Bakery', gitRepoUrl: null }
 
 const account = (calls: string[]): AccountProvider => ({
-  account: async () => ({ signedIn: true, apiUrl: 'http://fabric', consoleUrl: 'http://fabric' }),
+  account: async () => ({ signedIn: true, apiUrl: 'http://cloud', consoleUrl: 'http://cloud' }),
   projects: async () => [cloud],
-  startSignIn: async () => ({ code: 'ABCD', url: 'http://fabric/cli-auth', expiresAt: new Date().toISOString() }),
+  startSignIn: async () => ({ code: 'ABCD', url: 'http://cloud/cli-auth', expiresAt: new Date().toISOString() }),
   pollSignIn: async () => 'confirmed',
   locate: async () => null,
   adopt: async () => {},
@@ -34,7 +34,7 @@ const repo = async (base: string, name: string) => {
 }
 
 describe('workspaces', () => {
-  test('a cloud project asks Fabric where its workspace is served', async () => {
+  test('a cloud project asks Pikku Studio Cloud where its workspace is served', async () => {
     const calls: string[] = []
     const base = await mkdtemp(join(tmpdir(), 'pikku-studio-ws-'))
     const service = new StudioProjectsService({ account: account(calls), home: join(base, 'studio'), startApps: false })

@@ -62,7 +62,7 @@ export interface StudioProject {
   name: string
   location: ProjectLocation
   path: string | null
-  fabricProjectId: string | null
+  cloudProjectId: string | null
   gitRepoUrl: string | null
   current: boolean
   missing: boolean
@@ -137,7 +137,7 @@ export type SignInStatus = 'pending' | 'confirmed' | 'expired' | 'rejected'
 
 export interface AccountProvider {
   account(): Promise<StudioAccount>
-  /** The projects in Fabric: one team's, by its slug, or every team's. */
+  /** The projects in Pikku Studio Cloud: one team's, by its slug, or every team's. */
   projects(team?: string): Promise<CloudProject[]>
   startSignIn(): Promise<{ code: string; url: string; expiresAt: string }>
   pollSignIn(code: string): Promise<SignInStatus>
@@ -220,7 +220,7 @@ export const fileProjectStore = (home: string): ProjectStore => {
   }
 }
 
-// The team of the work that is only on this computer, and the only team without Fabric.
+// The team of the work that is only on this computer, and the only team without Pikku Studio Cloud.
 export const LOCAL_TEAM = 'local'
 
 const DESIGN_ENV_KEYS = ['PATH', 'HOME', 'USER', 'LOGNAME', 'SHELL', 'TMPDIR', 'TMP', 'TEMP', 'LANG', 'LC_ALL', 'LC_CTYPE', 'TZ', 'TERM', 'NODE_ENV', 'NODE_OPTIONS', 'SystemRoot']
@@ -731,7 +731,7 @@ export class StudioProjectsService {
   }
 
   /**
-   * Every project, or one team's: a Fabric team's projects (the copy on this computer standing in
+   * Every project, or one team's: a Pikku Studio Cloud team's projects (the copy on this computer standing in
    * for its cloud entry), or for the `local` team the projects that are only on this computer.
    */
   async list(team?: string): Promise<StudioProject[]> {
@@ -744,8 +744,8 @@ export class StudioProjectsService {
       const pinned = entries.filter((e) => resolve(e.path) === current)
       entries.splice(0, entries.length, ...pinned)
     }
-    const fabricTeam = team && team !== LOCAL_TEAM ? team : undefined
-    const cloud = this.options.pinned ? [] : await this.account.projects(fabricTeam).catch(() => [] as CloudProject[])
+    const cloudTeam = team && team !== LOCAL_TEAM ? team : undefined
+    const cloud = this.options.pinned ? [] : await this.account.projects(cloudTeam).catch(() => [] as CloudProject[])
     const claimed = new Set<string>()
     const local = await Promise.all(
       entries.map(async (entry): Promise<StudioProject> => {
@@ -761,7 +761,7 @@ export class StudioProjectsService {
           name: match?.name ?? entry.name ?? (missing ? basename(entry.path) : await projectName(entry.path)),
           location: match ? 'both' : 'local',
           path: entry.path,
-          fabricProjectId: match?.projectId ?? linkedId,
+          cloudProjectId: match?.projectId ?? linkedId,
           gitRepoUrl: match?.gitRepoUrl ?? null,
           current: resolve(entry.path) === current,
           missing,
@@ -780,7 +780,7 @@ export class StudioProjectsService {
           name: p.name,
           location: 'cloud',
           path: null,
-          fabricProjectId: p.projectId,
+          cloudProjectId: p.projectId,
           gitRepoUrl: p.gitRepoUrl,
           current: false,
           missing: false,
@@ -790,7 +790,7 @@ export class StudioProjectsService {
       )
     const owner = await this.owner()
     const taken = new Set(local.map((p) => `${p.owner}/${p.slug}`))
-    const here = team === undefined ? local : local.filter((p) => (fabricTeam ? p.location === 'both' : !p.fabricProjectId))
+    const here = team === undefined ? local : local.filter((p) => (cloudTeam ? p.location === 'both' : !p.cloudProjectId))
     return [
       ...here,
       ...(team === LOCAL_TEAM ? [] : remote).map((project) => {
@@ -874,8 +874,8 @@ export class StudioProjectsService {
     return this.register(root, id, name)
   }
 
-  async clone(fabricProjectId: string): Promise<StudioProject> {
-    const project = (await this.account.projects()).find((p) => p.projectId === fabricProjectId)
+  async clone(cloudProjectId: string): Promise<StudioProject> {
+    const project = (await this.account.projects()).find((p) => p.projectId === cloudProjectId)
     if (!project) throw new Error('That project is not in your account')
     if (!project.gitRepoUrl) throw new Error(`${project.name} has no repository to clone`)
     if (await this.nameTaken(project.name)) throw new Error(`You already have a project called ${project.name}`)

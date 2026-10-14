@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process'
 
 const FORBIDDEN = [
   '@pikkustudio/blocks-licensed',
-  '@pikkustudio/fabricstudio-blocks',
+  '@pikkustudio/blocks-cloud',
   '@project/app',
   '@pikku/shadcdn',
   'pikkustudio-cloud',

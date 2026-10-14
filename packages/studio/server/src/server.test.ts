@@ -5,13 +5,13 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, test } from 'node:test'
-import { StudioProjectsService, type FabricAccount } from './projects.js'
+import { StudioProjectsService, type CloudAccount } from './projects.js'
 import { startStudioServer } from './server.js'
 
-const account = (signedIn: { value: boolean }): FabricAccount => ({
-  account: async () => ({ signedIn: signedIn.value, apiUrl: 'http://fabric', consoleUrl: 'http://fabric' }),
+const account = (signedIn: { value: boolean }): CloudAccount => ({
+  account: async () => ({ signedIn: signedIn.value, apiUrl: 'http://cloud', consoleUrl: 'http://cloud' }),
   projects: async () => [],
-  startSignIn: async () => ({ code: 'WXYZ', url: 'http://fabric/cli-auth', expiresAt: new Date().toISOString() }),
+  startSignIn: async () => ({ code: 'WXYZ', url: 'http://cloud/cli-auth', expiresAt: new Date().toISOString() }),
   pollSignIn: async () => {
     signedIn.value = true
     return 'confirmed'
@@ -66,7 +66,7 @@ describe('Studio server', () => {
     }
   })
 
-  test('signs in with Fabric by code', async () => {
+  test('signs in with Pikku Studio Cloud by code', async () => {
     const { studio, call } = await setup()
     try {
       assert.equal((await call('startSignIn')).body.code, 'WXYZ')

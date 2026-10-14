@@ -142,10 +142,10 @@ describe('lease', () => {
 })
 
 describe('owner', () => {
-  test('Fabric owns a record only when linked and signed in', () => {
-    assert.equal(ownerFor(true, true), 'fabric')
+  test('Pikku Studio Cloud owns a record only when linked and signed in', () => {
+    assert.equal(ownerFor(true, true), 'cloud')
     assert.equal(ownerFor(true, false), 'local')
     assert.equal(ownerFor(false, true), 'local')
-    assert.equal(active({ owner: () => 'fabric', local: 'L', fabric: 'F' }), 'F')
+    assert.equal(active({ owner: () => 'cloud', local: 'L', cloud: 'F' }), 'F')
   })
 })

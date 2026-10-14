@@ -15,7 +15,7 @@ jobs:
         with:
           bun-version: 1.4.1
       - run: bun install --frozen-lockfile
-      - run: bun run check:fabric-boundary
+      - run: bun run check:cloud-boundary
       - run: bun run check:independence
       - run: bun run prebuild
       - run: bun run tsc

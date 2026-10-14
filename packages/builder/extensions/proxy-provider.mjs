@@ -1,6 +1,6 @@
 // pi extension: an OpenAI-compatible proxy as a pi provider.
 //
-// Set by @pikkustudio/builder when the chosen AI is a proxy (a LiteLLM key from Fabric, or any
+// Set by @pikkustudio/builder when the chosen AI is a proxy (a LiteLLM key from Pikku Studio Cloud, or any
 // OpenAI-compatible endpoint) rather than a provider pi knows by name. Does nothing
 // without PIKKU_BUILDER_PROXY_URL, so it is safe to load on every run.
 

@@ -232,7 +232,7 @@ export function OnboardingLayout() {
     )
   }
 
-  const panelTitle = { chat: m.parts__talk_to_pikku(), updates: m.shell_layout__updates(), workspace: m.onboarding_layout__this_workspace(), diff: m.onboarding_layout__the_difference(), why: m.onboarding_layout__why_this_one(), local: m.onboarding_layout__set_up_here(), accounts: m.onboarding_layout__connect_account(), keys: m.onboarding_layout__use_own_key(), litellm: m.onboarding_layout__connect_litellm(), provider: m.onboarding_layout__connect_provider({ provider: providers().find(([, id]) => id === q.via)?.[0] ?? m.onboarding_layout__a_provider() }), pitch: m.fabric_pitch__what_fabric_adds() }
+  const panelTitle = { chat: m.parts__talk_to_pikku(), updates: m.shell_layout__updates(), workspace: m.onboarding_layout__this_workspace(), diff: m.onboarding_layout__the_difference(), why: m.onboarding_layout__why_this_one(), local: m.onboarding_layout__set_up_here(), accounts: m.onboarding_layout__connect_account(), keys: m.onboarding_layout__use_own_key(), litellm: m.onboarding_layout__connect_litellm(), provider: m.onboarding_layout__connect_provider({ provider: providers().find(([, id]) => id === q.via)?.[0] ?? m.onboarding_layout__a_provider() }), pitch: m.cloud_pitch__what_cloud_adds() }
   const tabs = panel === 'chat' || panel === 'updates'
   const tab =
     '-mb-px inline-flex h-11.5 items-center gap-2 rounded-t-[10px] border-b-3 px-3.5 text-[15px] font-bold transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'

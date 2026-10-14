@@ -36,7 +36,7 @@ describe('StudioAi', () => {
     await assert.rejects(ai.set({ kind: 'subscription', provider: 'anthropic' }))
   })
 
-  test('a subscription or Fabric passes no key', async () => {
+  test('a subscription or Pikku Studio Cloud passes no key', async () => {
     const ai = new StudioAi(await home())
     await ai.set({ kind: 'subscription', provider: 'openai-codex' })
     assert.deepEqual(await ai.env(), { PIKKU_STUDIO_AI: 'subscription', PIKKU_STUDIO_AI_PROVIDER: 'openai-codex' })

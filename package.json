@@ -15,7 +15,7 @@
     "tsc": "bun run --filter '*' --if-present tsc",
     "test": "bun run --filter '*' --if-present test",
     "lint": "oxlint apps packages",
-    "check:fabric-boundary": "node scripts/check-fabric-boundary.mjs",
+    "check:cloud-boundary": "node scripts/check-cloud-boundary.mjs",
     "check:independence": "node scripts/check-independence.mjs",
     "build:desktop": "bash scripts/build-desktop.sh"
   },

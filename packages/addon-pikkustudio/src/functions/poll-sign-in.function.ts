@@ -8,7 +8,7 @@ export const PollSignInOutput = z.object({ status: z.enum(['pending', 'confirmed
 
 export const pollSignIn = pikkuSessionlessFunc({
   expose: true,
-  description: 'Check whether a Fabric sign-in was confirmed.',
+  description: 'Check whether a Pikku Studio Cloud sign-in was confirmed.',
   input: PollSignInInput,
   output: PollSignInOutput,
   func: async ({ studioProjects, studioSettings, studioAi, studioHooks, auth }, { code }, { http }) => {

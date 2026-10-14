@@ -8,7 +8,7 @@ export type ListedProject = {
   owner?: string
   name: string
   location: 'local' | 'cloud' | 'both'
-  fabricProjectId: string | null
+  cloudProjectId: string | null
   open: boolean
   busy?: boolean
   missing: boolean

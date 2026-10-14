@@ -1,5 +1,5 @@
 /**
- * Kysely types for the review addon's own tables, which live in fabric's
+ * Kysely types for the review addon's own tables, which live in the cloud's
  * Postgres database (db/postgres/0150, 0158, 0159). Hand-maintained — keep in sync
  * with those migrations.
  */

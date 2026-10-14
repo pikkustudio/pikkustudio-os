@@ -88,7 +88,7 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
       const env = await studioAi.env()
       const proxyUrl = process.env.PIKKU_BUILDER_PROXY_URL
       const proxyKey = process.env.PIKKU_BUILDER_PROXY_KEY
-      const fabric =
+      const cloud =
         proxyUrl && proxyKey
           ? { proxyUrl, apiKey: proxyKey }
           : env.PIKKU_STUDIO_AI === 'fabric'
@@ -98,7 +98,7 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
         env.PIKKU_STUDIO_AI_PROVIDER === 'litellm' && env.PIKKU_STUDIO_AI_BASE_URL
           ? { proxyUrl: `${env.PIKKU_STUDIO_AI_BASE_URL.replace(/\/+$/, '')}/v1`, apiKey: env.PIKKU_STUDIO_AI_KEY ?? 'none' }
           : null
-      if (!fabric && !env.PIKKU_STUDIO_AI) throw new Error('Choose your AI before building')
+      if (!cloud && !env.PIKKU_STUDIO_AI) throw new Error('Choose your AI before building')
       const launch = await studioProjects.builderLaunch(key, mode)
       return {
         ...launch,
@@ -107,10 +107,10 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
               model: studioModels.get(key) ?? env.PIKKU_STUDIO_MODEL,
               proxy: { url: litellm.proxyUrl, key: litellm.apiKey },
             }
-          : fabric
+          : cloud
           ? {
               model: studioModels.get(key) ?? process.env.PIKKU_STUDIO_MODEL ?? env.PIKKU_STUDIO_MODEL ?? 'deepseek-v4.1-flash',
-              proxy: { url: fabric.proxyUrl, key: fabric.apiKey },
+              proxy: { url: cloud.proxyUrl, key: cloud.apiKey },
             }
           : { provider: env.PIKKU_STUDIO_AI_PROVIDER, model: studioModels.get(key) ?? env.PIKKU_STUDIO_MODEL },
         env: { ...launch.env, ...env, PIKKU_DEV_LOG: studioProjects.latestLog(key) },

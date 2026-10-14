@@ -155,7 +155,7 @@ export interface InjectTestIdsOptions {
   /**
    * Stamp `data-fabric-src="src/routes/app.orders.tsx:42"` beside every testid.
    *
-   * Off unless fabric turns it on for the build, because this writes the app's
+   * Off unless the cloud turns it on for the build, because this writes the app's
    * own source layout into markup an end user can read in view-source. It is
    * also the expensive half of the changes panel: one attribute per addressable
    * element, where the panel's own code is one chunk.
@@ -247,7 +247,7 @@ export default function injectTestIds(
           anchorUsed = false
           if (!anchors || !state.filename) return
           anchorPath = path.relative(root, state.filename).split(path.sep).join('/')
-          anchorIdentifier = program.scope.generateUidIdentifier('fabricSrc')
+          anchorIdentifier = program.scope.generateUidIdentifier('cloudSrc')
         },
         exit(program) {
           if (!anchorUsed || !anchorIdentifier || !anchorPath) return

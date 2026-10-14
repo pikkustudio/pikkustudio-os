@@ -92,12 +92,12 @@ export async function startStudioServer(options: StudioServerOptions = {}) {
     new BuilderSession(async (key) => {
       const env = await ai.env()
       if (!env.PIKKU_STUDIO_AI) throw new Error('Choose your AI before building')
-      const fabric = env.PIKKU_STUDIO_AI === 'fabric' ? await projects.modelAccess() : null
+      const cloud = env.PIKKU_STUDIO_AI === 'fabric' ? await projects.modelAccess() : null
       const launch = await projects.builderLaunch(key)
       return {
         ...launch,
-        ai: fabric
-          ? { model: env.PIKKU_STUDIO_MODEL ?? 'deepseek-v4.1-flash', proxy: { url: fabric.proxyUrl, key: fabric.apiKey } }
+        ai: cloud
+          ? { model: env.PIKKU_STUDIO_MODEL ?? 'deepseek-v4.1-flash', proxy: { url: cloud.proxyUrl, key: cloud.apiKey } }
           : { provider: env.PIKKU_STUDIO_AI_PROVIDER, model: env.PIKKU_STUDIO_MODEL },
         env: { ...launch.env, ...env, PIKKU_DEV_LOG: join(home, 'logs', `${key}.log`) },
       }
@@ -138,7 +138,7 @@ export async function startStudioServer(options: StudioServerOptions = {}) {
     listProjects: async () => ({ projects: await projects.list() }),
     addProject: ({ path }: { path: string }) => projects.add(path),
     createProject: (input: { name: string; idea?: string }) => projects.create(input),
-    cloneProject: ({ fabricProjectId }: { fabricProjectId: string }) => projects.clone(fabricProjectId),
+    cloneProject: ({ cloudProjectId }: { cloudProjectId: string }) => projects.clone(cloudProjectId),
     removeProject: ({ key }: { key: string }) => projects.remove(key),
     async openProject({ key }: { key: string }) {
       await projects.open(key)
@@ -158,7 +158,7 @@ export async function startStudioServer(options: StudioServerOptions = {}) {
       return null
     },
     publishOptions: ({ key }: { key: string }) => publisher.options(key),
-    publishToFabric: ({ key }: { key: string }) => publisher.fabric(key),
+    publishToFabric: ({ key }: { key: string }) => publisher.cloud(key),
     publishStatus: async ({ key }: { key: string }) => publisher.status(key),
     projectApps: async ({ key }: { key: string }) => projects.projectApps(key),
     builderState: ({ key }: { key: string }) => builder.state(key),

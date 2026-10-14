@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium } from '@playwright/test'
-import { StudioProjectsService, type FabricAccount } from '../server/src/projects.js'
+import { StudioProjectsService, type CloudAccount } from '../server/src/projects.js'
 import { startStudioServer } from '../server/src/server.js'
 
 const here = fileURLToPath(new URL('.', import.meta.url))
@@ -14,8 +14,8 @@ const e2eApp = join(repo, 'e2e')
 const pikku = join(repo, 'packages', 'cli', 'dist', 'bin', 'pikku.js')
 const shots = process.env.STUDIO_SHOTS ?? join(here, '.shots')
 
-const offline: FabricAccount = {
-  account: async () => ({ signedIn: false, apiUrl: 'http://fabric.invalid', consoleUrl: 'http://fabric.invalid' }),
+const offline: CloudAccount = {
+  account: async () => ({ signedIn: false, apiUrl: 'http://cloud.invalid', consoleUrl: 'http://cloud.invalid' }),
   projects: async () => [],
   startSignIn: async () => {
     throw new Error('offline')
@@ -55,7 +55,7 @@ try {
   await page.getByTestId('studio-welcome').waitFor()
   assert.equal(await page.getByLabel(/password/i).count(), 0)
   await page.screenshot({ path: join(shots, '1-welcome.png') })
-  step('welcome offers working locally or Fabric, no password')
+  step('welcome offers working locally or Pikku Studio Cloud, no password')
 
   await page.getByTestId('studio-use-locally').click()
   await page.getByTestId('studio-choose-ai').waitFor()
@@ -72,7 +72,7 @@ try {
   step('an API key is saved and shown in plain words')
   await page.getByTestId('studio-local').waitFor()
   assert.equal(await page.getByTestId('studio-cloud').count(), 0)
-  step('working locally shows projects without a Fabric section')
+  step('working locally shows projects without a Pikku Studio Cloud section')
 
   await page.getByTestId('studio-add-open').click()
   await page.getByTestId('studio-add-path').fill(garden)
@@ -96,15 +96,15 @@ try {
 
   await page.goto(`${studio.url}/console/publish`)
   await page.getByTestId('studio-publish').waitFor({ timeout: 60_000 })
-  await page.getByTestId('studio-publish-fabric').getByText(/Sign in with Fabric from All projects/).waitFor()
-  assert.equal(await page.getByTestId('studio-publish-fabric-go').count(), 0)
+  await page.getByTestId('studio-publish-cloud').getByText(/Sign in with Pikku Studio Cloud from All projects/).waitFor()
+  assert.equal(await page.getByTestId('studio-publish-cloud-go').count(), 0)
   for (const target of ['standalone', 'cloudflare', 'serverless', 'azure']) {
     await page.getByTestId(`studio-publish-${target}-copy`).waitFor()
   }
   await page.getByTestId('studio-publish-cloudflare-show').click()
   await page.getByTestId('studio-publish-cloudflare').getByText(/@pikku\/deploy-cloudflare/).first().waitFor()
   await page.screenshot({ path: join(shots, '4-publish.png'), fullPage: true })
-  step('publish offers Fabric and a setup prompt for every other cloud')
+  step('publish offers Pikku Studio Cloud and a setup prompt for every other cloud')
 
   const opened = await page.evaluate(() => localStorage.getItem('pikku-server-url'))
   assert.match(opened ?? '', /\/p\/[a-z0-9]+$/)

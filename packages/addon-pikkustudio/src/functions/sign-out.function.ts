@@ -9,7 +9,7 @@ export const SignOutOutput = Settings
 
 export const signOut = pikkuSessionlessFunc({
   expose: true,
-  description: 'Sign out of Fabric, or stop using Studio locally.',
+  description: 'Sign out of Pikku Studio Cloud, or stop using Studio locally.',
   input: SignOutInput,
   output: SignOutOutput,
   func: async ({ studioProjects, studioSettings, studioAi, studioHooks, auth }, _input, { http }) => {

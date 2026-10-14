@@ -3,7 +3,7 @@ import type { StudioProjectsService } from './projects.js'
 
 export type PromptTarget = 'standalone' | 'cloudflare' | 'serverless' | 'azure'
 
-export type FabricReadiness = 'ready' | 'sign-in' | 'not-in-fabric'
+export type CloudReadiness = 'ready' | 'sign-in' | 'not-in-cloud'
 
 export interface PublishJob {
   state: 'idle' | 'running' | 'done' | 'failed'
@@ -103,25 +103,25 @@ export class StudioPublisher {
     const project = (await this.projects.list()).find((p) => p.key === key)
     if (!project) throw new Error('Studio does not know this project')
     const account = await this.projects.getAccount()
-    const fabric: FabricReadiness = !account.signedIn
+    const cloud: CloudReadiness = !account.signedIn
       ? 'sign-in'
-      : !project.fabricProjectId
-        ? 'not-in-fabric'
+      : !project.cloudProjectId
+        ? 'not-in-cloud'
         : 'ready'
     const prompts = Object.fromEntries(
       (Object.keys(PROVIDER) as PromptTarget[]).map((t) => [t, publishPrompt(t, project.name)])
     ) as Record<PromptTarget, string>
-    return { fabric, consoleUrl: account.consoleUrl, prompts }
+    return { cloud, consoleUrl: account.consoleUrl, prompts }
   }
 
   status(key: string): PublishJob {
     return this.jobs.get(key) ?? { state: 'idle', url: null, error: null, log: [] }
   }
 
-  async fabric(key: string): Promise<PublishJob> {
+  async cloud(key: string): Promise<PublishJob> {
     if (this.status(key).state === 'running') return this.status(key)
-    const { fabric } = await this.options(key)
-    if (fabric !== 'ready') throw new Error('Put this project in Fabric before publishing it there')
+    const { cloud } = await this.options(key)
+    if (cloud !== 'ready') throw new Error('Put this project in Pikku Studio Cloud before publishing it there')
     const { worktree } = await this.projects.open(key)
     const job: PublishJob = { state: 'running', url: null, error: null, log: [] }
     this.jobs.set(key, job)

@@ -18,7 +18,7 @@
     "types": ["vite/client", "node"],
     "paths": {
       "@/*": ["./src/*"],
-    // One copy of each, so linked packages (wt-design, fabric) do not load their own and get checked again.
+    // One copy of each, so linked packages (wt-design) do not load their own and get checked again.
       "kysely": ["../../node_modules/kysely"],
       "kysely/*": ["../../node_modules/kysely/*"],
       "zod": ["../../node_modules/zod"],

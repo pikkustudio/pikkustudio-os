@@ -4,15 +4,15 @@ import { mkdir, mkdtemp, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, test } from 'node:test'
-import { StudioProjectsService, type CloudProject, type FabricAccount } from './projects.js'
+import { StudioProjectsService, type CloudProject, type CloudAccount } from './projects.js'
 import { publishPrompt, StudioPublisher, type Runner } from './publish.js'
 
 const shop: CloudProject = { projectId: 'p-shop', name: 'Shop', slug: 'shop', productionBranch: 'main', gitRepoUrl: 'https://github.com/acme/shop.git' }
 
-const account = (signedIn: boolean, cloud: CloudProject[]): FabricAccount => ({
-  account: async () => ({ signedIn, apiUrl: 'http://fabric', consoleUrl: 'http://fabric/console' }),
+const account = (signedIn: boolean, cloud: CloudProject[]): CloudAccount => ({
+  account: async () => ({ signedIn, apiUrl: 'http://cloud', consoleUrl: 'http://cloud/console' }),
   projects: async () => cloud,
-  startSignIn: async () => ({ code: 'ABCD', url: 'http://fabric', expiresAt: new Date().toISOString() }),
+  startSignIn: async () => ({ code: 'ABCD', url: 'http://cloud', expiresAt: new Date().toISOString() }),
   pollSignIn: async () => 'confirmed',
   signOut: async () => {},
 })
@@ -44,15 +44,15 @@ const until = async (check: () => boolean) => {
 }
 
 describe('StudioPublisher', () => {
-  test('says what Fabric needs before it can publish', async () => {
+  test('says what Pikku Studio Cloud needs before it can publish', async () => {
     const local = await setup(false, [])
-    assert.equal((await new StudioPublisher(local.projects).options(local.key)).fabric, 'sign-in')
+    assert.equal((await new StudioPublisher(local.projects).options(local.key)).cloud, 'sign-in')
     const signedIn = await setup(true, [shop])
-    assert.equal((await new StudioPublisher(signedIn.projects).options(signedIn.key)).fabric, 'not-in-fabric')
-    await assert.rejects(new StudioPublisher(signedIn.projects).fabric(signedIn.key))
+    assert.equal((await new StudioPublisher(signedIn.projects).options(signedIn.key)).cloud, 'not-in-cloud')
+    await assert.rejects(new StudioPublisher(signedIn.projects).cloud(signedIn.key))
   })
 
-  test('publishes a Fabric project by pushing its work and deploying it', async () => {
+  test('publishes a Pikku Studio Cloud project by pushing its work and deploying it', async () => {
     const { projects, key } = await setup(true, [shop], 'git@github.com:acme/shop.git')
     const calls: string[] = []
     const run: Runner = async (command, args, cwd, onLine) => {
@@ -61,8 +61,8 @@ describe('StudioPublisher', () => {
       if (command === 'npx') onLine('Live at https://shop-main.pikku.app')
     }
     const publisher = new StudioPublisher(projects, run)
-    assert.equal((await publisher.options(key)).fabric, 'ready')
-    assert.equal((await publisher.fabric(key)).state, 'running')
+    assert.equal((await publisher.options(key)).cloud, 'ready')
+    assert.equal((await publisher.cloud(key)).state, 'running')
     await until(() => publisher.status(key).state !== 'running')
     projects.closeAll()
     const job = publisher.status(key)
@@ -77,7 +77,7 @@ describe('StudioPublisher', () => {
     const publisher = new StudioPublisher(projects, async (command) => {
       if (command === 'git') throw new Error('push rejected')
     })
-    await publisher.fabric(key)
+    await publisher.cloud(key)
     await until(() => publisher.status(key).state !== 'running')
     projects.closeAll()
     assert.deepEqual([publisher.status(key).state, publisher.status(key).error], ['failed', 'push rejected'])

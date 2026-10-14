@@ -31,7 +31,7 @@ export interface StudioProject {
   name: string
   location: ProjectLocation
   path: string | null
-  fabricProjectId: string | null
+  cloudProjectId: string | null
   gitRepoUrl: string | null
   current: boolean
   missing: boolean
@@ -86,17 +86,17 @@ export interface StudioAccount {
 
 export type SignInStatus = 'pending' | 'confirmed' | 'expired' | 'rejected'
 
-export interface FabricAccount {
+export interface CloudAccount {
   account(): Promise<StudioAccount>
   projects(): Promise<CloudProject[]>
   startSignIn(): Promise<{ code: string; url: string; expiresAt: string }>
   pollSignIn(code: string): Promise<SignInStatus>
   signOut(): Promise<void>
   modelAccess(): Promise<{ proxyUrl: string; apiKey: string }>
-  link(projectId: string): Promise<FabricLink | null>
+  link(projectId: string): Promise<CloudLink | null>
 }
 
-export interface FabricLink {
+export interface CloudLink {
   apiUrl: string
   token: string
   baseBranch: string
@@ -112,7 +112,7 @@ interface RegistryEntry {
 export const studioHome = () =>
   process.env.PIKKU_STUDIO_HOME ?? join(homedir(), '.pikkustudio')
 
-export const fabricAccount: FabricAccount = {
+export const cloudAccount: CloudAccount = {
   async account() {
     const ctx = await resolveApiContext({ resolveProject: false })
     return {
@@ -177,7 +177,7 @@ export const fabricAccount: FabricAccount = {
   },
   async modelAccess() {
     const ctx = await resolveApiContext({ resolveProject: false })
-    if (!ctx.token) throw new Error('Sign in to Fabric to build with Fabric AI')
+    if (!ctx.token) throw new Error('Sign in to Pikku Studio Cloud to build with Pikku Studio Cloud AI')
     const { proxyUrl, apiKey } = await getFabricRPC({ apiUrl: ctx.apiUrl, token: ctx.token }).invoke(
       'getDeveloperLiteLLMKey',
       {}
@@ -312,7 +312,7 @@ async function projectName(path: string): Promise<string> {
 
 export interface StudioProjectsOptions {
   currentRoot?: string | null
-  account?: FabricAccount
+  account?: CloudAccount
   home?: string
   devCommand?: (port: number) => { command: string; args: string[] }
   installCommand?: (dir: string) => { command: string; args: string[] } | null
@@ -335,11 +335,11 @@ export class StudioProjectsService {
   private running = new Map<string, RunningProject & { child: ChildProcess }>()
   private apps = new Map<string, RunningApp[]>()
   private keeping = new Set<Promise<unknown>>()
-  private account: FabricAccount
+  private account: CloudAccount
   private home: string
 
   constructor(private options: StudioProjectsOptions = {}) {
-    this.account = options.account ?? fabricAccount
+    this.account = options.account ?? cloudAccount
     this.home = options.home ?? studioHome()
   }
 
@@ -369,7 +369,7 @@ export class StudioProjectsService {
     return this.account.modelAccess()
   }
 
-  fabricLink(projectId: string) {
+  cloudLink(projectId: string) {
     return this.account.link(projectId)
   }
 
@@ -409,7 +409,7 @@ export class StudioProjectsService {
           name: match?.name ?? (missing ? basename(entry.path) : await projectName(entry.path)),
           location: match ? 'both' : 'local',
           path: entry.path,
-          fabricProjectId: match?.projectId ?? linkedId,
+          cloudProjectId: match?.projectId ?? linkedId,
           gitRepoUrl: match?.gitRepoUrl ?? null,
           current: resolve(entry.path) === current,
           missing,
@@ -425,7 +425,7 @@ export class StudioProjectsService {
           name: p.name,
           location: 'cloud',
           path: null,
-          fabricProjectId: p.projectId,
+          cloudProjectId: p.projectId,
           gitRepoUrl: p.gitRepoUrl,
           current: false,
           missing: false,
@@ -477,9 +477,9 @@ export class StudioProjectsService {
     return this.add(path)
   }
 
-  async clone(fabricProjectId: string): Promise<StudioProject> {
-    const project = (await this.account.projects()).find((p) => p.projectId === fabricProjectId)
-    if (!project) throw new Error('That project is not in your Fabric account')
+  async clone(cloudProjectId: string): Promise<StudioProject> {
+    const project = (await this.account.projects()).find((p) => p.projectId === cloudProjectId)
+    if (!project) throw new Error('That project is not in your Pikku Studio Cloud account')
     if (!project.gitRepoUrl) throw new Error(`${project.name} has no repository to clone`)
     const path = join(this.projectsDir, project.slug)
     if (existsSync(path)) throw new Error(`${path} already exists`)
@@ -491,7 +491,7 @@ export class StudioProjectsService {
         JSON.stringify({ fabric: { projectId: project.projectId } }, null, 2) + '\n'
       )
     }
-    await commitPaths(path, ['pikku.config.json'], 'Link to Fabric')
+    await commitPaths(path, ['pikku.config.json'], 'Link to Pikku Studio Cloud')
     return this.add(path)
   }
 

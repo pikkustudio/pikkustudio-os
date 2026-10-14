@@ -39,7 +39,7 @@ export interface ReviewVerdict extends ReviewTarget {
 }
 
 /**
- * The seam between the addon and its host. Fabric backs this with a table
+ * The seam between the addon and its host. Pikku Studio Cloud backs this with a table
  * carrying org provenance; a standalone repo backs it with a committed file.
  */
 export interface VerdictQuery {
