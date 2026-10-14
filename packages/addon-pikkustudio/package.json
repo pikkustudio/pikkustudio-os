@@ -1,5 +1,5 @@
 {
-  "name": "@pikkustudio/addon",
+  "name": "@pikkustudio/addon-studio",
   "version": "0.0.1",
   "description": "Studio addon for Pikku — the local backend behind Pikku Studio",
   "type": "module",
