@@ -34,7 +34,6 @@
   "dependencies": {
     "@pikkustudio/builder": "workspace:*",
     "@pikku/cli": "^0.12.179",
-    "@pikku/shadcdn": "^0.0.1",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-checkbox": "^1.3.2",
     "@radix-ui/react-dialog": "^1.1.14",
