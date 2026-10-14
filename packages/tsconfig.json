@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "types": ["node"],
+    "declaration": true,
+    "noImplicitAny": false,
+    "skipLibCheck": true,
+    "noUnusedLocals": true,
+    "importHelpers": false,
+    "removeComments": false,
+    "noLib": false,
+    "emitDecoratorMetadata": false,
+    "experimentalDecorators": false,
+    "useUnknownInCatchVariables": false,
+    "sourceMap": false,
+    "allowJs": false,
+    "strict": true,
+    "strictNullChecks": true
+  }
+}
