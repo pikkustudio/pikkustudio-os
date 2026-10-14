@@ -1,6 +1,6 @@
 import * as babel from '@babel/core'
 import type { Plugin } from 'vite'
-import injectTestIds from './inject-testids'
+import injectTestIds from './inject-testids.ts'
 
 const JSX_FILE = /\.[jt]sx$/
 

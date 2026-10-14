@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import { paraglideVitePlugin } from '@inlang/paraglide-js'
 import { fileURLToPath, URL } from 'node:url'
-import { testIds } from './build/testids.plugin'
+import { testIds } from './build/testids.plugin.ts'
 
 const base = process.env.FABRIC_FRONTEND_BASE || '/'
 
