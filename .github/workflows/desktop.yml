@@ -27,13 +27,6 @@ jobs:
             paths: |
               apps/studio/src-tauri/target/release/bundle/dmg/*.dmg
               apps/studio/src-tauri/target/release/bundle/macos/*.app
-          - os: windows-latest
-            target: windows
-            experimental: true
-            bundles: msi,nsis
-            paths: |
-              apps/studio/src-tauri/target/release/bundle/msi/*.msi
-              apps/studio/src-tauri/target/release/bundle/nsis/*.exe
     steps:
       - uses: actions/checkout@v4
         with:
