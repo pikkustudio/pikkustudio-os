@@ -139,15 +139,6 @@ function projectSourcePlugin(): PluginOption {
   }
 }
 
-function shadcdnDir(): string | null {
-  try {
-    return dirname(createRequire(import.meta.url).resolve('@pikku/shadcdn/package.json'))
-  } catch {
-    const sibling = fileURLToPath(new URL('../../shadcdn', import.meta.url))
-    return existsSync(sibling) ? sibling : null
-  }
-}
-
 function stockStoriesPlugin(): PluginOption {
   const id = 'virtual:stock-stories'
   return {
@@ -155,12 +146,8 @@ function stockStoriesPlugin(): PluginOption {
     resolveId: (source) => (source === id ? '\0' + id : null),
     load(loaded) {
       if (loaded !== '\0' + id) return null
-      const dir = shadcdnDir()
-      const files = dir
-        ? readdirSync(join(dir, 'ui')).filter((f) => f.endsWith('.stories.tsx'))
-        : []
-      const lines = files.map((f, i) => `import * as s${i} from ${JSON.stringify(join(dir!, 'ui', f))}`)
-      const entries = files.map((f, i) => `  ${JSON.stringify('/shadcdn/' + f)}: s${i},`)
+      const lines: string[] = []
+      const entries: string[] = []
       return `${lines.join('\n')}\nexport default {\n${entries.join('\n')}\n}\n`
     },
   }
@@ -673,7 +660,7 @@ export default defineConfig({
       // All three forms are listed because any one of them can be what Vite ends
       // up checking, and `workspaceConfigured` is the only one that survives the
       // repo not existing yet (see its definition).
-      allow: [serverDir, searchForWorkspaceRoot(serverDir), ...(shadcdnDir() ? [shadcdnDir()!] : []), workspaceReal(), workspaceConfigured],
+      allow: [serverDir, searchForWorkspaceRoot(serverDir), workspaceReal(), workspaceConfigured],
     },
     hmr: hmrPath
       ? { protocol: hmrProtocol(), path: hmrPath, clientPort: hmrClientPort() }

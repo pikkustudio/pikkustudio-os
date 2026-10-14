@@ -1,6 +1,5 @@
 @import 'tailwindcss';
 @source '__PIKKU_PROJECT_ROOT__';
-@source '../node_modules/@pikku/shadcdn/ui';
 
 @custom-variant dark (&:is(.dark *));
 

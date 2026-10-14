@@ -1,0 +1,7 @@
+node_modules
+dist
+.pikku
+target
+gen
+*.log
+.DS_Store
