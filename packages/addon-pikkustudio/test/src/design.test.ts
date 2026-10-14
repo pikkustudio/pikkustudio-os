@@ -37,7 +37,7 @@ const alive = (pid: number) => {
   }
 }
 
-const setup = async (entrySource: string, env?: () => Record<string, string>) => {
+const setup = async (entrySource: string, env?: () => Record<string, string>, paraglideCommand?: (appDir: string) => { command: string; args: string[] } | null, withMessages = false) => {
   const base = await mkdtemp(join(tmpdir(), 'pikku-studio-design-'))
   const source = join(base, 'design-src')
   await mkdir(source, { recursive: true })
@@ -45,6 +45,12 @@ const setup = async (entrySource: string, env?: () => Record<string, string>) =>
   const path = join(base, 'shop')
   await mkdir(path, { recursive: true })
   await writeFile(join(path, 'package.json'), JSON.stringify({ name: 'shop' }))
+  if (withMessages) {
+    await mkdir(join(path, 'apps', 'app', 'messages'), { recursive: true })
+    await mkdir(join(path, 'apps', 'app', 'project.inlang'), { recursive: true })
+    await writeFile(join(path, 'apps', 'app', 'messages', 'en.json'), '{"hello":"Hello"}')
+    await writeFile(join(path, 'apps', 'app', 'project.inlang', 'settings.json'), '{}')
+  }
   git(path, 'init', '-q', '-b', 'main')
   git(path, 'add', '-A')
   git(path, 'commit', '-qm', 'init')
@@ -53,6 +59,7 @@ const setup = async (entrySource: string, env?: () => Record<string, string>) =>
     home: join(base, 'studio'),
     projectsDir: join(base, 'studio', 'local'),
     designEntry: join(source, 'design.mjs'),
+    paraglideCommand,
     devCommand: () => ({ command: 'sh', args: ['-c', 'echo "$PIKKU_DESIGN_SERVER_URL" > url.txt; env > project-env.txt; env | grep -c PIKKU_STUDIO_DESIGN > legacy.txt; sleep 30'] }),
     installCommand: () => null,
     env,
@@ -165,5 +172,60 @@ describe('design server', () => {
     const pid = (service as any).supervisor.status(key, 'design').pid as number
     service.killAll()
     await until(() => !alive(pid))
+  })
+
+  const writer = (body: string) => () => ({ command: 'sh', args: ['-c', body] })
+
+  test('compiles the project messages before the design server starts', async () => {
+    const { service, key } = await setup(listening, undefined, writer('mkdir -p src/paraglide && echo x > src/paraglide/runtime.js && echo run >> ../../compiled.txt'), true)
+    try {
+      const opened = await service.open(key)
+      await until(() => service.designStatus(key)?.state === 'ready')
+      assert.ok(existsSync(join(opened.worktree, 'apps', 'app', 'src', 'paraglide', 'runtime.js')))
+      assert.equal(readFileSync(join(opened.worktree, 'compiled.txt'), 'utf8').trim(), 'run')
+    } finally {
+      service.killAll()
+    }
+  })
+
+  test('skips the compile when the output is newer than the messages', async () => {
+    const { service, key } = await setup(listening, undefined, writer('mkdir -p src/paraglide && echo x > src/paraglide/runtime.js && echo run >> ../../compiled.txt'), true)
+    try {
+      const opened = await service.open(key)
+      await until(() => service.designStatus(key)?.state === 'ready')
+      service.close(key)
+      const again = await service.open(key)
+      await until(() => service.designStatus(key)?.state === 'ready')
+      assert.equal(readFileSync(join(again.worktree, 'compiled.txt'), 'utf8').trim().split('\n').length, 1)
+    } finally {
+      service.killAll()
+    }
+  })
+
+  test('a failed compile shows as a failed design with the output, and never stops the project', async () => {
+    const { service, key } = await setup(listening, undefined, writer('echo "bad message at line 3" >&2; exit 2'), true)
+    try {
+      const opened = await service.open(key)
+      assert.ok(opened.port)
+      await until(() => service.designStatus(key)?.state === 'failed')
+      assert.match(service.designStatus(key)!.logTail, /bad message at line 3/)
+      assert.ok(service.runningProject(key))
+    } finally {
+      service.killAll()
+    }
+  })
+
+  test('restarting the design retries the compile', async () => {
+    const { service, key } = await setup(listening, undefined, writer('test -f ../../ok || { echo nope >&2; exit 1; }; mkdir -p src/paraglide && echo x > src/paraglide/runtime.js'), true)
+    try {
+      const opened = await service.open(key)
+      await until(() => service.designStatus(key)?.state === 'failed')
+      await writeFile(join(opened.worktree, 'ok'), '')
+      const status = await service.restartDesign(key)
+      assert.ok(status)
+      await until(() => service.designStatus(key)?.state === 'ready')
+    } finally {
+      service.killAll()
+    }
   })
 })

@@ -321,6 +321,42 @@ const tail = async (path: string, lines = 20) => {
   return text.trimEnd().split('\n').slice(-lines).join('\n')
 }
 
+const compiledAfter = (appDir: string) => {
+  const out = join(appDir, 'src', 'paraglide')
+  if (!existsSync(join(out, 'runtime.js'))) return false
+  const newest = (dir: string): number =>
+    !existsSync(dir)
+      ? 0
+      : readdirSync(dir, { withFileTypes: true }).reduce((latest, item) => {
+          const path = join(dir, item.name)
+          return Math.max(latest, item.isDirectory() ? newest(path) : statSync(path).mtimeMs)
+        }, 0)
+  const sources = Math.max(newest(join(appDir, 'messages')), newest(join(appDir, 'project.inlang')))
+  return newest(out) >= sources
+}
+
+const messageApps = (root: string) => {
+  const found: string[] = []
+  const scan = (dir: string) => {
+    if (existsSync(join(dir, 'project.inlang'))) found.push(dir)
+  }
+  scan(root)
+  for (const group of ['apps', 'packages']) {
+    const base = join(root, group)
+    if (!existsSync(base)) continue
+    for (const item of readdirSync(base, { withFileTypes: true })) if (item.isDirectory()) scan(join(base, item.name))
+  }
+  return found
+}
+
+const defaultParaglideCommand = (root: string) => (appDir: string) => {
+  for (const dir of [appDir, root]) {
+    const bin = join(dir, 'node_modules', '.bin', 'paraglide-js')
+    if (existsSync(bin)) return { command: bin, args: ['compile', '--project', './project.inlang', '--outdir', './src/paraglide'] }
+  }
+  return null
+}
+
 const designUrl = (port: number) => `http://127.0.0.1:${port}/`
 
 const waitForPort = async (port: number, timeoutMs = 180_000) => {
@@ -437,6 +473,7 @@ export interface StudioProjectsOptions {
   serveCommand?: (port: number) => { command: string; args: string[] }
   stopTimeoutMs?: number
   designEntry?: string
+  paraglideCommand?: (appDir: string) => { command: string; args: string[] } | null
   env?: (key: string) => Promise<Record<string, string>>
   personalSource?: (projectId: string) => ScopedSource | undefined
   teamSource?: (projectId: string, projectPath: string) => ScopedSource | undefined
@@ -489,11 +526,51 @@ export class StudioProjectsService {
 
   private supervisor: Supervisor
   private designSpecs = new Map<string, ServiceSpec>()
+  private designPrep = new Map<string, () => Promise<string | null>>()
+  private designFailures = new Map<string, string>()
+
+  private async compileMessages(root: string, confinement: Confinement | null): Promise<string | null> {
+    const resolveCommand = this.options.paraglideCommand ?? defaultParaglideCommand(root)
+    const failures: string[] = []
+    for (const appDir of messageApps(root)) {
+      if (compiledAfter(appDir)) continue
+      const plan = resolveCommand(appDir)
+      if (!plan) continue
+      const output = await new Promise<string | null>((done) => {
+        const options = { cwd: appDir, stdio: ['ignore', 'pipe', 'pipe'] as ['ignore', 'pipe', 'pipe'], env: process.env }
+        let child: ChildProcess
+        try {
+          child = confinement ? confinedSpawn(plan.command, plan.args, confinement, options) : spawn(plan.command, plan.args, options)
+        } catch (error) {
+          return done(String(error))
+        }
+        let text = ''
+        const timer = setTimeout(() => {
+          text += '\nTimed out compiling messages'
+          child.kill('SIGKILL')
+        }, 120_000)
+        child.stdout?.on('data', (d) => (text += d))
+        child.stderr?.on('data', (d) => (text += d))
+        child.on('error', (error) => {
+          clearTimeout(timer)
+          done(`${text}\n${error.message}`.trim())
+        })
+        child.on('close', (code) => {
+          clearTimeout(timer)
+          done(code === 0 ? null : `${basename(appDir)}: ${plan.command} ${plan.args.join(' ')} exited ${code}\n${text}`.trim())
+        })
+      })
+      if (output) failures.push(output)
+    }
+    return failures.length ? failures.join('\n\n').split('\n').slice(-40).join('\n') : null
+  }
 
   designStatus(key: string): ProjectDesign | null {
     const spec = this.designSpecs.get(key)
     if (!spec) return null
     const status = this.supervisor.status(key, 'design')
+    const failure = this.designFailures.get(key)
+    if (failure !== undefined) return { state: 'failed', url: designUrl(spec.port), restarts: 0, lastExit: null, logTail: failure }
     if (!status) return { state: 'starting', url: designUrl(spec.port), restarts: 0, lastExit: null, logTail: '' }
     return { state: status.state, url: designUrl(spec.port), restarts: status.restarts, lastExit: status.lastExit, logTail: status.logTail }
   }
@@ -502,18 +579,37 @@ export class StudioProjectsService {
     const spec = this.designSpecs.get(key)
     if (!spec) return null
     await this.supervisor.stop(key, 'design')
+    const prep = this.designPrep.get(key)
+    if (prep) {
+      const failure = await prep()
+      if (failure) this.designFailures.set(key, failure)
+      else this.designFailures.delete(key)
+      if (failure) return this.designStatus(key)
+    }
     await this.supervisor.start(key, spec).catch(() => {})
     return this.designStatus(key)
   }
 
-  private async startDesign(key: string, spec: ServiceSpec) {
+  private async startDesign(key: string, spec: ServiceSpec, prep?: () => Promise<string | null>) {
     this.designSpecs.set(key, spec)
+    if (prep) {
+      this.designPrep.set(key, prep)
+      const failure = await prep().catch((error) => String(error))
+      if (this.designSpecs.get(key) !== spec) return
+      if (failure) {
+        this.designFailures.set(key, failure)
+        return
+      }
+      this.designFailures.delete(key)
+    }
     await this.supervisor.start(key, spec).catch(() => {})
     if (this.designSpecs.get(key) !== spec) await this.supervisor.stopAll(key)
   }
 
   private stopDesign(key: string) {
     this.designSpecs.delete(key)
+    this.designPrep.delete(key)
+    this.designFailures.delete(key)
     return this.supervisor.stopAll(key)
   }
 
@@ -1387,7 +1483,7 @@ export class StudioProjectsService {
         logPath: join(this.home, 'logs', `${key}-design.log`),
         restart: 'on-crash',
         spawn: confinement ? (command, commandArgs, options) => confinedSpawn(command, commandArgs, confinement, options) : undefined,
-      })
+      }, () => this.compileMessages(worktree.projectDir, confinement))
     }
     if (this.options.startApps !== false) this.startApps(key, worktree.projectDir, port, confinement, spawnOptions.env)
     try {
