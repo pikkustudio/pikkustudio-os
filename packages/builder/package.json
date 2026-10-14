@@ -27,7 +27,7 @@
   "scripts": {
     "build": "tsc",
     "tsc": "tsc --noEmit",
-    "test": "node --import tsx --test 'src/**/*.test.ts' 'extensions/**/*.test.mjs'",
+    "test": "bun test",
     "prepublishOnly": "bun run build"
   },
   "dependencies": {
