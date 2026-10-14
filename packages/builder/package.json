@@ -9,7 +9,7 @@
   },
   "description": "The pikku builder \u2014 pi set up to build pikku apps, with the pikku skills and edit tools. Run it in a terminal, or drive it over rpc from Studio",
   "author": "yasser.fadl@gmail.com",
-  "license": "MIT",
+  "license": "BUSL-1.1",
   "type": "module",
   "bin": {
     "pikku-builder": "./dist/bin.js"

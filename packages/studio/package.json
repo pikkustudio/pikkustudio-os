@@ -9,7 +9,7 @@
   },
   "description": "Pikku Studio — the local app for building pikku projects: its backend (projects, sign-in, worktrees, one dev server per project)",
   "author": "yasser.fadl@gmail.com",
-  "license": "MIT",
+  "license": "BUSL-1.1",
   "type": "module",
   "bin": {
     "pikku-studio": "./dist/bin.js"

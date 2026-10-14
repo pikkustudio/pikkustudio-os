@@ -1,6 +1,7 @@
 {
   "name": "@pikku/addon-spindle",
   "version": "0.0.1",
+  "license": "BUSL-1.1",
   "type": "module",
   "imports": {
     "#pikku/*.js": "./dist/.pikku/*.js",
