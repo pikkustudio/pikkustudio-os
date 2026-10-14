@@ -488,7 +488,7 @@ const userConfig = await loadConfigFromFile(
 
 // allowedHosts: true disables vite's dev-server host check. The sandbox serves
 // every frontend behind Caddy, which routes by the per-sandbox hostname (e.g.
-// *.nip.io locally, *.pikkufabric.dev hosted). Plain \`vite dev\` 403s any Host
+// *.nip.io locally, *.pikkustudio.dev hosted). Plain \`vite dev\` 403s any Host
 // not in allowedHosts, so wait_for_primary_frontend never goes green and the
 // sandbox is stuck at "starting". (Cloudflare-plugin frontends dodge this via
 // the workerd dev server, which is why template sandboxes booted.) The sandbox
