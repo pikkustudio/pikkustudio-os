@@ -1,0 +1,62 @@
+name: Desktop
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  desktop:
+    name: desktop-${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            target: linux
+            experimental: false
+            bundles: appimage,deb
+            paths: |
+              apps/studio/src-tauri/target/release/bundle/appimage/*.AppImage
+              apps/studio/src-tauri/target/release/bundle/deb/*.deb
+          - os: macos-latest
+            target: macos
+            experimental: false
+            bundles: app,dmg
+            paths: |
+              apps/studio/src-tauri/target/release/bundle/dmg/*.dmg
+              apps/studio/src-tauri/target/release/bundle/macos/*.app
+          - os: windows-latest
+            target: windows
+            experimental: true
+            bundles: msi,nsis
+            paths: |
+              apps/studio/src-tauri/target/release/bundle/msi/*.msi
+              apps/studio/src-tauri/target/release/bundle/nsis/*.exe
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.1
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Linux packages
+        if: matrix.target == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libssl-dev
+      - run: bun install --frozen-lockfile
+      - run: bun run check:fabric-boundary
+      - run: bun run check:independence
+      - name: Build
+        shell: bash
+        env:
+          TAURI_BUNDLES: ${{ matrix.bundles }}
+        run: bun run build:desktop
+      - uses: actions/upload-artifact@v4
+        with:
+          name: studio-${{ matrix.target }}-${{ github.sha }}
+          path: ${{ matrix.paths }}
+          if-no-files-found: error

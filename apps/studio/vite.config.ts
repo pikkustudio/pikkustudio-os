@@ -50,7 +50,7 @@ export default defineConfig(() => {
     // on message edits. Must run first.
     paraglideVitePlugin({ project: './project.inlang', outdir: './src/paraglide' }),
     tailwindcss(),
-    tanstackStart({ spa: { enabled: true }, router: {} }),
+    tanstackStart({ spa: { enabled: true, prerender: { outputPath: '/index.html' } }, router: {} }),
     // Stamps the `data-testid`s browser scenarios address controls by, derived from each
     // control's i18n message key. A standalone pre-transform rather than a `babel` option
     // on react(): @vitejs/plugin-react@6 (rolldown/oxc) drops that option, and this must

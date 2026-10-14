@@ -76,8 +76,7 @@
     "studio": {
       "cwd": "apps/studio",
       "primary": true,
-      "deploy": true,
-      "kind": "ssr",
+      "kind": "spa",
       "dev": {
         "command": [
           "bun",
@@ -90,7 +89,21 @@
       "serves": "visitor",
       "personas": [
         "visitor"
-      ]
+      ],
+      "dist": "dist/client",
+      "serve": {
+        "urlPrefix": "/",
+        "spaFallback": true
+      },
+      "native": {
+        "identifier": "dev.pikku.studio",
+        "productName": "Pikku Studio",
+        "platforms": [
+          "desktop"
+        ],
+        "plugins": [],
+        "bundleServer": true
+      }
     }
   }
 }

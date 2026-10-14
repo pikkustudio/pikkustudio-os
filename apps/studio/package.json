@@ -5,6 +5,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "tauri": "tauri",
     "dev": "vite dev --port 4741 --strictPort",
     "build": "vite build",
     "preview": "vite preview --port 4741 --strictPort",
@@ -13,6 +14,7 @@
     "tsc:i18n": "tsc --noEmit -p tsconfig.i18n.json"
   },
   "dependencies": {
+    "@tauri-apps/api": "^2",
     "@pikku/addon-diffui": "workspace:*",
     "@pikku/addon-review": "workspace:*",
     "@pikku/addon-spindle": "workspace:*",
@@ -47,6 +49,7 @@
     "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2",
     "@babel/core": "^7.26.0",
     "@inlang/paraglide-js": "^2.20.0",
     "@shadcn/lint": "latest",

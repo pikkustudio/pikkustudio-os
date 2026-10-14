@@ -16,7 +16,8 @@
     "test": "bun run --filter '*' --if-present test",
     "lint": "oxlint apps packages",
     "check:fabric-boundary": "node scripts/check-fabric-boundary.mjs",
-    "check:independence": "node scripts/check-independence.mjs"
+    "check:independence": "node scripts/check-independence.mjs",
+    "build:desktop": "bash scripts/build-desktop.sh"
   },
   "devDependencies": {
     "@pikku/cli": "^0.12.184",
