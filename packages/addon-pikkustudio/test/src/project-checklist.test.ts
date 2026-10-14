@@ -12,7 +12,7 @@ const signals = (patch: Partial<Signals> = {}): Signals => ({
   designed: false,
   samples: 0,
   busy: { frontend: false, build: false },
-  publish: { state: 'idle', url: null },
+  publish: { state: 'idle' },
   run: null,
   activity: null,
   now: 1_000_000,

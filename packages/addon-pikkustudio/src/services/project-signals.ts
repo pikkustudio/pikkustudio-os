@@ -34,7 +34,7 @@ export async function readSignals(
     busy: { frontend: front.busy, build: build.busy },
     publish: (() => {
       const job = services.publisher.status(key)
-      return { state: job.state, url: job.url }
+      return { state: job.state }
     })(),
     run,
     activity: doing ? latestActivity(tools) : null,
