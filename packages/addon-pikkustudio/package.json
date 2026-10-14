@@ -24,7 +24,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "rm -rf dist && pikku all && tsc && (cp .pikku/addon/rpc/*.d.ts dist/.pikku/addon/rpc/ 2>/dev/null || true) && (mkdir -p dist/types && cp types/*.d.ts dist/types/)",
+    "build": "rm -rf dist && pikku all && tsc && (cp .pikku/addon/rpc/*.d.ts dist/.pikku/addon/rpc/ 2>/dev/null || true) && mkdir -p dist/.pikku/addon/db && cp .pikku/addon/db/pikku-db-meta.gen.json dist/.pikku/addon/db/ && (mkdir -p dist/types && cp types/*.d.ts dist/types/)",
     "pikku": "pikku all",
     "tsc": "tsc --noEmit",
     "test": "cd test && node --import tsx --test 'src/**/*.test.ts'"
