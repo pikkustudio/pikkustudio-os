@@ -15,9 +15,9 @@
   },
   "dependencies": {
     "@tauri-apps/api": "^2",
-    "@pikku/addon-diffui": "workspace:*",
-    "@pikku/addon-review": "workspace:*",
-    "@pikku/addon-spindle": "workspace:*",
+    "@pikkustudio/addon-diffui": "workspace:*",
+    "@pikkustudio/addon-review": "workspace:*",
+    "@pikkustudio/addon-spindle": "workspace:*",
     "@pikku/react": "^0.12.13",
     "@pikkustudio/blocks": "workspace:*",
     "@pikkustudio/theme": "workspace:*",

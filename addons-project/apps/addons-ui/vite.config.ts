@@ -8,7 +8,7 @@ const here = dirname(fileURLToPath(import.meta.url))
 const project = join(here, '..', '..')
 const modules = realpathSync(join(project, 'node_modules'))
 const real = (name: string) => realpathSync(join(project, 'node_modules', name))
-const sources = [real('@pikkustudio/blocks/src'), real('@pikku/addon-spindle/dist')]
+const sources = [real('@pikkustudio/blocks/src'), real('@pikkustudio/addon-spindle/dist')]
 
 writeFileSync(join(here, 'src', 'sources.gen.css'), sources.map((dir) => `@source '${dir}';`).join('\n') + '\n')
 

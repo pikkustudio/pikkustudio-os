@@ -1,4 +1,4 @@
-# @pikku/addon-spindle
+# @pikkustudio/addon-spindle
 
 Spindle's library inside Pikku Studio: upload assets, file them into knowledge bases. Single owner, so no org column; every table is `spindle_`-prefixed (`db/sqlite/0001-spindle.sql`).
 
