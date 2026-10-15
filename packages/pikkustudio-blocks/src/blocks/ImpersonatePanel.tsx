@@ -4,56 +4,34 @@ import { UserRound } from 'lucide-react'
 import { m } from '@/i18n/messages'
 import { Button } from '../ui/button'
 import { HintRow } from './HintRow'
+import { frameTransport, type Persona, type PersonaReply, type PersonaTransport } from '../lib/persona-transport'
 
 type Who = { name: string } | null
-type Persona = { id: string; name: string; jobTitle: string | null }
-type Reply = { ok: boolean; actors?: Persona[]; name?: string | null }
 
-let counter = 0
-
-const askUntilAnswered = async (type: string): Promise<Reply> => {
-  let reply: Reply = { ok: false }
-  for (let attempt = 0; attempt < 8 && !reply.ok; attempt++) reply = await ask(type)
+const askUntilAnswered = async (transport: PersonaTransport): Promise<PersonaReply> => {
+  let reply: PersonaReply = { ok: false }
+  for (let attempt = 0; attempt < 8 && !reply.ok; attempt++) reply = await transport.list()
   return reply
 }
 
-const ask = (type: string, extra: Record<string, unknown> = {}): Promise<Reply> =>
-  new Promise((resolve) => {
-    const frame = document.querySelector<HTMLIFrameElement>('iframe[data-live-app]')
-    if (!frame?.contentWindow) return resolve({ ok: false })
-    const id = `persona-${++counter}`
-    const done = (reply: Reply) => {
-      window.removeEventListener('message', onMessage)
-      clearTimeout(timer)
-      resolve(reply)
-    }
-    const onMessage = (event: MessageEvent) => {
-      const data = event.data
-      if (event.source === frame.contentWindow && data?.source === 'cloud-preview' && data.type === 'persona-result' && data.id === id) done(data)
-    }
-    const timer = setTimeout(() => done({ ok: false }), 1500)
-    window.addEventListener('message', onMessage)
-    frame.contentWindow.postMessage({ source: 'cloud-console', type, id, ...extra }, '*')
-  })
-
-const readWho = async (): Promise<Who> => {
-  const reply = await ask('persona-who')
+const readWho = async (transport: PersonaTransport): Promise<Who> => {
+  const reply = await transport.who()
   return reply.ok && reply.name != null ? { name: reply.name } : null
 }
 
-export function ImpersonatePanel({ onSwitched }: { onSwitched: () => void }) {
+export function ImpersonatePanel({ onSwitched, transport = frameTransport }: { onSwitched: () => void; transport?: PersonaTransport }) {
   const [actors, setActors] = useState<Persona[] | null>(null)
   const [who, setWho] = useState<Who>(null)
   const [busy, setBusy] = useState<string | null>(null)
   const [failed, setFailed] = useState(false)
 
   const refresh = useCallback(async () => {
-    setWho(await readWho())
-  }, [])
+    setWho(await readWho(transport))
+  }, [transport])
 
   useEffect(() => {
     let live = true
-    askUntilAnswered('persona-list').then((reply) => live && setActors(reply.actors ?? []))
+    askUntilAnswered(transport).then((reply) => live && setActors(reply.actors ?? []))
     refresh()
     return () => {
       live = false
@@ -78,7 +56,7 @@ export function ImpersonatePanel({ onSwitched }: { onSwitched: () => void }) {
     run(
       actor.id,
       async () => {
-        if (!(await ask('persona-switch', { persona: actor.id })).ok) throw new Error('switch')
+        if (!(await transport.switchTo(actor.id)).ok) throw new Error('switch')
       },
       { name: actor.name },
     )
@@ -86,7 +64,7 @@ export function ImpersonatePanel({ onSwitched }: { onSwitched: () => void }) {
     run(
       'out',
       async () => {
-        if (!(await ask('persona-signout')).ok) throw new Error('signout')
+        if (!(await transport.signOut()).ok) throw new Error('signout')
       },
       null,
     )

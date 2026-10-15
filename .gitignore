@@ -13,3 +13,4 @@ gen
 .vite
 .env
 .deploy
+apps/studio/injected

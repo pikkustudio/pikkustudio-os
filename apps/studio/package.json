@@ -7,7 +7,8 @@
   "scripts": {
     "tauri": "tauri",
     "dev": "vite dev --port 4741 --strictPort",
-    "build": "vite build",
+    "build": "vite build && vite build -c vite.injected.config.ts",
+    "build:panel": "vite build -c vite.injected.config.ts",
     "preview": "vite preview --port 4741 --strictPort",
     "lint": "oxlint",
     "tsc": "tsc --noEmit --incremental --tsBuildInfoFile node_modules/.cache/app-tsc.tsbuildinfo",
