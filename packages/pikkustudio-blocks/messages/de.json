@@ -3355,6 +3355,5 @@
   "page_breadcrumb__browse_part": "Bausteine durchsuchen",
   "page_breadcrumb__menu_part": "Bausteine",
   "page_breadcrumb__trigger_part": "Baustein: {name}. Bausteine durchsuchen",
-  "cloud_panel__title": "Pikku Cloud",
-  "cloud_panel__open": "Sehen, was Pikku Cloud dazu bringt"
+  "cloud_panel__title": "Pikku Cloud"
 }

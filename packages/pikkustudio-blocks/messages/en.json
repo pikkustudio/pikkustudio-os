@@ -3566,6 +3566,5 @@
   "page_breadcrumb__menu_part": "Parts",
   "page_breadcrumb__trigger_part": "Part: {name}. Browse parts",
   "updates_feed__ai_hosted": "{who} chose the hosted AI",
-  "cloud_panel__title": "Pikku cloud",
-  "cloud_panel__open": "See what Pikku cloud adds"
+  "cloud_panel__title": "Pikku cloud"
 }
