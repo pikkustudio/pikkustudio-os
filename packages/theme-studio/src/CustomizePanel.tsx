@@ -257,7 +257,7 @@ function useCustomize(labels: CustomizeLabels) {
       title={labels.open}
       aria-haspopup="dialog"
       onClick={() => setOpenState(true)}
-      className={`fixed end-0 top-1/2 z-40 flex -translate-y-1/2 items-center rounded-s-xl border border-e-0 border-[var(--cz-line,#ccc)] bg-[var(--cz-surface,#fff)] px-1.5 py-3 text-[var(--cz-ink-2,inherit)] shadow-lg hover:text-[var(--cz-ink,inherit)] ${ring}`}
+      className={`fixed end-0 top-28 z-40 flex items-center rounded-s-xl border border-e-0 border-[var(--cz-line,#ccc)] bg-[var(--cz-surface,#fff)] px-1.5 py-3 text-[var(--cz-ink-2,inherit)] shadow-lg hover:text-[var(--cz-ink,inherit)] ${ring}`}
     >
       <CustomizeIconSvg name="sliders" />
     </button>
