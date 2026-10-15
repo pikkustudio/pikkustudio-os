@@ -87,7 +87,7 @@ type FileRead = { content?: string; binary?: boolean; truncated?: boolean }
 export function useFrontDoors(key: string) {
   const apps = usePikkuQuery('studio:projectApps', { key }, { enabled: !!key, refetchInterval: 4000 })
   const meta = useProjectQuery<Meta>(key, 'console:getAllMeta', {})
-  const config = useProjectQuery<FileRead>(key, 'console:readProjectFile', { path: 'pikku.config.json' }, { enabled: !!meta.data?.httpMeta?.length })
+  const config = useProjectQuery<FileRead>(key, 'console:readProjectFile', { path: 'pikku.config.json' }, { enabled: !!meta.data?.httpMeta?.length, optional: true })
   const where = (() => {
     try {
       return (JSON.parse(config.data?.content ?? '{}') as { openAPI?: { outputFile?: string } }).openAPI?.outputFile ?? null
@@ -95,7 +95,7 @@ export function useFrontDoors(key: string) {
       return null
     }
   })()
-  const spec = useProjectQuery<FileRead>(key, 'console:readProjectFile', { path: where ?? '' }, { enabled: !!where })
+  const spec = useProjectQuery<FileRead>(key, 'console:readProjectFile', { path: where ?? '' }, { enabled: !!where, optional: true })
   const openSpec = () => {
     const content = spec.data?.content
     if (!content) return
