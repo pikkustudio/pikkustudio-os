@@ -77,7 +77,7 @@ export function DesignScreen() {
       stage = <PartsWaiting text={design?.state === 'restarting' ? m.design_parts__restarting() : m.design_parts__starting()} />
     }
   } else if (!key || apps.isPending) {
-    stage = <AppNotRunning state="starting" name={app} steps={startSteps(start.isSuccess, list)} onStart={() => undefined} />
+    stage = <PartsWaiting text={m.design_live__loading()} />
   } else if (failed) {
     stage = <AppNotRunning state="failed" name={app} error={start.error ?? restart.error} onStart={() => restart.mutate({ key })} starting={restart.isPending || start.isPending} />
   } else if (list.length === 0) {

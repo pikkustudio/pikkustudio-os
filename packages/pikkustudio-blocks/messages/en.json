@@ -671,6 +671,7 @@
   "design_live__chat_text": "Pointing at a part of your real app to talk about it is not available yet. For now, describe the part in the chat and Pikku will find it.",
   "design_live__chat_title": "Select for chat",
   "design_live__frame": "{name}, as people see it",
+  "design_live__loading": "Loading…",
   "design_live__look_text": "Changing colours and fonts here is not available on your real app yet. For now, ask Pikku in the chat and it will change them for you.",
   "design_live__look_title": "Look and feel",
   "design_live__running": "Running",
