@@ -1,7 +1,7 @@
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 
-export type ChatLine = { kind: string; text?: string; at: number }
+export type ChatLine = { kind: string; text?: string; at: number; [extra: string]: unknown }
 
 export type ArchivedChat = { id: string; title: string; at: number; items: ChatLine[]; specialist?: string }
 
@@ -13,7 +13,7 @@ export const archiveChat = async (projectDir: string, id: string, items: ChatLin
   const said = items.filter((i) => i.text && ['user', 'assistant', 'error'].includes(i.kind))
   if (!said.length) throw new Error('There is nothing in this chat to save yet.')
   await mkdir(root(projectDir), { recursive: true })
-  const chat: ArchivedChat = { id, title: titleOf(said), at: said[said.length - 1]!.at, items: said, specialist }
+  const chat: ArchivedChat = { id, title: titleOf(said), at: said[said.length - 1]!.at, items, specialist }
   await writeFile(join(root(projectDir), `${id}.json`), JSON.stringify(chat, null, 2) + '\n')
 }
 

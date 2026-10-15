@@ -28,12 +28,13 @@ import { ChatMarkdown } from '../blocks/ChatMarkdown'
 import { AiSpinner } from '../blocks/Spinner'
 import { Button } from '../ui/button'
 import { SavedChats } from '../blocks/SavedChats'
+import { FullTranscript } from '../blocks/FullTranscript'
 import { QuickFind } from '../blocks/QuickFind'
 import { SlashMenu, slashMatches, slashOptionId } from '../blocks/SlashMenu'
 import { UpdatesFeed } from '../blocks/UpdatesFeed'
 import { ProjectRunGate } from '../blocks/ProjectRunGate'
 import { Toaster } from '../blocks/Toaster'
-import { GitPullRequest, Archive, type LucideIcon, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, History, Home, Info, Compass, KeyRound, ListChecks, Search, Laptop, LayoutGrid, Mail, MessageCircle, MessageCircleQuestion, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, PanelLeftClose, PanelLeftOpen, User, UserRoundCheck, Wrench, X, CheckCheck } from 'lucide-react'
+import { GitPullRequest, Archive, type LucideIcon, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, History, Home, Info, Compass, KeyRound, ListChecks, Search, Laptop, LayoutGrid, Mail, MessageCircle, MessageCircleQuestion, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, PanelLeftClose, PanelLeftOpen, User, UserRoundCheck, Wrench, X, CheckCheck, ScrollText } from 'lucide-react'
 
 // The app shell: rail, preview drawer (right edge), Pikku button + bubble, side panels.
 // Every screen route is a child of this layout. Page content lives in the route files.
@@ -188,6 +189,20 @@ export function ShellLayout() {
   const projectKey = useProjectKey()
   const workMode = useLocation({ select: (l) => modeForPath(l.pathname) })
   const [saved, setSaved] = useState<{ open: string | null } | null>(null)
+  const [full, setFull] = useState(() => {
+    try {
+      return localStorage.getItem('studio.chat.full') === '1'
+    } catch {
+      return false
+    }
+  })
+  const toggleFull = () =>
+    setFull((on) => {
+      try {
+        localStorage.setItem('studio.chat.full', on ? '0' : '1')
+      } catch {}
+      return !on
+    })
   const guide = usePikkuChat(projectKey)
   const builder = useBuilderChat(projectKey, workMode)
   const chat = workMode ? builder : guide
@@ -511,6 +526,10 @@ export function ShellLayout() {
                   <b className="min-w-0 flex-1 truncate text-foreground">{projectName}{aboutScreen ? <>{sep(', ')}{aboutScreen}</> : null}</b>
                   {workMode ? (
                     <>
+                      <Button variant={full ? 'bordered' : 'ghost'} size="textTight" type="button" aria-pressed={full} title={m.builder_chat__full_hint()} onClick={toggleFull} data-testid="chat-full-toggle">
+                        <ScrollText className="size-4" />
+                        {m.builder_chat__full()}
+                      </Button>
                       <Button variant="ghost" size="textTight" type="button" onClick={() => setSaved({ open: null })}>
                         <History className="size-4" />
                         {m.builder_chat__saved_chats()}
@@ -527,7 +546,8 @@ export function ShellLayout() {
                 ) : (
                 <>
                 <div className="flex min-h-0 flex-1 flex-col gap-4.5 overflow-auto px-6 py-5" tabIndex={0} aria-label={m.shell_layout__chat()} role="log">
-                  {chat.items.map((it) =>
+                  {full && workMode ? <FullTranscript items={builder.raw} busy={builder.busy} avatar={<Avatar mood="calm" size="sm" />} /> : null}
+                  {(full && workMode ? [] : chat.items).map((it) =>
                     it.kind === 'me' ? (
                       <div key={it.id} className="flex min-w-0 items-start justify-end gap-3">
                         <div className="flex max-w-5/6 min-w-0 flex-col gap-2 rounded-t-[18px] rounded-es-[18px] rounded-ee-[4px] bg-accent px-4 py-2.5 text-[16px] leading-[1.5] text-foreground">

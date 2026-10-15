@@ -76,7 +76,7 @@ export const modeForPath = (path: string): WorkMode | null => SCREEN_SPECIALIST.
 
 const TIMED_OUT = /timed out|took too long/i
 
-type BuilderItem = { kind: string; text?: string; at: number }
+export type BuilderItem = { kind: string; text?: string; at: number; id?: string; name?: string; summary?: string; args?: string; output?: string; status?: string }
 type Timed = { at: number; item: ChatItem }
 
 const KICKOFF_TAG = '[[kickoff]]'
@@ -294,7 +294,7 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
     [send, doOffer, doStamp, guideAct.mutateAsync, key, state.refetch, checklist.refetch, fail],
   )
 
-  return { items, busy: sending || !!data?.busy, send, decide, push, archive, skipQuestion, archiving: archiveChat.isPending, canArchive: !!mode && !sending && !data?.busy && !archiveChat.isPending && (data?.items ?? []).some((i) => !!i.text && (i.kind === 'user' || i.kind === 'assistant')) }
+  return { items, raw: data?.items ?? [], busy: sending || !!data?.busy, send, decide, push, archive, skipQuestion, archiving: archiveChat.isPending, canArchive: !!mode && !sending && !data?.busy && !archiveChat.isPending && (data?.items ?? []).some((i) => !!i.text && (i.kind === 'user' || i.kind === 'assistant')) }
 }
 
 export type SavedChat = { id: string; title: string; at: number }

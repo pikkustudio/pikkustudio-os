@@ -14,7 +14,8 @@ const routerEnv = (launch: { env?: Record<string, string>; queueHome?: string })
 export type BuilderItem =
   | { kind: 'user'; text: string; at: number }
   | { kind: 'assistant'; text: string; at: number }
-  | { kind: 'tool'; id: string; name: string; summary: string; status: 'running' | 'done' | 'error'; at: number }
+  | { kind: 'thinking'; text: string; at: number }
+  | { kind: 'tool'; id: string; name: string; summary: string; args?: string; output?: string; status: 'running' | 'done' | 'error'; at: number }
   | { kind: 'error'; text: string; at: number }
   | { kind: 'loop'; text: string; at: number }
   | { kind: 'navigate'; screen: string; id?: string; title?: string; at: number }
@@ -56,6 +57,25 @@ const summarize = (args: unknown): string => {
   if (typeof pick === 'string') return pick.length > 120 ? `${pick.slice(0, 117)}…` : pick
   if (Array.isArray(a.files)) return a.files.map((f) => (f && typeof f === 'object' ? (f as any).path : '')).filter(Boolean).join(', ')
   return ''
+}
+
+const SECRET = /(sk-[A-Za-z0-9_-]{16,}|gh[pousr]_[A-Za-z0-9]{20,}|xox[abprs]-[A-Za-z0-9-]{10,}|AKIA[0-9A-Z]{16}|eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}|-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY-----)/g
+const KEYED = /((?:api[_-]?key|secret|token|password|authorization|bearer)["']?\s*[:=]\s*["']?)([^\s"',}]{8,})/gi
+
+const redact = (text: string): string => text.replace(SECRET, '[hidden]').replace(KEYED, '$1[hidden]')
+
+const show = (value: unknown): string => {
+  if (value == null) return ''
+  if (typeof value === 'string') return redact(value)
+  if (Array.isArray((value as { content?: unknown }).content)) {
+    const parts = (value as { content: { type?: string; text?: string }[] }).content.map((c) => (c?.type === 'text' ? String(c.text ?? '') : `[${c?.type ?? 'part'}]`))
+    return redact(parts.join('\n'))
+  }
+  try {
+    return redact(JSON.stringify(value, null, 2))
+  } catch {
+    return ''
+  }
 }
 
 interface Turn {
@@ -486,6 +506,10 @@ export class BuilderSession {
       const delta = String(event.assistantMessageEvent.delta ?? '')
       if (last?.kind === 'assistant') last.text += delta
       else state.items.push({ kind: 'assistant', text: delta, at: Date.now() })
+    } else if (event.type === 'message_update' && event.assistantMessageEvent?.type === 'thinking_delta') {
+      const delta = redact(String(event.assistantMessageEvent.delta ?? ''))
+      if (last?.kind === 'thinking') last.text += delta
+      else state.items.push({ kind: 'thinking', text: delta, at: Date.now() })
     } else if (event.type === 'tool_execution_start') {
       const turn = this.turns.get(key)
       if (turn) turn.tools += 1
@@ -494,13 +518,17 @@ export class BuilderSession {
         id: String(event.toolCallId ?? state.items.length),
         name: String(event.toolName ?? 'tool'),
         summary: summarize(event.args),
+        args: show(event.args),
         status: 'running',
         at: Date.now(),
       })
     } else if (event.type === 'tool_execution_end') {
       const id = event.toolCallId == null ? null : String(event.toolCallId)
       const tool = state.items.findLast((i) => i.kind === 'tool' && (id === null || i.id === id))
-      if (tool?.kind === 'tool') tool.status = event.isError ? 'error' : 'done'
+      if (tool?.kind === 'tool') {
+        tool.status = event.isError ? 'error' : 'done'
+        tool.output = show(event.result)
+      }
       const navigate = event.isError ? null : event.result?.details?.navigate
       if (navigate?.screen) state.items.push({ kind: 'navigate', ...navigate, at: Date.now() })
     } else if (event.type === 'message_end' && event.message?.stopReason === 'error') {

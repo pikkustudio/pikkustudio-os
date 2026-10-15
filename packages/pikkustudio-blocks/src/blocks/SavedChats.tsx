@@ -2,9 +2,9 @@ import { asI18n, type I18nNode, type I18nString } from '@pikku/react'
 import { ArrowLeft, Lock, MessageSquare } from 'lucide-react'
 import { m } from '@/i18n/messages'
 import { getLocale } from '@/paraglide/runtime.js'
-import { stripMarkers, useSavedChat, useSavedChats } from '../lib/builder-chat'
+import { useSavedChat, useSavedChats } from '../lib/builder-chat'
+import { FullTranscript } from './FullTranscript'
 import { AiSpinner } from './Spinner'
-import { ChatMarkdown } from './ChatMarkdown'
 import { EmptyState } from './EmptyState'
 import { ErrorState } from './ErrorState'
 import { RowCard, RowStack } from './RowCard'
@@ -36,20 +36,7 @@ export function SavedChats({ projectKey, openId, onOpen, onClose, avatar }: { av
               {m.builder_chat__saved_loading()}
             </p>
           ) : null}
-          {(chat.data?.items ?? []).map((it, index) =>
-            it.kind === 'user' ? (
-              <div key={index} className="flex min-w-0 items-start justify-end gap-3">
-                <div className="flex max-w-5/6 min-w-0 flex-col gap-2 rounded-t-[18px] rounded-es-[18px] rounded-ee-[4px] bg-accent px-4 py-2.5 text-[16px] leading-[1.5] text-foreground">{asI18n(it.text ?? '')}</div>
-              </div>
-            ) : it.kind === 'assistant' ? (
-              <div key={index} className="flex min-w-0 items-start gap-3">
-                <span className="mt-0.5">{avatar}</span>
-                <div className="flex min-w-0 flex-col gap-2 text-[16px] leading-[1.5] text-foreground">
-                  <ChatMarkdown>{stripMarkers(it.text ?? '')}</ChatMarkdown>
-                </div>
-              </div>
-            ) : null,
-          )}
+          {chat.data ? <FullTranscript items={chat.data.items} busy={false} avatar={avatar} /> : null}
         </div>
         <p className="flex items-center gap-2 border-t border-border bg-card px-6 py-4 text-[14px] text-ink-2">
           <Lock className="size-4.5 shrink-0" />
