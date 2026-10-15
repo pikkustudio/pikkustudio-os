@@ -776,6 +776,9 @@
     }
   ],
   "element_panel__right": "Right",
+  "element_panel__section_colour": "Colour",
+  "element_panel__section_text": "Text",
+  "element_panel__section_layout": "Layout",
   "element_panel__single_one_wins": "Anything you set on a single one still wins.",
   "element_panel__size": "Size",
   "element_panel__space_inside": "Space inside",

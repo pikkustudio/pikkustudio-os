@@ -649,6 +649,9 @@
     }
   ],
   "element_panel__right": "Rechts",
+  "element_panel__section_colour": "Farbe",
+  "element_panel__section_text": "Text",
+  "element_panel__section_layout": "Layout",
   "element_panel__single_one_wins": "Was du bei einem einzelnen Teil festlegst, hat immer Vorrang.",
   "element_panel__size": "Größe",
   "element_panel__space_inside": "Innenabstand",

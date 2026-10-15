@@ -713,6 +713,9 @@
     }
   ],
   "element_panel__right": "يمين",
+  "element_panel__section_colour": "اللون",
+  "element_panel__section_text": "النص",
+  "element_panel__section_layout": "التخطيط",
   "element_panel__single_one_wins": "ما تضبطونه على عنصر واحد له الأولوية دائما.",
   "element_panel__size": "الحجم",
   "element_panel__space_inside": "المسافة الداخلية",
