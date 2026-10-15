@@ -45,8 +45,8 @@ import { GitPullRequest, Archive, type LucideIcon, ArrowLeft, ArrowRight, Bell, 
 
 const item =
   'flex w-full items-center gap-3 rounded-lg px-3 text-start font-semibold no-underline transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'
-const PIN_ICON: Record<Movable, LucideIcon> = { 'virtual-users': UserRoundCheck, translations: Globe, artifacts: FileText, content: FolderOpen, 'front-doors': Smartphone, audit: History }
-const pinLabel = (id: Movable): I18nString => ({ 'virtual-users': m.quick_find__virtual_users, translations: m.quick_find__translations, artifacts: SCREEN_NAME.artifacts, content: m.content__title, 'front-doors': m.front_doors__title, audit: m.quick_find__audit })[id]()
+const PIN_ICON: Record<Movable, LucideIcon> = { 'virtual-users': UserRoundCheck, translations: Globe, artifacts: FileText, content: FolderOpen, 'front-doors': Smartphone, audit: History, emails: Mail, knowledge: BookOpen, publish: Upload }
+const pinLabel = (id: Movable): I18nString => ({ 'virtual-users': m.quick_find__virtual_users, translations: m.quick_find__translations, artifacts: SCREEN_NAME.artifacts, content: m.content__title, 'front-doors': m.front_doors__title, audit: m.quick_find__audit, emails: SCREEN_NAME.emails, knowledge: SCREEN_NAME.knowledge, publish: m.shell_layout__publish })[id]()
 const navItem = `${item} h-9.25 text-[14px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`
 const iconBtn =
   'grid size-11 shrink-0 place-items-center rounded-full text-ink-2 transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'
@@ -340,18 +340,6 @@ export function ShellLayout() {
                   </Link>
                 )
               })}
-              <Link {...keep} to="/emails" className={navItem}>
-                <Mail className="size-5" />
-                {SCREEN_NAME.emails()}
-              </Link>
-              <Link {...keep} to="/knowledge" className={navItem}>
-                <BookOpen className="size-5" />
-                {SCREEN_NAME.knowledge()}
-              </Link>
-              <Link {...keep} to="/publish" className={navItem}>
-                <Upload className="size-5" />
-                {m.shell_layout__publish()}
-              </Link>
             </div>
             )}
             <div className="mt-auto flex flex-col gap-2.5">
