@@ -1308,7 +1308,7 @@ export class StudioProjectsService {
     if (this.options.confine === false || !canConfine()) return null
     if (this.options.confine) return this.options.confine(worktree)
     const base = worktreeConfinement(worktree)
-    const readable = [join(homedir(), '.fabric', 'auth.json')]
+    const readable = [join(homedir(), '.pikkustudio', 'auth.json')]
     if (this.options.designEntry) {
       readable.push(resolve(this.options.designEntry, '..', '..'))
       const modules = hoistedNodeModules(dirname(this.options.designEntry))
