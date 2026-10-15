@@ -11,7 +11,7 @@ import type { Device } from '../types/designTypes'
 const withIcon = (Icon: typeof Palette, text: I18nString) => (
   <span className="inline-flex items-center gap-1.5">
     <Icon className="size-4" />
-    <span className="hidden @min-[1100px]/bar:inline @min-[900px]/bar:group-aria-pressed:inline">{text}</span>
+    <span className="hidden group-aria-pressed:inline">{text}</span>
   </span>
 )
 
