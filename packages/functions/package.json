@@ -27,7 +27,6 @@
     "@pikku/addon-spindle": "workspace:*",
     "@pikku/kysely": "^0.13.34",
     "@pikku/schema-cfworker": "^0.12.7",
-    "@pikkustudio/studio": "workspace:*",
     "@pikkustudio/vault": "workspace:*",
     "@resvg/resvg-wasm": "^2.6.2",
     "@standard-schema/spec": "^1.1.0",
