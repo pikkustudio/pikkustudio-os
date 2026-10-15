@@ -1,4 +1,4 @@
-# @pikku/addon-diffui
+# @pikkustudio/addon-diffui
 
 A Pikku addon with screens that shows the original mock and its built prototype side by side, light and dark, for every screenshot pair `scripts/compare-screen.mjs` produces.
 

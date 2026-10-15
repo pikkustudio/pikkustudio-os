@@ -2,6 +2,6 @@ import { wireAddon } from '#pikku/addon'
 
 wireAddon({
   name: 'diffui',
-  package: '@pikku/addon-diffui',
+  package: '@pikkustudio/addon-diffui',
   ui: true,
 })

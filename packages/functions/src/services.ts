@@ -27,8 +27,8 @@ import { studioAgentRunner } from './lib/chat-runner.js'
 import { createStudio } from './lib/studio.js'
 import { studioAuthSecret } from './lib/auth-secret.js'
 import { connectVault } from '@pikkustudio/vault/connect'
-import { KyselyCommentStore } from '@pikku/addon-review/comment-store'
-import { KyselyVerdictStore } from '@pikku/addon-review/store'
+import { KyselyCommentStore } from '@pikkustudio/addon-review/comment-store'
+import { KyselyVerdictStore } from '@pikkustudio/addon-review/store'
 import { worktreeMetaSource } from './lib/worktree-meta-source.js'
 
 process.env.PIKKU_DATA_DIR ??= join(studioHome(), 'data')

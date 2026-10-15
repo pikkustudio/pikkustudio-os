@@ -37,10 +37,10 @@
       "name": "@pikkustudio/app-studio",
       "version": "0.0.1",
       "dependencies": {
-        "@pikku/addon-diffui": "workspace:*",
-        "@pikku/addon-review": "workspace:*",
-        "@pikku/addon-spindle": "workspace:*",
         "@pikku/react": "^0.12.13",
+        "@pikkustudio/addon-diffui": "workspace:*",
+        "@pikkustudio/addon-review": "workspace:*",
+        "@pikkustudio/addon-spindle": "workspace:*",
         "@pikkustudio/blocks": "workspace:*",
         "@pikkustudio/theme": "workspace:*",
         "@project/functions-sdk": "workspace:*",
@@ -120,7 +120,7 @@
       ],
     },
     "packages/addons/diffui": {
-      "name": "@pikku/addon-diffui",
+      "name": "@pikkustudio/addon-diffui",
       "version": "0.0.1",
       "devDependencies": {
         "@pikku/cli": "*",
@@ -139,7 +139,7 @@
       },
     },
     "packages/addons/review": {
-      "name": "@pikku/addon-review",
+      "name": "@pikkustudio/addon-review",
       "version": "0.0.1",
       "dependencies": {
         "@pikku/kysely": "^0.13.34",
@@ -160,7 +160,7 @@
       },
     },
     "packages/addons/spindle": {
-      "name": "@pikku/addon-spindle",
+      "name": "@pikkustudio/addon-spindle",
       "version": "0.0.1",
       "dependencies": {
         "@pikku/kysely": "^0.13.34",
@@ -256,14 +256,14 @@
         "@ai-sdk/openai": "^4.0.81",
         "@ai-sdk/openai-compatible": "^3.0.59",
         "@pikku/addon-console": "^0.12.59",
-        "@pikku/addon-diffui": "workspace:*",
-        "@pikku/addon-review": "workspace:*",
-        "@pikku/addon-spindle": "workspace:*",
         "@pikku/ai-vercel": "^0.12.14",
         "@pikku/better-auth": "^0.12.52",
         "@pikku/core": "^0.12.136",
         "@pikku/kysely": "^0.13.34",
         "@pikku/schema-cfworker": "^0.12.7",
+        "@pikkustudio/addon-diffui": "workspace:*",
+        "@pikkustudio/addon-review": "workspace:*",
+        "@pikkustudio/addon-spindle": "workspace:*",
         "@pikkustudio/addon-studio": "workspace:*",
         "@pikkustudio/builder": "workspace:*",
         "@pikkustudio/vault": "workspace:*",
@@ -823,12 +823,6 @@
 
     "@pikku/addon-console": ["@pikku/addon-console@0.12.59", "", { "dependencies": { "@pikku/code-edit": "^0.12.4", "@pikku/knowledge": "^0.12.18", "json-schema": "^0.4.0", "open": "^11.0.1" }, "peerDependencies": { "@pikku/better-auth": "^0.12.54", "@pikku/core": "^0.12.139" }, "optionalPeers": ["@pikku/better-auth"] }, "sha512-1pOY3sYVDNR+lDxEQJlzNd01IFMWIsKnfsyK8kvQ3HuSGVfyP3R1NHtajMqCTvEwIB0AAve9uxDHwCN0EHMHYQ=="],
 
-    "@pikku/addon-diffui": ["@pikku/addon-diffui@workspace:packages/addons/diffui"],
-
-    "@pikku/addon-review": ["@pikku/addon-review@workspace:packages/addons/review"],
-
-    "@pikku/addon-spindle": ["@pikku/addon-spindle@workspace:packages/addons/spindle"],
-
     "@pikku/ai-vercel": ["@pikku/ai-vercel@0.12.15", "", { "peerDependencies": { "@pikku/core": "^0.12.138", "ai": "^7.0.0" } }, "sha512-GzHLgdFdBwyHsfk7oXrvmrHd6cGeNMdW/dq+yHoIq+nbqDJ0MT0rtruperrq8JrZSqK1MHurAtMdLuSJTRcKyw=="],
 
     "@pikku/better-auth": ["@pikku/better-auth@0.12.54", "", { "peerDependencies": { "@pikku/core": "^0.12.138", "better-auth": "^1.7.5", "zod": "^4" } }, "sha512-KJiOZsuCV3EOI1zmZASok6s8xZkCAwUlWn2ADcOmYTolHALFZQ/3uDtVytQnmQOE91kyEuHeXcxNKQdI9u1c/A=="],
@@ -880,6 +874,12 @@
     "@pikku/skills": ["@pikku/skills@0.12.54", "", {}, "sha512-2hOet9pq+dwpnh6YDyj9+FoJ4p5nWFHJ+pKaIft2XmeCPqgn2ydt0RFCnqGoAg8sOmEcCv3kcjISAFXCzIAxhg=="],
 
     "@pikku/websocket": ["@pikku/websocket@0.12.5", "", { "optionalDependencies": { "ws": "^8.21.3" } }, "sha512-nvYS/MmwzglNZJ0HqyoxLq63ZLzvsfXQmtg5T55H4ctYg3OK7EaL7SATgdbPstX9pBtIvKn2/FxVfvmS+Ua5BQ=="],
+
+    "@pikkustudio/addon-diffui": ["@pikkustudio/addon-diffui@workspace:packages/addons/diffui"],
+
+    "@pikkustudio/addon-review": ["@pikkustudio/addon-review@workspace:packages/addons/review"],
+
+    "@pikkustudio/addon-spindle": ["@pikkustudio/addon-spindle@workspace:packages/addons/spindle"],
 
     "@pikkustudio/addon-studio": ["@pikkustudio/addon-studio@workspace:packages/addon-pikkustudio"],
 
@@ -2137,11 +2137,11 @@
 
     "@inlang/sdk/kysely": ["kysely@0.28.17", "", {}, "sha512-nbD8lB9EB3wNdMhOCdx5Li8DxnLbvKByylRLcJ1h+4SkrowVeECAyZlyiKMThF7xFdRz0jSQ2MoJr+wXux2y0Q=="],
 
-    "@pikku/addon-diffui/@types/node": ["@types/node@26.6.5", "", { "dependencies": { "undici-types": "~8.9.0" } }, "sha512-uMzsv9stDdofIZBx4UGh4Z9ZgXnGC9seRDscilBcTHAeOFk67MZg/k9bWVfO+bk4qZmG+l52hRnLwUiH2LnJTg=="],
+    "@pikkustudio/addon-diffui/@types/node": ["@types/node@26.6.5", "", { "dependencies": { "undici-types": "~8.9.0" } }, "sha512-uMzsv9stDdofIZBx4UGh4Z9ZgXnGC9seRDscilBcTHAeOFk67MZg/k9bWVfO+bk4qZmG+l52hRnLwUiH2LnJTg=="],
 
-    "@pikku/addon-review/@types/node": ["@types/node@26.6.5", "", { "dependencies": { "undici-types": "~8.9.0" } }, "sha512-uMzsv9stDdofIZBx4UGh4Z9ZgXnGC9seRDscilBcTHAeOFk67MZg/k9bWVfO+bk4qZmG+l52hRnLwUiH2LnJTg=="],
+    "@pikkustudio/addon-review/@types/node": ["@types/node@26.6.5", "", { "dependencies": { "undici-types": "~8.9.0" } }, "sha512-uMzsv9stDdofIZBx4UGh4Z9ZgXnGC9seRDscilBcTHAeOFk67MZg/k9bWVfO+bk4qZmG+l52hRnLwUiH2LnJTg=="],
 
-    "@pikku/addon-spindle/@types/node": ["@types/node@26.6.5", "", { "dependencies": { "undici-types": "~8.9.0" } }, "sha512-uMzsv9stDdofIZBx4UGh4Z9ZgXnGC9seRDscilBcTHAeOFk67MZg/k9bWVfO+bk4qZmG+l52hRnLwUiH2LnJTg=="],
+    "@pikkustudio/addon-spindle/@types/node": ["@types/node@26.6.5", "", { "dependencies": { "undici-types": "~8.9.0" } }, "sha512-uMzsv9stDdofIZBx4UGh4Z9ZgXnGC9seRDscilBcTHAeOFk67MZg/k9bWVfO+bk4qZmG+l52hRnLwUiH2LnJTg=="],
 
     "@pikkustudio/app-studio/lucide-react": ["lucide-react@0.456.0", "", { "peerDependencies": { "react": "^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0-rc" } }, "sha512-DIIGJqTT5X05sbAsQ+OhA8OtJYyD4NsEMCA/HQW/Y6ToPQ7gwbtujIoeAaup4HpHzV35SQOarKAWH8LYglB6eA=="],
 
@@ -2267,11 +2267,11 @@
 
     "@earendil-works/chord/esbuild/@esbuild/win32-x64": ["@esbuild/win32-x64@0.28.1", "", { "os": "win32", "cpu": "x64" }, "sha512-bm4Mowrv+GXMlpWX++EcXw/iLyd1o3+bJkC2DkWXYVvgZCqD/bSj9ctZeAMC3cIxgjRVR2Dufaiu4YPxr5gW1A=="],
 
-    "@pikku/addon-diffui/@types/node/undici-types": ["undici-types@8.9.0", "", {}, "sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg=="],
+    "@pikkustudio/addon-diffui/@types/node/undici-types": ["undici-types@8.9.0", "", {}, "sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg=="],
 
-    "@pikku/addon-review/@types/node/undici-types": ["undici-types@8.9.0", "", {}, "sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg=="],
+    "@pikkustudio/addon-review/@types/node/undici-types": ["undici-types@8.9.0", "", {}, "sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg=="],
 
-    "@pikku/addon-spindle/@types/node/undici-types": ["undici-types@8.9.0", "", {}, "sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg=="],
+    "@pikkustudio/addon-spindle/@types/node/undici-types": ["undici-types@8.9.0", "", {}, "sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg=="],
 
     "@pikkustudio/app-studio/vite/lightningcss": ["lightningcss@1.33.0", "", { "dependencies": { "detect-libc": "^2.0.3" }, "optionalDependencies": { "lightningcss-android-arm64": "1.33.0", "lightningcss-darwin-arm64": "1.33.0", "lightningcss-darwin-x64": "1.33.0", "lightningcss-freebsd-x64": "1.33.0", "lightningcss-linux-arm-gnueabihf": "1.33.0", "lightningcss-linux-arm64-gnu": "1.33.0", "lightningcss-linux-arm64-musl": "1.33.0", "lightningcss-linux-x64-gnu": "1.33.0", "lightningcss-linux-x64-musl": "1.33.0", "lightningcss-win32-arm64-msvc": "1.33.0", "lightningcss-win32-x64-msvc": "1.33.0" } }, "sha512-WkUDrojuJs0xkgGf2udWxa3yGBRxPtxUkB79i6aCZLRgc7PM8fZe9TosfPDcvEpQZbuFASnHYmRLBLUbmLOIIA=="],
 

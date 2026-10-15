@@ -8,7 +8,7 @@
     "#pikku/*": "./.pikku/*/index.ts"
   },
   "dependencies": {
-    "@pikku/addon-spindle": "*",
+    "@pikkustudio/addon-spindle": "*",
     "@pikku/kysely": "^0.13.34"
   }
 }

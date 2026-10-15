@@ -2,6 +2,6 @@ import { wireAddon } from '#pikku/addon'
 
 wireAddon({
   name: 'spindle',
-  package: '@pikku/addon-spindle',
+  package: '@pikkustudio/addon-spindle',
   ui: true,
 })
