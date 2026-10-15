@@ -26,6 +26,7 @@ export interface SingletonServices extends CoreSingletonServices<Config> {
   studioSettings: StudioSettingsFile
   studioHooks: StudioHooks
   studioLogs: LogStore
+  studioModels: Map<string, string>
   auth?: () => Promise<BetterAuthInstance>
   kysely?: Kysely<any>
 }

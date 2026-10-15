@@ -7,7 +7,7 @@ import { EmptyState } from '../blocks/EmptyState'
 import { NotFoundState } from '../blocks/NotFoundState'
 import { Outlet, useLocation, useNavigate, useSearch } from '@tanstack/react-router'
 import { Link } from '../blocks/Link'
-import { useEffect, useMemo, useState, type ComponentType, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type ComponentType, type ReactNode } from 'react'
 import { m } from '@/i18n/messages'
 import { getLocale } from '@/paraglide/runtime.js'
 import { languageName } from '../lib/i18n'
@@ -34,6 +34,8 @@ import { SlashMenu, slashMatches, slashOptionId } from '../blocks/SlashMenu'
 import { UpdatesFeed } from '../blocks/UpdatesFeed'
 import { ProjectRunGate } from '../blocks/ProjectRunGate'
 import { Toaster } from '../blocks/Toaster'
+import { ComposerTools } from '../blocks/ComposerTools'
+import { useComposerExtras } from '../lib/composer-extras'
 import { GitPullRequest, Archive, type LucideIcon, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, History, Home, Info, Compass, KeyRound, ListChecks, Search, Laptop, LayoutGrid, Mail, MessageCircle, MessageCircleQuestion, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, PanelLeftClose, PanelLeftOpen, User, UserRoundCheck, Wrench, X, CheckCheck, ScrollText } from 'lucide-react'
 
 // The app shell: rail, preview drawer (right edge), Pikku button + bubble, side panels.
@@ -187,6 +189,21 @@ export function ShellLayout() {
   const slashIdx = Math.min(slashAt, Math.max(slash.length - 1, 0))
   const [bubbleDraft, setBubbleDraft] = useState('')
   const projectKey = useProjectKey()
+  const composerRef = useRef<HTMLTextAreaElement>(null)
+  const extras = useComposerExtras(projectKey)
+  const dictate = (text: string) => {
+    const field = composerRef.current
+    const at = field?.selectionStart ?? draft.length
+    const end = field?.selectionEnd ?? at
+    const before = draft.slice(0, at)
+    const glue = before && !/\s$/.test(before) ? ' ' : ''
+    setDraft(before + glue + text + draft.slice(end))
+    const caret = (before + glue + text).length
+    requestAnimationFrame(() => {
+      field?.focus()
+      field?.setSelectionRange(caret, caret)
+    })
+  }
   const workMode = useLocation({ select: (l) => modeForPath(l.pathname) })
   const [saved, setSaved] = useState<{ open: string | null } | null>(null)
   const [full, setFull] = useState(() => {
@@ -654,15 +671,17 @@ export function ShellLayout() {
                   aria-label={m.shell_layout__message_pikku()}
                   onSubmit={(e) => {
                     e.preventDefault()
-                    if (!draft.trim()) return
+                    if (!draft.trim() || extras.busy) return
                     {
-                      const text = draft.trim()
+                      const text = draft.trim() + extras.suffix()
                       say(asI18n(text))
                     }
                     setDraft('')
+                    extras.clear()
                   }}
                 >
                   <textarea
+                    ref={composerRef}
                     rows={1}
                     value={draft}
                     onChange={(e) => {
@@ -711,6 +730,7 @@ export function ShellLayout() {
                     <ArrowRight className="rtl:-scale-x-100 size-5.5" />
                   </button>
                 </form>
+                <ComposerTools projectKey={projectKey} extras={extras} field={composerRef} onText={dictate} />
                 </>
                 )}
               </div>

@@ -12,6 +12,7 @@ export const createSingletonServices = pikkuAddonServices(async (_config, { auth
     studioSettings,
     studioHooks,
     studioLogs,
+    studioModels,
   } = await createStudioServices({
     logStore: kysely ? kyselyLogStore(kysely) : undefined,
     projectStore: kysely ? kyselyProjectStore(kysely, fileProjectStore(studioHome())) : undefined,
@@ -25,5 +26,6 @@ export const createSingletonServices = pikkuAddonServices(async (_config, { auth
     studioSettings,
     studioHooks,
     studioLogs,
+    studioModels,
   }
 })
