@@ -122,7 +122,6 @@ export function DesignScreen() {
           onOpenTab={parts ? (design?.url ? () => window.open(liveAppUrl(design.url), '_blank', 'noopener') : undefined) : current?.url ? () => window.open(liveAppUrl(current.url!), '_blank', 'noopener') : undefined}
           actions={
             <>
-              <Segmented label={m.design_parts__what()} value={parts ?? 'live'} onChange={(v) => set({ parts: v === 'live' ? undefined : v, part: undefined })} options={[['live', m.design_parts__live()], ['library', m.design_parts__library()], ['app', m.design_parts__sections()]]} />
               <PinButton variant="bar" />
             </>
           }
