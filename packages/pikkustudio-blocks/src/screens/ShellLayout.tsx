@@ -33,7 +33,7 @@ import { SlashMenu, slashMatches, slashOptionId } from '../blocks/SlashMenu'
 import { UpdatesFeed } from '../blocks/UpdatesFeed'
 import { ProjectRunGate } from '../blocks/ProjectRunGate'
 import { Toaster } from '../blocks/Toaster'
-import { GitPullRequest, Archive, type LucideIcon, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, History, Home, Info, Compass, KeyRound, ListChecks, Search, Laptop, LayoutGrid, Mail, MessageCircle, MessageCircleQuestion, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, User, UserRoundCheck, Wrench, X, CheckCheck } from 'lucide-react'
+import { GitPullRequest, Archive, type LucideIcon, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, History, Home, Info, Compass, KeyRound, ListChecks, Search, Laptop, LayoutGrid, Mail, MessageCircle, MessageCircleQuestion, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, PanelLeftClose, PanelLeftOpen, User, UserRoundCheck, Wrench, X, CheckCheck } from 'lucide-react'
 
 // The app shell: rail, preview drawer (right edge), Pikku button + bubble, side panels.
 // Every screen route is a child of this layout. Page content lives in the route files.
@@ -44,10 +44,19 @@ import { GitPullRequest, Archive, type LucideIcon, ArrowLeft, ArrowRight, Bell, 
 
 
 const item =
-  'flex w-full items-center gap-3 rounded-lg px-3 text-start font-semibold no-underline transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'
+  'flex w-full items-center gap-3 rounded-lg px-3 group-data-[collapsed]/rail:justify-center group-data-[collapsed]/rail:px-0 text-start font-semibold no-underline transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'
 const PIN_ICON: Record<Movable, LucideIcon> = { 'virtual-users': UserRoundCheck, translations: Globe, artifacts: FileText, content: FolderOpen, 'front-doors': Smartphone, audit: History, emails: Mail, knowledge: BookOpen, publish: Upload }
 const pinLabel = (id: Movable): I18nString => ({ 'virtual-users': m.quick_find__virtual_users, translations: m.quick_find__translations, artifacts: SCREEN_NAME.artifacts, content: m.content__title, 'front-doors': m.front_doors__title, audit: m.quick_find__audit, emails: SCREEN_NAME.emails, knowledge: SCREEN_NAME.knowledge, publish: m.shell_layout__publish })[id]()
 const navItem = `${item} h-9.25 text-[14px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`
+const lbl = 'group-data-[collapsed]/rail:hidden'
+const RAIL_KEY = 'studio.rail.collapsed'
+const readCollapsed = () => {
+  try {
+    return localStorage.getItem(RAIL_KEY) === '1'
+  } catch {
+    return false
+  }
+}
 const iconBtn =
   'grid size-11 shrink-0 place-items-center rounded-full text-ink-2 transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'
 
@@ -151,6 +160,15 @@ export function ShellLayout() {
     navigate({ to: '.', search: ((prev: object) => ({ ...prev, ...patch })) as never, replace: true })
   const setPanel = (id: PanelId | '') => set({ panel: id || undefined })
   const [find, setFind] = useState(false)
+  const [collapsed, setCollapsed] = useState(readCollapsed)
+  const toggleRail = () =>
+    setCollapsed((c) => {
+      try {
+        localStorage.setItem(RAIL_KEY, c ? '0' : '1')
+      } catch {}
+      return !c
+    })
+  const tip = (label: I18nString) => (collapsed ? { title: label, 'aria-label': label } : {})
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
@@ -262,88 +280,107 @@ export function ShellLayout() {
         <div className="group/shell relative flex h-full overflow-hidden" data-open={panel !== '' ? '' : undefined}>
           {/* Rail */}
           <aside
-            className="flex min-h-0 w-63 shrink-0 flex-col gap-3.5 overflow-auto border-e border-border bg-muted px-4 py-5 @min-[1700px]/app:w-70"
+            data-collapsed={collapsed ? '' : undefined}
+            className="group/rail flex min-h-0 w-63 shrink-0 flex-col gap-3.5 overflow-x-hidden overflow-y-auto border-e border-border bg-muted px-4 py-5 transition-[width,padding] duration-200 ease-out motion-reduce:transition-none data-[collapsed]:w-16 data-[collapsed]:px-2 @min-[1700px]/app:w-70 @min-[1700px]/app:data-[collapsed]:w-16"
             aria-label={m.shell_layout__studio()}
           >
-            <Link {...keep} to="/overview" className="flex items-center gap-2.5 px-2 py-1 font-heading text-[24px] font-extrabold tracking-[-0.02em] no-underline">
+            <Link {...keep} to="/overview" className="flex items-center gap-2.5 px-2 py-1 font-heading text-[24px] font-extrabold tracking-[-0.02em] no-underline group-data-[collapsed]/rail:justify-center group-data-[collapsed]/rail:px-0">
               <PikkuMark label={m.shell_layout__studio()} />
-              {m.shell_layout__studio()}
+              <span className={lbl}>{m.shell_layout__studio()}</span>
             </Link>
-            <Button asChild variant="default" size="page" className="mx-1">
-              <Link {...keep} to="/new-project">
+            <Button asChild variant="default" size="page" className="mx-1 group-data-[collapsed]/rail:mx-auto group-data-[collapsed]/rail:size-11 group-data-[collapsed]/rail:px-0">
+              <Link {...keep} to="/new-project" {...tip(m.shell_layout__new_project())}>
               <Plus className="size-4.5" />
-              {m.shell_layout__new_project()}
+              <span className={lbl}>{m.shell_layout__new_project()}</span>
             </Link>
             </Button>
             <button
               type="button"
               onClick={() => setFind(true)}
-              className="mx-1 flex h-11.5 shrink-0 items-center gap-2.5 rounded-full border border-input bg-card px-5.5 text-start text-px15 text-muted-foreground transition-colors duration-140 hover:bg-secondary"
+              {...tip(m.shell_layout__find_a_page())}
+              className="mx-1 flex h-11.5 shrink-0 items-center gap-2.5 rounded-full border border-input bg-card px-5.5 text-start text-px15 text-muted-foreground transition-colors duration-140 hover:bg-secondary group-data-[collapsed]/rail:mx-auto group-data-[collapsed]/rail:size-11 group-data-[collapsed]/rail:justify-center group-data-[collapsed]/rail:px-0"
             >
-              <Search className="size-4.5" />
-              <span className="flex-1 truncate font-bold">{m.shell_layout__find_a_page()}</span>
-              <kbd className="rounded-md border border-border px-1.5 text-[12px]">{m.shell_layout__find_shortcut()}</kbd>
+              <Search className="size-4.5 shrink-0" />
+              <span className={`flex-1 truncate font-bold ${lbl}`}>{m.shell_layout__find_a_page()}</span>
+              <kbd className={`rounded-md border border-border px-1.5 text-[12px] ${lbl}`}>{m.shell_layout__find_shortcut()}</kbd>
             </button>
             <nav className="flex flex-col gap-0.5" aria-label={m.shell_layout__main()}>
-              <Link {...keep} to="/projects" className={`${item} h-11.5 text-[15px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`}>
+              <Link {...keep} {...tip(m.shell_layout__home())} to="/projects" className={`${item} h-11.5 text-[15px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`}>
                 <Home className="size-5.5" />
-                {m.shell_layout__home()}
+                <span className={lbl}>{m.shell_layout__home()}</span>
               </Link>
-              <Link {...keep} to={'/studio-metrics' as never} className={`${item} h-11.5 text-[15px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`}>
+              <Link {...keep} {...tip(m.shell_layout__studio_metrics())} to={'/studio-metrics' as never} className={`${item} h-11.5 text-[15px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`}>
                 <Gauge className="size-5.5" />
-                {m.shell_layout__studio_metrics()}
+                <span className={lbl}>{m.shell_layout__studio_metrics()}</span>
               </Link>
             </nav>
             {addonNav ? (
               <div className="flex flex-col gap-0.5 px-1">
-                <Link {...keep} to={(addonNav.back?.to ?? '/overview') as never} className={`${navItem} mb-1`}>
+                <Link {...keep} {...tip(addonNav.back ? asI18n(addonNav.back.label) : m.shell_layout__back_to({ project: projectName }))} to={(addonNav.back?.to ?? '/overview') as never} className={`${navItem} mb-1`}>
                   <ArrowLeft className="rtl:-scale-x-100 size-5" />
-                  {addonNav.back ? asI18n(addonNav.back.label) : m.shell_layout__back_to({ project: projectName })}
+                  <span className={lbl}>{addonNav.back ? asI18n(addonNav.back.label) : m.shell_layout__back_to({ project: projectName })}</span>
                 </Link>
-                <div className="mb-1.5 px-3 text-[13px] font-semibold text-muted-foreground">{asI18n(addonNav.title)}</div>
+                <div className={`mb-1.5 px-3 text-[13px] font-semibold text-muted-foreground ${lbl}`}>{asI18n(addonNav.title)}</div>
                 {addonNav.items.map((n) => (
-                  <Link {...keep} key={n.splat} to={(n.to ?? '/addons/$') as never} params={(n.to ? undefined : { _splat: n.splat }) as never} activeOptions={{ exact: true }} aria-current={n.splat === addonNav.current || (n.splat.includes('/') && addonNav.current.startsWith(`${n.splat}/`)) ? 'page' : 'false'} className={navItem}>
+                  <Link {...keep} {...tip(asI18n(n.label))} key={n.splat} to={(n.to ?? '/addons/$') as never} params={(n.to ? undefined : { _splat: n.splat }) as never} activeOptions={{ exact: true }} aria-current={n.splat === addonNav.current || (n.splat.includes('/') && addonNav.current.startsWith(`${n.splat}/`)) ? 'page' : 'false'} className={navItem}>
                     <LayoutGrid className="size-5" />
-                    {asI18n(n.label)}
+                    <span className={lbl}>{asI18n(n.label)}</span>
                   </Link>
                 ))}
               </div>
             ) : /\/studio-metrics$/.test(path) || !projectSlug || projectMissing ? null : (
             <div className="flex flex-col gap-0.5 px-1">
-              <div className="mb-1.5 px-3 text-[13px] font-semibold text-muted-foreground">{projectName}</div>
-              <Link {...keep} to={'/explore' as never} className={navItem}>
+              <div className={`mb-1.5 px-3 text-[13px] font-semibold text-muted-foreground ${lbl}`}>{projectName}</div>
+              <Link {...keep} {...tip(m.shell_layout__explore())} to={'/explore' as never} className={navItem}>
                 <Compass className="size-5" />
-                {m.shell_layout__explore()}
+                <span className={lbl}>{m.shell_layout__explore()}</span>
               </Link>
-              <Link {...keep} to={'/project' as never} className={navItem} data-testid="nav-project">
+              <Link {...keep} {...tip(SCREEN_NAME.project())} to={'/project' as never} className={navItem} data-testid="nav-project">
                 <ListChecks className="size-5" />
-                {SCREEN_NAME.project()}
+                <span className={lbl}>{SCREEN_NAME.project()}</span>
               </Link>
-              <Link {...keep} to="/overview" className={navItem}>
+              <Link {...keep} {...tip(m.shell_layout__overview())} to="/overview" className={navItem}>
                 <LayoutGrid className="size-5" />
-                {m.shell_layout__overview()}
+                <span className={lbl}>{m.shell_layout__overview()}</span>
               </Link>
-              <Link {...keep} to={'/changes' as never} className={navItem}>
+              <Link {...keep} {...tip(m.shell_layout__changes())} to={'/changes' as never} className={navItem}>
                 <GitPullRequest className="size-5" />
-                {m.shell_layout__changes()}
+                <span className={lbl}>{m.shell_layout__changes()}</span>
               </Link>
-              <Link {...keep} to="/design" className={navItem}>
+              <Link {...keep} {...tip(SCREEN_NAME.frontend())} to="/design" className={navItem}>
                 <Palette className="size-5" />
-                {SCREEN_NAME.frontend()}
+                <span className={lbl}>{SCREEN_NAME.frontend()}</span>
               </Link>
               {MOVABLE.filter((id) => pins.includes(id)).map((id) => {
                 const Icon = PIN_ICON[id]
                 return (
-                  <Link {...keep} key={id} to={`/${id}` as never} className={navItem}>
+                  <Link {...keep} {...tip(pinLabel(id))} key={id} to={`/${id}` as never} className={navItem}>
                     <Icon className="size-5" />
-                    {pinLabel(id)}
+                    <span className={lbl}>{pinLabel(id)}</span>
                   </Link>
                 )
               })}
             </div>
             )}
             <div className="mt-auto flex flex-col gap-2.5">
-              <Account expanded={panel === 'workspace'} onOpen={() => setPanel('workspace')} onAccount={() => navigate({ to: '/account', search: ((prev: object) => ({ ...prev, panel: undefined })) as never })} />
+              <button
+                type="button"
+                onClick={toggleRail}
+                aria-expanded={!collapsed}
+                aria-label={collapsed ? m.shell_layout__expand_nav() : m.shell_layout__collapse_nav()}
+                title={collapsed ? m.shell_layout__expand_nav() : m.shell_layout__collapse_nav()}
+                className="flex h-9.25 w-full items-center gap-3 rounded-lg px-3 text-start text-[14px] font-semibold text-ink-2 transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3 group-data-[collapsed]/rail:justify-center group-data-[collapsed]/rail:px-0"
+              >
+                {collapsed ? <PanelLeftOpen className="size-5 rtl:-scale-x-100" /> : <PanelLeftClose className="size-5 rtl:-scale-x-100" />}
+                <span className={lbl}>{m.shell_layout__collapse_nav()}</span>
+              </button>
+              {collapsed ? (
+                <button type="button" onClick={() => setPanel('workspace')} {...tip(m.shell_layout__your_workspace())} className={`${iconBtn} mx-auto`}>
+                  <Laptop className="size-5.5" />
+                </button>
+              ) : (
+                <Account expanded={panel === 'workspace'} onOpen={() => setPanel('workspace')} onAccount={() => navigate({ to: '/account', search: ((prev: object) => ({ ...prev, panel: undefined })) as never })} />
+              )}
             </div>
           </aside>
 

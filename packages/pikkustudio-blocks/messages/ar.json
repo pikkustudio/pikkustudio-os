@@ -2637,6 +2637,8 @@
   "shell_layout__language": "اللغة",
   "shell_layout__left_alone": "لم يمس",
   "shell_layout__looks": "المظهر",
+  "shell_layout__collapse_nav": "طيّ القائمة",
+  "shell_layout__expand_nav": "توسيع القائمة",
   "shell_layout__main": "الرئيسي",
   "shell_layout__match_this_computer": "مطابقة هذا الحاسوب",
   "shell_layout__message_pikku": "راسلوا Pikku",

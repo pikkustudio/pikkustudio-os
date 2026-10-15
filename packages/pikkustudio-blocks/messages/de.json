@@ -2441,6 +2441,8 @@
   "shell_layout__language": "Sprache",
   "shell_layout__left_alone": "Unberührt gelassen",
   "shell_layout__looks": "Aussehen",
+  "shell_layout__collapse_nav": "Menü einklappen",
+  "shell_layout__expand_nav": "Menü ausklappen",
   "shell_layout__main": "Hauptbereich",
   "shell_layout__match_this_computer": "Wie dieser Computer",
   "shell_layout__message_pikku": "Nachricht an Pikku",

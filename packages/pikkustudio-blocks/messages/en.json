@@ -2564,6 +2564,8 @@
   "shell_layout__language": "Language",
   "shell_layout__left_alone": "Left alone",
   "shell_layout__looks": "Looks",
+  "shell_layout__collapse_nav": "Collapse menu",
+  "shell_layout__expand_nav": "Expand menu",
   "shell_layout__main": "Main",
   "shell_layout__match_this_computer": "Match this computer",
   "shell_layout__message_pikku": "Message Pikku",
