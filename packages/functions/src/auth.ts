@@ -28,7 +28,7 @@ import { personaList } from '#pikku/scenarios/pikku-personas.gen.js'
 // sendResetPassword/verification emails. It runs lazily after all services exist,
 // so never re-construct a service here or reach for a dynamic import.
 export const auth = pikkuBetterAuth(
-  async ({ kysely, secrets, variables, emailService, featureFlags, logger }) => {
+  async ({ kysely, secrets, variables, emailService, logger }) => {
     // `.reveal()` at the sink, not earlier: getSecret hands back a nominal
     // SecretValue that no concretely-typed parameter accepts, so every disclosure
     // is one greppable call. Better Auth wants the raw string, and this is where
@@ -142,7 +142,6 @@ export const auth = pikkuBetterAuth(
           allowSignIn: ALLOW_ACTOR_SIGN_IN,
           personaSignIn: {
             personas: personaList,
-            featureFlags,
           },
         }),
         pikkuBan(),

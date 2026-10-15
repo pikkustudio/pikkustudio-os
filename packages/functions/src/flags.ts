@@ -14,7 +14,4 @@ defineFeatureFlags({
   assistantPanel: {
     description: 'The assistant panel',
   },
-  devSwitcher: {
-    description: 'The "Sign in as" persona switcher on the login screen',
-  },
 })
