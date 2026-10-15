@@ -853,7 +853,7 @@ export class StudioProjectsService {
         await cp(starter, join(staging, slugify(name)), { recursive: true, filter: (path) => basename(path) !== 'node_modules' })
       } else {
         const { command, args } = (this.options.createCommand ??
-          ((n) => ({ command: 'npx', args: ['-y', 'create-pikku@latest', '--template', 'fabric', '--name', n, '--skip-install'] })))(slugify(name))
+          ((n) => ({ command: 'npx', args: ['-y', 'create-pikku@latest', '--template', 'starter-template', '--name', n, '--skip-install'] })))(slugify(name))
         await run(command, args, staging)
       }
       const scaffold = join(staging, slugify(name))
