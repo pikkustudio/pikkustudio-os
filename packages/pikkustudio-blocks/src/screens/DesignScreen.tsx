@@ -4,7 +4,6 @@ import { useNavigate, useSearch } from '@tanstack/react-router'
 import { Globe, MousePointer2, Palette, UserRound } from 'lucide-react'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { m } from '@/i18n/messages'
-import { PinButton } from '../blocks/PinButton'
 import { PreviewBar } from '../blocks/PreviewBar'
 import { DesignInspector } from '../blocks/DesignInspector'
 import { AppNotRunning, startSteps } from '../blocks/AppNotRunning'
@@ -119,11 +118,6 @@ export function DesignScreen() {
           onTool={(t) => set({ mode: t === 'design' ? undefined : t })}
           onReload={() => setReloadKey((k) => k + 1)}
           onOpenTab={parts ? (design?.url ? () => window.open(liveAppUrl(design.url), '_blank', 'noopener') : undefined) : current?.url ? () => window.open(liveAppUrl(current.url!), '_blank', 'noopener') : undefined}
-          actions={
-            <>
-              <PinButton variant="bar" />
-            </>
-          }
         />
         <div className={`grid min-h-0 flex-1 gap-3.5 ${tool === 'none' || parts ? 'grid-cols-1' : 'grid-cols-[minmax(0,1fr)_340px]'}`}>
           {stage}
