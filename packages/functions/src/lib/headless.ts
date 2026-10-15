@@ -1,6 +1,6 @@
 import type { Logger } from '@pikku/core/services'
 import type { Studio } from './studio.js'
-import { wakeUp } from './sleep.js'
+import { recordAccess, wakeUp } from './sleep.js'
 
 export const headlessKey = () => process.env.PIKKU_STUDIO_PROJECT_KEY ?? 'app'
 
@@ -11,7 +11,10 @@ export const tickChanges = (studio: Pick<Studio, 'projects' | 'builder'>, key: s
     ticking = true
     try {
       const { started, reason } = await studio.builder.startChanges(key, true)
-      if (started) logger?.info(`Studio tick: ${reason}`)
+      if (started) {
+        recordAccess()
+        logger?.info(`Studio tick: ${reason}`)
+      }
     } catch (error) {
       logger?.warn(`Studio tick failed: ${error instanceof Error ? error.message : error}`)
     } finally {

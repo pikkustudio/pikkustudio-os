@@ -3,9 +3,10 @@ import { ref } from '#pikku/function'
 import { translateTexts } from './functions/studio/translate.function.js'
 import { sleepReadiness, sleepSettings, setSleepSettings } from './functions/studio/sleep.function.js'
 import { startChanges, startBuild } from './functions/studio/headless.function.js'
+import { restartDev } from './functions/studio/restart-dev.function.js'
 import { startProjectRun, projectRun } from './functions/studio/project-run.function.js'
 import { projectChecklist, projectGuideSay, projectGuideAct, projectNoteRun } from './functions/studio/project-flow.function.js'
-import { health } from './functions/studio/health.function.js'
+import { health, trafficCheck } from './functions/studio/health.function.js'
 import { studioAccess } from './middleware/access.middleware.js'
 import { serviceGate } from './middleware/service.middleware.js'
 import { makeFavicons } from './functions/studio/favicons.function.js'
@@ -89,6 +90,7 @@ const studioRoutes = defineHTTPRoutes({
     vaultActivity: { method: 'post', route: '/studio/vaultActivity', func: vaultActivity },
     translateTexts: { method: 'post', route: '/studio/translateTexts', func: translateTexts },
     startChanges: { method: 'post', route: '/studio/startChanges', func: startChanges },
+    restartDev: { method: 'post', route: '/studio/restartDev', func: restartDev },
     startBuild: { method: 'post', route: '/studio/startBuild', func: startBuild },
     sleepSettings: { method: 'post', route: '/studio/sleepSettings', func: sleepSettings },
     setSleepSettings: { method: 'post', route: '/studio/setSleepSettings', func: setSleepSettings },
@@ -116,6 +118,7 @@ const healthRoutes = defineHTTPRoutes({
   tags: ['studio'],
   routes: {
     health: { method: 'get', route: '/studio/health', func: health },
+    traffic: { method: 'get', route: '/studio/traffic', func: trafficCheck },
   },
 })
 

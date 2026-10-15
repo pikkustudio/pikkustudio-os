@@ -106,6 +106,7 @@ export class BuilderSession {
   private states = new Map<string, BuilderState>()
   private writes = 0
   private turns = new Map<string, Turn>()
+  private starting = new Set<string>()
   private drives = new Map<string, Drive>()
   private modes = new Map<string, BuilderMode>()
 
@@ -409,7 +410,16 @@ export class BuilderSession {
 
   async startChanges(key: string, onlyNew = false): Promise<{ started: boolean; reason: string }> {
     const state = await this.state(key)
-    if (state.busy || this.turns.has(key)) return { started: false, reason: 'The builder is already working' }
+    if (state.busy || this.turns.has(key) || this.starting.has(key)) return { started: false, reason: 'The builder is already working' }
+    this.starting.add(key)
+    try {
+      return await this.beginChanges(key, onlyNew)
+    } finally {
+      this.starting.delete(key)
+    }
+  }
+
+  private async beginChanges(key: string, onlyNew: boolean): Promise<{ started: boolean; reason: string }> {
     const launch = await this.resolve(key)
     const route = await pikkuNext(launch.cwd, undefined, launch.run, routerEnv(launch))
     if (!route.agent) return { started: false, reason: route.reason }

@@ -60,4 +60,28 @@ describe('BuilderSession.startChanges', () => {
     await settle()
     assert.equal((await builder.startChanges('shop')).started, true)
   })
+
+  test('two ticks at once start one turn', async () => {
+    const home = await mkdtemp(join(tmpdir(), 'pikku-builder-'))
+    let launches = 0
+    const builder = new BuilderSession(
+      async () => ({
+        cwd: home,
+        loop: false,
+        run: async () => {
+          await new Promise((r) => setTimeout(r, 30))
+          return { code: 0, output: route('Open changes', 'change 1') }
+        },
+        launch: () => {
+          launches += 1
+          return spawn(process.execPath, ['-e', fakePi], { stdio: ['pipe', 'pipe', 'pipe'] })
+        },
+      }),
+      home
+    )
+    const results = await Promise.all([builder.startChanges('shop'), builder.startChanges('shop')])
+    assert.deepEqual(results.map((r) => r.started).sort(), [false, true])
+    await until(async () => !(await builder.state('shop')).busy)
+    assert.equal(launches, 1)
+  })
 })
