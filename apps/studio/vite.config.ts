@@ -6,7 +6,7 @@ import { paraglideVitePlugin } from '@inlang/paraglide-js'
 import { fileURLToPath, URL } from 'node:url'
 import { testIds } from './build/testids.plugin.ts'
 
-const base = process.env.FABRIC_FRONTEND_BASE || '/'
+const base = process.env.PIKKUSTUDIO_FRONTEND_BASE || '/'
 
 // Plain TanStack Start config (Node target) — used for local sandbox dev. This
 // template is deploy-provider agnostic: it ships NO @cloudflare/vite-plugin. At

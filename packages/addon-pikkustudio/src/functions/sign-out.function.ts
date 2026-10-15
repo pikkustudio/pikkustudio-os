@@ -15,10 +15,10 @@ export const signOut = pikkuSessionlessFunc({
   func: async ({ studioProjects, studioSettings, studioAi, studioHooks, auth }, _input, { http }) => {
     await endSession(auth, http)
     const current = await studioSettings.read()
-    if (current.signIn === 'fabric') {
+    if (current.signIn === 'cloud') {
       await studioProjects.signOut()
       studioHooks.changed()
-      if ((await studioAi.choice())?.kind === 'fabric') await studioAi.clear()
+      if ((await studioAi.choice())?.kind === 'cloud') await studioAi.clear()
     }
     return studioSettings.update({ signIn: null })
   },

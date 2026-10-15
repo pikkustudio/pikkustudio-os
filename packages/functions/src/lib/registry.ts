@@ -2,7 +2,7 @@ import { existsSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 
-const registryBase = () => (process.env.FABRIC_API_URL ?? 'https://api.pikkustudio.app').replace(/\/+$/, '')
+const registryBase = () => (process.env.PIKKUSTUDIO_API_URL ?? 'https://api.pikkustudio.app').replace(/\/+$/, '')
 
 export interface OpenApiEntry {
   name: string

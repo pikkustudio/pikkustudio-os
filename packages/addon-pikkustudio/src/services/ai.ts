@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { chmod, mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 
@@ -37,12 +37,12 @@ export const SUBSCRIPTION_PROVIDERS: SubscriptionProvider[] = [
 export type AiChoice =
   | { kind: 'key'; provider: string; model: string; baseUrl?: string }
   | { kind: 'subscription'; provider: string }
-  | { kind: 'fabric' }
+  | { kind: 'cloud' }
 
 export type AiInput =
   | { kind: 'key'; provider: string; apiKey: string; model?: string; baseUrl?: string }
   | { kind: 'subscription'; provider: string }
-  | { kind: 'fabric' }
+  | { kind: 'cloud' }
 
 async function litellmModel(baseUrl: string, apiKey: string): Promise<string> {
   const response = await fetch(`${baseUrl}/v1/models`, {
@@ -58,7 +58,14 @@ async function litellmModel(baseUrl: string, apiKey: string): Promise<string> {
 }
 
 export class StudioAi {
-  constructor(private home: string) {}
+  constructor(private home: string) {
+    const path = join(home, 'ai.json')
+    if (!existsSync(path)) return
+    const stored = JSON.parse(readFileSync(path, 'utf8'))
+    if (stored.choice?.kind !== 'fabric') return
+    stored.choice.kind = 'cloud'
+    writeFileSync(path, JSON.stringify(stored, null, 2) + '\n')
+  }
 
   private get choicePath() {
     return join(this.home, 'ai.json')
@@ -80,7 +87,7 @@ export class StudioAi {
 
   usesCloud(): boolean {
     if (!existsSync(this.choicePath)) return false
-    return (JSON.parse(readFileSync(this.choicePath, 'utf8')).choice as AiChoice | null)?.kind === 'fabric'
+    return (JSON.parse(readFileSync(this.choicePath, 'utf8')).choice as AiChoice | null)?.kind === 'cloud'
   }
 
   chatConfig(): { baseUrl: string; apiKey: string; model: string; provider: string } | null {
@@ -126,7 +133,7 @@ export class StudioAi {
       }
       choice = { kind: 'subscription', provider: input.provider }
     } else {
-      choice = { kind: 'fabric' }
+      choice = { kind: 'cloud' }
     }
     await mkdir(this.home, { recursive: true })
     await writeFile(this.choicePath, JSON.stringify({ choice }, null, 2) + '\n')
@@ -141,7 +148,7 @@ export class StudioAi {
   async env(): Promise<Record<string, string>> {
     const choice = await this.choice()
     if (!choice) return {}
-    if (choice.kind === 'fabric') return { PIKKU_STUDIO_AI: 'fabric' }
+    if (choice.kind === 'cloud') return { PIKKU_STUDIO_AI: 'cloud' }
     if (choice.kind === 'subscription') {
       return { PIKKU_STUDIO_AI: 'subscription', PIKKU_STUDIO_AI_PROVIDER: choice.provider }
     }

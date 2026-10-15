@@ -15,9 +15,9 @@ export const pollSignIn = pikkuSessionlessFunc({
     const status = await studioProjects.pollSignIn(code)
     if (status === 'confirmed') {
       await startSession(auth, http)
-      await studioSettings.update({ signIn: 'fabric' })
+      await studioSettings.update({ signIn: 'cloud' })
       studioHooks.changed()
-      if (!(await studioAi.choice())) await studioAi.set({ kind: 'fabric' })
+      if (!(await studioAi.choice())) await studioAi.set({ kind: 'cloud' })
     }
     return { status }
   },

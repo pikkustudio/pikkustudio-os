@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import {
   createServer,
@@ -15,7 +15,7 @@ import { StudioPublisher } from './publish.js'
 import { BuilderSession, changesReport } from '@pikkustudio/builder'
 import { KEY_PROVIDERS, StudioAi, SUBSCRIPTION_PROVIDERS, type AiInput } from './ai.js'
 
-export type SignInChoice = 'local' | 'fabric'
+export type SignInChoice = 'local' | 'cloud'
 
 export interface StudioSettings {
   signIn: SignInChoice | null
@@ -44,7 +44,13 @@ export const resolveDesignEntry = () =>
   fileURLToPath(import.meta.resolve('@pikkustudio/design-server'))
 
 class StudioSettingsFile {
-  constructor(private path: string) {}
+  constructor(private path: string) {
+    if (!existsSync(path)) return
+    const stored = JSON.parse(readFileSync(path, 'utf8'))
+    if (stored.signIn !== 'fabric') return
+    stored.signIn = 'cloud'
+    writeFileSync(path, JSON.stringify(stored, null, 2) + '\n')
+  }
 
   async read(): Promise<StudioSettings> {
     if (!existsSync(this.path)) return { signIn: null }
@@ -92,7 +98,7 @@ export async function startStudioServer(options: StudioServerOptions = {}) {
     new BuilderSession(async (key) => {
       const env = await ai.env()
       if (!env.PIKKU_STUDIO_AI) throw new Error('Choose your AI before building')
-      const cloud = env.PIKKU_STUDIO_AI === 'fabric' ? await projects.modelAccess() : null
+      const cloud = env.PIKKU_STUDIO_AI === 'cloud' ? await projects.modelAccess() : null
       const launch = await projects.builderLaunch(key)
       return {
         ...launch,
@@ -108,7 +114,7 @@ export async function startStudioServer(options: StudioServerOptions = {}) {
   const actions: Record<string, (input: any) => Promise<unknown>> = {
     async account() {
       const [current, account] = await Promise.all([settings.read(), projects.getAccount()])
-      const signIn = current.signIn === 'fabric' && !account.signedIn ? null : current.signIn
+      const signIn = current.signIn === 'cloud' && !account.signedIn ? null : current.signIn
       return { signIn, ai: await ai.choice(), ...account }
     },
     aiOptions: async () => ({ keys: KEY_PROVIDERS, subscriptions: SUBSCRIPTION_PROVIDERS }),
@@ -122,16 +128,16 @@ export async function startStudioServer(options: StudioServerOptions = {}) {
     async pollSignIn({ code }: { code: string }) {
       const status = await projects.pollSignIn(code)
       if (status === 'confirmed') {
-        await settings.update({ signIn: 'fabric' })
-        if (!(await ai.choice())) await ai.set({ kind: 'fabric' })
+        await settings.update({ signIn: 'cloud' })
+        if (!(await ai.choice())) await ai.set({ kind: 'cloud' })
       }
       return { status }
     },
     async signOut() {
       const current = await settings.read()
-      if (current.signIn === 'fabric') {
+      if (current.signIn === 'cloud') {
         await projects.signOut()
-        if ((await ai.choice())?.kind === 'fabric') await ai.clear()
+        if ((await ai.choice())?.kind === 'cloud') await ai.clear()
       }
       return settings.update({ signIn: null })
     },
@@ -158,7 +164,7 @@ export async function startStudioServer(options: StudioServerOptions = {}) {
       return null
     },
     publishOptions: ({ key }: { key: string }) => publisher.options(key),
-    publishToFabric: ({ key }: { key: string }) => publisher.cloud(key),
+    publishToCloud: ({ key }: { key: string }) => publisher.cloud(key),
     publishStatus: async ({ key }: { key: string }) => publisher.status(key),
     projectApps: async ({ key }: { key: string }) => projects.projectApps(key),
     builderState: ({ key }: { key: string }) => builder.state(key),

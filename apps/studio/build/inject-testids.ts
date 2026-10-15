@@ -153,7 +153,7 @@ function literalIdentity(attributes: BabelTypes.JSXOpeningElement['attributes'])
 
 export interface InjectTestIdsOptions {
   /**
-   * Stamp `data-fabric-src="src/routes/app.orders.tsx:42"` beside every testid.
+   * Stamp `data-cloud-src="src/routes/app.orders.tsx:42"` beside every testid.
    *
    * Off unless the cloud turns it on for the build, because this writes the app's
    * own source layout into markup an end user can read in view-source. It is
@@ -210,13 +210,13 @@ export default function injectTestIds(
     if (!anchors || !anchorIdentifier) return
     const line = element.loc?.start.line
     if (!line) return
-    if (element.attributes.some((attribute) => attributeName(attribute) === 'data-fabric-src')) {
+    if (element.attributes.some((attribute) => attributeName(attribute) === 'data-cloud-src')) {
       return
     }
     anchorUsed = true
     element.attributes.push(
       t.jsxAttribute(
-        t.jsxIdentifier('data-fabric-src'),
+        t.jsxIdentifier('data-cloud-src'),
         t.jsxExpressionContainer(
           t.binaryExpression('+', t.cloneNode(anchorIdentifier), t.stringLiteral(`:${line}`)),
         ),

@@ -4,7 +4,7 @@ import { studioUrl } from './studio-url.js'
 
 test('production and staging APIs map to their studio host', () => {
   assert.equal(studioUrl('https://api.pikkustudio.app', ''), 'https://cloud.pikkustudio.app')
-  assert.equal(studioUrl('https://api.pikkufabric.cloud/', ''), 'https://studio.pikkufabric.cloud')
+  assert.equal(studioUrl('https://api.pikkustudio.dev/', ''), 'https://studio.pikkustudio.dev')
 })
 
 test('a self-hosted api.<domain> maps to studio.<domain>', () => assert.equal(studioUrl('https://api.acme.example', ''), 'https://studio.acme.example'))

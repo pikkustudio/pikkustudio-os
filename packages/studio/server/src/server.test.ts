@@ -71,8 +71,8 @@ describe('Studio server', () => {
     try {
       assert.equal((await call('startSignIn')).body.code, 'WXYZ')
       assert.equal((await call('pollSignIn', { code: 'WXYZ' })).body.status, 'confirmed')
-      assert.equal((await call('account')).body.signIn, 'fabric')
-      assert.deepEqual((await call('account')).body.ai, { kind: 'fabric' })
+      assert.equal((await call('account')).body.signIn, 'cloud')
+      assert.deepEqual((await call('account')).body.ai, { kind: 'cloud' })
       await call('signOut')
       assert.equal((await call('account')).body.ai, null)
     } finally {

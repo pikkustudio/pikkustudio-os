@@ -22,7 +22,7 @@ const JSX_FILE = /\.[jt]sx$/
  * reads them is gated on the same flag.
  */
 export function testIds(): Plugin {
-  const sourceAnchors = process.env.FABRIC_CHANGES_PANEL === 'true'
+  const sourceAnchors = process.env.PIKKUSTUDIO_CHANGES_PANEL === 'true'
   return {
     name: 'pikku:testids',
     enforce: 'pre',

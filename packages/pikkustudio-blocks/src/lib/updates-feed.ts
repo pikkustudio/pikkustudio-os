@@ -131,7 +131,7 @@ const STUDIO: Record<string, Phrase> = {
 export const studioEvent = (event: RawStudio, index: number): FeedItem => ({
   id: `studio:${event.at}:${index}`,
   at: event.at,
-  phrase: event.type === 'ai.choose' ? (event.subject === 'fabric' ? 'ai_hosted' : 'ai_own') : (STUDIO[event.type] ?? 'unknown'),
+  phrase: event.type === 'ai.choose' ? (event.subject === 'cloud' ? 'ai_hosted' : 'ai_own') : (STUDIO[event.type] ?? 'unknown'),
   actor: event.type === 'project.publish' ? { kind: 'pikku' } : { kind: 'you' },
   subject: null,
   outcome: event.outcome === 'failed' ? 'bad' : 'ok',

@@ -91,7 +91,7 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
       const cloud =
         proxyUrl && proxyKey
           ? { proxyUrl, apiKey: proxyKey }
-          : env.PIKKU_STUDIO_AI === 'fabric'
+          : env.PIKKU_STUDIO_AI === 'cloud'
             ? await studioProjects.modelAccess()
             : null
       const litellm =

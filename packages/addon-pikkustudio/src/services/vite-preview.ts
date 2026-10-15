@@ -199,7 +199,7 @@ if (window.self !== window.top) {
     myNode = el
     const omIndex = peers(omId).indexOf(el)
     const r = el.getBoundingClientRect()
-    window.parent.postMessage({ source: 'fabric-preview', type: 'element-select', omId, omIndex, tag: el.tagName.toLowerCase(), component: el.dataset.omComponent || el.tagName.toLowerCase(), rect: { top: r.top, left: r.left, width: r.width, height: r.height } }, '*')
+    window.parent.postMessage({ source: 'cloud-preview', type: 'element-select', omId, omIndex, tag: el.tagName.toLowerCase(), component: el.dataset.omComponent || el.tagName.toLowerCase(), rect: { top: r.top, left: r.left, width: r.width, height: r.height } }, '*')
   }
   // Find the best [data-om-id] element for a design-mode click. Tries closest()
   // first (the common case), then walks up looking for a descendant with
@@ -218,7 +218,7 @@ if (window.self !== window.top) {
   }
   window.addEventListener('message', e => {
     const d = e.data
-    if (!d || d.source !== 'fabric-console') return
+    if (!d || d.source !== 'cloud-console') return
     if (d.type === 'set-selections') {
       selections = Array.isArray(d.selections) ? d.selections : []
       render()
@@ -228,9 +228,9 @@ if (window.self !== window.top) {
   })
   window.addEventListener('message', async e => {
     const d = e.data
-    if (!d || d.source !== 'fabric-console' || typeof d.type !== 'string' || d.type.indexOf('persona-') !== 0) return
+    if (!d || d.source !== 'cloud-console' || typeof d.type !== 'string' || d.type.indexOf('persona-') !== 0) return
     const api = location.origin + '/api/auth'
-    const reply = body => window.parent.postMessage(Object.assign({ source: 'fabric-preview', type: 'persona-result', id: d.id }, body), '*')
+    const reply = body => window.parent.postMessage(Object.assign({ source: 'cloud-preview', type: 'persona-result', id: d.id }, body), '*')
     try {
       if (d.type === 'persona-list') {
         const r = await fetch(api + '/sign-in/personas', { credentials: 'include' })
@@ -290,7 +290,7 @@ if (window.self !== window.top) {
   window.addEventListener('keydown', e => {
     if (e.key !== 'Escape') return
     selections = []; render()
-    window.parent.postMessage({ source: 'fabric-preview', type: 'element-deselect' }, '*')
+    window.parent.postMessage({ source: 'cloud-preview', type: 'element-deselect' }, '*')
   }, { capture: true })
   // Look up an i18n key for an element: tries full textContent first, then
   // direct text nodes only (handles mixed content like "text <a>link</a>").
@@ -359,7 +359,7 @@ if (window.self !== window.top) {
         const phKey = ph && window.__omI18nRegistry?.[ph]
         if (phKey) {
           flash(e.target)
-          window.parent.postMessage({ source: 'fabric-preview', type: 'i18n-open', key: phKey }, '*')
+          window.parent.postMessage({ source: 'cloud-preview', type: 'i18n-open', key: phKey }, '*')
           return
         }
       }
@@ -367,7 +367,7 @@ if (window.self !== window.top) {
       const i18nEl = e.target.closest('[data-om-i18n]')
       if (i18nEl) {
         flash(i18nEl)
-        window.parent.postMessage({ source: 'fabric-preview', type: 'i18n-open', key: i18nEl.dataset.omI18n }, '*')
+        window.parent.postMessage({ source: 'cloud-preview', type: 'i18n-open', key: i18nEl.dataset.omI18n }, '*')
         return
       }
       // Registry fallback: covers props like title={m.key()} and mixed-content
@@ -376,7 +376,7 @@ if (window.self !== window.top) {
       if (rk) {
         const el = e.target.closest('[data-om-id]') || e.target
         flash(el)
-        window.parent.postMessage({ source: 'fabric-preview', type: 'i18n-open', key: rk }, '*')
+        window.parent.postMessage({ source: 'cloud-preview', type: 'i18n-open', key: rk }, '*')
       }
       return
     }
@@ -390,7 +390,7 @@ if (window.self !== window.top) {
 <\\/script>\`
 
 const scaffoldPlugin = {
-  name: 'fabric-scaffold-om-id',
+  name: 'cloud-scaffold-om-id',
   enforce: 'pre',
   async transform(code, id) {
     if (!babel) return null
@@ -454,7 +454,7 @@ const scaffoldPlugin = {
           if (chunk && (Buffer.isBuffer(chunk) ? chunk.length : (typeof chunk === 'string' ? chunk.length : 0)) > 0)
             buf.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk, typeof encoding === 'string' ? encoding : 'utf8'))
           const body = buf.length > 0 ? Buffer.concat(buf).toString('utf8') : ''
-          const patched = body.includes('</body>') && !body.includes('fabric-preview')
+          const patched = body.includes('</body>') && !body.includes('cloud-preview')
             ? body.replace('</head>', REGISTRY_SETUP_SCRIPT + '\\n</head>').replace('</body>', ELEMENT_SELECT_SCRIPT + '\\n</body>')
             : body
           const out = Buffer.from(patched, 'utf8')
@@ -474,7 +474,7 @@ const scaffoldPlugin = {
   transformIndexHtml: {
     order: 'post',
     handler(html) {
-      if (html.includes('fabric-preview')) return html
+      if (html.includes('cloud-preview')) return html
       return html.replace('</head>', REGISTRY_SETUP_SCRIPT + '\\n</head>').replace('</body>', ELEMENT_SELECT_SCRIPT + '\\n</body>')
     }
   }
@@ -504,8 +504,8 @@ const userConfig = await loadConfigFromFile(
 // sandbox runtime). Overrides the app's own hmr so ANY frontend hot-reloads in
 // the builder preview without a full refresh. An https origin ⇒ wss, since a
 // plain-ws client on an https page is mixed-content-blocked.
-const __hmrPath = process.env.FABRIC_FRONTEND_HMR_PATH
-const __hmrOrigin = process.env.FABRIC_FRONTEND_ORIGIN
+const __hmrPath = process.env.PIKKUSTUDIO_FRONTEND_HMR_PATH
+const __hmrOrigin = process.env.PIKKUSTUDIO_FRONTEND_ORIGIN
 let __hmr
 if (__hmrPath && __hmrOrigin) {
   try {

@@ -29,11 +29,11 @@ const ask = (type: string, extra: Record<string, unknown> = {}): Promise<Reply> 
     }
     const onMessage = (event: MessageEvent) => {
       const data = event.data
-      if (event.source === frame.contentWindow && data?.source === 'fabric-preview' && data.type === 'persona-result' && data.id === id) done(data)
+      if (event.source === frame.contentWindow && data?.source === 'cloud-preview' && data.type === 'persona-result' && data.id === id) done(data)
     }
     const timer = setTimeout(() => done({ ok: false }), 1500)
     window.addEventListener('message', onMessage)
-    frame.contentWindow.postMessage({ source: 'fabric-console', type, id, ...extra }, '*')
+    frame.contentWindow.postMessage({ source: 'cloud-console', type, id, ...extra }, '*')
   })
 
 const readWho = async (): Promise<Who> => {
