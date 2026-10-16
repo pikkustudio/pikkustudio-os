@@ -19,7 +19,7 @@
     "@pikkustudio/addon-diffui": "workspace:*",
     "@pikkustudio/addon-review": "workspace:*",
     "@pikkustudio/addon-spindle": "workspace:*",
-    "@pikku/react": "^0.12.13",
+    "@pikku/react": "^0.12.16",
     "@pikkustudio/blocks": "workspace:*",
     "@pikkustudio/theme": "workspace:*",
     "@project/functions-sdk": "workspace:*",

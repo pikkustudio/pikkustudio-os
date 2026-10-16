@@ -32,8 +32,8 @@
   },
   "dependencies": {
     "@earendil-works/pi-coding-agent": "0.85.1",
-    "@pikku/cli": "^0.12.179",
-    "@pikku/skills": "^0.12.48"
+    "@pikku/cli": "^0.12.189",
+    "@pikku/skills": "^0.12.56"
   },
   "devDependencies": {
     "@types/node": "^22",
