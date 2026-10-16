@@ -3,7 +3,7 @@ import { createRootRoute, HeadContent, Outlet, Scripts, useRouter, type ErrorCom
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { PikkuProvider, createPikku } from '@pikku/react'
 import { DirectionProvider } from '@radix-ui/react-direction'
-import { ChatTransportCtx, ProjectChatTransportCtx, fetchTransport } from '@pikkustudio/blocks/lib/chat'
+import { ChatTransportCtx, fetchTransport } from '@pikkustudio/blocks/lib/chat'
 import { ProjectRpcCtx } from '@pikkustudio/blocks/lib/projectRpc'
 import { projectInvoke } from '@/lib/projectRpc'
 import { PikkuFetch } from '@project/functions-sdk/pikku/pikku-fetch.gen'
@@ -68,7 +68,6 @@ function RootDocument({ children }: { children: ReactNode }) {
     return client
   })
   const [chatTransport] = useState(() => fetchTransport(apiUrl()))
-  const [projectChatTransport] = useState(() => fetchTransport(typeof window === 'undefined' ? '' : window.location.origin))
   const router = useRouter()
   // The reactive locale store, not the local state: a language switch anywhere in the app (account screen, login) goes
   // through setActiveLocale, and portals (menus, tooltips) must follow it.
@@ -130,11 +129,9 @@ function RootDocument({ children }: { children: ReactNode }) {
           <QueryClientProvider client={queryClient}>
             <ProjectRpcCtx.Provider value={projectInvoke}>
             <ChatTransportCtx.Provider value={chatTransport}>
-            <ProjectChatTransportCtx.Provider value={projectChatTransport}>
             <PikkuProvider pikku={pikku}>
               <SessionGate>{children}</SessionGate>
             </PikkuProvider>
-            </ProjectChatTransportCtx.Provider>
             </ChatTransportCtx.Provider>
             </ProjectRpcCtx.Provider>
           </QueryClientProvider>

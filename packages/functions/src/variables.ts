@@ -25,3 +25,15 @@ defineVariable({
   schema: AppUrlSchema,
   optional: true,
 })
+
+export const VirtualUserVerifyKeySchema = z.string()
+
+defineVariable({
+  name: 'virtualUserVerifyKey',
+  displayName: 'Virtual User Verify Key',
+  description:
+    "Public half of this stage's virtual user key pair. Checks the signed statements presented to POST /api/auth/sign-in/virtual-user. Unset refuses virtual user sign-in from outside the app.",
+  variableId: 'VIRTUAL_USER_VERIFY_KEY',
+  schema: VirtualUserVerifyKeySchema,
+  optional: true,
+})

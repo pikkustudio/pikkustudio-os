@@ -34,13 +34,7 @@ export const auth = pikkuBetterAuth(
     // is one greppable call. Better Auth wants the raw string, and this is where
     // it stops being a secret in the type system.
     const BETTER_AUTH_SECRET = (await secrets.getSecret('BETTER_AUTH_SECRET')).reveal()
-    // Optional: the secret alone never opens /api/auth/sign-in/virtual-user. The plugin
-    // gates on `pikku dev`, or on the opt-in below for a stage meant to run
-    // scenarios, and warns when a secret is set against a shut gate.
-    const SCENARIO_VIRTUAL_USER_SECRET = await secrets
-      .getSecret('SCENARIO_VIRTUAL_USER_SECRET')
-      .then((value) => value?.reveal())
-      .catch(() => undefined)
+    const VIRTUAL_USER_VERIFY_KEY = await variables.get('VIRTUAL_USER_VERIFY_KEY')
     const ALLOW_VIRTUAL_USER_SIGN_IN = await variables.get(VIRTUAL_USER_SIGN_IN_OPT_IN_ENV)
 
     // How long the signed session cookie is trusted, in seconds. Declared (with its
@@ -88,8 +82,8 @@ export const auth = pikkuBetterAuth(
       session: { cookieCache: { enabled: true, maxAge: SESSION_COOKIE_CACHE_MAX_AGE } },
       advanced: { database: { generateId: 'uuid' } },
       // Scenario virtual users: synthetic users (user.virtualUser = true, see
-      // db/sqlite/0001-better-auth.sql) signed in by pikkuScenario via
-      // POST /api/auth/sign-in/virtual-user { email, secret }. Never signs in real users.
+      // db/sqlite/0001-better-auth.sql) signed in by a statement checked
+      // against VIRTUAL_USER_VERIFY_KEY, or in-process by runs. Never signs in real users.
       //
       // ban(): the enforcement half of better-auth's admin() plugin — the
       // banned/banReason/banExpires columns (see db/sqlite/0001-better-auth.sql) and the
@@ -138,7 +132,7 @@ export const auth = pikkuBetterAuth(
           },
         }),
         pikkuVirtualUser({
-          secret: SCENARIO_VIRTUAL_USER_SECRET,
+          verifyKey: VIRTUAL_USER_VERIFY_KEY,
           allowSignIn: ALLOW_VIRTUAL_USER_SIGN_IN,
           virtualUserSignIn: {
             virtualUsers: virtualUserList,
