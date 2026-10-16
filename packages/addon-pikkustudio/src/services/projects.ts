@@ -146,7 +146,10 @@ export interface AccountProvider {
   link(projectId: string): Promise<AccountLink | null>
   locate(path: string, cloud: CloudProject[]): Promise<{ projectId: string; project: CloudProject | null } | null>
   adopt(projectId: string, path: string): Promise<void>
+  /** Opens a project's cloud workspace: creates it when there is none and wakes it when it sleeps. */
   workspaceLink?(projectId: string): Promise<WorkspaceLink>
+  /** Where a project's cloud workspace stands, without creating or waking it. */
+  workspaceStatus?(projectId: string): Promise<WorkspaceStatus>
   gitCredential?(projectId: string): Promise<{ username: string; password: string }>
 }
 
@@ -155,6 +158,9 @@ export interface WorkspaceLink {
   state: 'starting' | 'ready'
   token?: string
 }
+
+/** A workspace that is `off` has none yet, or is asleep; only opening it on purpose starts it. */
+export type WorkspaceStatus = WorkspaceLink | { url: string; state: 'off'; token?: string }
 
 export interface WorkspaceTarget {
   state: 'ready'
@@ -1414,10 +1420,12 @@ export class StudioProjectsService {
 
   private workspaceTargets = new Map<string, { at: number; target: WorkspaceTarget }>()
 
-  async workspaceTarget(key: string): Promise<WorkspaceTarget | { state: 'starting' }> {
+  /** Where to send a cloud project's requests. Passing a request through never starts a workspace; that is for opening it. */
+  async workspaceTarget(key: string): Promise<WorkspaceTarget | { state: 'starting' | 'off' }> {
     const cached = this.workspaceTargets.get(key)
     if (cached && Date.now() - cached.at < WORKSPACE_TARGET_TTL) return cached.target
-    const link = await this.workspaceLink(key)
+    const link = this.account.workspaceStatus ? await this.account.workspaceStatus(key.slice('cloud:'.length)) : await this.workspaceLink(key)
+    if (link.state === 'off') return { state: 'off' }
     if (link.state !== 'ready' || !link.url) return { state: 'starting' }
     const headers: Record<string, string> = link.token ? { authorization: `Bearer ${link.token}` } : {}
     const res = await fetch(`${link.url}/studio/listProjects`, { method: 'POST', headers: { ...headers, 'content-type': 'application/json' }, body: '{}' })

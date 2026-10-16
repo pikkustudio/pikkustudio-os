@@ -51,7 +51,7 @@ export function GoLiveSteps({ plan, home, onAct, busy }: { plan: Plan; home: Pro
               <div key={way} className="flex max-w-72 flex-col gap-2">
                 <Button variant={way === 'cloud' ? 'hero' : 'heroGhost'} size="page" type="button" disabled={off} aria-busy={working} onClick={() => onAct(way)}>
                   {working ? <LoaderCircle className="size-4.5 animate-spin" /> : <Icon className="size-4.5" />}
-                  {working ? m.action_notice__bringing() : w.action}
+                  {working ? w.working : w.action}
                 </Button>
                 <span className="text-px15 text-hero-ink-2 text-pretty">{w.why}{w.note ? <>{sep(' ')}{w.note}</> : null}</span>
               </div>

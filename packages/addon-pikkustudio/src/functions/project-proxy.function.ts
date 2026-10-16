@@ -19,7 +19,11 @@ export const projectProxy = pikkuSessionlessFunc({
     url.pathname = url.pathname.slice(`/p/${key}`.length) || '/'
     if (key.startsWith('cloud:')) {
       const target = await studioProjects.workspaceTarget(key)
-      if (target.state === 'starting') return Response.json({ state: 'starting' }, { status: 503, headers: { 'retry-after': '3' } })
+      if (target.state !== 'ready') {
+        return target.state === 'starting'
+          ? Response.json({ state: 'starting' }, { status: 503, headers: { 'retry-after': '3' } })
+          : Response.json({ state: 'off', error: 'The cloud workspace is not running' }, { status: 409 })
+      }
       const remote = new URL(`${target.url}/p/${target.remoteKey}${url.pathname === '/' ? '' : url.pathname}`)
       remote.search = url.search
       const headers = new Headers(incoming.headers)

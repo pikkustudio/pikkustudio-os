@@ -13,7 +13,7 @@ import { getLocale } from '@/paraglide/runtime.js'
 import { languageName } from '../lib/i18n'
 import { useProjectKey, useProjectMissing, useProjectName, useProjectSlug } from '../lib/project'
 import { useAddonNav } from '../lib/addon-nav'
-import { pageNeedsApp } from '../lib/project-url'
+import { isTeamScoped, pageNeedsApp } from '../lib/project-url'
 import { usePikkuChat } from '../lib/chat'
 import { LocalAccountName, LocalShellAccount, LocalWorkspaceAbout, SignOutSection } from '../blocks/ShellAccount'
 import { useSlots } from '../lib/slots'
@@ -35,8 +35,10 @@ import { UpdatesFeed } from '../blocks/UpdatesFeed'
 import { ProjectRunGate } from '../blocks/ProjectRunGate'
 import { Toaster } from '../blocks/Toaster'
 import { ComposerTools } from '../blocks/ComposerTools'
+import { NoAiCard } from '../blocks/NoAiCard'
+import { useStickToBottom } from '../lib/stick-to-bottom'
 import { useComposerExtras } from '../lib/composer-extras'
-import { GitPullRequest, Archive, type LucideIcon, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, History, Home, Info, Compass, KeyRound, ListChecks, Search, Laptop, LayoutGrid, Mail, MessageCircle, MessageCircleQuestion, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, PanelLeftClose, PanelLeftOpen, User, UserRoundCheck, Wrench, X, CheckCheck, ScrollText } from 'lucide-react'
+import { GitPullRequest, Archive, type LucideIcon, ArrowDown, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, History, Home, Info, Compass, KeyRound, ListChecks, Search, Laptop, LayoutGrid, Mail, MessageCircle, MessageCircleQuestion, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, PanelLeftClose, PanelLeftOpen, User, UserRoundCheck, Wrench, X, CheckCheck, ScrollText } from 'lucide-react'
 
 // The app shell: rail, preview drawer (right edge), Pikku button + bubble, side panels.
 // Every screen route is a child of this layout. Page content lives in the route files.
@@ -154,7 +156,8 @@ export function ShellLayout() {
   const q = useSearch({ strict: false }) as { view?: View; look?: 'light' | 'dark'; panel?: PanelId; show?: 'done'; project?: string; change?: string }
   const path = useLocation({ select: (l) => l.pathname })
   const project = useLocation({ select: (l) => (l.search as { project?: string }).project })
-  const needsProject = !project && !/\/(projects|secrets|account|studio-metrics|new-project|sign-in|your-name|choose-ai)$/.test(path) && !/^\/admin(\/|$)/.test(path)
+  // Only a team's pages need a project; leaving for a page outside any team (profile, account, sign-in) must not bounce back.
+  const needsProject = !project && isTeamScoped(path) && !/\/(projects|secrets|account|studio-metrics|new-project|sign-in|your-name|choose-ai)$/.test(path) && !/^\/admin(\/|$)/.test(path)
   useEffect(() => {
     if (needsProject) navigate({ to: '/projects', search: ((prev: object) => prev) as never, replace: true })
   }, [needsProject])
@@ -263,8 +266,12 @@ export function ShellLayout() {
 
   const approve = () => setPanel('updates')
   const lastAsked = chat.items.reduce<string | undefined>((found, it) => (it.kind === 'me' ? it.text : found), undefined)
+  // Only the latest no-AI failure gets the sign-in card; earlier repeats are dropped.
+  const lastNoAi = chat.items.reduce<string | undefined>((found, it) => (it.kind === 'error' && it.noAi ? it.id : found), undefined)
+  const log = useStickToBottom<HTMLDivElement>()
   const say = (text: I18nString) => {
     setPanel('chat')
+    log.toBottom()
     if (!workMode && /^\/experiment\s+\S/.test(text)) {
       void builder.send(text)
       navigate({ to: '/artifacts', search: ((prev: object) => prev) as never })
@@ -562,7 +569,8 @@ export function ShellLayout() {
                   <SavedChats projectKey={projectKey} openId={saved.open} onOpen={(open) => setSaved({ open })} onClose={() => setSaved(null)} avatar={<Avatar mood="calm" size="sm" />} />
                 ) : (
                 <>
-                <div className="flex min-h-0 flex-1 flex-col gap-4.5 overflow-auto px-6 py-5" tabIndex={0} aria-label={m.shell_layout__chat()} role="log">
+                <div className="relative flex min-h-0 flex-1 flex-col">
+                <div ref={log.ref} className="flex min-h-0 flex-1 flex-col gap-4.5 overflow-auto px-6 py-5" tabIndex={0} aria-label={m.shell_layout__chat()} role="log">
                   {full && workMode ? <FullTranscript items={builder.raw} busy={builder.busy} avatar={<Avatar mood="calm" size="sm" />} /> : null}
                   {(full && workMode ? [] : chat.items).map((it) =>
                     it.kind === 'me' ? (
@@ -571,6 +579,8 @@ export function ShellLayout() {
                           {asI18n(it.text)}
                         </div>
                       </div>
+                    ) : it.kind === 'error' && it.noAi ? (
+                      it.id === lastNoAi ? <NoAiCard key={it.id} onRetry={lastAsked ? () => say(asI18n(lastAsked)) : undefined} /> : null
                     ) : it.kind === 'error' ? (
                       <div key={it.id} className="flex flex-col gap-1.5 rounded-xl border border-border bg-card px-3 py-2 text-[14px]">
                         <div className="flex items-center gap-2">
@@ -654,6 +664,19 @@ export function ShellLayout() {
                       <AiSpinner />
                       {m.shell_layout__thinking()}
                     </p> : null}
+                </div>
+                {log.atBottom ? null : (
+                  <button
+                    type="button"
+                    onClick={log.toBottom}
+                    aria-label={m.shell_layout__to_latest()}
+                    title={m.shell_layout__to_latest()}
+                    className="absolute bottom-3 left-1/2 grid size-10 -translate-x-1/2 cursor-pointer place-items-center rounded-full border border-border bg-card text-foreground shadow-card hover:bg-secondary focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+                    data-testid="chat-to-latest"
+                  >
+                    <ArrowDown className="size-5" aria-hidden="true" />
+                  </button>
+                )}
                 </div>
                 {attached.length ? (
                   <div className="flex flex-wrap gap-2 bg-card px-5 pt-2.5">

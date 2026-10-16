@@ -7,13 +7,19 @@ export const ProjectRpcCtx = createContext<ProjectInvoke>(async (_key, name) => 
   throw new Error(`No project transport for ${name}`)
 })
 
+const IDLE_MS = 30_000
+
 export function useProjectQuery<T>(key: string, name: string, data?: unknown, options?: { refetchInterval?: number; enabled?: boolean; optional?: boolean }) {
   const invoke = useContext(ProjectRpcCtx)
   return useQuery<T>({
     enabled: !!key && options?.enabled !== false,
     queryKey: ['project', key, name, data ?? null],
     queryFn: () => invoke(key, name, data),
-    refetchInterval: options?.refetchInterval,
+    // A cloud workspace that is off (409) or still starting (503) is checked on far less often.
+    refetchInterval: (query) => {
+      const status = (query.state.error as { status?: number } | null)?.status
+      return options?.refetchInterval && (status === 409 || status === 503) ? Math.max(options.refetchInterval, IDLE_MS) : options?.refetchInterval
+    },
     retry: false,
     ...(options?.optional ? { retryOnMount: false, refetchOnWindowFocus: false, staleTime: 300_000 } : {}),
   })

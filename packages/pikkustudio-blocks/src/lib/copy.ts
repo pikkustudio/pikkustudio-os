@@ -43,6 +43,8 @@ export type Copy = {
   /** Matches the server message that means this computer is signed out of the host. */
   signedOutMatch?: RegExp
   noticeDenied: (p: { what: I18nString }) => I18nString
+  /** Reasons the host can tell apart behind a refusal, matched on the server message; the first match replaces `noticeDenied`. */
+  deniedBecause?: { match: RegExp; text: (p: { what: I18nString }) => I18nString; fix?: { label: () => I18nString; to: string } }[]
   noticeSignedOut: (p: { what: I18nString }) => I18nString
   aiHostedChosen: (p: { who: I18nString }) => I18nString
   signInNote: (p: { who: I18nString }) => I18nString

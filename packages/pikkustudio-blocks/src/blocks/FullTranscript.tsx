@@ -2,7 +2,8 @@ import { asI18n, type I18nNode } from '@pikku/react'
 import { useState } from 'react'
 import { Brain, Check, ChevronDown, CircleAlert, Wrench } from 'lucide-react'
 import { m } from '@/i18n/messages'
-import { stripMarkers } from '../lib/builder-chat'
+import { NO_AI, stripMarkers } from '../lib/builder-chat'
+import { NoAiCard } from './NoAiCard'
 import { ChatMarkdown } from './ChatMarkdown'
 
 export type FullItem = {
@@ -40,10 +41,12 @@ function Fold({ icon, label, summary, live, children }: { icon: I18nNode; label:
 const oneLine = (text: string) => text.replace(/\s+/g, ' ').trim()
 
 export function FullTranscript({ items, busy, avatar }: { items: FullItem[]; busy: boolean; avatar: I18nNode }) {
+  const lastNoAi = items.reduce((found, it, index) => (it.kind === 'error' && NO_AI.test(it.text ?? '') ? index : found), -1)
   if (!items.length) return <p className="text-[14px] text-muted-foreground">{m.builder_chat__full_empty()}</p>
   return (
     <>
       {items.map((it, index) => {
+        const noAi = it.kind === 'error' && NO_AI.test(it.text ?? '')
         const live = busy && index === items.length - 1
         const key = `${it.kind}${index}`
         if (it.kind === 'user')
@@ -91,6 +94,7 @@ export function FullTranscript({ items, busy, avatar }: { items: FullItem[]; bus
             </Fold>
           )
         }
+        if (noAi) return index === lastNoAi ? <NoAiCard key={key} /> : null
         if (it.kind === 'error')
           return (
             <Fold key={key} live icon={<CircleAlert className="size-4 text-warning-foreground" aria-hidden="true" />} label={m.builder_chat__error()} summary={oneLine(it.text ?? '')}>

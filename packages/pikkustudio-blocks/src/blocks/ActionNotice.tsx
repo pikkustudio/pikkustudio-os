@@ -32,7 +32,8 @@ export function ActionNotice({ error, what, onRetry, retrying }: { error: unknow
     void send(anonymise(fault)).then(setPassed)
   }, [ours, choice, canSend, error, send, fault])
 
-  const body = signedOut(fault, copy.signedOutMatch) ? copy.noticeSignedOut({ what }) : denied(fault) ? copy.noticeDenied({ what }) : ours ? m.action_notice__ours({ what }) : m.action_notice__generic({ what })
+  const because = denied(fault) ? copy.deniedBecause?.find((reason) => reason.match.test(fault.message ?? '')) : undefined
+  const body = signedOut(fault, copy.signedOutMatch) ? copy.noticeSignedOut({ what }) : because ? because.text({ what }) : denied(fault) ? copy.noticeDenied({ what }) : ours ? m.action_notice__ours({ what }) : m.action_notice__generic({ what })
 
   return (
     <div role="alert" className="max-w-xl rounded-card bg-destructive-soft p-5 text-foreground" data-testid="action-notice">
@@ -47,6 +48,11 @@ export function ActionNotice({ error, what, onRetry, retrying }: { error: unknow
               <Button variant="default" size="compact" type="button" onClick={onRetry} disabled={retrying} aria-busy={retrying}>
                 {retrying ? <LoaderCircle className="size-4 animate-spin" /> : <RefreshCw className="size-4" />}
                 {retrying ? m.action_notice__retrying() : m.query_state__try_again()}
+              </Button>
+            ) : null}
+            {because?.fix ? (
+              <Button variant="default" size="compact" type="button" onClick={() => void navigate({ to: because.fix!.to as never })}>
+                {because.fix.label()}
               </Button>
             ) : null}
             {signedOut(fault, copy.signedOutMatch) ? (

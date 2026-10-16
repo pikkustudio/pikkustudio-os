@@ -75,6 +75,8 @@ export const SCREEN_SPECIALIST: ReadonlyArray<readonly [RegExp, WorkMode]> = [
 export const modeForPath = (path: string): WorkMode | null => SCREEN_SPECIALIST.find(([screen]) => screen.test(path))?.[1] ?? null
 
 const TIMED_OUT = /timed out|took too long/i
+/** The builder had no AI to build with: not signed in to Cloud and no key of the user's own. */
+export const NO_AI = /Sign in to Pikku Studio Cloud to build with|Choose your AI before building/i
 
 export type BuilderItem = { kind: string; text?: string; at: number; id?: string; name?: string; summary?: string; args?: string; output?: string; status?: string }
 type Timed = { at: number; item: ChatItem }
@@ -104,7 +106,7 @@ const toChat = (all: BuilderItem[], prefix: string, agent?: I18nString): Timed[]
       const text = stripMarkers(item.text)
       return text ? [{ at: item.at, item: { id, kind: 'pikku', text, ...(agent ? { agent } : {}) } }] : []
     }
-    if (item.kind === 'error') return [{ at: item.at, item: { id, kind: 'error', detail: item.text, retry: TIMED_OUT.test(item.text) } }]
+    if (item.kind === 'error') return [{ at: item.at, item: { id, kind: 'error', detail: item.text, retry: TIMED_OUT.test(item.text), noAi: NO_AI.test(item.text) } }]
     return []
   })
 }
@@ -164,7 +166,7 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
 
   const fail = useCallback((error: unknown) => {
     const detail = (error as Error)?.message ?? ''
-    setLocal((x) => [...x, { at: Date.now(), item: { id: `l${Math.random()}`, kind: 'error', detail, retry: TIMED_OUT.test(detail) } }])
+    setLocal((x) => [...x, { at: Date.now(), item: { id: `l${Math.random()}`, kind: 'error', detail, retry: TIMED_OUT.test(detail), noAi: NO_AI.test(detail) } }])
   }, [])
 
   const send = useCallback(
