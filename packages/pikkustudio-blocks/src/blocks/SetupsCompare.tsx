@@ -1,9 +1,25 @@
 import { m } from '@/i18n/messages'
-import type { I18nNode } from '@pikku/react'
+import type { I18nNode, I18nString } from '@pikku/react'
 import { ArrowRight, BookmarkPlus, Check, MessageCircle } from 'lucide-react'
-import { rowLabels, type Auto, type RowKey, type Setup, type Wire } from '../mocks/setups'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
+
+export type RowKey = 'money' | 'start' | 'auto' | 'screens'
+export type Wire = 'plans' | 'calendar' | 'book' | 'pay' | 'account' | 'receipt' | 'credits' | 'list'
+
+export type Auto =
+  | { kind: 'workflow'; title: I18nString; steps: I18nString[] }
+  | { kind: 'agent'; title: I18nString; says: I18nString; tools: I18nString[] }
+
+export type Setup = {
+  id: string
+  name: I18nString
+  line: I18nString
+  money: { text: I18nString; unique?: boolean }
+  start: { text: I18nString; steps: I18nString[]; unique?: boolean }
+  auto: { runs: Auto; person: I18nString; unique?: boolean }
+  screens: { items: Array<{ name: I18nString; wire: Wire }>; unique?: boolean }
+}
 
 const bar = 'h-1.5 rounded-full bg-surface-3'
 
@@ -88,8 +104,15 @@ function Flow({ runs }: { runs: Auto }) {
   )
 }
 
+export const rowLabels = (): Record<RowKey, { label: I18nString; hint: I18nString }> => ({
+  money: { label: m.setups_compare__row_money(), hint: m.setups_compare__row_money_hint() },
+  start: { label: m.setups_compare__row_start(), hint: m.setups_compare__row_start_hint() },
+  auto: { label: m.setups_compare__row_auto(), hint: m.setups_compare__row_auto_hint() },
+  screens: { label: m.setups_compare__row_screens(), hint: m.setups_compare__row_screens_hint() },
+})
+
 function Row({ row, unique, saved, onWish, children }: { row: RowKey; unique?: boolean; saved: boolean; onWish: () => void; children: I18nNode }) {
-  const l = rowLabels[row]
+  const l = rowLabels()[row]
   return (
     <section className={`flex flex-col gap-2.5 border-t border-border px-5 py-4 ${unique ? 'bg-accent/40' : ''}`}>
       <div className="flex items-start justify-between gap-2">

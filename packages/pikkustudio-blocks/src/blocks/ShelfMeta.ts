@@ -1,23 +1,11 @@
 import { m } from '@/i18n/messages'
-import { BellRing, CalendarPlus, CalendarX, Camera, CreditCard, Flag, Mail, Type, type LucideIcon } from 'lucide-react'
-import type { Outcome, Version } from '../mocks/versions'
+import { Flag, type LucideIcon } from 'lucide-react'
+import type { Outcome, Version } from '../lib/versions'
 import type { ShelfHue } from './ShelfArt'
 import type { I18nString } from '@pikku/react'
 
-/** The part each version changed, shown as one icon on its flat art. Derived here, not in the data. */
-const part: Record<string, { icon: LucideIcon; hue: ShelfHue }> = {
-  v9: { icon: CreditCard, hue: 'teal' },
-  v8: { icon: CalendarPlus, hue: 'petrol' },
-  v7: { icon: Mail, hue: 'sea' },
-  v6: { icon: Camera, hue: 'teal' },
-  v5: { icon: BellRing, hue: 'petrol' },
-  v4: { icon: Type, hue: 'sea' },
-  v3: { icon: Flag, hue: 'teal' },
-  v2: { icon: CalendarX, hue: 'sea' },
-}
-
 export const shelfPart = (v: Version): { icon: LucideIcon; hue: ShelfHue } => {
-  const p = part[v.id] ?? { icon: Flag, hue: 'teal' as ShelfHue }
+  const p = { icon: Flag, hue: 'teal' as ShelfHue }
   return v.outcome === 'failed' || v.outcome === 'cancelled' ? { icon: p.icon, hue: 'grey' } : p
 }
 

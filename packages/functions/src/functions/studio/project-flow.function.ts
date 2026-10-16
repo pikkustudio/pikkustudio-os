@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { pikkuSessionlessFunc } from '#pikku/function'
 import { slotKey } from '@pikkustudio/builder'
-import { allowed, deriveChecklist, guideContext, languageRule, readSignals, type Checklist, type RunState } from '@pikkustudio/addon-studio/services'
+import { EMPTY_INTAKE, allowed, deriveChecklist, guideContext, languageRule, readSignals, type Checklist, type RunState } from '@pikkustudio/addon-studio/services'
 import { BACKEND_PROMPT, FLAGS_PROMPT, TESTS_PROMPT, ideaWithAnswers, lastAskedQuestion } from '../../lib/project-flow.js'
 
 const StepId = z.enum(['questions', 'explore', 'frontend', 'backend', 'tests', 'publish'])
@@ -47,7 +47,6 @@ const view = async (studio: Studio, workflows: Workflows | undefined, key: strin
   const intake = await studio.projects.intake(key)
   const run = await runOf(workflows, intake?.run?.id)
   const signals = await readSignals(studio, key, run)
-  if (!signals) throw new Error('That project is not here any more')
   return { list: deriveChecklist(signals), chosenId: signals.directions.chosenId ?? null, publishUrl: signals.publish.url ?? null, idea: signals.intake.idea ?? '' }
 }
 
@@ -64,8 +63,7 @@ export const projectChecklist = pikkuSessionlessFunc({
 })
 
 const startExplore = async (studio: Studio, rpc: { startWorkflow: (name: string, data: unknown) => Promise<{ runId: string }> }, key: string) => {
-  const intake = await studio.projects.intake(key)
-  if (!intake) throw new Error('That project is not here any more')
+  const intake = (await studio.projects.intake(key)) ?? EMPTY_INTAKE
   const name = (await studio.projects.list()).find((p) => p.key === key)?.name ?? key
   const { runId } = await rpc.startWorkflow('studio:startProject', {
     name,

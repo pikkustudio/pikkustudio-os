@@ -367,9 +367,6 @@
   "list__permissions_empty": "No permissions yet.",
   "list__permissions_intro": "The things people can be allowed to do in your app.",
   "list__permissions_title": "Permissions",
-  "list__personas_empty": "No pretend visitors yet. Ask Pikku to add some.",
-  "list__personas_intro": "The pretend visitors used to try your app out before real people do.",
-  "list__personas_title": "People",
   "list__queues_empty": "No background jobs yet.",
   "list__queues_intro": "Work that should not make anyone wait, like sending a confirmation email. Your app puts it in a waiting line and works through it.",
   "list__queues_title": "Background jobs",
@@ -994,31 +991,6 @@
   "tr__title": "Translations",
   "validation__email_invalid": "Enter a valid email address.",
   "validation__required": "Required.",
-  "visitors__can": [
-    {
-      "declarations": [
-        "input count",
-        "local countPlural = count: plural"
-      ],
-      "selectors": [
-        "countPlural"
-      ],
-      "match": {
-        "countPlural=one": "Can use {count} part of your app",
-        "countPlural=other": "Can use {count} parts of your app"
-      }
-    }
-  ],
-  "visitors__empty": "No pretend visitors yet. Ask Pikku to add some.",
-  "visitors__intro": "Pretend visitors that use your app like a person would, so you find problems before real people do.",
-  "visitors__no_runs": "Nobody has visited yet.",
-  "visitors__runs_count": "Recent visits: {count}",
-  "visitors__send": "Send in",
-  "visitors__sending": "Sending",
-  "visitors__status_done": "Finished",
-  "visitors__status_failed": "Ran into a problem",
-  "visitors__status_running": "Visiting now",
-  "visitors__title": "AI visitors",
   "working__active": "Working right now",
   "working__change": "Building a change",
   "working__cloud": "In the cloud",

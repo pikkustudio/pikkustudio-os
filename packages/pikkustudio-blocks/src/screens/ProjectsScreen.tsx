@@ -22,7 +22,7 @@ const looks = ['bakery', 'kiln', 'garden', 'dog'] as const
 const workspacesOf = (p: ListedProject) =>
   p.workspaces ?? (p.missing ? undefined : { local: p.location === 'cloud' ? 0 : 1, cloud: p.location === 'local' ? 0 : 1 })
 
-const toCard = (p: ListedProject): Project => ({
+export const toCard = (p: ListedProject): Project => ({
   id: p.key,
   slug: p.slug,
   name: p.name,

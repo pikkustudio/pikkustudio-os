@@ -2,7 +2,7 @@ import { asI18n } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useEffect, useState } from 'react'
 import { Check } from 'lucide-react'
-import { steps } from '../mocks/versions'
+import { steps } from '../lib/versions'
 
 const clock = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
 

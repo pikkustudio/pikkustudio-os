@@ -19,7 +19,6 @@
     "./messages/*": "./messages/*",
     "./ui/*": "./src/ui/*.tsx",
     "./lib/*": "./src/lib/*.ts",
-    "./mocks/*": "./src/mocks/*.ts",
     "./styles/*": "./src/styles/*",
     "./types/*": "./src/types/*.ts"
   },

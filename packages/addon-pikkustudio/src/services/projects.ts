@@ -55,6 +55,8 @@ export interface Intake {
   samples: boolean
 }
 
+export const EMPTY_INTAKE: Intake = { path: null as never, done: false, idea: null, surfaces: [], devices: [], answers: [], skipped: [], run: null, jobs: {}, samples: false }
+
 export interface StudioProject {
   key: string
   owner: string
@@ -983,7 +985,7 @@ export class StudioProjectsService {
   }
 
   async updateIntake(key: string, change: (found: Intake) => Intake): Promise<Intake | null> {
-    const found = await this.intake(key)
+    const found = (await this.intake(key)) ?? (existsSync(dirname(this.intakeFile(key))) ? EMPTY_INTAKE : null)
     if (!found) return null
     const next = change(found)
     await writeFile(this.intakeFile(key), JSON.stringify(next) + '\n')

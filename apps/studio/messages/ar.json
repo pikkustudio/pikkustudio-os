@@ -391,9 +391,6 @@
   "list__permissions_empty": "لا توجد صلاحيات بعد.",
   "list__permissions_intro": "ما يمكن السماح للأشخاص بفعله في تطبيقكم.",
   "list__permissions_title": "الصلاحيات",
-  "list__personas_empty": "لا يوجد زوار تجريبيون بعد. اطلبوا من Pikku إضافة بعضهم.",
-  "list__personas_intro": "زوار تجريبيون يستخدمون لتجربة تطبيقكم قبل وصول الأشخاص الحقيقيين.",
-  "list__personas_title": "الأشخاص",
   "list__queues_empty": "لا توجد مهام في الخلفية بعد.",
   "list__queues_intro": "أعمال لا ينبغي أن ينتظرها أحد، مثل إرسال رسالة تأكيد. يضعها تطبيقكم في طابور انتظار وينجزها واحدة تلو الأخرى.",
   "list__queues_title": "مهام الخلفية",
@@ -1048,35 +1045,6 @@
   "tr__title": "الترجمات",
   "validation__email_invalid": "أدخلوا عنوان بريد إلكتروني صالحا.",
   "validation__required": "مطلوب.",
-  "visitors__can": [
-    {
-      "declarations": [
-        "input count",
-        "local countPlural = count: plural"
-      ],
-      "selectors": [
-        "countPlural"
-      ],
-      "match": {
-        "countPlural=zero": "يستطيع استخدام {count} جزءا من تطبيقكم",
-        "countPlural=one": "يستطيع استخدام جزء واحد من تطبيقكم",
-        "countPlural=two": "يستطيع استخدام جزأين من تطبيقكم",
-        "countPlural=few": "يستطيع استخدام {count} أجزاء من تطبيقكم",
-        "countPlural=many": "يستطيع استخدام {count} جزءا من تطبيقكم",
-        "countPlural=other": "يستطيع استخدام {count} جزءا من تطبيقكم"
-      }
-    }
-  ],
-  "visitors__empty": "لا يوجد زوار تجريبيون بعد. اطلبوا من Pikku إضافة بعضهم.",
-  "visitors__intro": "زوار تجريبيون يستخدمون تطبيقكم كما يفعل الإنسان، لتكتشفوا المشكلات قبل أن يواجهها الناس الحقيقيون.",
-  "visitors__no_runs": "لم يزر أحد بعد.",
-  "visitors__runs_count": "الزيارات الأخيرة: {count}",
-  "visitors__send": "أرسلوه",
-  "visitors__sending": "جار الإرسال",
-  "visitors__status_done": "انتهى",
-  "visitors__status_failed": "واجه مشكلة",
-  "visitors__status_running": "يزور الآن",
-  "visitors__title": "زوار الذكاء الاصطناعي",
   "working__active": "يعمل الآن",
   "working__change": "يبني تغييرا",
   "working__cloud": "في السحابة",

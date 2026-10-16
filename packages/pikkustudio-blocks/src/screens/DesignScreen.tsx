@@ -1,7 +1,7 @@
 import { asI18n, type I18nString } from '@pikku/react'
-import { useCallback, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
-import { Globe, MousePointer2, Palette, UserRound } from 'lucide-react'
+import { AppWindow, LayoutTemplate, Shapes, UserRound } from 'lucide-react'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { m } from '@/i18n/messages'
 import { PreviewBar } from '../blocks/PreviewBar'
@@ -9,12 +9,16 @@ import { DesignInspector } from '../blocks/DesignInspector'
 import { AppNotRunning, startSteps } from '../blocks/AppNotRunning'
 import { HintRow } from '../blocks/HintRow'
 import { ImpersonatePanel } from '../blocks/ImpersonatePanel'
-import { LiveAppFrame, liveAppUrl } from '../blocks/LiveAppFrame'
+import { LiveAppFrame, liveAppUrl, type PickedElement } from '../blocks/LiveAppFrame'
+import { LiveLookPanel } from '../blocks/LiveLookPanel'
+import { LiveWordingPanel } from '../blocks/LiveWordingPanel'
+import { ChatSelectPanel } from '../blocks/ChatSelectPanel'
+import { ShellCtx, type AttachRef } from '../lib/shell'
 import { DesignPartsFrame, type PartsCatalog, type PartsLens } from '../blocks/DesignPartsFrame'
 import { StatusLine } from '../blocks/StatusLine'
 import { MockStatusBar } from '../blocks/MockStatusBar'
 import { useProjectKey } from '../lib/project'
-import type { Device, Mode } from '../types/designTypes'
+import type { Device, Mode, Styles } from '../types/designTypes'
 
 type LiveApp = { slug: string; url: string | null; state: 'starting' | 'ready' | 'failed' }
 type DesignPreview = { state: 'starting' | 'ready' | 'restarting' | 'failed' | 'stopped'; url: string; restarts: number; logTail: string } | null
@@ -24,13 +28,37 @@ const label = (slug: string): I18nString => {
   return asI18n(text)
 }
 
+const pickedRef = ({ omId, omIndex, component, text: shown }: PickedElement): AttachRef => {
+  const [file, line] = omId.split(':')
+  const where = `${file}${line ? `:${line}` : ''}`
+  const base = `${file.split('/').pop()}${line ? `:${line}` : ''}`
+  const text = shown || component
+  const meta = `${component} · ${base}`
+  return { omId, omIndex, text: asI18n(text), meta: asI18n(meta), where: asI18n(where) }
+}
+
+const pickedLabel = ({ omId, component, text: shown }: PickedElement): I18nString => {
+  const [file, line] = omId.split(':')
+  const text = `${shown ? `“${shown}” ` : ''}${component} · ${file}${line ? `:${line}` : ''}`
+  return asI18n(text)
+}
+
 export function DesignScreen() {
   const q = useSearch({ strict: false }) as { mode?: Mode; screen?: 'tablet' | 'phone'; app?: string; parts?: PartsLens; part?: string }
   const navigate = useNavigate()
   const set = (patch: Record<string, unknown>) => navigate({ to: '.', search: ((prev: object) => ({ ...prev, ...patch })) as never, replace: true })
   const key = useProjectKey()
+  const { attached, attach } = useContext(ShellCtx)
   const [reloadKey, setReloadKey] = useState(0)
   const [wanted, setWanted] = useState(false)
+  const [picked, setPicked] = useState<PickedElement | null>(null)
+  const [styles, setStyles] = useState<Styles>({})
+  const [wordingKey, setWordingKey] = useState<string | null>(null)
+  const forget = () => {
+    setPicked(null)
+    setStyles({})
+    setWordingKey(null)
+  }
   const apps = usePikkuQuery('studio:projectApps', { key }, {
     enabled: !!key,
     refetchInterval: (query: { state: { data?: LiveApp[] } }) => ((query.state.data ?? []).every((a) => a.state === 'ready') && (query.state.data ?? []).length > 0 ? 15000 : 2000),
@@ -84,7 +112,24 @@ export function DesignScreen() {
   } else if (!current?.url || current.state !== 'ready') {
     stage = <AppNotRunning state="starting" name={app} steps={startSteps(start.isSuccess, list)} onStart={() => undefined} />
   } else {
-    stage = <LiveAppFrame url={current.url} device={device} reloadKey={reloadKey} title={label(current.slug)} />
+    stage = (
+      <LiveAppFrame
+        url={current.url}
+        device={device}
+        reloadKey={reloadKey}
+        title={label(current.slug)}
+        inspect={tool === 'chat' || tool === 'design' ? 'design' : tool === 'translations' ? 'i18n' : 'off'}
+        marks={tool === 'chat' ? attached.filter((a) => a.omId).map((a) => ({ id: a.label, omId: a.omId, omIndex: a.omIndex, color: a.color })) : undefined}
+        styles={tool === 'design' && picked && Object.keys(styles).length ? [{ omId: picked.omId, styles }] : []}
+        onPick={(next) => {
+          if (tool === 'chat') attach(pickedLabel(next), pickedRef(next))
+          if (tool !== 'design') return
+          setPicked(next)
+          setStyles({})
+        }}
+        onWording={tool === 'translations' ? setWordingKey : undefined}
+      />
+    )
   }
 
   function start_parts() {
@@ -93,12 +138,12 @@ export function DesignScreen() {
   }
 
   const panel = {
-    design: [m.design_live__look_title(), Palette, m.design_live__look_text()],
-    translations: [m.design_live__words_title(), Globe, m.design_live__words_text()],
-    chat: [m.design_live__chat_title(), MousePointer2, m.design_live__chat_text()],
-    impersonate: [m.impersonate__title(), UserRound, m.impersonate__text()],
+    design: m.design_live__look_title(),
+    translations: m.design_live__words_title(),
+    chat: m.design_live__chat_title(),
+    impersonate: m.impersonate__title(),
   } as const
-  const [title, Icon, text] = panel[tool === 'none' ? 'design' : tool]
+  const title = panel[tool === 'none' ? 'design' : tool]
 
   return (
     <div className="flex h-full flex-col gap-3">
@@ -113,9 +158,15 @@ export function DesignScreen() {
           tools={parts ? [] : undefined}
           hideDevice={!!parts}
           kind={parts ? 'part' : 'app'}
-          onPick={(_a, p) => set(parts ? { part: p } : { app: p })}
+          onPick={(_a, p) => {
+            forget()
+            set(parts ? { part: p } : { app: p })
+          }}
           onDevice={(d) => set({ screen: d === 'computer' ? undefined : d })}
-          onTool={(t) => set({ mode: t === 'design' ? undefined : t })}
+          onTool={(t) => {
+            forget()
+            set({ mode: t === 'design' ? undefined : t })
+          }}
           onReload={() => setReloadKey((k) => k + 1)}
           onOpenTab={parts ? (design?.url ? () => window.open(liveAppUrl(design.url), '_blank', 'noopener') : undefined) : current?.url ? () => window.open(liveAppUrl(current.url!), '_blank', 'noopener') : undefined}
         />
@@ -128,8 +179,12 @@ export function DesignScreen() {
                   <HintRow icon={UserRound}>{m.impersonate__text()}</HintRow>
                   {current?.url && current.state === 'ready' ? <ImpersonatePanel onSwitched={() => setReloadKey((k) => k + 1)} /> : null}
                 </>
+              ) : tool === 'chat' ? (
+                <ChatSelectPanel attached={attached} />
+              ) : tool === 'translations' ? (
+                <LiveWordingPanel key={wordingKey ?? ''} wordingKey={wordingKey} reloadKey={reloadKey} />
               ) : (
-                <HintRow icon={Icon}>{text}</HintRow>
+                <LiveLookPanel key={picked?.omId ?? ''} picked={picked} styles={styles} onStyles={setStyles} onRetry={() => { forget(); setReloadKey((k) => k + 1) }} />
               )}
             </DesignInspector>
           )}

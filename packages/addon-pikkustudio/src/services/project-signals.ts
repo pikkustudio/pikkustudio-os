@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import { slotKey, type BuilderSession } from '@pikkustudio/builder'
 import { listArtifacts } from './artifacts.js'
 import { latestActivity, type RunState, type Signals } from '../lib/project-checklist.js'
-import type { StudioProjectsService } from './projects.js'
+import { EMPTY_INTAKE, type StudioProjectsService } from './projects.js'
 import type { StudioPublisher } from './publish.js'
 
 const WORKING = 6
@@ -13,9 +13,8 @@ export async function readSignals(
   key: string,
   run: RunState,
   now = Date.now(),
-): Promise<Signals | null> {
-  const intake = await services.projects.intake(key)
-  if (!intake) return null
+): Promise<Signals> {
+  const intake = (await services.projects.intake(key)) ?? EMPTY_INTAKE
   const cwd = await services.projects.projectDir(key)
   const artifacts = (await listArtifacts(cwd)).filter((a) => a.exploration === 'first')
   const mocks = join(cwd, '.mocks')

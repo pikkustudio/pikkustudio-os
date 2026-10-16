@@ -367,9 +367,6 @@
   "list__permissions_empty": "Noch keine Berechtigungen.",
   "list__permissions_intro": "Was Leuten in deiner App erlaubt werden kann.",
   "list__permissions_title": "Berechtigungen",
-  "list__personas_empty": "Noch keine Testbesucher. Bitte Pikku, welche hinzuzufügen.",
-  "list__personas_intro": "Die Testbesucher, mit denen deine App ausprobiert wird, bevor echte Leute kommen.",
-  "list__personas_title": "Personen",
   "list__queues_empty": "Noch keine Hintergrundaufgaben.",
   "list__queues_intro": "Arbeit, bei der niemand warten soll, zum Beispiel eine Bestätigungs-E-Mail. Deine App reiht sie in eine Warteschlange ein und arbeitet sie ab.",
   "list__queues_title": "Hintergrundaufgaben",
@@ -988,31 +985,6 @@
   "tr__title": "Übersetzungen",
   "validation__email_invalid": "Gib eine gültige E-Mail-Adresse ein.",
   "validation__required": "Pflichtfeld.",
-  "visitors__can": [
-    {
-      "declarations": [
-        "input count",
-        "local countPlural = count: plural"
-      ],
-      "selectors": [
-        "countPlural"
-      ],
-      "match": {
-        "countPlural=one": "Kann {count} Teil deiner App nutzen",
-        "countPlural=other": "Kann {count} Teile deiner App nutzen"
-      }
-    }
-  ],
-  "visitors__empty": "Noch keine Testbesucher. Bitte Pikku, welche hinzuzufügen.",
-  "visitors__intro": "Testbesucher, die deine App so nutzen wie ein Mensch, damit du Probleme findest, bevor echte Leute darauf stoßen.",
-  "visitors__no_runs": "Bisher war noch niemand zu Besuch.",
-  "visitors__runs_count": "Letzte Besuche: {count}",
-  "visitors__send": "Losschicken",
-  "visitors__sending": "Wird geschickt",
-  "visitors__status_done": "Fertig",
-  "visitors__status_failed": "Auf ein Problem gestoßen",
-  "visitors__status_running": "Zu Besuch",
-  "visitors__title": "KI-Besucher",
   "working__active": "Arbeitet gerade",
   "working__change": "Baut eine Änderung",
   "working__cloud": "In der Cloud",

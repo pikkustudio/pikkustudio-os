@@ -14,4 +14,10 @@ defineFeatureFlags({
   assistantPanel: {
     description: 'The assistant panel',
   },
+  exploreSetups: {
+    description: 'The page that compares ways to set up a new idea',
+  },
+  projectLanding: {
+    description: 'The new project home page',
+  },
 })

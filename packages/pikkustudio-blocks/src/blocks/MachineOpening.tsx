@@ -15,11 +15,11 @@ export function OpeningStage({ children, sectionRef, label = m.machine_opening__
     <section
       ref={sectionRef}
       data-hue="sea"
-      className="relative grid min-h-95 grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] overflow-hidden rounded-[30px] bg-hero text-hero-ink group-data-open/shell:grid-cols-[minmax(0,1.4fr)_minmax(0,0.6fr)] @min-[1700px]/app:min-h-110"
+      className="relative grid min-h-95 grid-cols-1 overflow-hidden rounded-[30px] bg-hero text-hero-ink lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] lg:group-data-open/shell:grid-cols-[minmax(0,1.4fr)_minmax(0,0.6fr)] @min-[1700px]/app:min-h-110"
       aria-label={label}
     >
       <div className="relative z-1 flex flex-col justify-center gap-5 px-13 pt-13 pb-12 @min-[1700px]/app:p-16 group-data-open/shell:@min-[1700px]/app:p-13">{children}</div>
-      <div className="relative min-h-55 group-data-open/shell:min-h-0" aria-hidden="true">
+      <div className="relative hidden min-h-55 group-data-open/shell:min-h-0 lg:block" aria-hidden="true">
         <svg className="absolute inset-0 size-full" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice">
           <circle cx="368" cy="48" r="248" className="fill-w1" />
           <circle cx="16" cy="408" r="231" className="fill-w2" />

@@ -167,6 +167,7 @@ if (window.self !== window.top) {
     }
     entry.box.style.outline = (s.mine ? '2px solid ' : '2px dashed ') + s.color
     entry.box.style.outlineOffset = '2px'
+    entry.box.style.background = s.tint ? 'color-mix(in srgb,' + s.color + ' 12%,transparent)' : ''
     entry.label.style.display = s.mine ? 'none' : ''
     entry.label.textContent = s.mine ? '' : (s.name || 'Someone')
     entry.label.style.background = s.color
@@ -211,13 +212,77 @@ if (window.self !== window.top) {
     scheduled = true
     requestAnimationFrame(() => { scheduled = false; for (const entry of boxes.values()) place(entry) })
   }
+  let paint = null
+  function hex(value) {
+    if (!paint) { const c = document.createElement('canvas'); c.width = 1; c.height = 1; paint = c.getContext('2d', { willReadFrequently: true }) }
+    paint.clearRect(0, 0, 1, 1)
+    paint.fillStyle = '#000'
+    paint.fillStyle = value
+    paint.fillRect(0, 0, 1, 1)
+    const d = paint.getImageData(0, 0, 1, 1).data
+    return '#' + [d[0], d[1], d[2]].map(n => n.toString(16).padStart(2, '0')).join('')
+  }
+  const COLOUR_STARTS = ['#', 'rgb', 'hsl', 'oklch', 'oklab', 'lab(', 'lch(', 'color(', 'hwb']
+  function themeColours() {
+    const names = new Set()
+    const walk = rules => {
+      for (const rule of rules) {
+        if (rule.cssRules) walk(rule.cssRules)
+        if (!rule.style) continue
+        for (let i = 0; i < rule.style.length; i++) if (rule.style[i].startsWith('--')) names.add(rule.style[i])
+      }
+    }
+    for (const sheet of document.styleSheets) { try { walk(sheet.cssRules) } catch {} }
+    const root = getComputedStyle(document.documentElement)
+    const found = []
+    for (const name of names) {
+      const raw = root.getPropertyValue(name).trim()
+      if (COLOUR_STARTS.some(start => raw.toLowerCase().startsWith(start))) found.push([name.slice(2), hex(raw)])
+    }
+    return found
+  }
+  function lookOf(el) {
+    const cs = getComputedStyle(el)
+    let bg = cs.backgroundColor
+    for (let node = el.parentElement; (bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent') && node; node = node.parentElement) bg = getComputedStyle(node).backgroundColor
+    const look = { background: hex(bg), color: hex(cs.color), fontSize: Math.round(parseFloat(cs.fontSize)), fontWeight: Number(cs.fontWeight) || 400, padding: Math.round(parseFloat(cs.paddingTop)), textAlign: cs.textAlign === 'start' ? 'left' : cs.textAlign === 'end' ? 'right' : cs.textAlign, borderRadius: Math.round(parseFloat(cs.borderTopLeftRadius)), borderWidth: Math.round(parseFloat(cs.borderTopWidth)), borderColor: hex(cs.borderTopColor), font: cs.fontFamily.split(',')[0].replaceAll('"', '').replaceAll("'", '').trim() }
+    const colours = themeColours()
+    const tokenOf = value => (colours.find(([, h]) => h === value) || [null])[0]
+    return { look, tokens: { background: tokenOf(look.background), color: tokenOf(look.color), borderColor: look.borderWidth ? tokenOf(look.borderColor) : null } }
+  }
+  let styled = []
+  function applyStyles(rules) {
+    for (const [el, prev] of styled) el.style.cssText = prev
+    styled = []
+    for (const rule of Array.isArray(rules) ? rules : []) {
+      for (const el of peers(rule.omId)) {
+        styled.push([el, el.style.cssText])
+        for (const [prop, value] of Object.entries(rule.styles || {})) el.style[prop] = value
+      }
+    }
+    reposition()
+  }
+  async function wordingOf(key) {
+    const runtime = await import('/src/paraglide/runtime.js')
+    const locales = Array.isArray(runtime.locales) && runtime.locales.length ? [...runtime.locales] : [runtime.baseLocale]
+    const values = {}
+    let variant = false
+    for (const locale of locales) {
+      const res = await fetch('/messages/' + locale + '.json', { cache: 'no-store' })
+      if (!res.ok) throw new Error('Could not read messages/' + locale + '.json (' + res.status + ')')
+      const all = await res.json()
+      values[locale] = typeof all[key] === 'string' ? all[key] : null
+      if (all[key] !== undefined && typeof all[key] !== 'string') variant = true
+    }
+    return { base: runtime.baseLocale, locales, values, variant }
+  }
   function emitSelect(el) {
     const omId = el.dataset.omId
     if (!omId) return
     myNode = el
     const omIndex = peers(omId).indexOf(el)
     const r = el.getBoundingClientRect()
-    window.parent.postMessage({ source: 'cloud-preview', type: 'element-select', omId, omIndex, tag: el.tagName.toLowerCase(), component: el.dataset.omComponent || el.tagName.toLowerCase(), rect: { top: r.top, left: r.left, width: r.width, height: r.height } }, '*')
+    window.parent.postMessage({ source: 'cloud-preview', type: 'element-select', omId, omIndex, tag: el.tagName.toLowerCase(), component: el.dataset.omComponent || el.tagName.toLowerCase(), text: (el.innerText || el.getAttribute('aria-label') || '').replaceAll(String.fromCharCode(10), ' ').split(' ').filter(Boolean).join(' ').slice(0, 60), root: \${JSON.stringify(cwd)}, count: peers(omId).length, i18n: el.dataset.omI18n || findI18nKey(el) || null, ...lookOf(el), rect: { top: r.top, left: r.left, width: r.width, height: r.height } }, '*')
   }
   // Find the best [data-om-id] element for a design-mode click. Tries closest()
   // first (the common case), then walks up looking for a descendant with
@@ -242,6 +307,13 @@ if (window.self !== window.top) {
       render()
     } else if (d.type === 'set-inspect-mode') {
       applyMode(d.mode === 'design' || d.mode === 'i18n' ? d.mode : 'off')
+    } else if (d.type === 'set-styles') {
+      applyStyles(d.rules)
+    } else if (d.type === 'i18n-values' && typeof d.key === 'string') {
+      wordingOf(d.key).then(
+        found => window.parent.postMessage({ source: 'cloud-preview', type: 'i18n-values', id: d.id, ok: true, ...found }, '*'),
+        err => window.parent.postMessage({ source: 'cloud-preview', type: 'i18n-values', id: d.id, ok: false, message: String(err && err.message || err) }, '*'),
+      )
     }
   })
   window.addEventListener('message', async e => {

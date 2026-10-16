@@ -7,8 +7,8 @@ import { Textarea } from '../ui/textarea'
 import type { Uses } from './OnboardingLayout'
 
 const PLATFORMS = [
-  { id: 'browser', name: 'Browser', icon: <Monitor className="size-4.5" /> },
-  { id: 'phones', name: 'Mobile', icon: <Smartphone className="size-4.5" /> },
+  { id: 'browser', name: 'Browser', icon: <Monitor className="size-4" /> },
+  { id: 'phones', name: 'Mobile', icon: <Smartphone className="size-4" /> },
 ]
 
 function Pill({ on, onClick, children }: { on: boolean; onClick: () => void; children: I18nNode }) {
@@ -18,7 +18,7 @@ function Pill({ on, onClick, children }: { on: boolean; onClick: () => void; chi
       role="checkbox"
       aria-checked={on}
       onClick={onClick}
-      className={`flex h-11 items-center gap-2 rounded-full border-2 px-4 text-[15px] font-semibold transition ${on ? 'border-hero-ink bg-hero-ink text-hero' : 'border-hero-ink/35 hover:border-hero-ink/70'}`}
+      className={`flex h-9 items-center gap-1.5 rounded-full border-[1.5px] px-3 text-[14.5px] font-semibold transition ${on ? 'border-foreground bg-foreground text-background' : 'border-foreground/25 text-muted-foreground hover:border-foreground/60 hover:text-foreground'}`}
     >
       {on ? <Check className="size-4" strokeWidth={3} /> : null}
       {children}
@@ -82,61 +82,65 @@ export function NewProjectForm({
         <label htmlFor="idea" className="text-[17px] font-bold">
           {m.new_project_form__label()}
         </label>
-        <Textarea id="idea" tone="hero" value={idea} onChange={(e) => setIdea(e.target.value)} placeholder={m.new_project_form__idea_placeholder()} />
-        <div className="flex flex-wrap items-center gap-2">
-          <input ref={picker} id="attach" type="file" multiple hidden onChange={(e) => add(e.target.files)} />
-          <Button variant="heroGhost" size="page" type="button" onClick={() => picker.current?.click()}>
-            <Paperclip className="size-4.5" />
-            {m.new_project_form__add_files()}
-          </Button>
-          {files.map((f) => (
-            <span key={`${f.name}-${f.size}`} className="flex h-10 max-w-64 items-center gap-1.5 rounded-full border border-hero-ink/35 pe-1.5 ps-3.5 text-[14.5px] font-semibold">
-              <span className="truncate">{asI18n(f.name)}</span>
-              <button type="button" aria-label={m.new_project_form__remove({ name: f.name })} onClick={() => setFiles(files.filter((x) => x !== f))} className="grid size-7 shrink-0 place-items-center rounded-full hover:bg-hero-ink/12">
-                <X className="size-4" />
-              </button>
-            </span>
-          ))}
-          {files.length === 0 ? <span className="text-[14.5px] text-hero-ink-2">{m.new_project_form__drop_hint()}</span> : null}
-          {tooBig ? <span role="alert" className="text-[14.5px] font-semibold">{m.new_project_form__too_big()}</span> : null}
-        </div>
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-3">
-          <div role="group" aria-label={m.new_project_form__where_label()} className="flex items-center gap-2">
-            {PLATFORMS.map((p) => (
-              <Pill key={p.id} on={uses.devices.includes(p.id)} onClick={() => flip(p.id)}>
-                {p.icon}
-                {asI18n(p.name)}
-              </Pill>
+        <div className="rounded-[20px] border-[2.5px] border-transparent bg-field text-foreground transition-all hover:border-hero-ink/45 focus-within:border-hero-ink focus-within:ring-5 focus-within:ring-hero-ink/25">
+          <Textarea
+            id="idea"
+            tone="hero"
+            className="min-h-24 resize-none border-0 bg-transparent pb-2 hover:border-transparent focus-visible:ring-0"
+            value={idea}
+            onChange={(e) => setIdea(e.target.value)}
+            placeholder={m.new_project_form__idea_placeholder()}
+          />
+          <div className="flex flex-wrap items-center gap-2 px-3.5 pb-3.5">
+            <input ref={picker} id="attach" type="file" multiple hidden onChange={(e) => add(e.target.files)} />
+            <button
+              type="button"
+              title={m.new_project_form__drop_hint()}
+              onClick={() => picker.current?.click()}
+              className="flex h-9 items-center gap-1.5 rounded-full px-3 text-[14.5px] font-semibold text-muted-foreground transition hover:bg-foreground/8 hover:text-foreground"
+            >
+              <Paperclip className="size-4.5" />
+              {m.new_project_form__add_files()}
+            </button>
+            {files.map((f) => (
+              <span key={`${f.name}-${f.size}`} className="flex h-9 max-w-56 items-center gap-1 rounded-full border-[1.5px] border-foreground/25 pe-1 ps-3 text-[14px] font-semibold">
+                <span className="truncate">{asI18n(f.name)}</span>
+                <button type="button" aria-label={m.new_project_form__remove({ name: f.name })} onClick={() => setFiles(files.filter((x) => x !== f))} className="grid size-7 shrink-0 place-items-center rounded-full hover:bg-foreground/10">
+                  <X className="size-4" />
+                </button>
+              </span>
             ))}
+            <div role="group" aria-label={m.new_project_form__where_label()} className="ms-auto flex items-center gap-2">
+              {PLATFORMS.map((p) => (
+                <Pill key={p.id} on={uses.devices.includes(p.id)} onClick={() => flip(p.id)}>
+                  {p.icon}
+                  {asI18n(p.name)}
+                </Pill>
+              ))}
+            </div>
           </div>
         </div>
+        {tooBig ? <span role="alert" className="text-[14.5px] font-semibold">{m.new_project_form__too_big()}</span> : null}
         <div className="flex flex-col gap-4">
           {goInterview ? (
-            <div className="flex flex-col gap-2">
+            <>
               <Button variant="hero" size="pageLg" type="button" data-testid="start-interview" disabled={!ready} onClick={goInterview}>
                 <MessageCircle className="size-5.5" />
-                <span>{m.new_project_form__interview_start()}</span>
+                <span>{m.new_project_form__start()}</span>
                 <ArrowRight className="rtl:-scale-x-100 size-5.5" />
               </Button>
-              <p className="text-[14.5px] text-hero-ink-2">{m.new_project_form__interview_note()}</p>
-            </div>
+              <p className="text-[14.5px] text-hero-ink-2">{m.new_project_form__or()}</p>
+            </>
           ) : null}
-          <div className="flex flex-col gap-2">
-            <Button variant={goInterview ? 'heroGhost' : 'hero'} size="pageLg" type="button" data-testid="start-designing" disabled={!ready} onClick={go}>
-              <Sparkles className="size-5.5" />
-              <span>{m.new_project_form__start()}</span>
-              <ArrowRight className="rtl:-scale-x-100 size-5.5" />
-            </Button>
-            {goInterview ? <p className="text-[14.5px] text-hero-ink-2">{m.new_project_form__design_note()}</p> : null}
-          </div>
+          <Button variant={goInterview ? 'heroGhost' : 'hero'} size="pageLg" type="button" data-testid="start-designing" disabled={!ready} onClick={go}>
+            <Sparkles className="size-5.5" />
+            <span>{goInterview ? m.new_project_form__lucky() : m.new_project_form__start()}</span>
+            <ArrowRight className="rtl:-scale-x-100 size-5.5" />
+          </Button>
         </div>
-        <p className="min-h-5 text-[14.5px] text-hero-ink-2">
-          {uses.devices.length === 0
-            ? m.new_project_form__pick_one()
-            : uses.devices.includes('phones')
-              ? m.new_project_form__mobile_note()
-              : m.new_project_form__nothing_online()}
-        </p>
+        {uses.devices.length === 0 || uses.devices.includes('phones') ? (
+          <p className="text-[14.5px] text-hero-ink-2">{uses.devices.length === 0 ? m.new_project_form__pick_one() : m.new_project_form__mobile_note()}</p>
+        ) : null}
       </section>
     </div>
   )

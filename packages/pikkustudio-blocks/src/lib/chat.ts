@@ -70,7 +70,7 @@ export const mockTransport: ChatTransport = async function* (path, body) {
 }
 
 export const ChatTransportCtx = createContext<ChatTransport>(mockTransport)
-export const ProjectChatTransportCtx = createContext<ChatTransport>(mockTransport)
+export const ProjectAgentApiCtx = createContext<(projectKey: string) => string>((projectKey) => `/p/${projectKey}/rpc/agent`)
 
 const cardFor = (value: { toolName: string; args: Record<string, unknown> }) => {
   if (value.toolName.endsWith('postChange')) {

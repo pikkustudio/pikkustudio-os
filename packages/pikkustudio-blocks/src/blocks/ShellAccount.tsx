@@ -131,7 +131,7 @@ export function WorkspaceProjects() {
   const projects = useTeamProjects()
   const items = (projects.data ?? []).filter((p) => p.slug)
   return (
-    <PanelSection title={m.project_cards_mock__title()}>
+    <PanelSection title={m.shell_account__projects()}>
       {items.length ? (
         <ul className="flex flex-col gap-1">
           {items.map((p) => {

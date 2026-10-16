@@ -3,9 +3,46 @@ import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { useProjectKey } from './project'
 import { asI18n, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
-import type { Version } from '../mocks/versions'
 
-export { steps, type Version } from '../mocks/versions'
+export type Outcome = 'live' | 'was-live' | 'failed' | 'rolled-back' | 'cancelled' | 'working' | 'waiting'
+
+export type Flag = { id: string; level: 'security' | 'breaking' | 'tests'; text: I18nString }
+export type Missing = { id: string; kind: 'secret' | 'setting'; name: I18nString; why: I18nString; placeholder: I18nString }
+export type Group = { label: I18nString; added: I18nString[]; removed: I18nString[]; changed: I18nString[] }
+
+export type Version = {
+  id: string
+  v: string
+  sha: string
+  title: I18nString
+  summary: I18nString
+  day: string
+  time: string
+  by: I18nString
+  outcome: Outcome
+  reason?: I18nString
+  failedAt?: 'build' | 'start' | 'publish' | 'data'
+  took?: string
+  liveSince?: string
+  replaces?: string
+  visits?: number
+  phase?: number
+  started?: string
+  tests?: { passed: number; failed: number; skipped: number; secs: number }
+  flags: Flag[]
+  missing: Missing[]
+  includes?: string[]
+  groups: Group[]
+  log: string
+}
+
+export const steps = [
+  ['Fetching your work', 25],
+  ['Building it', 150],
+  ['Testing it', 60],
+  ['Checking it', 15],
+  ['Going live', 70],
+] as Array<[string, number]>
 
 export type Head = { sha: string; title: I18nString; by: I18nString; when: I18nString }
 

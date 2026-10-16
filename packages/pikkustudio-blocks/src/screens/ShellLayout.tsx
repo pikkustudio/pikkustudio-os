@@ -22,7 +22,9 @@ import { SCREEN_NAME, agentName } from '../lib/screen-names'
 import { modeForPath, useBuilderChat } from '../lib/builder-chat'
 import { useProjectQuery } from '../lib/projectRpc'
 import { MOVABLE, usePins, type Movable } from '../lib/pins'
-import { ShellCtx, type PanelId, type PublishNote, type View } from '../lib/shell'
+import { AttachedChips } from '../blocks/AttachedChips'
+import { freeSelectionSlot, selectionColor } from '../lib/selection-colors'
+import { ShellCtx, type AttachRef, type Attachment, type PanelId, type PublishNote, type View } from '../lib/shell'
 import { keep } from '../lib/links'
 import { ChatMarkdown } from '../blocks/ChatMarkdown'
 import { AiSpinner } from '../blocks/Spinner'
@@ -238,12 +240,16 @@ export function ShellLayout() {
     const text = new Date(iso).toLocaleString(getLocale(), { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
     return asI18n(text)
   }
-  const [attached, setAttached] = useState<I18nString[]>([])
-  const attach = (label: I18nString) => {
-    setAttached((a) => (a.includes(label) ? a : [...a, label]))
+  const [attached, setAttached] = useState<Attachment[]>([])
+  const attach = (label: I18nString, ref?: AttachRef) => {
+    setAttached((a) => {
+      if (a.some((x) => x.label === label)) return a
+      const slot = freeSelectionSlot(a.map((x) => x.slot))
+      return [...a, { label, text: ref?.text ?? label, meta: ref?.meta ?? label, where: ref?.where ?? label, omId: ref?.omId ?? '', omIndex: ref?.omIndex ?? 0, slot, color: selectionColor(slot) }]
+    })
     setPanel('chat')
   }
-  const detach = (label: I18nString) => setAttached((a) => a.filter((x) => x !== label))
+  const detach = (label: I18nString) => setAttached((a) => a.filter((x) => x.label !== label))
   const fill = useLocation({ select: (l) => /\/(design|artifacts\/[^/]+|routines\/[^/]+)$/.test(l.pathname) || (l.pathname.endsWith('/emails') && !!(l.search as { email?: string }).email) })
   const needsApp = useLocation({ select: (l) => pageNeedsApp(l.pathname) })
   const onArtifacts = useLocation({ select: (l) => l.pathname.endsWith('/artifacts') })
@@ -678,28 +684,19 @@ export function ShellLayout() {
                   </button>
                 )}
                 </div>
-                {attached.length ? (
-                  <div className="flex flex-wrap gap-2 bg-card px-5 pt-2.5">
-                    {attached.map((a) => (
-                      <Button key={a} variant="selected" size="chipSm" type="button" title={m.shell_layout__remove_from_chat()} onClick={() => detach(a)}>
-                        <MousePointer2 className="size-4" />
-                        {a}
-                        <X className="size-4" />
-                      </Button>
-                    ))}
-                  </div>
-                ) : null}
+                <AttachedChips attached={attached} onRemove={detach} />
                 <form
-                  className="relative flex items-end gap-2 border-t border-border bg-card px-5 pt-3.5 pb-4.5"
+                  className="relative flex items-end gap-2 border-t border-border bg-card px-5 py-3.5"
                   aria-label={m.shell_layout__message_pikku()}
                   onSubmit={(e) => {
                     e.preventDefault()
                     if (!draft.trim() || extras.busy) return
                     {
-                      const text = draft.trim() + extras.suffix()
-                      say(asI18n(text))
+                      const text = attached.length ? `${draft.trim()}\n\n${m.shell_layout__picked_in_preview({ items: attached.map((a) => a.label).join('; ') })}` : draft.trim()
+                      say(asI18n(text + extras.suffix()))
                     }
                     setDraft('')
+                    setAttached([])
                     extras.clear()
                   }}
                 >
@@ -741,16 +738,16 @@ export function ShellLayout() {
                     }}
                     aria-label={m.shell_layout__message_pikku()}
                     placeholder={attached.length ? m.shell_layout__say_what_to_change() : m.shell_layout__ask_or_tell()}
-                    className="max-h-35 min-h-12 flex-1 resize-none rounded-[24px] border-[1.5px] border-input bg-background px-4.5 py-3 text-[15px] leading-[1.4] text-foreground hover:border-muted-foreground focus:border-primary focus:ring-4 focus:ring-accent focus:outline-none"
+                    className="max-h-35 min-h-11 flex-1 resize-none rounded-xl border border-input bg-background px-3.5 py-2.5 text-[15px] leading-[1.4] text-foreground placeholder:text-muted-foreground hover:border-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary focus:outline-none"
                   />
                   <SlashMenu items={slash} active={slashIdx} onHover={setSlashAt} onPick={(c) => setDraft(`/${c.name} `)} />
                   <button
                     type="submit"
                     aria-label={m.parts__send()}
                     disabled={!draft.trim()}
-                    className="grid size-12 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition-colors duration-140 hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40"
+                    className="grid size-11 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground transition-colors duration-140 hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card focus-visible:outline-none disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground"
                   >
-                    <ArrowRight className="rtl:-scale-x-100 size-5.5" />
+                    <ArrowRight className="rtl:-scale-x-100 size-5" />
                   </button>
                 </form>
                 <ComposerTools projectKey={projectKey} extras={extras} field={composerRef} onText={dictate} />

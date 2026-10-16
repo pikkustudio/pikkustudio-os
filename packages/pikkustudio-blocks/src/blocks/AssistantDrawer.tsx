@@ -1,11 +1,12 @@
-import { AiSpinner } from './Spinner'
+import { AssistantLiveChat } from './AssistantLiveChat'
 import { m } from '@/i18n/messages'
 import { asI18n, sep, type I18nString } from '@pikku/react'
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import type { LucideIcon } from 'lucide-react'
-import { ArrowLeft, ArrowRight, Check, CircleAlert, Moon, Wrench, X } from 'lucide-react'
+import { ArrowLeft, Check, CircleAlert, KeyRound, Moon, Wrench, X } from 'lucide-react'
 import { Button } from '../ui/button'
-import { ProjectChatTransportCtx } from '../lib/chat'
+import { ProjectAgentApiCtx } from '../lib/chat'
+import { useProjectQuery } from '../lib/projectRpc'
 import { GRADE_NOT_QUITE } from '../lib/tokens'
 
 
@@ -41,20 +42,14 @@ function Bubble({ turn, hue }: { turn: Turn; hue: Assistant['hue'] }) {
     </div>
   )
 }
-const grow = (so_far: I18nString, delta: unknown): I18nString => {
-  const text = so_far + String(delta)
-  return asI18n(text)
-}
+type Needed = { requirements: { credentialName: string; displayName: string; connected: boolean }[]; allConnected: boolean }
 
 export function AssistantDrawer({ a, projectKey, start, onClose, onPikku, onFix }: { a: Assistant; projectKey: string; start: 'chat' | 'history'; onClose: () => void; onPikku: () => void; onFix: (text: I18nString) => void }) {
   const [tab, setTab] = useState(start)
   const [seen, setSeen] = useState<string | null>(null)
-  const [draft, setDraft] = useState('')
-  const [msgs, setMsgs] = useState<Turn[]>([['me', a.hello.startsWith('Zzz') ? m.assistant_drawer__opening_sleepy() : m.assistant_drawer__opening({ hello: a.hello })]])
-  const [thinking, setThinking] = useState(false)
-  const end = useRef<HTMLDivElement>(null)
-  const transport = useContext(ProjectChatTransportCtx)
-  const thread = useRef(`try-${Math.random().toString(36).slice(2)}`)
+  const api = useContext(ProjectAgentApiCtx)(projectKey)
+  const needed = useProjectQuery<Needed>(projectKey, 'console:agentCredentialCheck', { agentName: a.id })
+  const missing = needed.data && !needed.data.allConnected ? needed.data.requirements.filter((r) => !r.connected) : []
   const past = a.history.find((h) => h.id === seen)
 
   useEffect(() => {
@@ -62,35 +57,15 @@ export function AssistantDrawer({ a, projectKey, start, onClose, onPikku, onFix 
     window.addEventListener('keydown', k)
     return () => window.removeEventListener('keydown', k)
   }, [onClose])
-  useEffect(() => {
-    end.current?.scrollIntoView({ block: 'end' })
-  }, [msgs, thinking, tab])
 
-  const send = async () => {
-    const t = draft.trim()
-    if (!t || thinking) return
-    setMsgs((m) => [...m, ['visitor', asI18n(t)]])
-    setDraft('')
-    setThinking(true)
-    const add = (turn: Turn) => setMsgs((m) => [...m, turn])
-    try {
-      let open = -1
-      const empty: string = ''
-      for await (const e of transport(`/p/${projectKey}/rpc/agent/${a.id}/stream`, { message: t, threadId: thread.current, resourceId: 'studio-try' })) {
-        if (e.type === 'TOOL_CALL_START') {
-          const toolName = String(e.toolCallName ?? '')
-          add(['did', toolName ? asI18n(toolName) : m.assistant_drawer__looked_something_up()])
-        }
-        else if (e.type === 'TEXT_MESSAGE_START') setMsgs((m) => (open = m.length, [...m, ['me', asI18n(empty)]]))
-        else if (e.type === 'TEXT_MESSAGE_CONTENT') setMsgs((m) => m.map((x, i) => (i === open ? ['me', grow(x[1], e.delta)] : x)))
-        else if (e.type === 'RUN_ERROR') add(['did', m.assistant_drawer__something_got_in_the_way()])
+  const connect = (name: string) => {
+    const popup = window.open(`${api.replace(/\/rpc\/agent$/, '')}/credentials/${name}/connect`, 'oauth-connect', 'width=600,height=700')
+    const timer = setInterval(() => {
+      if (!popup || popup.closed) {
+        clearInterval(timer)
+        void needed.refetch()
       }
-    } catch {
-      add(['did', m.assistant_drawer__could_not_reach()])
-    } finally {
-      setMsgs((m) => m.filter((x) => !(x[0] === 'me' && !x[1].trim())))
-      setThinking(false)
-    }
+    }, 500)
   }
 
   const tabBtn = (id: 'chat' | 'history', label: I18nString) => (
@@ -130,39 +105,21 @@ export function AssistantDrawer({ a, projectKey, start, onClose, onPikku, onFix 
         {tabBtn('history', m.assistant_drawer__tab_history({ n: a.history.length }))}
       </div>
 
-      {tab === 'chat' ? (
-        <div className="flex min-h-0 flex-1 flex-col">
-          <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-auto px-5 py-5" role="log" aria-label={m.assistant_drawer__chat_label({ name: a.name })} tabIndex={0}>
-            {msgs.map((t, i) => (
-              <Bubble key={i} turn={t} hue={a.hue} />
+      {tab === 'chat' && missing.length > 0 ? (
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-4 overflow-auto px-6 py-8 text-center" data-testid="connect-gate">
+          <KeyRound className="size-8 text-warning-foreground" aria-hidden="true" />
+          <b className="font-heading text-[20px]">{m.assistant_drawer__connect_title({ name: a.name })}</b>
+          <p className="max-w-ch40 text-[15px] text-ink-2">{m.assistant_drawer__connect_text()}</p>
+          <div className="flex flex-col gap-2">
+            {missing.map((r) => (
+              <Button key={r.credentialName} type="button" variant="bordered" size="compact" onClick={() => connect(r.credentialName)}>
+                {m.assistant_drawer__connect_one({ name: asI18n(r.displayName) })}
+              </Button>
             ))}
-            {thinking && (
-              <div className="flex items-center gap-2 self-start text-[15px] text-muted-foreground">
-                <AiSpinner />
-                {m.assistant_drawer__is_thinking({ name: a.name })}
-              </div>
-            )}
-            <div ref={end} />
           </div>
-          <form
-            className="flex items-end gap-2 border-t border-border px-5 pt-3.5 pb-4.5"
-            onSubmit={(e) => {
-              e.preventDefault()
-              send()
-            }}
-          >
-            <input
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              aria-label={m.assistant_drawer__message_label({ name: a.name })}
-              placeholder={m.assistant_drawer__write_as_a_visitor()}
-              className="min-h-12 flex-1 rounded-full border-[1.5px] border-input bg-background px-4.5 text-[16px] text-foreground focus:border-primary focus:ring-4 focus:ring-accent focus:outline-none"
-            />
-            <button type="submit" aria-label={m.assistant_drawer__send()} disabled={!draft.trim() || thinking} className="grid size-12 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground disabled:cursor-not-allowed disabled:opacity-40">
-              <ArrowRight className="rtl:-scale-x-100 size-5.5" />
-            </button>
-          </form>
         </div>
+      ) : tab === 'chat' ? (
+        <AssistantLiveChat key={a.id} agentId={a.id} name={a.name} hue={a.hue} hello={a.hello} projectKey={projectKey} onFix={onFix} />
       ) : past ? (
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex items-center gap-3 border-b border-border px-5 py-3">

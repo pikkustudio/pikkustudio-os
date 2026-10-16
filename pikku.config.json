@@ -59,17 +59,17 @@
     "virtualUser": true
   },
   "scenarios": {
-    "emailDomain": "actors.local"
+    "emailDomain": "virtualuser.local"
   },
   "environments": {
     "local": {
       "apiUrl": "http://localhost:4740",
-      "signInPath": "/api/auth/sign-in/actor",
+      "signInPath": "/api/auth/sign-in/virtual-user",
       "appUrl": "http://localhost:4741"
     },
     "coverage": {
       "apiUrl": "http://localhost:4010",
-      "signInPath": "/api/auth/sign-in/actor"
+      "signInPath": "/api/auth/sign-in/virtual-user"
     }
   },
   "frontends": {
@@ -87,7 +87,7 @@
         "healthPath": "/"
       },
       "serves": "visitor",
-      "personas": [
+      "virtualUsers": [
         "visitor"
       ],
       "dist": "dist/client",

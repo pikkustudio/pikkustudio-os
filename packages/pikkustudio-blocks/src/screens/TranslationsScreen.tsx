@@ -1,3 +1,4 @@
+import { asI18n } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useProjectKey, useProjectName } from '../lib/project'
@@ -9,42 +10,78 @@ import { TransRows } from '../blocks/TransRows'
 import { EmptyState } from '../blocks/EmptyState'
 import { Languages } from 'lucide-react'
 import { CardsSkeleton, QueryState } from '../blocks/QueryState'
-import { faultOf } from '../blocks/ErrorState'
+import { detailsOf, faultOf } from '../blocks/ErrorState'
+import { FixNotice } from '../blocks/FixNotice'
+import { HintRow } from '../blocks/HintRow'
+import { appWrites, isVariant, type I18nApp, type WordingWrite } from '../lib/wordingWrite'
 import { AskPikku } from '../blocks/AskPikku'
 import type { TransString } from '../types/translations'
 
-type Catalog = Record<string, string>
-type I18nApp = { app: string; baseLocale: string; defaultLocale: string | null; locales: Record<string, Catalog> }
-
 function Editor({ app, projectKey }: { app: I18nApp; projectKey: string }) {
-  const write = useProjectAction<{ app: string; locale: string; content: Catalog }>(projectKey, 'console:writeI18nLocale', ['console:getI18n'])
-  const [drafts, setDrafts] = useState<Record<string, Catalog>>({})
+  const write = useProjectAction<WordingWrite>(projectKey, 'console:writeI18nLocale', ['console:getI18n'])
+  const [drafts, setDrafts] = useState<Record<string, Record<string, string>>>({})
+  const [failed, setFailed] = useState<{ error: unknown; locale: string } | null>(null)
   const timers = useRef<Record<string, number>>({})
+  const latest = useRef(app)
+  latest.current = app
   useEffect(() => () => Object.values(timers.current).forEach(window.clearTimeout), [])
   const locales = Object.keys(app.locales).filter((l) => l !== app.baseLocale)
-  const merged = (locale: string): Catalog => ({ ...app.locales[locale], ...drafts[locale] })
+  const base = app.locales[app.baseLocale] ?? {}
+  const variants = Object.keys(base).filter((id) => isVariant(app, id))
+  const text = (locale: string, id: string) => {
+    const value = drafts[locale]?.[id] ?? app.locales[locale]?.[id]
+    return typeof value === 'string' && !isMissing(value) ? value : ''
+  }
   const items: TransString[] = useMemo(
     () =>
-      Object.entries(app.locales[app.baseLocale] ?? {}).map(([id, base]) => ({
-        id,
-        base,
-        values: Object.fromEntries(locales.map((l) => [l, isMissing(merged(l)[id]) ? '' : merged(l)[id]!])),
-      })),
+      Object.entries(base)
+        .filter((entry): entry is [string, string] => typeof entry[1] === 'string' && !isVariant(app, entry[0]))
+        .map(([id, original]) => ({ id, base: original, values: Object.fromEntries(locales.map((l) => [l, text(l, id)])) })),
     [app, drafts],
   )
+  const save = async (locale: string, edits: Record<string, string>) => {
+    try {
+      for (const one of appWrites(latest.current, Object.entries(edits).map(([key, value]) => ({ key, locale, value })))) await write.mutateAsync(one)
+      setFailed(null)
+    } catch (error) {
+      setFailed({ error, locale })
+    }
+  }
   const set = (id: string, locale: string, value: string) => {
-    const next = { ...merged(locale), [id]: value }
+    const next = { ...drafts[locale], [id]: value }
     setDrafts((d) => ({ ...d, [locale]: next }))
     window.clearTimeout(timers.current[locale])
-    timers.current[locale] = window.setTimeout(() => write.mutate({ app: app.app, locale, content: next }), 700)
+    timers.current[locale] = window.setTimeout(() => void save(locale, next), 700)
   }
-  if (!locales.length)
-    return (
-      <EmptyState layout="row" icon={Languages} title={m.translations_screen__one_language()} text={m.translations_screen__one_language_text()}>
-        <AskPikku label={m.translations_screen__add_language()} prompt={m.translations_screen__i_would_like_to_add()} />
-      </EmptyState>
-    )
-  return <TransRows items={items} locales={locales} baseLocale={app.baseLocale} set={set} />
+  const keys = asI18n(variants.join(', '))
+  return (
+    <>
+      {variants.length ? (
+        <HintRow icon={Languages}>
+          <span className="flex flex-col items-start gap-2">
+            {m.translations_screen__variants({ keys })}
+            <AskPikku label={m.translations_screen__variants_ask()} prompt={m.translations_screen__variants_say({ keys })} />
+          </span>
+        </HintRow>
+      ) : null}
+      {failed ? (
+        <FixNotice
+          title={m.action_notice__title()}
+          body={m.live_save__failed()}
+          ask={m.error_state__fix_ask_what({ what: m.translations_screen__save_failed_what(), details: asI18n(detailsOf(faultOf(failed.error), m.translations_screen__save_failed_what())) })}
+          onRetry={() => void save(failed.locale, drafts[failed.locale] ?? {})}
+          retrying={write.isPending}
+        />
+      ) : null}
+      {locales.length ? (
+        <TransRows items={items} locales={locales} baseLocale={app.baseLocale} set={set} />
+      ) : (
+        <EmptyState layout="row" icon={Languages} title={m.translations_screen__one_language()} text={m.translations_screen__one_language_text()}>
+          <AskPikku label={m.translations_screen__add_language()} prompt={m.translations_screen__i_would_like_to_add()} />
+        </EmptyState>
+      )}
+    </>
+  )
 }
 
 const missingFunction = (error: unknown) => {
