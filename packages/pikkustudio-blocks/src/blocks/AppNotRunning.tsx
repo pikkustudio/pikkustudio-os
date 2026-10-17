@@ -21,7 +21,7 @@ export type LaunchPhase = 'machine' | 'studio' | 'sync' | 'project' | 'connect'
 export const CLOUD_LAUNCH: LaunchPhase[] = ['machine', 'studio', 'sync', 'project', 'connect']
 export const LOCAL_LAUNCH: LaunchPhase[] = ['sync', 'project', 'connect']
 
-const phaseLabel = (phase: LaunchPhase) =>
+export const phaseLabel = (phase: LaunchPhase) =>
   ({
     machine: m.project_launch__step_machine,
     studio: m.project_launch__step_studio,

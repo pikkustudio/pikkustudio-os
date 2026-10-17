@@ -3650,6 +3650,7 @@
   "project_launch__stage_why": "Bei {name} läuft gerade nichts, deshalb gibt es hier noch nichts zu sehen. Veröffentliche dein Projekt dorthin oder arbeite in deinem Arbeitsbereich weiter.",
   "project_launch__stage_publish": "Zum Veröffentlichen",
   "project_launch__stage_workspace": "Meinen Arbeitsbereich öffnen",
+  "project_launch__stalled": "Dein Arbeitsbereich hängt seit mehreren Minuten bei „{step}“, in der Cloud geht also etwas nicht weiter. Erneut versuchen startet ihn noch einmal; Pikku kann herausfinden, warum er hängen geblieben ist.",
   "versions_screen__version_line": "Version {version}",
   "versions_screen__intro_place": "Jede Version deiner App, die auf {place} veröffentlicht wurde, die neueste zuerst.",
   "versions_screen__none_title": "Noch nichts veröffentlicht",
