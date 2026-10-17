@@ -4710,5 +4710,8 @@
   "connections_screen__disconnect_warning": "The parts of your app that use {name} will stop working until it is connected again.",
   "connections_screen__disconnect_failed": "That could not be disconnected. Nothing was changed. Try again.",
   "connections_screen__technical_called": "Developers call this",
-  "quick_find__connections": "Connections"
+  "quick_find__connections": "Connections",
+  "cloud_offline__title": "Pikku Studio Cloud can't be reached right now",
+  "cloud_offline__body": "Everything on this computer keeps working. This part lives in Pikku Studio Cloud and comes back once you are online again.",
+  "cloud_offline__retry": "Check again"
 }

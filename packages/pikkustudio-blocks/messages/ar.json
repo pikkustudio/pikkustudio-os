@@ -4848,5 +4848,8 @@
   "connections_screen__disconnect_warning": "ستتوقف أجزاء تطبيقك التي تستخدم {name} عن العمل حتى يُعاد ربطه.",
   "connections_screen__disconnect_failed": "تعذّر الفصل. لم يتغير شيء. حاول مرة أخرى.",
   "connections_screen__technical_called": "يسميه المطورون",
-  "quick_find__connections": "الاتصالات"
+  "quick_find__connections": "الاتصالات",
+  "cloud_offline__title": "لا يمكن الوصول إلى Pikku Studio Cloud الآن",
+  "cloud_offline__body": "كل ما على هذا الكمبيوتر يستمر في العمل. هذا الجزء موجود في Pikku Studio Cloud وسيعود عندما تتصل بالإنترنت مجددًا.",
+  "cloud_offline__retry": "تحقق مرة أخرى"
 }

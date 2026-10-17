@@ -5,8 +5,7 @@ import { useRouter } from '@tanstack/react-router'
 import { X } from 'lucide-react'
 import { isAuthPath, isSessionError, signInPath, signInSearch } from '../lib/sign-in-redirect'
 import { dismiss, errorText, toast, useToasts } from '../lib/toast'
-
-const unreachable = (error: unknown) => error instanceof TypeError || [502, 503, 504].includes((error as { status?: number } | null)?.status ?? 0)
+import { cloudUnreachable as unreachable } from '../lib/cloud-offline'
 
 export function Toaster() {
   const client = useQueryClient()
@@ -22,7 +21,7 @@ export function Toaster() {
       toast(errorText(error))
     }
     const onQuery = client.getQueryCache().subscribe((e) => {
-      if (e.type === 'updated' && e.action.type === 'error' && !unreachable(e.action.error)) report(e.action.error)
+      if (e.type === 'updated' && e.action.type === 'error' && !unreachable(e.action.error) && !e.query.meta?.handlesErrors) report(e.action.error)
     })
     const onMutation = client.getMutationCache().subscribe((e) => {
       if (e.type === 'updated' && e.action.type === 'error' && !/runVirtualUser/.test(String((e.action.error as Error)?.message))) report(e.action.error)

@@ -7,6 +7,7 @@ import { anonymise, useErrorReports } from '../lib/errorReports'
 import { Button } from '../ui/button'
 import { ErrorReportDrawer } from './ErrorReportDrawer'
 import { PikkuDot } from './PikkuDot'
+import { CloudOffline } from './CloudOffline'
 
 type Fault = { name?: string; message?: string; errorId?: string; status?: number }
 
@@ -50,7 +51,8 @@ export function ErrorState({ error, what, onRetry, retrying }: { error: unknown;
   const { choice, canSend, set, send } = useErrorReports()
   const fault = faultOf(error)
   const details = detailsOf(fault, what)
-  const ours = isPikkuFault(fault)
+  const offline = fault.name === 'CloudUnreachableError'
+  const ours = !offline && isPikkuFault(fault)
   const sentFor = useRef<unknown>(null)
 
   useEffect(() => {
@@ -59,6 +61,7 @@ export function ErrorState({ error, what, onRetry, retrying }: { error: unknown;
     void send(anonymise(fault)).then(setPassed)
   }, [ours, choice, canSend, error, send, fault])
 
+  if (offline) return <CloudOffline onRetry={onRetry} />
   return (
     <div role="alert" className="flex flex-col items-center gap-4 rounded-card border border-border bg-card px-6 py-9 text-center shadow-card" data-testid="error-state">
       <Spot ours={ours} />

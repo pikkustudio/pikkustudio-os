@@ -4504,5 +4504,8 @@
   "connections_screen__disconnect_warning": "Die Teile deiner App, die {name} nutzen, funktionieren erst wieder, wenn es neu verbunden ist.",
   "connections_screen__disconnect_failed": "Das konnte nicht getrennt werden. Nichts wurde geändert. Versuch es noch einmal.",
   "connections_screen__technical_called": "Entwickler nennen das",
-  "quick_find__connections": "Verbindungen"
+  "quick_find__connections": "Verbindungen",
+  "cloud_offline__title": "Pikku Studio Cloud ist gerade nicht erreichbar",
+  "cloud_offline__body": "Alles auf diesem Computer funktioniert weiter. Dieser Teil liegt in Pikku Studio Cloud und ist wieder da, sobald du online bist.",
+  "cloud_offline__retry": "Erneut prüfen"
 }

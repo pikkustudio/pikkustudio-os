@@ -92,10 +92,10 @@ export const riskOf = (score: number, max: number): Risk => (max <= 0 ? 'low' : 
 type Opts = { enabled?: boolean }
 
 export const useReviewQueue = (projectId: string, subject: ReviewSubject, opts: Opts = {}) =>
-  usePikkuQuery('review:getReviewQueue' as never, { projectId, gitSha: null, sinceGitSha: null, subject, limit: 50 } as never, { retry: false, enabled: !!projectId && opts.enabled !== false } as never) as unknown as import('@tanstack/react-query').UseQueryResult<Queue>
+  usePikkuQuery('review:getReviewQueue' as never, { projectId, gitSha: null, sinceGitSha: null, subject, limit: 50 } as never, { retry: false, meta: { handlesErrors: true }, enabled: !!projectId && opts.enabled !== false } as never) as unknown as import('@tanstack/react-query').UseQueryResult<Queue>
 
 export const useReviewFixes = (projectId: string, subject: ReviewSubject, includeStale: boolean) =>
-  usePikkuQuery('review:getReviewFixes' as never, { projectId, gitSha: null, subject, targetIds: null, includeStale, limit: 50 } as never, { retry: false, enabled: !!projectId } as never) as unknown as import('@tanstack/react-query').UseQueryResult<Fixes>
+  usePikkuQuery('review:getReviewFixes' as never, { projectId, gitSha: null, subject, targetIds: null, includeStale, limit: 50 } as never, { retry: false, meta: { handlesErrors: true }, enabled: !!projectId } as never) as unknown as import('@tanstack/react-query').UseQueryResult<Fixes>
 
 type Mut<I, O = unknown> = import('@tanstack/react-query').UseMutationResult<O, Error, I>
 
