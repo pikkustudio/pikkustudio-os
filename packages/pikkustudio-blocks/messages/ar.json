@@ -4349,6 +4349,35 @@
   "analytics_events__kind_choice": "خيار من بضعة خيارات",
   "analytics_events__kind_list": "قائمة",
   "analytics_events__kind_other": "تفصيل",
+  "analytics_events__count": [
+    {
+      "declarations": [
+        "input count",
+        "input shown",
+        "input days",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "لم يُسجَّل في آخر {days} يومًا",
+        "countPlural=one": "سُجِّل مرة واحدة في آخر {days} يومًا",
+        "countPlural=two": "سُجِّل مرتين في آخر {days} يومًا",
+        "countPlural=few": "سُجِّل {shown} مرات في آخر {days} يومًا",
+        "countPlural=many": "سُجِّل {shown} مرة في آخر {days} يومًا",
+        "countPlural=other": "سُجِّل {shown} مرة في آخر {days} يومًا"
+      }
+    }
+  ],
+  "analytics_events__count_with": "{count}، {who}",
+  "analytics_events__by_all": "كلها من أشخاص مسجّلي الدخول",
+  "analytics_events__by_most": "معظمها من أشخاص مسجّلي الدخول",
+  "analytics_events__by_half": "نحو نصفها من أشخاص مسجّلي الدخول",
+  "analytics_events__by_some": "قليل منها من أشخاص مسجّلي الدخول",
+  "analytics_events__never": "لم يُسجَّل بعد",
+  "analytics_events__counts_failed": "تعذّرت قراءة عدد مرات حدوثها الآن.",
+  "analytics_events__counts_retry": "حاول مرة أخرى",
   "project_secrets__title": "الأسرار والإعدادات",
   "project_secrets__text": "كلمات المرور والمفاتيح والاختيارات التي يطلبها هذا المشروع. لا تُعرض الأسرار مرة أخرى بعد حفظها؛ أما الإعدادات فيمكنك قراءتها وتغييرها في أي وقت.",
   "project_secrets__hero_label": "الأسرار والإعدادات",

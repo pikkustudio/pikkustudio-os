@@ -4037,6 +4037,31 @@
   "analytics_events__kind_choice": "eine von wenigen Möglichkeiten",
   "analytics_events__kind_list": "eine Liste",
   "analytics_events__kind_other": "eine Angabe",
+  "analytics_events__count": [
+    {
+      "declarations": [
+        "input count",
+        "input shown",
+        "input days",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "In den letzten {days} Tagen einmal notiert",
+        "countPlural=other": "In den letzten {days} Tagen {shown}-mal notiert"
+      }
+    }
+  ],
+  "analytics_events__count_with": "{count}, {who}",
+  "analytics_events__by_all": "alle von angemeldeten Personen",
+  "analytics_events__by_most": "meist von angemeldeten Personen",
+  "analytics_events__by_half": "etwa die Hälfte von angemeldeten Personen",
+  "analytics_events__by_some": "einige von angemeldeten Personen",
+  "analytics_events__never": "Noch nicht notiert",
+  "analytics_events__counts_failed": "Wie oft das passiert ist, konnte gerade nicht gelesen werden.",
+  "analytics_events__counts_retry": "Erneut versuchen",
   "project_secrets__title": "Geheimnisse und Einstellungen",
   "project_secrets__text": "Die Passwörter, Schlüssel und Entscheidungen, die dieses Projekt braucht. Geheimnisse werden nach dem Speichern nie wieder angezeigt; Einstellungen kannst du jederzeit lesen und ändern.",
   "project_secrets__hero_label": "Geheimnisse und Einstellungen",

@@ -21,7 +21,8 @@ import { keep } from '../lib/links'
 import { useProjectKey } from '../lib/project'
 import { useProjectQuery } from '../lib/projectRpc'
 import { LOCAL_WORKSPACE, formatTarget, useProjectTarget } from '../lib/project-target'
-import { useSlots, type LiveMetrics } from '../lib/slots'
+import { useSlots, type AnalyticsEventCount, type AnalyticsEventCounts, type LiveMetrics } from '../lib/slots'
+import { getLocale } from '@/paraglide/runtime.js'
 import { Art, Bars, Figure, clock, seconds, speed, words } from './metrics-shared'
 
 type UseLive = (name: string | null, hours: number) => LiveMetrics
@@ -140,7 +141,7 @@ export function LiveMetricsScreen({ name, use }: { name: string; use: UseLive })
           return (
             <>
               <Quiet hours={hours} />
-              <AnalyticsEvents />
+              <AnalyticsEvents stage={name} />
             </>
           )
         const slowNow = s.average !== null && s.average > 2000
@@ -239,7 +240,7 @@ export function LiveMetricsScreen({ name, use }: { name: string; use: UseLive })
               </Section>
             </div>
 
-            <AnalyticsEvents />
+            <AnalyticsEvents stage={name} />
           </>
         )
       }}
@@ -314,9 +315,29 @@ const kindOf = (schema: string): I18nString => {
 
 const list = (items: string[]) => new Intl.ListFormat(undefined, { style: 'long', type: 'conjunction' }).format(items)
 
-/** The moments the app declares it writes down about people, read off the app's own declaration. */
-export function AnalyticsEvents() {
+const COUNT_DAYS = 30
+const noCounts = (): AnalyticsEventCounts | null => null
+
+const share = (c: AnalyticsEventCount): I18nString | null => {
+  const part = c.signedIn / c.total
+  if (!c.signedIn) return null
+  if (part >= 0.95) return m.analytics_events__by_all()
+  if (part >= 0.65) return m.analytics_events__by_most()
+  if (part >= 0.35) return m.analytics_events__by_half()
+  return m.analytics_events__by_some()
+}
+
+const countLine = (c: AnalyticsEventCount | undefined): I18nString => {
+  if (!c?.total) return m.analytics_events__never()
+  const line = m.analytics_events__count({ count: c.total, shown: new Intl.NumberFormat(getLocale()).format(c.total), days: COUNT_DAYS })
+  const who = share(c)
+  return who ? m.analytics_events__count_with({ count: line, who }) : line
+}
+
+/** The moments the app declares it writes down about people, read off the app's own declaration; on a published copy, how often each fired. */
+export function AnalyticsEvents({ stage }: { stage?: string }) {
   const key = useProjectKey()
+  const counts = (useSlots().useAnalyticsEventCounts ?? noCounts)(stage ?? null, COUNT_DAYS)
   const meta = useProjectQuery<{ analyticsEvents?: Record<string, EventMeta> }>(key, 'console:getAllMeta', {})
   const events = Object.values(meta.data?.analyticsEvents ?? {}).sort((a, b) => a.name.localeCompare(b.name))
   return (
@@ -331,6 +352,14 @@ export function AnalyticsEvents() {
         </p>
       ) : (
         <RowStack>
+          {counts?.error ? (
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-px15 text-ink-2" data-testid="analytics-events-counts-error">
+              <span>{m.analytics_events__counts_failed()}</span>
+              <Button variant="ghost" size="compact" type="button" disabled={counts.isFetching} onClick={counts.retry}>
+                {m.analytics_events__counts_retry()}
+              </Button>
+            </div>
+          ) : null}
           {events.map((e) => {
             const props = Object.entries(e.props ?? {})
             const caption = !e.props
@@ -338,7 +367,8 @@ export function AnalyticsEvents() {
               : props.length === 0
                 ? m.analytics_events__props_none()
                 : m.analytics_events__props({ list: list(props.map(([n, s]) => m.analytics_events__prop({ name: words(n).toLowerCase(), kind: kindOf(s) }))) })
-            return <RowCard key={e.name} tile={<NotebookPen className="size-5" />} title={asI18n(words(e.name))} caption={caption} />
+            const note = counts && !counts.isPending && !counts.error ? countLine(counts.counts[e.name]) : undefined
+            return <RowCard key={e.name} tile={<NotebookPen className="size-5" />} title={asI18n(words(e.name))} caption={caption} note={note} />
           })}
         </RowStack>
       )}

@@ -4243,6 +4243,31 @@
   "analytics_events__kind_choice": "one of a few choices",
   "analytics_events__kind_list": "a list",
   "analytics_events__kind_other": "a detail",
+  "analytics_events__count": [
+    {
+      "declarations": [
+        "input count",
+        "input shown",
+        "input days",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Noted once in the last {days} days",
+        "countPlural=other": "Noted {shown} times in the last {days} days"
+      }
+    }
+  ],
+  "analytics_events__count_with": "{count}, {who}",
+  "analytics_events__by_all": "all by signed-in people",
+  "analytics_events__by_most": "mostly by signed-in people",
+  "analytics_events__by_half": "about half by signed-in people",
+  "analytics_events__by_some": "a few by signed-in people",
+  "analytics_events__never": "Not noted yet",
+  "analytics_events__counts_failed": "How often these happened couldn't be read just now.",
+  "analytics_events__counts_retry": "Try again",
   "project_secrets__title": "Secrets and settings",
   "project_secrets__text": "The passwords, keys and choices this project asks for. Secrets are never shown again once saved; settings you can read and change any time.",
   "project_secrets__hero_label": "Secrets and settings",

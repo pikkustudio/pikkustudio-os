@@ -34,6 +34,16 @@ export type LiveMetrics = {
   slowLimitMs: number
 }
 
+export type AnalyticsEventCount = { total: number; signedIn: number; series: { day: string; count: number }[] }
+export type AnalyticsEventCounts = {
+  /** By event name; an event missing here never fired in the window. */
+  counts: Record<string, AnalyticsEventCount>
+  isPending: boolean
+  error: unknown
+  isFetching: boolean
+  retry: () => void
+}
+
 export type Slots = {
   SignInHero?: ComponentType<{ st: string; loading: boolean; open: Open; done: () => void }>
   SignInOffer?: ComponentType<{ loading: boolean; open: Open; done: () => void }>
@@ -54,6 +64,8 @@ export type Slots = {
   useStageAudit?: (projectKey: string, refetchInterval: number) => { data?: StageAuditPage }
   /** Requests and speed of a published copy, by target name; null asks only where the site is. A hook, called every render. */
   useLiveMetrics?: (name: string | null, hours: number) => LiveMetrics
+  /** How often each analytics event fired on a published copy over the last days; null when that copy is not published. A hook, called every render. */
+  useAnalyticsEventCounts?: (stageName: string | null, days: number) => AnalyticsEventCounts | null
   useReleases?: (projectKey: string) => ReleasesView
   useReleaseDetail?: (projectKey: string, id: string, wanted: boolean) => ReleaseDetail
   /** What the next publish would change against what is live; null when unknown or nothing deploys. A hook, called every render. */
