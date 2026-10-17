@@ -14,7 +14,7 @@ import { Segmented } from '../blocks/Segmented'
 import { Dot, RowCard, RowStack } from '../blocks/RowCard'
 import { SidePanel } from '../blocks/SidePanel'
 import { ShelfTile } from '../blocks/ShelfTile'
-import { ErrorState } from '../blocks/ErrorState'
+import { ErrorState, detailsOf, faultOf } from '../blocks/ErrorState'
 import { StatusLine } from '../blocks/StatusLine'
 import { PikkuDot } from '../blocks/PikkuDot'
 import { ago, canGoBack, dayTime, failWords, shelfPart, shelfTone, shelfWords, titleOf, versionLine, when, who } from '../blocks/ShelfMeta'
@@ -68,7 +68,7 @@ export function VersionsScreen() {
   const [mode, setMode] = useState('cards')
   return (
     <Page gap="snug">
-      <PageHead crumb={projectName} title={m.versions_screen__title()} text={view.place ? m.versions_screen__intro_place({ place: asI18n(view.place) }) : m.versions_screen__intro()} size="lead">
+      <PageHead crumb={projectName} title={m.versions_screen__title()} text={view.place ? m.versions_screen__intro_place({ place: asI18n(view.place) }) : m.versions_screen__intro()} size="lead" developerDetails>
         {view.state === 'ready' && view.releases.length > 0 ? (
           <Segmented label={m.versions_screen__how_show()} value={mode} options={[['cards', m.versions_screen__view_cards()], ['rows', m.versions_screen__view_rows()]]} onChange={setMode} />
         ) : null}
@@ -79,14 +79,28 @@ export function VersionsScreen() {
 }
 
 function Body({ view, mode }: { view: ReleasesView; mode: string }) {
+  const { say } = useContext(ShellCtx)
   if (view.state === 'loading')
     return (
       <div role="status" aria-busy="true" className="flex flex-col gap-3.5">
-        <div className="h-64 animate-pulse rounded-hero bg-secondary" />
+        <NextCard label={m.versions_screen__what_matters()} hue="teal" art={<Art />} title={m.versions_screen__hero_loading()} why={m.versions_screen__intro()} />
         <div className="h-40 animate-pulse rounded-card border border-border bg-secondary" />
       </div>
     )
-  if (view.state === 'error') return <ErrorState error={view.error} what={m.versions_screen__title()} onRetry={view.retry} />
+  if (view.state === 'error')
+    return (
+      <>
+        <NextCard label={m.versions_screen__what_matters()} hue="petrol" art={<Art />} title={m.versions_screen__hero_error()} why={m.versions_screen__hero_error_text()}>
+          <div className="flex flex-wrap gap-3">
+            <Button variant="hero" size="page" type="button" onClick={() => say(m.error_state__fix_ask_what({ what: m.versions_screen__title(), details: detailsOf(faultOf(view.error), m.versions_screen__title()) }))}>
+              <PikkuDot />
+              {m.metrics_screen__fix_it()}
+            </Button>
+          </div>
+        </NextCard>
+        <ErrorState error={view.error} what={m.versions_screen__title()} onRetry={view.retry} />
+      </>
+    )
   if (view.state === 'off' || view.releases.length === 0) return <NothingYet view={view} />
   return <History view={view} mode={mode} />
 }

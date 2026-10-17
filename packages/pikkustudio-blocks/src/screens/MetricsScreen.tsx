@@ -1,7 +1,7 @@
 import { asI18n, sep, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useContext, useMemo, useState } from 'react'
-import { Activity, Check, Copy } from 'lucide-react'
+import { Check, Copy } from 'lucide-react'
 import { PageHead } from '../blocks/PageHead'
 import { Segmented } from '../blocks/Segmented'
 import { Page } from '../blocks/Page'
@@ -10,6 +10,7 @@ import { Section } from '../blocks/Section'
 import { AskPikku } from '../blocks/AskPikku'
 import { PikkuDot } from '../blocks/PikkuDot'
 import { Button } from '../ui/button'
+import { ErrorState, detailsOf, faultOf } from '../blocks/ErrorState'
 import { ShellCtx } from '../lib/shell'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { useProjectKey } from '../lib/project'
@@ -114,17 +115,32 @@ function LocalMetrics({ scope }: { scope: 'app' | 'studio' }) {
 
   return (
     <Page gap="snug">
-      <PageHead crumb={scope === 'studio' ? m.metrics_screen__crumb_studio() : m.metrics_screen__crumb_app()} title={scope === 'studio' ? m.metrics_screen__title_studio() : m.metrics_screen__title_app()} text={scope === 'studio' ? m.metrics_screen__text_studio() : m.metrics_screen__text_app()} size="lead">
+      <PageHead crumb={scope === 'studio' ? m.metrics_screen__crumb_studio() : m.metrics_screen__crumb_app()} title={scope === 'studio' ? m.metrics_screen__title_studio() : m.metrics_screen__title_app()} text={scope === 'studio' ? m.metrics_screen__text_studio() : m.metrics_screen__text_app()} size="lead" developerDetails>
         {scope === 'app' ? <LiveSwitch /> : null}
         <Segmented label={m.metrics_screen__time_range()} value={range} options={ranges()} onChange={setRange} />
       </PageHead>
 
-      {!all.length && !calls.isLoading ? (
-        <div className="flex flex-col items-center gap-3 rounded-empty border border-border bg-card px-6 py-14 text-center" data-testid="metrics-empty">
-          <Activity className="size-8 text-muted-foreground" />
-          <p className="text-px17 font-semibold">{m.metrics_screen__empty_title()}</p>
-          <p className="max-w-[48ch] text-px15 text-ink-2">{m.metrics_screen__empty_text()}</p>
+      {calls.isError ? (
+        <>
+          <NextCard label={m.metrics_screen__how_answering()} hue="petrol" art={<Art calm={false} />} title={m.metrics_screen__error_title()} why={m.metrics_screen__error_text()}>
+            <div className="flex flex-wrap items-center gap-3">
+              <Button variant="hero" size="pageLg" type="button" onClick={() => say(m.error_state__fix_ask_what({ what: m.metrics_screen__how_answering(), details: detailsOf(faultOf(calls.error), m.metrics_screen__how_answering()) }))}>
+                <PikkuDot />
+                {m.metrics_screen__fix_it()}
+              </Button>
+            </div>
+          </NextCard>
+          <ErrorState error={calls.error} what={m.metrics_screen__how_answering()} onRetry={() => void calls.refetch()} retrying={calls.isFetching} />
+        </>
+      ) : calls.isPending ? (
+        <div role="status" aria-busy="true" className="flex flex-col gap-3.5">
+          <NextCard label={m.metrics_screen__how_answering()} hue="teal" art={<Art calm />} title={m.metrics_screen__loading_title()} why={scope === 'studio' ? m.metrics_screen__text_studio() : m.metrics_screen__text_app()} />
+          <div className="h-40 animate-pulse rounded-card border border-border bg-secondary" />
         </div>
+      ) : !all.length ? (
+        <NextCard label={m.metrics_screen__how_answering()} hue="teal" art={<Art calm />} title={m.metrics_screen__empty_title()} why={m.metrics_screen__empty_text()}>
+          <span className="hidden" data-testid="metrics-empty" />
+        </NextCard>
       ) : (
         <>
           <NextCard label={m.metrics_screen__how_answering()} hue={failures > 0 ? 'petrol' : 'teal'} art={<Art calm={failures === 0} />} title={verdict} why={detail}>

@@ -2,20 +2,19 @@ import { asI18n, sep, type I18nNode, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useContext, useMemo, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { Activity, Globe, NotebookPen } from 'lucide-react'
+import { NotebookPen } from 'lucide-react'
 import { PageHead } from '../blocks/PageHead'
 import { Segmented } from '../blocks/Segmented'
 import { Page } from '../blocks/Page'
 import { NextCard } from '../blocks/NextCard'
 import { Section } from '../blocks/Section'
-import { EmptyState } from '../blocks/EmptyState'
-import { ErrorState } from '../blocks/ErrorState'
+import { ErrorState, detailsOf, faultOf } from '../blocks/ErrorState'
 import { StatusLine } from '../blocks/StatusLine'
 import { AskPikku } from '../blocks/AskPikku'
 import { PikkuDot } from '../blocks/PikkuDot'
 import { RowCard, RowStack } from '../blocks/RowCard'
 import { Link } from '../blocks/Link'
-import { Button } from '../ui/button'
+import { Button, buttonVariants } from '../ui/button'
 import { ShellCtx } from '../lib/shell'
 import { keep } from '../lib/links'
 import { useProjectKey } from '../lib/project'
@@ -68,35 +67,52 @@ function useLive(name: string, hours: number, use: UseLive) {
   }, [live])
 }
 
-function Gate({ live, head, children }: { live: LiveMetrics; head: I18nNode; children: () => I18nNode }) {
+function Gate({ live, head, label, children }: { live: LiveMetrics; head: I18nNode; label: I18nString; children: () => I18nNode }) {
   const target = useProjectTarget()
+  const { say } = useContext(ShellCtx)
+  const hero = (title: I18nString, why: I18nString, actions?: I18nNode, calm = true) => (
+    <NextCard label={label} hue={calm ? 'teal' : 'petrol'} art={<Art calm={calm} />} title={title} why={why}>
+      {actions ? <div className="flex flex-wrap gap-3">{actions}</div> : null}
+    </NextCard>
+  )
   const back = target.openWorkspace ? (
-    <Button variant="bordered" size="page" onClick={target.openWorkspace}>
+    <Button variant="heroGhost" size="page" onClick={target.openWorkspace}>
       {m.metrics_live__back()}
     </Button>
   ) : null
   const body = live.isPending ? (
-    <p className="h-24 animate-pulse rounded-card bg-secondary" aria-label={m.metrics_live__loading()} />
+    <div role="status" aria-busy="true" className="flex flex-col gap-3.5">
+      {hero(m.metrics_live__loading(), m.metrics_live__text())}
+      <p className="h-24 animate-pulse rounded-card bg-secondary" aria-label={m.metrics_live__loading()} />
+    </div>
   ) : live.error ? (
-    <ErrorState error={live.error} what={m.metrics_live__what()} onRetry={live.retry} retrying={live.isFetching} />
+    <>
+      {hero(
+        m.metrics_live__error_title(),
+        m.metrics_live__error_text(),
+        <Button variant="hero" size="pageLg" type="button" onClick={() => say(m.error_state__fix_ask_what({ what: m.metrics_live__what(), details: detailsOf(faultOf(live.error), m.metrics_live__what()) }))}>
+          <PikkuDot />
+          {m.metrics_screen__fix_it()}
+        </Button>,
+        false,
+      )}
+      <ErrorState error={live.error} what={m.metrics_live__what()} onRetry={live.retry} retrying={live.isFetching} />
+    </>
   ) : !live.found ? (
-    <EmptyState icon={Globe} title={m.metrics_live__missing_title()} text={m.metrics_live__missing_text()}>
-      {back}
-    </EmptyState>
+    hero(m.metrics_live__missing_title(), m.metrics_live__missing_text(), back)
   ) : live.publishing && !live.published ? (
-    <section className="flex flex-col gap-2 rounded-card border border-border bg-card px-6 py-5 shadow-card">
-      <b className="text-[19px]">{m.metrics_live__publishing_title()}</b>
-      <StatusLine tone="wait" text={m.metrics_live__publishing_text()} />
-    </section>
+    hero(m.metrics_live__publishing_title(), m.metrics_live__publishing_text(), <StatusLine tone="wait" text={m.metrics_live__publishing_title()} />)
   ) : !live.published ? (
-    <EmptyState icon={Globe} title={m.metrics_live__never_title()} text={m.metrics_live__never_text()}>
-      <Button asChild variant="bordered" size="page">
-        <Link {...keep} to={'/publish' as never}>
+    hero(
+      m.metrics_live__never_title(),
+      m.metrics_live__never_text(),
+      <>
+        <Link {...keep} to={'/publish' as never} className={buttonVariants({ variant: 'hero', size: 'page' })}>
           {m.metrics_live__go_publish()}
         </Link>
-      </Button>
-      {back}
-    </EmptyState>
+        {back}
+      </>,
+    )
   ) : (
     children()
   )
@@ -108,10 +124,8 @@ function Gate({ live, head, children }: { live: LiveMetrics; head: I18nNode; chi
   )
 }
 
-function Quiet({ hours }: { hours: string }) {
-  return (
-    <EmptyState icon={Activity} title={m.metrics_live__quiet_title()} text={hours === '24' ? m.metrics_live__quiet_text_day() : m.metrics_live__quiet_text_week()} />
-  )
+function Quiet({ hours, label }: { hours: string; label: I18nString }) {
+  return <NextCard label={label} hue="teal" art={<Art calm />} title={m.metrics_live__quiet_title()} why={hours === '24' ? m.metrics_live__quiet_text_day() : m.metrics_live__quiet_text_week()} />
 }
 
 const perHour = (v: number) => m.metrics_live__per_hour({ n: Math.round(v) })
@@ -129,18 +143,18 @@ export function LiveMetricsScreen({ name, use }: { name: string; use: UseLive })
   const from = to - Number(hours) * HOUR
   const s = useLive(name, Number(hours), use)
   const head = (
-    <PageHead crumb={m.metrics_screen__crumb_app()} title={m.metrics_screen__title_app()} text={m.metrics_live__text()} size="lead">
+    <PageHead crumb={m.metrics_screen__crumb_app()} title={m.metrics_screen__title_app()} text={m.metrics_live__text()} size="lead" developerDetails>
       <LiveSwitch />
       <Segmented label={m.metrics_screen__time_range()} value={hours} options={liveRanges()} onChange={setHours} />
     </PageHead>
   )
   return (
-    <Gate live={s.live} head={head}>
+    <Gate live={s.live} head={head} label={m.metrics_live__how_answering()}>
       {() => {
         if (!s.requests)
           return (
             <>
-              <Quiet hours={hours} />
+              <Quiet hours={hours} label={m.metrics_live__how_answering()} />
               <AnalyticsEvents stage={name} />
             </>
           )
@@ -254,15 +268,15 @@ export function LivePerformanceScreen({ name, use }: { name: string; use: UseLiv
   const from = to - Number(hours) * HOUR
   const s = useLive(name, Number(hours), use)
   const head = (
-    <PageHead crumb={m.performance_screen__crumb()} title={m.performance_screen__title()} text={m.metrics_live__perf_text()} size="lead">
+    <PageHead crumb={m.performance_screen__crumb()} title={m.performance_screen__title()} text={m.metrics_live__perf_text()} size="lead" developerDetails>
       <LiveSwitch />
       <Segmented label={m.performance_screen__time_range()} value={hours} options={liveRanges()} onChange={setHours} />
     </PageHead>
   )
   return (
-    <Gate live={s.live} head={head}>
+    <Gate live={s.live} head={head} label={m.performance_screen__how_doing()}>
       {() => {
-        if (!s.requests) return <Quiet hours={hours} />
+        if (!s.requests) return <Quiet hours={hours} label={m.performance_screen__how_doing()} />
         const hits = s.live.slowHits
         const slowNow = s.average !== null && s.average > 2000
         const verdict = hits > 0 ? m.metrics_live__perf_verdict_cut() : slowNow ? m.metrics_screen__verdict_slow() : m.performance_screen__verdict_ok()

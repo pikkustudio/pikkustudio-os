@@ -1,12 +1,12 @@
 import { m } from '@/i18n/messages'
 import { useContext, useState } from 'react'
-import { Bot, Search } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Art } from '../blocks/ExploreHub'
 import { AssistantCard } from '../blocks/AssistantCard'
 import { AssistantDrawer } from '../blocks/AssistantDrawer'
-import { EmptyState } from '../blocks/EmptyState'
+import { detailsOf, faultOf } from '../blocks/ErrorState'
 import { NextCard } from '../blocks/NextCard'
 import { PageHead } from '../blocks/PageHead'
 import { PikkuDot } from '../blocks/PikkuDot'
@@ -35,7 +35,7 @@ export function AssistantsScreen() {
 
   return (
     <Page gap="snug">
-      <PageHead crumb={app} title={m.assistants_screen__title()} text={m.assistants_screen__text()} size="lead" />
+      <PageHead crumb={app} title={m.assistants_screen__title()} text={m.assistants_screen__text()} size="lead" developerDetails />
 
       {list.length > 0 ? (
         <NextCard
@@ -54,20 +54,33 @@ export function AssistantsScreen() {
             </Button>
           </div>
         </NextCard>
-      ) : null}
+      ) : query.isPending ? (
+        <NextCard label={m.assistants_screen__your_assistants()} hue="teal" art={<Art />} title={m.assistants_screen__hero_loading()} why={m.assistants_screen__text()} />
+      ) : query.isError ? (
+        <NextCard label={m.assistants_screen__your_assistants()} hue="petrol" art={<Art />} title={m.assistants_screen__hero_error()} why={m.assistants_screen__hero_error_text()}>
+          <div className="flex flex-wrap gap-3">
+            <Button variant="hero" size="page" onClick={() => say(m.error_state__fix_ask_what({ what: m.assistants_screen__title(), details: detailsOf(faultOf(query.error), m.assistants_screen__title()) }))}>
+              <PikkuDot />
+              {m.assistants_screen__fix_it()}
+            </Button>
+          </div>
+        </NextCard>
+      ) : (
+        <NextCard label={m.assistants_screen__your_assistants()} hue="teal" art={<Art />} title={m.assistants_screen__empty()} why={m.assistants_screen__empty_text()}>
+          <div className="flex flex-wrap gap-3">
+            <Button variant="hero" size="page" onClick={askNew}>
+              <PikkuDot />
+              {m.assistants_screen__ask_new()}
+            </Button>
+          </div>
+        </NextCard>
+      )}
 
       <QueryState
         query={query}
         skeleton={<CardsSkeleton count={3} />}
         empty={(d) =>
-          d.length === 0 ? (
-            <EmptyState layout="row" icon={Bot} title={m.assistants_screen__empty()} text={m.assistants_screen__empty_text()}>
-              <Button type="button" size="page" onClick={askNew}>
-                <PikkuDot />
-                {m.assistants_screen__ask_new()}
-              </Button>
-            </EmptyState>
-          ) : null
+          d.length === 0 ? <></> : null
         }
       >
         {() => (
