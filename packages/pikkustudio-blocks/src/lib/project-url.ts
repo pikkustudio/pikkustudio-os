@@ -12,7 +12,7 @@ const TEAM_PAGES = new Set(['projects', 'secrets', 'studio-metrics', 'new-projec
 // Publish and Resume never call it; the rest are team pages.
 export const PAGES: Record<string, boolean> = {
   overview: true, project: false, review: false, 'review-ui': false, 'review-fixes': false, resume: false, publish: false, build: false, lab: false,
-  billing: false, team: false, settings: false, 'project-settings': false, plans: false, ai: false, domains: false, workspaces: false, 'secret-access': false,
+  billing: false, team: false, settings: false, 'project-settings': false, plans: false, ai: false, domains: false, workspaces: false, 'secret-access': false, 'project-secrets': true,
   'changes': true, design: true, emails: true, translations: true, artifacts: true, knowledge: true, content: true,
   'front-doors': true, code: true, audit: true, apps: true, explore: true, logs: true, performance: true, metrics: true, scorers: true, connections: true, 'incoming-alerts': true,
   assistants: true, 'virtual-users': true, routines: true, versions: false, addons: true, 'add-ons': true, mocks: true, surface: true, permissions: true, security: true,

@@ -4012,5 +4012,73 @@
   "analytics_events__kind_date": "ein Datum",
   "analytics_events__kind_choice": "eine von wenigen Möglichkeiten",
   "analytics_events__kind_list": "eine Liste",
-  "analytics_events__kind_other": "eine Angabe"
+  "analytics_events__kind_other": "eine Angabe",
+  "project_secrets__title": "Geheimnisse und Einstellungen",
+  "project_secrets__text": "Die Passwörter, Schlüssel und Entscheidungen, die dieses Projekt braucht. Geheimnisse werden nach dem Speichern nie wieder angezeigt; Einstellungen kannst du jederzeit lesen und ändern.",
+  "project_secrets__hero_label": "Geheimnisse und Einstellungen",
+  "project_secrets__hero_missing_why": "Dein Projekt braucht diese Angaben, bevor es ganz funktioniert. Trag jede einmal ein, und es übernimmt sie.",
+  "project_secrets__hero_fill": "{name} eintragen",
+  "project_secrets__hero_ready": "Alles, was dieses Projekt braucht, ist eingetragen.",
+  "project_secrets__hero_ready_why": "Geheimnisse bleiben nach dem Speichern verborgen, und niemand kann sie hier wieder auslesen.",
+  "project_secrets__hero_ready_why_published": "Geheimnisse werden in diesem Browser verschlossen, bevor sie gesendet werden. Niemand kann sie wieder auslesen, auch wir nicht.",
+  "project_secrets__secrets": "Geheimnisse",
+  "project_secrets__settings": "Einstellungen",
+  "project_secrets__saved": "Gespeichert",
+  "project_secrets__optional": "Nicht nötig",
+  "project_secrets__needs_value": "Braucht einen Wert",
+  "project_secrets__change": "Ändern",
+  "project_secrets__add": "Eintragen",
+  "project_secrets__connected": "Wird ausgefüllt, wenn sich jemand auf der Seite Verbindungen verbindet.",
+  "project_secrets__open_connections": "Verbindungen öffnen",
+  "project_secrets__setting_local": "Du kannst das hier ändern, sobald das Projekt veröffentlicht ist.",
+  "project_secrets__empty": "Dieses Projekt braucht keine Geheimnisse oder Einstellungen.",
+  "project_secrets__empty_text": "Wenn es ein Passwort, einen Schlüssel oder eine Entscheidung von dir braucht, erscheint das hier.",
+  "project_secrets__show_technical": "Details für Entwickler zeigen",
+  "project_secrets__hide_technical": "Details für Entwickler ausblenden",
+  "project_secrets__tech_name": "Name im Code",
+  "project_secrets__tech_id": "Gespeichert als",
+  "project_secrets__drawer_secret": "Ein Geheimnis eintragen",
+  "project_secrets__drawer_setting": "Eine Einstellung ändern",
+  "project_secrets__drawer_replaces": "Speichern ersetzt, was vorher da war. Es wird nie wieder angezeigt.",
+  "project_secrets__drawer_setting_sub": "Speichern ersetzt den aktuellen Wert.",
+  "project_secrets__drawer_needed": "Dein Projekt braucht das.",
+  "project_secrets__drawer_sealed": "Wird in diesem Browser verschlossen, bevor es gesendet wird. Niemand kann es wieder auslesen.",
+  "project_secrets__drawer_local": "Für dieses Projekt auf diesem Computer gespeichert. Es wird nie wieder angezeigt.",
+  "project_secrets__drawer_the_secret": "Das Geheimnis",
+  "project_secrets__drawer_the_value": "Der Wert",
+  "project_secrets__drawer_where": "Wo finde ich das?",
+  "project_secrets__drawer_failed": "Das konnte nicht gespeichert werden. Nichts wurde geändert. Versuch es noch einmal.",
+  "project_secrets__drawer_saving": "Wird gespeichert…",
+  "project_secrets__drawer_save": "Speichern",
+  "project_secrets__drawer_cancel": "Abbrechen",
+  "project_secrets__hero_missing": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "1 Angabe fehlt noch.",
+        "countPlural=other": "{count} Angaben fehlen noch."
+      }
+    }
+  ],
+  "project_secrets__hero_count": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "1 Angabe eingetragen",
+        "countPlural=other": "{count} Angaben eingetragen"
+      }
+    }
+  ]
 }

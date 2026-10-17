@@ -4220,5 +4220,73 @@
   "analytics_events__kind_date": "a date",
   "analytics_events__kind_choice": "one of a few choices",
   "analytics_events__kind_list": "a list",
-  "analytics_events__kind_other": "a detail"
+  "analytics_events__kind_other": "a detail",
+  "project_secrets__title": "Secrets and settings",
+  "project_secrets__text": "The passwords, keys and choices this project asks for. Secrets are never shown again once saved; settings you can read and change any time.",
+  "project_secrets__hero_label": "Secrets and settings",
+  "project_secrets__hero_missing_why": "Your project asks for these before it can work fully. Add each one once and it picks them up.",
+  "project_secrets__hero_fill": "Add {name}",
+  "project_secrets__hero_ready": "Everything this project asks for is filled in.",
+  "project_secrets__hero_ready_why": "Secrets stay hidden once saved, and nobody can read them back here.",
+  "project_secrets__hero_ready_why_published": "Secrets are locked in this browser before they are sent, so nobody can read them back, not even us.",
+  "project_secrets__secrets": "Secrets",
+  "project_secrets__settings": "Settings",
+  "project_secrets__saved": "Saved",
+  "project_secrets__optional": "Not needed",
+  "project_secrets__needs_value": "Needs a value",
+  "project_secrets__change": "Change",
+  "project_secrets__add": "Add it",
+  "project_secrets__connected": "Filled in when someone connects on the Connections page.",
+  "project_secrets__open_connections": "Open Connections",
+  "project_secrets__setting_local": "You can change this here once the project is published.",
+  "project_secrets__empty": "This project does not ask for any secrets or settings.",
+  "project_secrets__empty_text": "When it needs a password, a key or a choice from you, it shows up here.",
+  "project_secrets__show_technical": "Show developer details",
+  "project_secrets__hide_technical": "Hide developer details",
+  "project_secrets__tech_name": "Name in the code",
+  "project_secrets__tech_id": "Stored as",
+  "project_secrets__drawer_secret": "Fill in a secret",
+  "project_secrets__drawer_setting": "Change a setting",
+  "project_secrets__drawer_replaces": "Saving replaces what was there. It is never shown again.",
+  "project_secrets__drawer_setting_sub": "Saving replaces the current value.",
+  "project_secrets__drawer_needed": "Your project needs this.",
+  "project_secrets__drawer_sealed": "Locked in this browser before it is sent. Nobody can read it back.",
+  "project_secrets__drawer_local": "Saved for this project on this computer. It is never shown again.",
+  "project_secrets__drawer_the_secret": "The secret",
+  "project_secrets__drawer_the_value": "The value",
+  "project_secrets__drawer_where": "Where do I find this?",
+  "project_secrets__drawer_failed": "That could not be saved. Nothing was changed. Try again.",
+  "project_secrets__drawer_saving": "Saving…",
+  "project_secrets__drawer_save": "Save",
+  "project_secrets__drawer_cancel": "Cancel",
+  "project_secrets__hero_missing": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "1 thing still needs a value.",
+        "countPlural=other": "{count} things still need a value."
+      }
+    }
+  ],
+  "project_secrets__hero_count": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "1 thing filled in",
+        "countPlural=other": "{count} things filled in"
+      }
+    }
+  ]
 }

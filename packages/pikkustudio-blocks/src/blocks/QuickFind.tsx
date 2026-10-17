@@ -34,6 +34,7 @@ const pages = (): Hit[] => (
     [m.quick_find__metrics(), '/metrics', Gauge],
     [m.quick_find__scorers(), '/scorers', ClipboardCheck],
     [m.quick_find__connections(), '/connections', Link2],
+    [m.project_secrets__title(), '/project-secrets', KeyRound],
     [m.quick_find__permissions(), '/permissions', ShieldCheck],
     [m.quick_find__incoming_alerts(), '/incoming-alerts', BellRing],
     [m.security_screen__title(), '/security', ShieldCheck],

@@ -4324,5 +4324,73 @@
   "analytics_events__kind_date": "تاريخ",
   "analytics_events__kind_choice": "خيار من بضعة خيارات",
   "analytics_events__kind_list": "قائمة",
-  "analytics_events__kind_other": "تفصيل"
+  "analytics_events__kind_other": "تفصيل",
+  "project_secrets__title": "الأسرار والإعدادات",
+  "project_secrets__text": "كلمات المرور والمفاتيح والاختيارات التي يطلبها هذا المشروع. لا تُعرض الأسرار مرة أخرى بعد حفظها؛ أما الإعدادات فيمكنك قراءتها وتغييرها في أي وقت.",
+  "project_secrets__hero_label": "الأسرار والإعدادات",
+  "project_secrets__hero_missing_why": "يحتاج مشروعك إلى هذه قبل أن يعمل بالكامل. أضف كل واحدة مرة واحدة وسيستخدمها.",
+  "project_secrets__hero_fill": "أضف {name}",
+  "project_secrets__hero_ready": "كل ما يطلبه هذا المشروع مُدخل.",
+  "project_secrets__hero_ready_why": "تبقى الأسرار مخفية بعد حفظها، ولا يمكن لأحد قراءتها هنا.",
+  "project_secrets__hero_ready_why_published": "تُقفل الأسرار في هذا المتصفح قبل إرسالها، فلا يستطيع أحد قراءتها، ولا حتى نحن.",
+  "project_secrets__secrets": "الأسرار",
+  "project_secrets__settings": "الإعدادات",
+  "project_secrets__saved": "محفوظ",
+  "project_secrets__optional": "غير مطلوب",
+  "project_secrets__needs_value": "يحتاج إلى قيمة",
+  "project_secrets__change": "تغيير",
+  "project_secrets__add": "أضفه",
+  "project_secrets__connected": "يُملأ عندما يتصل أحدهم من صفحة الاتصالات.",
+  "project_secrets__open_connections": "افتح الاتصالات",
+  "project_secrets__setting_local": "يمكنك تغيير هذا هنا بعد نشر المشروع.",
+  "project_secrets__empty": "لا يطلب هذا المشروع أي أسرار أو إعدادات.",
+  "project_secrets__empty_text": "عندما يحتاج إلى كلمة مرور أو مفتاح أو اختيار منك، سيظهر هنا.",
+  "project_secrets__show_technical": "إظهار تفاصيل المطورين",
+  "project_secrets__hide_technical": "إخفاء تفاصيل المطورين",
+  "project_secrets__tech_name": "الاسم في الشيفرة",
+  "project_secrets__tech_id": "محفوظ باسم",
+  "project_secrets__drawer_secret": "أدخل سرًا",
+  "project_secrets__drawer_setting": "غيّر إعدادًا",
+  "project_secrets__drawer_replaces": "الحفظ يستبدل ما كان موجودًا. لن يُعرض مرة أخرى.",
+  "project_secrets__drawer_setting_sub": "الحفظ يستبدل القيمة الحالية.",
+  "project_secrets__drawer_needed": "مشروعك يحتاج إلى هذا.",
+  "project_secrets__drawer_sealed": "يُقفل في هذا المتصفح قبل إرساله. لا يستطيع أحد قراءته.",
+  "project_secrets__drawer_local": "محفوظ لهذا المشروع على هذا الحاسوب. لن يُعرض مرة أخرى.",
+  "project_secrets__drawer_the_secret": "السر",
+  "project_secrets__drawer_the_value": "القيمة",
+  "project_secrets__drawer_where": "أين أجد هذا؟",
+  "project_secrets__drawer_failed": "تعذر الحفظ. لم يتغير شيء. حاول مرة أخرى.",
+  "project_secrets__drawer_saving": "جارٍ الحفظ…",
+  "project_secrets__drawer_save": "حفظ",
+  "project_secrets__drawer_cancel": "إلغاء",
+  "project_secrets__hero_missing": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "ما زال عنصر واحد يحتاج إلى قيمة.",
+        "countPlural=other": "ما زالت {count} عناصر تحتاج إلى قيمة."
+      }
+    }
+  ],
+  "project_secrets__hero_count": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "عنصر واحد مُدخل",
+        "countPlural=other": "{count} عناصر مُدخلة"
+      }
+    }
+  ]
 }
