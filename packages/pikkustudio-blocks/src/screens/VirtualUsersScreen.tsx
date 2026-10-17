@@ -43,7 +43,7 @@ export function VirtualUsersScreen() {
   const problems = found.reduce((n, u) => n + problemsOf(u.visits[0]).length, 0)
 
   return (
-    <div className={`@container/vu transition-[padding] duration-200 ${drawer ? 'pe-[24rem] @min-[1700px]/app:pe-110' : ''}`}>
+    <div className="@container/vu">
     <Page gap="snug">
       <PageHead crumb={app} title={m.virtual_users_screen__title()} text={m.virtual_users_screen__text()} size="lead" />
 

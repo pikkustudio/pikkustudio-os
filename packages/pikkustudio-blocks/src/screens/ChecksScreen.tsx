@@ -133,7 +133,7 @@ export function ChecksScreen() {
             : m.checks_screen__why_walks({ walks: m.checks_screen__walk_count({ n: failing.length }) })
 
   return (
-    <div className={`@container/vu transition-[padding] duration-200 ${drawer ? 'pe-[24rem] @min-[1700px]/app:pe-110' : ''}`}>
+    <div className="@container/vu">
       <Page gap="snug">
         <PageHead crumb={projectName} title={m.checks_screen__title()} text={m.checks_screen__text()} size="lead" developerDetails />
 

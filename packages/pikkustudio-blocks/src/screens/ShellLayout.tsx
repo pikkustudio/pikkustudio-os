@@ -450,7 +450,7 @@ function ShellLayoutInner() {
           </aside>
 
           {/* Page area */}
-          <div className="flex min-h-0 min-w-0 flex-1 flex-col pe-0 transition-all duration-420 ease-[cubic-bezier(.16,1,.3,1)] group-data-open/shell:pe-102 @min-[1700px]/app:group-data-open/shell:pe-120">
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col pe-0 transition-all duration-420 ease-[cubic-bezier(.16,1,.3,1)] group-data-open/shell:pe-102 @min-[1700px]/app:group-data-open/shell:pe-120 [:root:has([data-side-panel])_&]:pe-102 @min-[1700px]/app:[:root:has([data-side-panel])_&]:pe-120">
             <div className={`min-h-0 flex-1 ${fill ? 'overflow-hidden pt-4 pe-6.5 pb-3.5 ps-6' : 'overflow-auto scroll-smooth [scrollbar-width:thin] px-12 pt-9 pb-7 @min-[1700px]/app:px-16 @min-[1700px]/app:pt-11 @min-[1700px]/app:pb-8'}`}>
               {projectMissing ? (
                 <NotFoundState what={m.shell_layout__the_project({ projectSlug })}>
@@ -849,7 +849,7 @@ function ShellLayoutInner() {
           </aside>
 
           {/* Pikku button and speech bubble */}
-          <div className="absolute end-6 bottom-6 z-4 flex flex-col items-end gap-4 group-data-open/shell:hidden transition-all duration-420 ease-[cubic-bezier(.16,1,.3,1)] group-data-open/shell:end-114 @min-[1700px]/app:group-data-open/shell:end-126">
+          <div className="absolute end-6 bottom-6 z-4 flex flex-col items-end gap-4 group-data-open/shell:hidden [:root:has([data-side-panel])_&]:hidden transition-all duration-420 ease-[cubic-bezier(.16,1,.3,1)] group-data-open/shell:end-114 @min-[1700px]/app:group-data-open/shell:end-126">
             {bubbleIsOpen ? (
               <section className="relative flex w-85 flex-col gap-3 rounded-card border border-border bg-card p-4 shadow-[0_6px_20px_-4px_rgba(8,40,52,0.16),0_2px_4px_rgba(8,40,52,0.06)]" aria-label={m.parts__pikku()} aria-live="polite">
                 <span className="absolute -bottom-1.5 end-7 size-3 rotate-45 border-e border-b border-border bg-card" />

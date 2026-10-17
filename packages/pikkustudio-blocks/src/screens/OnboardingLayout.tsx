@@ -354,7 +354,7 @@ export function OnboardingLayout() {
           </aside>
 
           {/* Page area */}
-          <div className="flex min-h-0 min-w-0 flex-1 flex-col pe-0 transition-all duration-420 ease-[cubic-bezier(.16,1,.3,1)] group-data-open/shell:pe-102 @min-[1700px]/app:group-data-open/shell:pe-120">
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col pe-0 transition-all duration-420 ease-[cubic-bezier(.16,1,.3,1)] group-data-open/shell:pe-102 @min-[1700px]/app:group-data-open/shell:pe-120 [:root:has([data-side-panel])_&]:pe-102 @min-[1700px]/app:[:root:has([data-side-panel])_&]:pe-120">
             <div className="min-h-0 flex-1 overflow-auto scroll-smooth px-12 pt-9 pb-7 @min-[1700px]/app:px-16 @min-[1700px]/app:pt-11 @min-[1700px]/app:pb-8">
               <Outlet />
             </div>

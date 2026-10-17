@@ -41,7 +41,7 @@ export function SecretForm({
   }
 
   return (
-    <aside
+    <aside data-side-panel=""
       role="dialog"
       aria-label={fixed ? m.secret_form__change_a_secret() : m.secret_form__add_a_secret()}
       className="fixed inset-y-0 end-0 z-50 flex w-102 max-w-full flex-col border-s border-border bg-card shadow-[0_24px_56px_-14px_rgba(8,40,52,0.45)] @min-[1700px]/app:w-120"

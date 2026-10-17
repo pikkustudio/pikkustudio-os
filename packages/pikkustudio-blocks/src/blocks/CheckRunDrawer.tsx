@@ -128,7 +128,7 @@ export function CheckRunDrawer({ projectKey, runId, focus, onClose }: { projectK
   const forget = () => remove.mutate({ runId }, { onSuccess: onClose })
 
   return (
-    <aside aria-label={m.checks_screen__drawer_aria()} className="fixed inset-y-0 end-0 z-50 flex w-102 max-w-full flex-col border-s border-border bg-card shadow-[0_24px_56px_-14px_rgba(8,40,52,0.45)] @min-[1700px]/app:w-120">
+    <aside data-side-panel="" aria-label={m.checks_screen__drawer_aria()} className="fixed inset-y-0 end-0 z-50 flex w-102 max-w-full flex-col border-s border-border bg-card shadow-[0_24px_56px_-14px_rgba(8,40,52,0.45)] @min-[1700px]/app:w-120">
       <header data-hue={data?.results.some((r) => r.status === 'failed') ? 'teal' : 'sea'} className="flex items-center gap-3 bg-hero px-5 pt-4 pb-4 text-hero-ink">
         <span className="min-w-0 flex-1">
           <h2 className="font-heading text-[22px] leading-[1.15] font-bold tracking-[-0.012em]">{data ? m.checks_screen__run_title({ when: ago(data.startedAt) }) : m.checks_screen__run_loading()}</h2>
