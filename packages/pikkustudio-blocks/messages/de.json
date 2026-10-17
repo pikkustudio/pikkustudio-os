@@ -3487,31 +3487,6 @@
   "accounts_panel__failed_title": "Das hat nicht geklappt",
   "accounts_panel__failed_body": "Es wurde nichts geändert. Versuche es noch einmal oder bitte Pikku herauszufinden, warum.",
   "accounts_panel__failed_ask": "Die Änderung am Konto von {name} hat nicht geklappt. Bitte finde heraus, warum, und behebe es. {details}",
-  "accounts_access__title": "Was diese Person darf",
-  "accounts_access__unavailable": "Diese App merkt sich noch nicht, wer was darf.",
-  "accounts_access__no_roles_in_app": "Diese App hat noch keine Rollen, also dürfen alle Angemeldeten dasselbe.",
-  "accounts_access__no_role": "{name} hat noch keine Rolle und darf nur, was alle Angemeldeten dürfen.",
-  "accounts_access__take_away": "Wegnehmen",
-  "accounts_access__pick_role": "Rolle wählen",
-  "accounts_access__give_role": "Diese Rolle geben",
-  "accounts_access__show_developer": "Details für Entwickler zeigen",
-  "accounts_access__hide_developer": "Details für Entwickler ausblenden",
-  "accounts_access__id": "Konto-ID",
-  "accounts_access__direct": "Direkt gegebene Rechte, außerhalb jeder Rolle",
-  "accounts_access__no_direct": "Keine.",
-  "accounts_access__remove_scope": "{scope} entfernen",
-  "accounts_access__pick_scope": "Recht wählen",
-  "accounts_access__grant_scope": "Recht geben",
-  "accounts_access__all": "Alles, was diese Person darf, mit Rollen",
-  "accounts_access__none_at_all": "Nichts über das hinaus, was alle Angemeldeten dürfen.",
-  "accounts_password__title": "Passwort",
-  "accounts_password__explain": "Wenn {name} nicht mehr hineinkommt, können Sie ein neues Passwort wählen. Sagen Sie es der Person selbst.",
-  "accounts_password__choose": "Neues Passwort wählen",
-  "accounts_password__new": "Neues Passwort",
-  "accounts_password__save": "Passwort speichern",
-  "accounts_password__saved": "Gespeichert. {name} kann sich mit dem neuen Passwort anmelden.",
-  "accounts_password__failed_title": "Das Passwort wurde nicht gespeichert",
-  "accounts_password__failed_body": "Vielleicht ist es zu kurz oder zu lang. Versuchen Sie ein anderes oder fragen Sie Pikku, warum.",
   "accounts_invite__title": "Jemanden einladen",
   "accounts_invite__sub": "Die Person bekommt eine E-Mail mit einem Link zum Anmelden.",
   "accounts_invite__email": "E-Mail der Person",
@@ -3868,5 +3843,115 @@
         "countPlural=other": "{count} Bausteine haben neuere Versionen. Nichts Dringendes."
       }
     }
-  ]
+  ],
+  "quick_find__permissions": "Berechtigungen",
+  "permissions_screen__title": "Berechtigungen",
+  "permissions_screen__text": "Rollen legen fest, was Menschen in deiner App tun dürfen. Eine Rolle gibst du jemandem unter Konten.",
+  "permissions_screen__roles": "Rollen",
+  "permissions_screen__can_do": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "Darf 1 Sache",
+        "nPlural=other": "Darf {n} Dinge"
+      }
+    }
+  ],
+  "permissions_screen__can_do_nothing": "Darf noch nichts",
+  "permissions_screen__change": "Ändern",
+  "permissions_screen__role_has_unused": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "Enthält 1 Sache, die deine App nicht mehr nutzt",
+        "nPlural=other": "Enthält {n} Dinge, die deine App nicht mehr nutzt"
+      }
+    }
+  ],
+  "permissions_screen__vocabulary": "Was eine Rolle erlauben kann",
+  "permissions_screen__vocabulary_count": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "Deine App hat 1 Sache, die eine Rolle erlauben kann. Du wählst sie, wenn du eine Rolle änderst.",
+        "nPlural=other": "Deine App hat {n} Dinge, die eine Rolle erlauben kann. Du wählst sie, wenn du eine Rolle änderst."
+      }
+    }
+  ],
+  "permissions_screen__vocabulary_none": "Deine App hat noch nichts, was eine Rolle erlauben kann. Pikku fügt das hinzu, sobald es die Teile baut, die es brauchen.",
+  "permissions_screen__unused_caption": "Deine App nutzt das nicht mehr. Es erlaubt nichts, ist aber noch gespeichert.",
+  "permissions_screen__unused_tidy": "Pikku aufräumen lassen",
+  "permissions_screen__unused_say": "Meine App speichert noch die Berechtigung {id}, aber der Code nutzt sie nicht mehr. Bitte räume sie auf und nimm sie aus allen Rollen, die sie noch haben.",
+  "permissions_screen__not_running_title": "Deine App läuft gerade nicht",
+  "permissions_screen__not_running_text": "Starte sie und komm dann zurück, um ihre Rollen zu sehen.",
+  "permissions_screen__no_addon_title": "Diese App kann noch keine Rollen verwalten",
+  "permissions_screen__no_addon_text": "Pikku kann den Teil hinzufügen, der Rollen und ihre Rechte verwaltet.",
+  "permissions_screen__add_it": "Für mich hinzufügen",
+  "permissions_screen__add_it_say": "Bitte füge dieser App die Verwaltung von Rollen und Berechtigungen hinzu, damit ich festlegen kann, was jede Art von Mensch tun darf.",
+  "permissions_screen__cannot_see": "Du darfst die Rollen nicht sehen",
+  "permissions_screen__cannot_see_text": "Bitte die Person, die sich um dieses Projekt kümmert, dich Rollen verwalten zu lassen, und komm dann zurück.",
+  "permissions_screen__ask_access": "Pikku darum kümmern lassen",
+  "permissions_screen__ask_access_say": "Ich kann die Rollen und Berechtigungen dieser App nicht sehen. Bitte finde heraus, welche Berechtigung mir fehlt, und hilf mir, sie zu bekommen.",
+  "permissions_hero__label": "Berechtigungen",
+  "permissions_hero__title": "Leg fest, was jede Art von Mensch tun darf",
+  "permissions_hero__text": "Eine Rolle ist eine Reihe von Dingen, die jemand tun darf, etwa Leitung oder Team. Änderst du eine Rolle, gilt das für alle, die sie haben.",
+  "permissions_hero__empty_title": "Leg deine erste Rolle an",
+  "permissions_hero__empty_text": "Eine Rolle ist eine Reihe von Dingen, die jemand tun darf, etwa Leitung oder Team. Leg eine an und gib sie Menschen unter Konten.",
+  "permissions_hero__create": "Neue Rolle anlegen",
+  "permissions_hero__count": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "1 Rolle",
+        "nPlural=other": "{n} Rollen"
+      }
+    }
+  ],
+  "permissions_panel__new_title": "Neue Rolle",
+  "permissions_panel__new_sub": "Gib ihr einen Namen und hake an, was sie erlaubt.",
+  "permissions_panel__edit_sub": "Hake an, was diese Rolle erlaubt.",
+  "permissions_panel__name": "Name",
+  "permissions_panel__name_hint": "Zum Beispiel Leitung",
+  "permissions_panel__name_taken": "Es gibt schon eine Rolle mit diesem Namen. Wähle einen anderen.",
+  "permissions_panel__description": "Wofür sie ist (optional)",
+  "permissions_panel__description_hint": "Zum Beispiel: führt den Laden im Alltag",
+  "permissions_panel__can_do": "Was diese Rolle darf",
+  "permissions_panel__technical": "Technische Namen zeigen",
+  "permissions_panel__nothing_declared": "Deine App hat noch nichts, was eine Rolle erlauben kann.",
+  "permissions_panel__included_by": "Enthalten, weil sie {name} erlaubt",
+  "permissions_panel__unused": "Deine App nutzt das nicht mehr. Du kannst den Haken entfernen.",
+  "permissions_panel__create": "Rolle anlegen",
+  "permissions_panel__save": "Änderungen speichern",
+  "permissions_panel__cancel": "Abbrechen",
+  "permissions_panel__remove": "Rolle entfernen",
+  "permissions_panel__remove_explain": "Entfernst du eine Rolle, verlieren alle, die sie haben, was sie erlaubt hat.",
+  "permissions_panel__remove_confirm": "Ja, {name} entfernen",
+  "permissions_panel__keep": "Behalten",
+  "permissions_panel__failed_title": "Das hat nicht geklappt",
+  "permissions_panel__failed_body": "Es wurde nichts geändert. Versuch es noch einmal oder lass Pikku herausfinden, warum.",
+  "permissions_panel__failed_ask": "Das Ändern der Rolle {name} hat nicht geklappt. Bitte finde heraus, warum, und behebe es. {details}"
 }

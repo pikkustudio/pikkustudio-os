@@ -3695,31 +3695,6 @@
   "accounts_panel__failed_title": "That did not work",
   "accounts_panel__failed_body": "Nothing was changed. You can try again, or ask Pikku to find out why.",
   "accounts_panel__failed_ask": "Changing the account of {name} did not work. Please find out why and fix it. {details}",
-  "accounts_access__title": "What they can do",
-  "accounts_access__unavailable": "This app does not keep track of who can do what yet.",
-  "accounts_access__no_roles_in_app": "This app has no roles yet, so everyone who signs in can do the same things.",
-  "accounts_access__no_role": "{name} has no role yet, so they can only do what anyone signed in can do.",
-  "accounts_access__take_away": "Take away",
-  "accounts_access__pick_role": "Choose a role",
-  "accounts_access__give_role": "Give them this role",
-  "accounts_access__show_developer": "Show developer details",
-  "accounts_access__hide_developer": "Hide developer details",
-  "accounts_access__id": "Account id",
-  "accounts_access__direct": "Permissions given directly, outside any role",
-  "accounts_access__no_direct": "None.",
-  "accounts_access__remove_scope": "Remove {scope}",
-  "accounts_access__pick_scope": "Choose a permission",
-  "accounts_access__grant_scope": "Give permission",
-  "accounts_access__all": "Everything they are allowed, roles included",
-  "accounts_access__none_at_all": "Nothing beyond what anyone signed in can do.",
-  "accounts_password__title": "Password",
-  "accounts_password__explain": "If {name} cannot get back in, you can choose a new password for them. Tell them yourself.",
-  "accounts_password__choose": "Choose a new password",
-  "accounts_password__new": "New password",
-  "accounts_password__save": "Save password",
-  "accounts_password__saved": "Saved. {name} can sign in with the new password.",
-  "accounts_password__failed_title": "The password was not saved",
-  "accounts_password__failed_body": "It may be too short or too long. Try another, or ask Pikku to find out why.",
   "accounts_invite__title": "Invite someone",
   "accounts_invite__sub": "They get an email with a link to sign in.",
   "accounts_invite__email": "Their email",
@@ -4076,5 +4051,115 @@
         "countPlural=other": "{count} parts have newer versions. Nothing urgent."
       }
     }
-  ]
+  ],
+  "quick_find__permissions": "Permissions",
+  "permissions_screen__title": "Permissions",
+  "permissions_screen__text": "Roles decide what people in your app are allowed to do. You give someone a role on Accounts.",
+  "permissions_screen__roles": "Roles",
+  "permissions_screen__can_do": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "Can do 1 thing",
+        "nPlural=other": "Can do {n} things"
+      }
+    }
+  ],
+  "permissions_screen__can_do_nothing": "Cannot do anything yet",
+  "permissions_screen__change": "Change",
+  "permissions_screen__role_has_unused": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "Includes 1 thing your app no longer uses",
+        "nPlural=other": "Includes {n} things your app no longer uses"
+      }
+    }
+  ],
+  "permissions_screen__vocabulary": "What a role can allow",
+  "permissions_screen__vocabulary_count": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "Your app has 1 thing a role can allow. You pick it when you change a role.",
+        "nPlural=other": "Your app has {n} things a role can allow. You pick them when you change a role."
+      }
+    }
+  ],
+  "permissions_screen__vocabulary_none": "Your app does not have anything a role can allow yet. Pikku adds these as it builds the parts that need them.",
+  "permissions_screen__unused_caption": "Your app no longer uses this. It allows nothing, but it is still stored.",
+  "permissions_screen__unused_tidy": "Ask Pikku to tidy it up",
+  "permissions_screen__unused_say": "My app still stores the permission {id}, but the code no longer uses it. Please tidy it up and take it out of any role that still has it.",
+  "permissions_screen__not_running_title": "Your app is not running right now",
+  "permissions_screen__not_running_text": "Start it, then come back to see its roles.",
+  "permissions_screen__no_addon_title": "This app cannot manage roles yet",
+  "permissions_screen__no_addon_text": "Pikku can add the part that keeps track of roles and what they allow.",
+  "permissions_screen__add_it": "Add it for me",
+  "permissions_screen__add_it_say": "Please add roles and permissions management to this app so I can decide what each kind of person is allowed to do.",
+  "permissions_screen__cannot_see": "You do not have permission to see the roles",
+  "permissions_screen__cannot_see_text": "Ask the person who looks after this project to let you manage roles, then come back.",
+  "permissions_screen__ask_access": "Ask Pikku to sort it out",
+  "permissions_screen__ask_access_say": "I cannot see the roles and permissions of this app. Please work out what permission I am missing and help me get it.",
+  "permissions_hero__label": "Permissions",
+  "permissions_hero__title": "Decide what each kind of person can do",
+  "permissions_hero__text": "A role is a set of things someone is allowed to do, like Manager or Staff. Change a role and everyone who has it gets the change.",
+  "permissions_hero__empty_title": "Make your first role",
+  "permissions_hero__empty_text": "A role is a set of things someone is allowed to do, like Manager or Staff. Make one, then give it to people on Accounts.",
+  "permissions_hero__create": "Make a new role",
+  "permissions_hero__count": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "1 role",
+        "nPlural=other": "{n} roles"
+      }
+    }
+  ],
+  "permissions_panel__new_title": "New role",
+  "permissions_panel__new_sub": "Name it, then tick what it allows.",
+  "permissions_panel__edit_sub": "Tick what this role allows.",
+  "permissions_panel__name": "Name",
+  "permissions_panel__name_hint": "For example Manager",
+  "permissions_panel__name_taken": "There is already a role with this name. Pick another one.",
+  "permissions_panel__description": "What it is for (optional)",
+  "permissions_panel__description_hint": "For example: runs the shop day to day",
+  "permissions_panel__can_do": "What this role can do",
+  "permissions_panel__technical": "Show technical names",
+  "permissions_panel__nothing_declared": "Your app does not have anything a role can allow yet.",
+  "permissions_panel__included_by": "Included because it allows {name}",
+  "permissions_panel__unused": "Your app no longer uses this. You can untick it.",
+  "permissions_panel__create": "Make role",
+  "permissions_panel__save": "Save changes",
+  "permissions_panel__cancel": "Cancel",
+  "permissions_panel__remove": "Remove role",
+  "permissions_panel__remove_explain": "Removing a role takes away what it allowed from everyone who has it.",
+  "permissions_panel__remove_confirm": "Yes, remove {name}",
+  "permissions_panel__keep": "Keep it",
+  "permissions_panel__failed_title": "That did not work",
+  "permissions_panel__failed_body": "Nothing was changed. You can try again, or ask Pikku to find out why.",
+  "permissions_panel__failed_ask": "Changing the role {name} did not work. Please find out why and fix it. {details}"
 }

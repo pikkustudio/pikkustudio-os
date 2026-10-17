@@ -105,11 +105,3 @@ export function useReleaseDetail(id: string, wanted: boolean): ReleaseDetail {
   const source = useSlots().useReleaseDetail ?? useNoDetail
   return source(key, id, wanted)
 }
-
-const useNoPreview = (): ReleaseGroup[] | null => null
-
-export function useReleasePreview(): ReleaseGroup[] | null {
-  const key = useProjectKey()
-  const source = useSlots().useReleasePreview ?? useNoPreview
-  return source(key)
-}

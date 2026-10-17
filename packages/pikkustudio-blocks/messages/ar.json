@@ -3755,31 +3755,6 @@
   "accounts_panel__failed_title": "لم ينجح ذلك",
   "accounts_panel__failed_body": "لم يتغير شيء. يمكنك المحاولة مجددًا أو أن تطلب من Pikku معرفة السبب.",
   "accounts_panel__failed_ask": "لم ينجح تغيير حساب {name}. من فضلك اكتشف السبب وأصلحه. {details}",
-  "accounts_access__title": "ما يمكنه فعله",
-  "accounts_access__unavailable": "هذا التطبيق لا يتتبع بعد من يمكنه فعل ماذا.",
-  "accounts_access__no_roles_in_app": "لا توجد أدوار في هذا التطبيق بعد، لذا يستطيع كل من يسجل الدخول فعل الأشياء نفسها.",
-  "accounts_access__no_role": "ليس لدى {name} دور بعد، لذا يمكنه فعل ما يفعله أي شخص مسجل الدخول فقط.",
-  "accounts_access__take_away": "اسحب",
-  "accounts_access__pick_role": "اختر دورًا",
-  "accounts_access__give_role": "امنحه هذا الدور",
-  "accounts_access__show_developer": "أظهر تفاصيل المطورين",
-  "accounts_access__hide_developer": "أخفِ تفاصيل المطورين",
-  "accounts_access__id": "معرّف الحساب",
-  "accounts_access__direct": "صلاحيات ممنوحة مباشرة، خارج أي دور",
-  "accounts_access__no_direct": "لا شيء.",
-  "accounts_access__remove_scope": "أزل {scope}",
-  "accounts_access__pick_scope": "اختر صلاحية",
-  "accounts_access__grant_scope": "امنح الصلاحية",
-  "accounts_access__all": "كل ما هو مسموح له، بما في ذلك الأدوار",
-  "accounts_access__none_at_all": "لا شيء أكثر مما يستطيعه أي شخص مسجل الدخول.",
-  "accounts_password__title": "كلمة المرور",
-  "accounts_password__explain": "إذا لم يستطع {name} الدخول مجددًا، يمكنك اختيار كلمة مرور جديدة له. أخبره بها بنفسك.",
-  "accounts_password__choose": "اختر كلمة مرور جديدة",
-  "accounts_password__new": "كلمة المرور الجديدة",
-  "accounts_password__save": "احفظ كلمة المرور",
-  "accounts_password__saved": "تم الحفظ. يمكن لـ {name} تسجيل الدخول بكلمة المرور الجديدة.",
-  "accounts_password__failed_title": "لم تُحفظ كلمة المرور",
-  "accounts_password__failed_body": "ربما هي قصيرة جدًا أو طويلة جدًا. جرّب أخرى، أو اطلب من Pikku معرفة السبب.",
   "accounts_invite__title": "ادعُ شخصًا",
   "accounts_invite__sub": "سيصله بريد إلكتروني برابط لتسجيل الدخول.",
   "accounts_invite__email": "بريده الإلكتروني",
@@ -4164,5 +4139,131 @@
         "countPlural=other": "{count} جزء لها إصدارات أحدث. لا شيء عاجل."
       }
     }
-  ]
+  ],
+  "quick_find__permissions": "الصلاحيات",
+  "permissions_screen__title": "الصلاحيات",
+  "permissions_screen__text": "الأدوار تحدد ما يُسمح للناس بفعله في تطبيقك. تعطي أحدهم دوراً من صفحة الحسابات.",
+  "permissions_screen__roles": "الأدوار",
+  "permissions_screen__can_do": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=zero": "لا يستطيع شيئاً",
+        "nPlural=one": "يستطيع أمراً واحداً",
+        "nPlural=two": "يستطيع أمرين",
+        "nPlural=few": "يستطيع {n} أمور",
+        "nPlural=many": "يستطيع {n} أمراً",
+        "nPlural=other": "يستطيع {n} أمر"
+      }
+    }
+  ],
+  "permissions_screen__can_do_nothing": "لا يستطيع شيئاً بعد",
+  "permissions_screen__change": "تغيير",
+  "permissions_screen__role_has_unused": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=zero": "لا يتضمن شيئاً لم يعد مستخدماً",
+        "nPlural=one": "يتضمن أمراً واحداً لم يعد تطبيقك يستخدمه",
+        "nPlural=two": "يتضمن أمرين لم يعد تطبيقك يستخدمهما",
+        "nPlural=few": "يتضمن {n} أمور لم يعد تطبيقك يستخدمها",
+        "nPlural=many": "يتضمن {n} أمراً لم يعد تطبيقك يستخدمها",
+        "nPlural=other": "يتضمن {n} أمر لم يعد تطبيقك يستخدمها"
+      }
+    }
+  ],
+  "permissions_screen__vocabulary": "ما يمكن أن يسمح به الدور",
+  "permissions_screen__vocabulary_count": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=zero": "لا يوجد في تطبيقك شيء يمكن أن يسمح به الدور.",
+        "nPlural=one": "في تطبيقك أمر واحد يمكن أن يسمح به الدور. تختاره عند تغيير الدور.",
+        "nPlural=two": "في تطبيقك أمران يمكن أن يسمح بهما الدور. تختارهما عند تغيير الدور.",
+        "nPlural=few": "في تطبيقك {n} أمور يمكن أن يسمح بها الدور. تختارها عند تغيير الدور.",
+        "nPlural=many": "في تطبيقك {n} أمراً يمكن أن يسمح بها الدور. تختارها عند تغيير الدور.",
+        "nPlural=other": "في تطبيقك {n} أمر يمكن أن يسمح بها الدور. تختارها عند تغيير الدور."
+      }
+    }
+  ],
+  "permissions_screen__vocabulary_none": "لا يوجد في تطبيقك بعد شيء يمكن أن يسمح به الدور. يضيفها Pikku حين يبني الأجزاء التي تحتاجها.",
+  "permissions_screen__unused_caption": "لم يعد تطبيقك يستخدم هذا. لا يسمح بشيء، لكنه ما زال محفوظاً.",
+  "permissions_screen__unused_tidy": "اطلب من Pikku ترتيبه",
+  "permissions_screen__unused_say": "ما زال تطبيقي يحفظ الصلاحية {id}، لكن الكود لم يعد يستخدمها. أرجو ترتيب ذلك وإزالتها من أي دور ما زال يتضمنها.",
+  "permissions_screen__not_running_title": "تطبيقك لا يعمل الآن",
+  "permissions_screen__not_running_text": "شغّله ثم عد لترى أدواره.",
+  "permissions_screen__no_addon_title": "هذا التطبيق لا يستطيع إدارة الأدوار بعد",
+  "permissions_screen__no_addon_text": "يستطيع Pikku إضافة الجزء الذي يتابع الأدوار وما تسمح به.",
+  "permissions_screen__add_it": "أضفه لي",
+  "permissions_screen__add_it_say": "أرجو إضافة إدارة الأدوار والصلاحيات إلى هذا التطبيق حتى أحدد ما يُسمح لكل نوع من الناس بفعله.",
+  "permissions_screen__cannot_see": "ليس لديك إذن برؤية الأدوار",
+  "permissions_screen__cannot_see_text": "اطلب من الشخص المسؤول عن هذا المشروع أن يسمح لك بإدارة الأدوار، ثم عد.",
+  "permissions_screen__ask_access": "اطلب من Pikku حل ذلك",
+  "permissions_screen__ask_access_say": "لا أستطيع رؤية أدوار هذا التطبيق وصلاحياته. أرجو معرفة الإذن الذي ينقصني ومساعدتي في الحصول عليه.",
+  "permissions_hero__label": "الصلاحيات",
+  "permissions_hero__title": "حدد ما يستطيع كل نوع من الناس فعله",
+  "permissions_hero__text": "الدور مجموعة من الأمور المسموح لشخص بفعلها، مثل مدير أو موظف. إذا غيّرت دوراً تغيّر لكل من لديه.",
+  "permissions_hero__empty_title": "أنشئ دورك الأول",
+  "permissions_hero__empty_text": "الدور مجموعة من الأمور المسموح لشخص بفعلها، مثل مدير أو موظف. أنشئ واحداً ثم أعطه للناس من صفحة الحسابات.",
+  "permissions_hero__create": "أنشئ دوراً جديداً",
+  "permissions_hero__count": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=zero": "لا أدوار",
+        "nPlural=one": "دور واحد",
+        "nPlural=two": "دوران",
+        "nPlural=few": "{n} أدوار",
+        "nPlural=many": "{n} دوراً",
+        "nPlural=other": "{n} دور"
+      }
+    }
+  ],
+  "permissions_panel__new_title": "دور جديد",
+  "permissions_panel__new_sub": "سمّه ثم اختر ما يسمح به.",
+  "permissions_panel__edit_sub": "اختر ما يسمح به هذا الدور.",
+  "permissions_panel__name": "الاسم",
+  "permissions_panel__name_hint": "مثلاً مدير",
+  "permissions_panel__name_taken": "يوجد دور بهذا الاسم. اختر اسماً آخر.",
+  "permissions_panel__description": "الغرض منه (اختياري)",
+  "permissions_panel__description_hint": "مثلاً: يدير المتجر يومياً",
+  "permissions_panel__can_do": "ما يستطيع هذا الدور فعله",
+  "permissions_panel__technical": "إظهار الأسماء التقنية",
+  "permissions_panel__nothing_declared": "لا يوجد في تطبيقك بعد شيء يمكن أن يسمح به الدور.",
+  "permissions_panel__included_by": "مضمّن لأنه يسمح بـ {name}",
+  "permissions_panel__unused": "لم يعد تطبيقك يستخدم هذا. يمكنك إلغاء اختياره.",
+  "permissions_panel__create": "أنشئ الدور",
+  "permissions_panel__save": "احفظ التغييرات",
+  "permissions_panel__cancel": "إلغاء",
+  "permissions_panel__remove": "احذف الدور",
+  "permissions_panel__remove_explain": "حذف الدور يسحب ما كان يسمح به من كل من لديه.",
+  "permissions_panel__remove_confirm": "نعم، احذف {name}",
+  "permissions_panel__keep": "أبقِه",
+  "permissions_panel__failed_title": "لم ينجح ذلك",
+  "permissions_panel__failed_body": "لم يتغير شيء. يمكنك المحاولة مجدداً أو أن تطلب من Pikku معرفة السبب.",
+  "permissions_panel__failed_ask": "لم ينجح تغيير الدور {name}. أرجو معرفة السبب وإصلاحه. {details}"
 }
