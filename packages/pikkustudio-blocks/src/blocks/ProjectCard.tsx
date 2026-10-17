@@ -25,6 +25,9 @@ export type Project = {
   live?: { places: number } | null
   attention?: number
   workingNow?: string[]
+  usage?: I18nString
+  image?: string | null
+  repoUrl?: string | null
 }
 
 export const chips = (): Record<ProjectState, { text: I18nString; icon: typeof Check; variant: 'pillOk' | 'pillInfo' | 'pillMute' }> => ({
@@ -41,7 +44,7 @@ export function ProjectCard({ item }: { item: Project }) {
   return (
     <article data-testid={`project_card__${item.id}`} className="flex flex-col overflow-hidden rounded-card border border-border bg-card shadow-card" aria-label={asI18n(item.name)}>
       <div className="aspect-[2/1] overflow-hidden border-b border-border bg-secondary">
-        <ProjectThumb look={item.look} label={asI18n(item.name)} />
+        {item.image ? <img src={item.image} alt="" className="size-full object-cover object-top" /> : <ProjectThumb look={item.look} label={asI18n(item.name)} />}
       </div>
       <div className="flex flex-1 flex-col gap-2.5 px-4.5 py-4">
         <div className="flex flex-wrap items-center gap-2">
@@ -71,6 +74,7 @@ export function ProjectCard({ item }: { item: Project }) {
             </span>
           ) : null}
           {item.visitors ? <span>{m.project_card__visitors_this_week({ count: item.visitors })}</span> : null}
+          {item.usage ? <span>{item.usage}</span> : null}
         </span>
         <ProjectActions item={item} className="mt-auto flex flex-wrap items-center gap-2 pt-2" />
       </div>

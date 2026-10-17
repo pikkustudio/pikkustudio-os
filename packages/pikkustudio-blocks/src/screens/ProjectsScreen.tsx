@@ -16,6 +16,7 @@ import { useTeamProjects, type ListedProject } from '../blocks/TeamProjects'
 import { useAccount } from '../lib/onboarding'
 import { useSlots } from '../lib/slots'
 import { LOCAL_TEAM, useTeamSlug } from '../lib/team'
+import { useProjectSlots } from '../lib/project-slots'
 
 const looks = ['bakery', 'kiln', 'garden', 'dog'] as const
 
@@ -39,7 +40,9 @@ const TeamSlug = ({ children }: { children: (name: string) => ReactNode }) => <>
 
 export function ProjectsScreen() {
   const team = useTeamProjects()
-  const projects = { ...team, data: team.data?.map(toCard) } as UseQueryResult<Project[]>
+  const { useProjectOverlay, ProjectsLead } = useProjectSlots()
+  const overlay = useProjectOverlay?.(team.data ?? []) ?? {}
+  const projects = { ...team, data: team.data?.map((p) => ({ ...toCard(p), ...overlay[p.key] })) } as UseQueryResult<Project[]>
   const signedIn = !!useAccount().data?.signIn
   const local = useTeamSlug() === LOCAL_TEAM
   const TeamName = useSlots().TeamName ?? TeamSlug
@@ -63,6 +66,7 @@ export function ProjectsScreen() {
           </Link>
         </Button>
       </PageHead>
+      {ProjectsLead ? <ProjectsLead /> : null}
       <QueryState
         query={projects}
         skeleton={<CardsSkeleton />}
