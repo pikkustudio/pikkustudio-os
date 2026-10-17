@@ -1,5 +1,5 @@
 import { execFile } from 'node:child_process'
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { chmod, copyFile, mkdir, readdir, readFile, rename, rm, writeFile } from 'node:fs/promises'
 import { randomBytes } from 'node:crypto'
 import { basename, dirname, isAbsolute, join, resolve } from 'node:path'
@@ -43,6 +43,10 @@ export async function commitPaths(repo: string, paths: string[], message: string
 export const MAIN = 'main'
 export const DEVELOP = 'develop'
 
+const liveBranch = (bare: string): string => readFileSync(join(bare, 'HEAD'), 'utf8').trim().replace(/^ref: refs\/heads\//, '')
+
+const workBranch = (live: string): string => (live.startsWith('main-') ? `staging-${live.slice('main-'.length)}` : DEVELOP)
+
 export const layoutRoot = (path: string): string | null =>
   basename(path) === MAIN && existsSync(join(dirname(path), 'repo.git')) ? dirname(path) : null
 
@@ -50,9 +54,10 @@ async function addLayoutWorktrees(root: string, base: string, onMain?: (main: st
   const bare = join(root, 'repo.git')
   await git(bare, 'worktree', 'add', '-q', join(root, MAIN), base)
   await onMain?.(join(root, MAIN))
-  const has = await git(bare, 'rev-parse', '--verify', '-q', `refs/heads/${DEVELOP}`).then(() => true, () => false)
-  if (has) await git(bare, 'worktree', 'add', '-q', join(root, DEVELOP), DEVELOP)
-  else await git(bare, 'worktree', 'add', '-q', '-b', DEVELOP, join(root, DEVELOP), MAIN)
+  const work = workBranch(base)
+  const has = await git(bare, 'rev-parse', '--verify', '-q', `refs/heads/${work}`).then(() => true, () => false)
+  if (has) await git(bare, 'worktree', 'add', '-q', join(root, DEVELOP), work)
+  else await git(bare, 'worktree', 'add', '-q', '-b', work, join(root, DEVELOP), base)
 }
 
 export async function createLayout(root: string, scaffold: string, studioHome: string): Promise<void> {
@@ -85,7 +90,8 @@ export async function cloneLayout(
   url: string,
   studioHome: string,
   onMain?: (main: string) => Promise<void>,
-  credential?: GitCredential
+  credential?: GitCredential,
+  live?: string
 ): Promise<void> {
   await mkdir(root, { recursive: true })
   await exec('git', ['clone', '-q', '--bare', '--', url, join(root, 'repo.git')], {
@@ -94,9 +100,9 @@ export async function cloneLayout(
   })
   const bare = join(root, 'repo.git')
   await git(bare, 'config', 'remote.origin.fetch', '+refs/heads/*:refs/remotes/origin/*')
-  const base = await git(bare, 'symbolic-ref', '--short', 'HEAD')
-  if (base !== MAIN) await git(bare, 'branch', '-m', base, MAIN)
-  await addLayoutWorktrees(root, MAIN, onMain)
+  const base = live || (await git(bare, 'symbolic-ref', '--short', 'HEAD'))
+  await git(bare, 'symbolic-ref', 'HEAD', `refs/heads/${base}`)
+  await addLayoutWorktrees(root, base, onMain)
   await guardMain(root, studioHome)
 }
 
@@ -112,15 +118,16 @@ const NAME = /^[a-z0-9][a-z0-9-]{0,39}$/
 export async function addWorktree(root: string, name: string): Promise<void> {
   if (!NAME.test(name) || name === MAIN || name === DEVELOP) throw new Error(`"${name}" cannot be used as a worktree name`)
   if (existsSync(join(root, name))) throw new Error(`A worktree called "${name}" already exists`)
-  await git(join(root, 'repo.git'), 'worktree', 'add', '-q', '-b', name, join(root, name), DEVELOP)
+  await git(join(root, DEVELOP), 'worktree', 'add', '-q', '-b', name, join(root, name))
 }
 
 export async function listWorktrees(root: string): Promise<string[]> {
-  const out = await git(join(root, 'repo.git'), 'worktree', 'list', '--porcelain')
+  const bare = join(root, 'repo.git')
+  const out = await git(bare, 'worktree', 'list', '--porcelain')
   return lines(out)
     .filter((l) => l.startsWith('branch '))
     .map((l) => l.slice('branch refs/heads/'.length))
-    .filter((b) => b !== MAIN)
+    .filter((b) => b !== liveBranch(bare))
 }
 
 export async function ensureWorktree(
@@ -165,8 +172,6 @@ export async function ensureWorktree(
   }
 }
 
-const MAIN_REF = `refs/heads/${MAIN}`
-
 export const mainTokenFile = (studioHome: string) => join(studioHome, 'main-token')
 
 export async function mainToken(studioHome: string): Promise<string> {
@@ -182,6 +187,7 @@ export const mainEnv = async (studioHome: string) => ({ PIKKU_STUDIO_MAIN: await
 
 export async function guardMain(root: string, studioHome: string): Promise<void> {
   await mainToken(studioHome)
+  const mainRef = `refs/heads/${liveBranch(join(root, 'repo.git'))}`
   const hooks = join(root, 'repo.git', 'hooks')
   await mkdir(hooks, { recursive: true })
   const file = join(hooks, 'reference-transaction')
@@ -193,7 +199,7 @@ allowed=0
 token_file=${JSON.stringify(mainTokenFile(studioHome))}
 if [ -r "$token_file" ] && [ "$PIKKU_STUDIO_MAIN" = "$(cat "$token_file")" ]; then allowed=1; fi
 while read -r old new ref; do
-  if [ "$state" = "prepared" ] && [ "$ref" = "${MAIN_REF}" ] && [ "$allowed" != "1" ]; then
+  if [ "$state" = "prepared" ] && [ "$ref" = "${mainRef}" ] && [ "$allowed" != "1" ]; then
     echo "main can only be changed by Pikku Studio. Make your change on develop and keep it." >&2
     exit 1
   fi
@@ -213,8 +219,8 @@ export const worktreeConfinement = (worktree: StudioWorktree): Confinement => ({
           join(worktree.gitDir, 'hooks'),
           join(worktree.gitDir, 'config'),
           join(worktree.gitDir, 'packed-refs'),
-          join(worktree.gitDir, MAIN_REF),
-          join(worktree.gitDir, 'logs', MAIN_REF),
+          join(worktree.gitDir, 'refs', 'heads', liveBranch(worktree.gitDir)),
+          join(worktree.gitDir, 'logs', 'refs', 'heads', liveBranch(worktree.gitDir)),
         ],
       }
     : {}),
@@ -356,7 +362,10 @@ const commits = async (folder: string, range: string, limit: number): Promise<Ve
 
 export async function listVersions(repo: string): Promise<{ live: VersionCommit[]; ahead: VersionCommit[] }> {
   const folder = await git(repo, 'rev-parse', '--show-toplevel')
-  return { live: await commits(folder, MAIN, 30), ahead: await commits(folder, `${MAIN}..${DEVELOP}`, 30) }
+  const common = resolve(folder, await git(folder, 'rev-parse', '--git-common-dir'))
+  const live = basename(common) === 'repo.git' ? liveBranch(common) : MAIN
+  const work = basename(common) === 'repo.git' ? workBranch(live) : DEVELOP
+  return { live: await commits(folder, live, 30), ahead: await commits(folder, `${live}..${work}`, 30) }
 }
 
 export type ProjectTheme = { id: string; name: string; primary: string; secondary: string | null; background: string | null; foreground: string | null; heading: string; body: string; radius: string; scheme: string }

@@ -152,7 +152,7 @@ export class StudioPublisher {
         const main = await this.projects.prepareMain(key)
         const from = main?.dir ?? worktree
         job.phase = 'send'
-        await this.run('git', ['push', '-u', 'origin', main ? 'main' : 'HEAD'], from, onLine)
+        await this.run('git', ['push', '-u', 'origin', 'HEAD'], from, onLine)
         job.phase = 'deploy'
         await target.deploy(from, this.run, onLine)
         job.state = 'done'
