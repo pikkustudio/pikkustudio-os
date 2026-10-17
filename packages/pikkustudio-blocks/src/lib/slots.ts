@@ -3,7 +3,7 @@ import type { WorkspaceAboutProps } from '../blocks/ShellAccount'
 import type { TeamScopeProps } from './team'
 import type { Copy } from './copy'
 import type { RawAudit, RawPerson } from './updates-feed'
-import type { ReleaseDetail, ReleasesView } from './releases'
+import type { ReleaseDetail, ReleaseGroup, ReleasesView } from './releases'
 import type { StageSettings } from './projectSecrets'
 import type { I18nNode } from '@pikku/react'
 import { createContext, useContext, type ComponentType, type ReactNode } from 'react'
@@ -56,6 +56,12 @@ export type Slots = {
   useLiveMetrics?: (name: string | null, hours: number) => LiveMetrics
   useReleases?: (projectKey: string) => ReleasesView
   useReleaseDetail?: (projectKey: string, id: string, wanted: boolean) => ReleaseDetail
+  /** What the next publish would change against what is live; null when unknown or nothing deploys. A hook, called every render. */
+  useReleasePreview?: (projectKey: string) => ReleaseGroup[] | null
+  /** One row saying how published versions go live, with its own form; absent where nothing deploys. */
+  ReleaseMode?: ComponentType
+  /** Recent messages the live copy sent to other services; absent where nothing deploys. */
+  ReleaseSent?: ComponentType
   /** The published copy's secrets and settings; null when the open copy is not a published one. A hook, called every render. */
   useStageSettings?: (projectKey: string, settingIds: string[]) => StageSettings | null
   useLiveUpdates?: (queryKeys: readonly string[]) => void

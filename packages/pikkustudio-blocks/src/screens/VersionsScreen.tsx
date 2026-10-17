@@ -19,7 +19,9 @@ import { StatusLine } from '../blocks/StatusLine'
 import { PikkuDot } from '../blocks/PikkuDot'
 import { ago, canGoBack, dayTime, failWords, shelfPart, shelfTone, shelfWords, titleOf, when, who } from '../blocks/ShelfMeta'
 import { stepNames } from '../blocks/ShelfStrip'
-import { useReleases, type Release, type ReleasesView } from '../lib/releases'
+import { useReleasePreview, useReleases, type Release, type ReleasesView } from '../lib/releases'
+import { useSlots } from '../lib/slots'
+import { GroupRows } from './VersionScreen'
 import { useProjectName } from '../lib/project'
 import { keep } from '../lib/links'
 import { ShellCtx } from '../lib/shell'
@@ -129,6 +131,8 @@ type Fault = { text: I18nString; ask: I18nString }
 
 function History({ view, mode }: { view: ReleasesView; mode: string }) {
   const { say } = useContext(ShellCtx)
+  const { ReleaseMode, ReleaseSent } = useSlots()
+  const preview = useReleasePreview()
   const edit = !view.readOnly && !!view.actions
   const [filter, setFilter] = useState('all')
   const [q, setQ] = useState('')
@@ -230,9 +234,16 @@ function History({ view, mode }: { view: ReleasesView; mode: string }) {
             </Switch>
           </RowCard>
         ) : null}
+        {ReleaseMode ? <ReleaseMode /> : null}
       </Section>
 
       <Pending view={view} />
+
+      {preview?.length ? (
+        <Section title={m.versions_screen__next_title()} sub={m.versions_screen__next_sub()}>
+          <GroupRows groups={preview} />
+        </Section>
+      ) : null}
 
       <Section title={m.versions_screen__on_shelf()} sub={m.versions_screen__on_shelf_sub()}>
         <div className="flex flex-wrap items-center gap-3">
@@ -270,6 +281,8 @@ function History({ view, mode }: { view: ReleasesView; mode: string }) {
           <p className="text-[14px] text-ink-2">{q.trim() || filter !== 'all' ? m.versions_screen__no_match() : m.versions_screen__shelf_empty()}</p>
         )}
       </Section>
+
+      {ReleaseSent ? <ReleaseSent /> : null}
 
       {back ? (
         <SidePanel icon={Undo2} label={m.versions_screen__go_back_title()} title={m.versions_screen__go_back_title()} sub={m.versions_screen__go_back_sub()} onClose={() => setBack(null)}>

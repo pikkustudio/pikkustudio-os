@@ -3889,6 +3889,8 @@
   "versions_screen__ask_pikku": "اسأل Pikku",
   "versions_screen__live_since_by": "منشور منذ {since} · {who}",
   "versions_screen__auto_title": "التحديث تلقائياً",
+  "versions_screen__next_title": "ما الذي سيغيّره نشرك القادم",
+  "versions_screen__next_sub": "مقارنةً بما يراه الناس الآن. لن يتغيّر شيء لديهم حتى تنشر.",
   "versions_screen__auto_on": "كل تغيير محفوظ يُنشر تلقائياً بعد نجاح الفحوصات.",
   "versions_screen__auto_off": "تنتظر التغييرات هنا حتى تنشرها.",
   "versions_screen__auto_failed": "لم يُحفظ هذا الإعداد.",

@@ -3829,6 +3829,8 @@
   "versions_screen__ask_pikku": "Ask Pikku",
   "versions_screen__live_since_by": "Live since {since} · {who}",
   "versions_screen__auto_title": "Update by itself",
+  "versions_screen__next_title": "What your next publish changes",
+  "versions_screen__next_sub": "Compared with what people see now. Nothing changes for them until you publish.",
   "versions_screen__auto_on": "Every saved change goes live on its own, after the checks pass.",
   "versions_screen__auto_off": "Changes wait here until you publish them.",
   "versions_screen__auto_failed": "That setting did not save.",

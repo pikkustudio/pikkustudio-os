@@ -3621,6 +3621,8 @@
   "versions_screen__ask_pikku": "Pikku fragen",
   "versions_screen__live_since_by": "Live seit {since} · {who}",
   "versions_screen__auto_title": "Von selbst aktualisieren",
+  "versions_screen__next_title": "Was Ihre nächste Veröffentlichung ändert",
+  "versions_screen__next_sub": "Im Vergleich zu dem, was die Leute jetzt sehen. Für sie ändert sich nichts, bis Sie veröffentlichen.",
   "versions_screen__auto_on": "Jede gespeicherte Änderung geht von selbst live, sobald die Prüfungen bestanden sind.",
   "versions_screen__auto_off": "Änderungen warten hier, bis du sie veröffentlichst.",
   "versions_screen__auto_failed": "Diese Einstellung wurde nicht gespeichert.",
