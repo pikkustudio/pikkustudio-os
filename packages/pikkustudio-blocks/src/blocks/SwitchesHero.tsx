@@ -17,7 +17,48 @@ function Art() {
   )
 }
 
-export function SwitchesHero({ total, on, attention, writable, onLook, onAsk }: { total: number | undefined; on: number; attention: number; writable: boolean; onLook: () => void; onAsk: () => void }) {
+export function SwitchesHero({
+  total,
+  on,
+  attention,
+  writable,
+  problem,
+  onLook,
+  onAsk,
+  onFix,
+}: {
+  total: number | undefined
+  on: number
+  attention: number
+  writable: boolean
+  problem?: 'not-running' | 'no-addon' | 'forbidden' | 'other' | null
+  onLook: () => void
+  onAsk: () => void
+  onFix?: () => void
+}) {
+  if (problem) {
+    return (
+      <NextCard
+        label={m.switches_hero__label()}
+        hue="teal"
+        art={<Art />}
+        title={problem === 'not-running' ? m.switches_screen__not_running_title() : problem === 'forbidden' ? m.switches_screen__cannot_see() : problem === 'no-addon' ? m.switches_screen__no_addon_title() : m.switches_hero__error_title()}
+        why={problem === 'not-running' ? m.switches_screen__not_running_text() : problem === 'forbidden' ? m.switches_screen__cannot_see_text() : problem === 'no-addon' ? m.switches_screen__no_addon_text() : m.switches_hero__error_text()}
+      >
+        {onFix ? (
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
+            <Button variant="hero" size="pageLg" type="button" onClick={onFix}>
+              <PikkuDot />
+              {problem === 'forbidden' ? m.switches_screen__cannot_see_ask() : m.switches_hero__fix()}
+            </Button>
+          </div>
+        ) : null}
+      </NextCard>
+    )
+  }
+  if (total === undefined) {
+    return <NextCard label={m.switches_hero__label()} hue="teal" art={<Art />} title={m.switches_hero__loading()} why={m.switches_screen__text()} />
+  }
   if (total === 0) {
     return (
       <NextCard label={m.switches_hero__label()} hue="teal" art={<Art />} title={m.switches_hero__empty_title()} why={m.switches_hero__empty_text()}>

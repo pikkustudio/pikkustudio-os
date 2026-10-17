@@ -11,6 +11,8 @@ import { QueryState } from '../blocks/QueryState'
 import { RowStack } from '../blocks/RowCard'
 import { PikkuDot } from '../blocks/PikkuDot'
 import { StatusLine } from '../blocks/StatusLine'
+import { FixNotice } from '../blocks/FixNotice'
+import { detailsOf, faultOf } from '../blocks/ErrorState'
 import { SwitchesHero } from '../blocks/SwitchesHero'
 import { SwitchRow } from '../blocks/SwitchRow'
 import { SwitchPanel } from '../blocks/SwitchPanel'
@@ -45,6 +47,7 @@ export function SwitchesScreen() {
   const sync = useProjectAction<null, { synced: number }>(key, 'admin:flagSync', ['admin:flagList'])
   const prune = useProjectAction<null, { pruned: string[] }>(key, 'admin:flagPrune', SWITCH_RPCS)
   const problem = list.isError ? accountsProblem(list.error) : null
+  const detail = (e: unknown) => detailsOf(faultOf(e), m.switches_screen__title())
   const flags = list.data?.flags ?? []
   const canChange = canEdit && !!list.data?.writable
   const look = flags.filter(needsLook)
@@ -59,12 +62,19 @@ export function SwitchesScreen() {
         on={flags.filter((f) => f.enabled).length}
         attention={look.length}
         writable={canChange}
+        problem={problem}
+        onFix={() => say(problem === 'forbidden' ? m.switches_screen__cannot_see_say() : problem === 'not-running' ? m.switches_screen__not_running_say() : problem === 'no-addon' ? m.switches_screen__add_it_say() : m.error_state__fix_ask_what({ what: m.switches_screen__title(), details: detail(list.error) }))}
         onLook={() => look[0] && setOpen(look[0].name)}
         onAsk={() => say(m.switches_screen__add_say())}
       />
 
       {problem === 'not-running' ? (
-        <EmptyState icon={Plug} title={m.switches_screen__not_running_title()} text={m.switches_screen__not_running_text()} />
+        <EmptyState icon={Plug} title={m.switches_screen__not_running_title()} text={m.switches_screen__not_running_text()}>
+          <Button type="button" size="page" onClick={() => say(m.switches_screen__not_running_say())}>
+            <PikkuDot />
+            {m.switches_screen__not_running_ask()}
+          </Button>
+        </EmptyState>
       ) : problem === 'no-addon' ? (
         <EmptyState icon={ToggleRight} title={m.switches_screen__no_addon_title()} text={m.switches_screen__no_addon_text()}>
           <Button type="button" size="page" onClick={() => say(m.switches_screen__add_it_say())}>
@@ -73,7 +83,12 @@ export function SwitchesScreen() {
           </Button>
         </EmptyState>
       ) : problem === 'forbidden' ? (
-        <EmptyState icon={LockKeyhole} title={m.switches_screen__cannot_see()} text={m.switches_screen__cannot_see_text()} />
+        <EmptyState icon={LockKeyhole} title={m.switches_screen__cannot_see()} text={m.switches_screen__cannot_see_text()}>
+          <Button type="button" size="page" onClick={() => say(m.switches_screen__cannot_see_say())}>
+            <PikkuDot />
+            {m.switches_screen__cannot_see_ask()}
+          </Button>
+        </EmptyState>
       ) : (
         <QueryState
           query={list}
@@ -101,9 +116,13 @@ export function SwitchesScreen() {
                 </Group>
               ) : null}
               {toggle.isError ? (
-                <p role="alert" className="text-px15 text-destructive-foreground">
-                  {m.switches_screen__toggle_failed()}
-                </p>
+                <FixNotice
+                  title={m.switches_screen__toggle_failed()}
+                  body={m.switches_screen__failed_body()}
+                  ask={m.switches_screen__failed_say({ what: m.switches_screen__toggle_what(), details: detail(toggle.error) })}
+                  onRetry={() => toggle.variables && toggle.mutate(toggle.variables)}
+                  retrying={toggle.isPending}
+                />
               ) : null}
             </div>
           )}
@@ -118,14 +137,18 @@ export function SwitchesScreen() {
             <Button type="button" variant="bordered" size="compact" disabled={!canChange || sync.isPending} aria-busy={sync.isPending} onClick={() => sync.mutate(null)}>
               {m.switches_screen__sync()}
             </Button>
-            {sync.isError ? <StatusLine tone="bad" text={m.switches_screen__sync_failed()} /> : sync.data ? <StatusLine tone="ok" text={m.switches_screen__synced({ count: sync.data.synced })} /> : null}
+            {sync.isError ? (
+              <FixNotice title={m.switches_screen__sync_failed()} body={m.switches_screen__failed_body()} ask={m.switches_screen__failed_say({ what: m.switches_screen__sync(), details: detail(sync.error) })} />
+            ) : sync.data ? <StatusLine tone="ok" text={m.switches_screen__synced({ count: sync.data.synced })} /> : null}
           </div>
           <div className="flex flex-col items-start gap-2">
             <p className="text-px14 text-ink-2">{m.switches_screen__prune_explain()}</p>
             <Button type="button" variant="bordered" size="compact" disabled={!canChange || prune.isPending} aria-busy={prune.isPending} onClick={() => prune.mutate(null)}>
               {m.switches_screen__prune()}
             </Button>
-            {prune.isError ? <StatusLine tone="bad" text={m.switches_screen__prune_failed()} /> : prune.data ? <StatusLine tone="ok" text={m.switches_screen__pruned({ count: prune.data.pruned.length })} /> : null}
+            {prune.isError ? (
+              <FixNotice title={m.switches_screen__prune_failed()} body={m.switches_screen__failed_body()} ask={m.switches_screen__failed_say({ what: m.switches_screen__prune(), details: detail(prune.error) })} />
+            ) : prune.data ? <StatusLine tone="ok" text={m.switches_screen__pruned({ count: prune.data.pruned.length })} /> : null}
           </div>
         </div>
       ) : null}

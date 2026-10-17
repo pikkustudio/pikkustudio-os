@@ -124,7 +124,13 @@ export function SwitchPanel({ projectKey, item, canChange, onChanged, onClose }:
       {exceptions.isPending ? (
         <div className="h-14 animate-pulse rounded-xl bg-secondary" />
       ) : exceptions.isError ? (
-        <p className="text-px15 text-ink-2">{m.switches_panel__exceptions_failed()}</p>
+        <FixNotice
+          title={m.switches_panel__exceptions_failed()}
+          body={m.switches_screen__failed_body()}
+          ask={m.switches_panel__exceptions_failed_say({ name: title, details: asI18n(exceptions.error instanceof Error ? exceptions.error.message : '') })}
+          onRetry={() => exceptions.refetch()}
+          retrying={exceptions.isFetching}
+        />
       ) : !exceptions.data.supported ? (
         <p className="text-px15 text-ink-2">{m.switches_panel__exceptions_elsewhere()}</p>
       ) : (
