@@ -149,9 +149,9 @@ export interface AccountProvider {
   locate(path: string, cloud: CloudProject[]): Promise<{ projectId: string; project: CloudProject | null } | null>
   adopt(projectId: string, path: string): Promise<void>
   /** Opens a project's cloud workspace: creates it when there is none and wakes it when it sleeps. */
-  workspaceLink?(projectId: string): Promise<WorkspaceLink>
+  workspaceLink?(projectId: string, workspace?: string): Promise<WorkspaceLink>
   /** Where a project's cloud workspace stands, without creating or waking it. */
-  workspaceStatus?(projectId: string): Promise<WorkspaceStatus>
+  workspaceStatus?(projectId: string, workspace?: string): Promise<WorkspaceStatus>
   gitCredential?(projectId: string): Promise<{ username: string; password: string }>
 }
 
@@ -176,6 +176,12 @@ export interface WorkspaceTarget {
 }
 
 const WORKSPACE_TARGET_TTL = 30_000
+
+/** A cloud project key, `cloud:<projectId>`, or `cloud:<projectId>@<workspace>` for one of its online workspaces by slug. */
+export const cloudKeyParts = (key: string) => {
+  const [projectId, workspace] = key.slice('cloud:'.length).split('@')
+  return { projectId, workspace: workspace || undefined }
+}
 
 export interface AccountLink {
   apiUrl: string
@@ -495,7 +501,7 @@ export interface StudioProjectsOptions {
   stopTimeoutMs?: number
   designEntry?: string
   paraglideCommand?: (appDir: string) => { command: string; args: string[] } | null
-  env?: (key: string) => Promise<Record<string, string>>
+  env?: (key: string, generated: Record<string, string>) => Promise<Record<string, string>>
   personalSource?: (projectId: string) => ScopedSource | undefined
   teamSource?: (projectId: string, projectPath: string) => ScopedSource | undefined
   waitForPort?: (port: number) => Promise<void>
@@ -1421,14 +1427,16 @@ export class StudioProjectsService {
   async workspaceLink(key: string): Promise<WorkspaceLink> {
     if (!key.startsWith('cloud:')) throw new Error('Only a cloud project has a workspace link')
     if (!this.account.workspaceLink) throw new Error('Cloud workspaces are not part of this edition')
-    return this.account.workspaceLink(key.slice('cloud:'.length))
+    const { projectId, workspace } = cloudKeyParts(key)
+    return this.account.workspaceLink(projectId, workspace)
   }
 
   /** Where a cloud project's workspace stands and how far its start has got, without starting it. */
   async workspaceStatus(key: string): Promise<WorkspaceProgress> {
     if (!key.startsWith('cloud:')) throw new Error('Only a cloud project has a workspace')
     if (!this.account.workspaceStatus) return { state: 'off', phase: null, error: null }
-    const link = await this.account.workspaceStatus(key.slice('cloud:'.length))
+    const { projectId, workspace } = cloudKeyParts(key)
+    const link = await this.account.workspaceStatus(projectId, workspace)
     if (link.state === 'off') return { state: 'off', phase: null, error: null }
     if (link.state === 'failed') return { state: 'failed', phase: link.phase ?? null, error: link.error ?? null }
     if (link.state === 'starting') return { state: 'starting', phase: link.phase ?? 'machine', error: null }
@@ -1442,7 +1450,8 @@ export class StudioProjectsService {
   async workspaceTarget(key: string): Promise<WorkspaceTarget | { state: 'starting' | 'off' }> {
     const cached = this.workspaceTargets.get(key)
     if (cached && Date.now() - cached.at < WORKSPACE_TARGET_TTL) return cached.target
-    const link = this.account.workspaceStatus ? await this.account.workspaceStatus(key.slice('cloud:'.length)) : await this.workspaceLink(key)
+    const { projectId, workspace } = cloudKeyParts(key)
+    const link = this.account.workspaceStatus ? await this.account.workspaceStatus(projectId, workspace) : await this.workspaceLink(key)
     if (link.state === 'off' || link.state === 'failed') return { state: 'off' }
     if (link.state !== 'ready' || !link.url) return { state: 'starting' }
     const headers: Record<string, string> = link.token ? { authorization: `Bearer ${link.token}` } : {}
@@ -1498,6 +1507,8 @@ export class StudioProjectsService {
     const log = openSync(logPath, 'a')
     await this.reapStrays()
     const designPort = design ? await freePort() : 0
+    const projectEnv = await this.projectEnv(key, entry.path)
+    const generated = Object.fromEntries(GENERATED_SECRETS.filter((name) => projectEnv[name]).map((name) => [name, projectEnv[name]!]))
     const spawnOptions = {
       cwd: worktree.projectDir,
       detached: true,
@@ -1509,8 +1520,8 @@ export class StudioProjectsService {
         PIKKU_STUDIO_TOKEN: token,
         PIKKU_CONSOLE_TOKEN: token,
         ...(design ? { PIKKU_DESIGN_SERVER_URL: designUrl(designPort) } : {}),
-        ...(await this.projectEnv(key, entry.path)),
-        ...(await (this.options.env?.(key) ?? {})),
+        ...projectEnv,
+        ...(await (this.options.env?.(key, generated) ?? {})),
       },
     }
     const child = confinement

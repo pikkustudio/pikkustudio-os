@@ -10,8 +10,11 @@ export const useProjectSlug = () => {
   return project ?? key ?? ''
 }
 
+export const isCloudKeyOf = (p: { key: string; cloudProjectId?: string | null }, key: string) =>
+  p.key === key || (!!p.cloudProjectId && (key === `cloud:${p.cloudProjectId}` || key.startsWith(`cloud:${p.cloudProjectId}@`)))
+
 export const onlineKey = (p: { key: string; cloudProjectId?: string | null }, target: TargetRef | undefined) =>
-  target?.kind === 'workspace' && target.name !== LOCAL_WORKSPACE && p.cloudProjectId && !p.key.startsWith('cloud:') ? `cloud:${p.cloudProjectId}` : p.key
+  target?.kind === 'workspace' && target.name !== LOCAL_WORKSPACE && p.cloudProjectId && !p.key.startsWith('cloud:') ? `cloud:${p.cloudProjectId}@${target.name}` : p.key
 
 export const useProjectKey = () => {
   const slug = useProjectSlug()

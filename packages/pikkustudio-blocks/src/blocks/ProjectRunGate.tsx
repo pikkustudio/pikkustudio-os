@@ -4,8 +4,8 @@ import { useQueryClient } from '@tanstack/react-query'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { m } from '@/i18n/messages'
 import { useNavigate } from '@tanstack/react-router'
-import { useProjectKey } from '../lib/project'
-import { useProjectTarget } from '../lib/project-target'
+import { isCloudKeyOf, useProjectKey } from '../lib/project'
+import { DEFAULT_TARGET, formatTarget, useProjectTarget } from '../lib/project-target'
 import { AppNotRunning, CLOUD_LAUNCH, LOCAL_LAUNCH, launchSteps, type LaunchPhase, type LaunchWhere } from './AppNotRunning'
 import { useTeamProjects, type ListedProject } from './TeamProjects'
 
@@ -21,7 +21,7 @@ export function ProjectRunGate({ children }: { children: I18nNode }) {
   const key = useProjectKey()
   const target = useProjectTarget()
   const navigate = useNavigate()
-  const project = useTeamProjects().data?.find((p) => p.key === key || `cloud:${p.cloudProjectId}` === key)
+  const project = useTeamProjects().data?.find((p) => isCloudKeyOf(p, key))
   if (target.kind === 'stage') {
     if (target.live !== false) return <>{children}</>
     const wayOut = {
@@ -37,6 +37,7 @@ export function ProjectRunGate({ children }: { children: I18nNode }) {
 
 function CloudGate({ project, children }: { project: ListedProject; children: I18nNode }) {
   const client = useQueryClient()
+  const navigate = useNavigate()
   const status = usePikkuQuery('studio:workspaceStatus' as never, { key: project.key } as never, {
     retry: false,
     refetchInterval: (query: { state: { data?: Workspace } }) => (query.state.data?.state === 'starting' ? 3000 : 15000),
@@ -48,6 +49,7 @@ function CloudGate({ project, children }: { project: ListedProject; children: I1
   const waking = link.isPending || (link.isSuccess && now.state === 'off' && Date.now() - link.submittedAt < WAKE_GRACE_MS)
   const pick = (where: LaunchWhere) => {
     if (where === 'cloud') link.mutate({ key: project.key })
+    else if (project.location === 'both') navigate({ to: '.', search: ((prev: object) => ({ ...prev, target: formatTarget(DEFAULT_TARGET) })) as never })
     else if (project.cloudProjectId) clone.mutate({ cloudProjectId: project.cloudProjectId } as never)
   }
 
