@@ -1,10 +1,11 @@
 import { asI18n, type I18nNode, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useState, type ComponentType } from 'react'
-import { ChevronDown, Search } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { Input } from '../ui/input'
 import { RowCard, RowStack } from '../blocks/RowCard'
 import { useProjectQuery } from '../lib/projectRpc'
+import { useDeveloperDetails } from '../lib/developer-details'
 
 type Wire = { name: string; pikkuFuncId: string; packageName?: string; title?: string; summary?: string; description?: string }
 export type TimedWire = Wire & { schedule: string }
@@ -50,10 +51,10 @@ const Group = ({ title, children }: { title: I18nString; children: I18nNode }) =
   </section>
 )
 
-/** The project's own items, then those an add-on brings, each as its own card; developer detail sits behind one switch. */
+/** The project's own items, then those an add-on brings, each as its own card; developer detail follows the shared switch in the page head. */
 export function WorkList({ items, icon: Icon, own, side, search, noDescription }: { items: WorkItem[]; icon: ComponentType<{ className?: string }>; own: I18nString; side: (id: string) => I18nNode; search: I18nString; noDescription: I18nString }) {
   const [term, setTerm] = useState('')
-  const [technical, setTechnical] = useState(false)
+  const [technical] = useDeveloperDetails()
   const needle = term.trim().toLowerCase()
   const shown = needle ? items.filter((i) => [i.id, i.title, i.what].some((v) => v?.toLowerCase().includes(needle))) : items
   const mine = shown.filter((i) => !i.addon)
@@ -99,10 +100,6 @@ export function WorkList({ items, icon: Icon, own, side, search, noDescription }
       {shown.length === 0 ? <p className="px-1 text-px15 text-ink-2">{m.work_list__no_matches({ query: term.trim() })}</p> : null}
       {mine.length ? <Group title={own}>{rows(mine)}</Group> : null}
       {theirs.length ? <Group title={m.work_list__from_addons()}>{rows(theirs)}</Group> : null}
-      <button type="button" aria-expanded={technical} onClick={() => setTechnical((v) => !v)} className="inline-flex items-center gap-1.5 self-start text-px15 font-semibold text-muted-foreground hover:text-foreground">
-        <ChevronDown className={`size-4 transition-transform ${technical ? 'rotate-180' : ''}`} />
-        {technical ? m.work_list__hide_technical() : m.work_list__show_technical()}
-      </button>
     </>
   )
 }

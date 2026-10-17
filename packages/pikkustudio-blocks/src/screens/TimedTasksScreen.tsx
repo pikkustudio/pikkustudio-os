@@ -31,7 +31,7 @@ export function TimedTasksScreen() {
   const { say } = useContext(ShellCtx)
   const q = useWorkMeta(key)
 
-  const head = <PageHead crumb={projectName} title={m.timed_tasks__title()} text={m.timed_tasks__text()} size="lead" />
+  const head = <PageHead crumb={projectName} title={m.timed_tasks__title()} text={m.timed_tasks__text()} size="lead" developerDetails />
 
   if (q.isError)
     return (

@@ -1,7 +1,7 @@
 import { asI18n, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useState } from 'react'
-import { ChevronDown, Search, ToggleRight, X } from 'lucide-react'
+import { Search, ToggleRight, X } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Switch as Toggle } from '../ui/switch'
@@ -15,11 +15,12 @@ import { switchWords } from './SwitchRow'
 import { useProjectAction, useProjectQuery } from '../lib/projectRpc'
 import { accountName, type AccountsPage } from '../lib/accounts'
 import { everyone, subjectOf, switchTitle, type Switch, type SwitchExceptions, type SwitchSubject } from '../lib/switches'
+import { useDeveloperDetails } from '../lib/developer-details'
 
 const Label = ({ children }: { children: I18nString }) => <h3 className="text-px14 font-bold text-muted-foreground">{children}</h3>
 
 export function SwitchPanel({ projectKey, item, canChange, onChanged, onClose }: { projectKey: string; item: Switch; canChange: boolean; onChanged: () => void; onClose: () => void }) {
-  const [technical, setTechnical] = useState(false)
+  const [technical] = useDeveloperDetails()
   const [some, setSome] = useState(!everyone(item))
   const [percent, setPercent] = useState(item.rolloutPercent ?? 50)
   const [term, setTerm] = useState('')
@@ -209,10 +210,6 @@ export function SwitchPanel({ projectKey, item, canChange, onChanged, onClose }:
         </>
       )}
 
-      <button type="button" aria-expanded={technical} onClick={() => setTechnical((v) => !v)} className="inline-flex items-center gap-1.5 self-start text-px15 font-semibold text-muted-foreground hover:text-foreground">
-        <ChevronDown className={`size-4 transition-transform ${technical ? 'rotate-180' : ''}`} />
-        {technical ? m.switches_screen__hide_technical() : m.switches_screen__show_technical()}
-      </button>
       {technical ? (
         <div className="flex flex-col gap-1.5 rounded-xl bg-secondary p-4">
           <p className="text-px14 text-ink-2">{m.switches_panel__called()}</p>

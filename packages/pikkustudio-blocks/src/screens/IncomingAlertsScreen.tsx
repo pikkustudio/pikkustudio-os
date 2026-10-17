@@ -78,7 +78,7 @@ export function IncomingAlertsScreen() {
   const switching = (name: string) => busy && (enable.variables?.name === name || disable.variables?.name === name)
   const actionFailed = enable.isError || disable.isError || forget.isError
 
-  const head = <PageHead crumb={projectName} title={m.incoming_alerts__title()} text={m.incoming_alerts__text()} size="lead" />
+  const head = <PageHead crumb={projectName} title={m.incoming_alerts__title()} text={m.incoming_alerts__text()} size="lead" developerDetails />
 
   if (meta.isError)
     return (

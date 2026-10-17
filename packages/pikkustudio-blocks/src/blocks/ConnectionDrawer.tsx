@@ -1,7 +1,7 @@
 import { asI18n } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useState, type FormEvent } from 'react'
-import { ChevronDown, KeyRound, Link2, Lock, UserRound } from 'lucide-react'
+import { KeyRound, Link2, Lock, UserRound } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { SidePanel } from './SidePanel'
@@ -9,6 +9,7 @@ import { HintNote } from './HintNote'
 import { Dot } from './RowCard'
 import { useProjectAction } from '../lib/projectRpc'
 import type { ConnectedPerson, Connection } from '../lib/connections'
+import { useDeveloperDetails } from '../lib/developer-details'
 
 function Person({ p, removing, onRemove }: { p: ConnectedPerson; removing: boolean; onRemove: () => void }) {
   const [sure, setSure] = useState(false)
@@ -53,7 +54,7 @@ export function ConnectionDrawer({
   onChanged: () => void
   onClose: () => void
 }) {
-  const [technical, setTechnical] = useState(false)
+  const [technical] = useDeveloperDetails()
   const [sure, setSure] = useState(false)
   const [values, setValues] = useState<Record<string, string>>({})
   const save = useProjectAction<{ name: string; value: unknown }>(projectKey, 'admin:credentialSet')
@@ -160,10 +161,6 @@ export function ConnectionDrawer({
         </p>
       ) : null}
 
-      <button type="button" aria-expanded={technical} onClick={() => setTechnical((v) => !v)} className="inline-flex items-center gap-1.5 self-start text-px15 font-semibold text-muted-foreground hover:text-foreground">
-        <ChevronDown className={`size-4 transition-transform ${technical ? 'rotate-180' : ''}`} />
-        {technical ? m.connections_screen__hide_technical() : m.connections_screen__show_technical()}
-      </button>
       {technical ? (
         <div className="flex flex-col gap-2 rounded-xl bg-secondary p-4">
           <p className="text-px14 text-ink-2">{m.connections_screen__technical_called()}</p>

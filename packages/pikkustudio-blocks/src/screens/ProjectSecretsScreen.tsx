@@ -2,7 +2,7 @@ import { asI18n, type I18nNode, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useMemo, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { ChevronDown, KeyRound, Link2, SlidersHorizontal } from 'lucide-react'
+import { KeyRound, Link2, SlidersHorizontal } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Page } from '../blocks/Page'
 import { PageHead } from '../blocks/PageHead'
@@ -16,6 +16,7 @@ import { useProjectKey, useProjectName } from '../lib/project'
 import { useProjectAction } from '../lib/projectRpc'
 import { useSlots } from '../lib/slots'
 import { useSecretsSet, useProjectSecretsMeta, type ProjectSecret, type ProjectValue } from '../lib/projectSecrets'
+import { useDeveloperDetails } from '../lib/developer-details'
 
 function Art() {
   return (
@@ -76,7 +77,7 @@ export function ProjectSecretsScreen() {
   const [editing, setEditing] = useState<Editing | null>(null)
   const [failed, setFailed] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [technical, setTechnical] = useState(false)
+  const [technical] = useDeveloperDetails()
   const setLocal = useProjectAction<{ secretId: string; value: unknown }>(key, 'console:secretSet', ['console:secretHas'])
 
   const setIds = stage ? (stage.secretIds ? new Set(stage.secretIds) : undefined) : local.set
@@ -184,7 +185,7 @@ export function ProjectSecretsScreen() {
 
   return (
     <Page gap="snug">
-      <PageHead crumb={app} title={m.project_secrets__title()} text={m.project_secrets__text()} size="lead" />
+      <PageHead crumb={app} title={m.project_secrets__title()} text={m.project_secrets__text()} size="lead" developerDetails />
       {hero}
       <QueryState
         query={meta.query}
@@ -208,10 +209,6 @@ export function ProjectSecretsScreen() {
                 <RowStack>{settings.map(settingRow)}</RowStack>
               </Group>
             ) : null}
-            <button type="button" aria-expanded={technical} onClick={() => setTechnical((v) => !v)} className="inline-flex items-center gap-1.5 self-start text-px15 font-semibold text-muted-foreground hover:text-foreground">
-              <ChevronDown className={`size-4 transition-transform ${technical ? 'rotate-180' : ''}`} />
-              {technical ? m.project_secrets__hide_technical() : m.project_secrets__show_technical()}
-            </button>
           </div>
         )}
       </QueryState>

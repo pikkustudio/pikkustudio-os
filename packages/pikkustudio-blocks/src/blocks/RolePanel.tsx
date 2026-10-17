@@ -5,10 +5,10 @@ import { ShieldCheck, ShieldPlus, Trash2 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Textarea } from '../ui/textarea'
-import { Switch } from '../ui/switch'
 import { SidePanel } from './SidePanel'
 import { FixNotice } from './FixNotice'
 import { useProjectAction } from '../lib/projectRpc'
+import { useDeveloperDetails } from '../lib/developer-details'
 import { coveredBy, depthOf, isAllowed, plainName, sameSet, togglePermission, type DeclaredPermission, type Role } from '../lib/permissions'
 
 const INDENT = ['', 'ps-6', 'ps-12', 'ps-18']
@@ -19,7 +19,7 @@ export function RolePanel({ projectKey, role, declared, taken, onClose }: { proj
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [selected, setSelected] = useState<string[]>(role?.scopes ?? [])
-  const [technical, setTechnical] = useState(false)
+  const [technical] = useDeveloperDetails()
   const [confirming, setConfirming] = useState(false)
   const create = useProjectAction<{ name: string; description?: string; scopes: string[] }>(projectKey, 'admin:scopeCreateRole', ROLES)
   const update = useProjectAction<{ name: string; scopes: string[] }>(projectKey, 'admin:scopeSetRoleScopes', ROLES)
@@ -76,12 +76,7 @@ export function RolePanel({ projectKey, role, declared, taken, onClose }: { proj
         ) : null}
 
         <section className="flex flex-col gap-2" aria-label={m.permissions_panel__can_do()}>
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <h3 className="font-heading text-[18px] font-bold">{m.permissions_panel__can_do()}</h3>
-            <Switch checked={technical} onCheckedChange={setTechnical}>
-              {m.permissions_panel__technical()}
-            </Switch>
-          </div>
+          <h3 className="font-heading text-[18px] font-bold">{m.permissions_panel__can_do()}</h3>
           {shown.length === 0 ? (
             <p className="text-px15 text-ink-2">{m.permissions_panel__nothing_declared()}</p>
           ) : (

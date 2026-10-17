@@ -79,7 +79,7 @@ export function AuditScreen() {
 
   return (
     <Page gap="snug">
-      <PageHead crumb={projectName} title={m.audit_screen__title()} text={m.audit_screen__text()} size="lead" />
+      <PageHead crumb={projectName} title={m.audit_screen__title()} text={m.audit_screen__text()} size="lead" developerDetails />
 
       <NextCard label={m.audit_screen__title()} hue="sea" art={<Art />} title={heroTitle} why={heroText}>
         <div>

@@ -1,6 +1,7 @@
 import type { I18nNode, I18nString } from '@pikku/react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { PinButton } from './PinButton'
+import { DeveloperDetailsButton } from './DeveloperDetailsButton'
 
 const head = cva('flex flex-wrap justify-between gap-5', {
   variants: { align: { start: 'items-start', end: 'items-end' } },
@@ -17,7 +18,7 @@ const lead = cva('text-pretty text-ink-2', {
   defaultVariants: { size: 'default' },
 })
 
-export function PageHead({ crumb, title, text, children, size, width, ...v }: { crumb?: I18nNode; title: I18nString; text?: I18nNode; children?: I18nNode } & VariantProps<typeof head> & VariantProps<typeof lead> & VariantProps<typeof body>) {
+export function PageHead({ crumb, title, text, children, developerDetails, size, width, ...v }: { crumb?: I18nNode; title: I18nString; text?: I18nNode; children?: I18nNode; developerDetails?: boolean } & VariantProps<typeof head> & VariantProps<typeof lead> & VariantProps<typeof body>) {
   return (
     <div data-testid="page-head" className={head(v)}>
       <div className={body({ width })}>
@@ -27,6 +28,7 @@ export function PageHead({ crumb, title, text, children, size, width, ...v }: { 
       </div>
       <div className="flex items-start gap-2.5">
         {children}
+        {developerDetails ? <DeveloperDetailsButton /> : null}
         <PinButton />
       </div>
     </div>

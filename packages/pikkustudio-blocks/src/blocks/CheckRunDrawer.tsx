@@ -1,7 +1,7 @@
 import { asI18n, sep } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useContext, useEffect, useState } from 'react'
-import { ArrowLeft, Check, ChevronDown, CircleAlert, X } from 'lucide-react'
+import { ArrowLeft, Check, CircleAlert, X } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Dot } from './RowCard'
 import { ErrorState } from './ErrorState'
@@ -10,6 +10,7 @@ import { ShellCtx } from '../lib/shell'
 import { useCanEdit } from '../lib/project-target'
 import { ago } from '../lib/virtualUsers'
 import { titleOf, useArtifact, useRun, type Artifact, type RunRecord, type ScenarioResult } from '../lib/checks'
+import { useDeveloperDetails } from '../lib/developer-details'
 
 function Picture({ projectKey, runId, a }: { projectKey: string; runId: string; a: Artifact }) {
   const src = useArtifact(projectKey, runId, a.path)
@@ -41,7 +42,7 @@ function Picture({ projectKey, runId, a }: { projectKey: string; runId: string; 
 
 function Walkthrough({ projectKey, runId, r, onBack }: { projectKey: string; runId: string; r: ScenarioResult; onBack: () => void }) {
   const { say } = useContext(ShellCtx)
-  const [technical, setTechnical] = useState(false)
+  const [technical] = useDeveloperDetails()
   const failed = r.status === 'failed'
   const pictures = r.artifacts ?? []
   const name = asI18n(titleOf(r))
@@ -71,15 +72,7 @@ function Walkthrough({ projectKey, runId, r, onBack }: { projectKey: string; run
             <PikkuDot />
             {m.checks_screen__ask_fix()}
           </Button>
-          {r.failure.stack && !r.failure.expected ? (
-            <>
-              <button type="button" aria-expanded={technical} onClick={() => setTechnical((v) => !v)} className="inline-flex items-center gap-1.5 self-start text-px15 font-semibold text-muted-foreground hover:text-foreground">
-                <ChevronDown className={`size-4 transition-transform ${technical ? 'rotate-180' : ''}`} />
-                {technical ? m.accounts_access__hide_developer() : m.accounts_access__show_developer()}
-              </button>
-              {technical ? <pre className="max-h-64 overflow-auto rounded-xl bg-secondary p-3 font-mono text-[12.5px] whitespace-pre-wrap text-ink-2">{asI18n(r.failure.stack)}</pre> : null}
-            </>
-          ) : null}
+          {technical && r.failure.stack && !r.failure.expected ? <pre className="max-h-64 overflow-auto rounded-xl bg-secondary p-3 font-mono text-[12.5px] whitespace-pre-wrap text-ink-2">{asI18n(r.failure.stack)}</pre> : null}
         </section>
       ) : null}
       {r.steps?.length ? (

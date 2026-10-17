@@ -89,7 +89,7 @@ export function ConnectionsScreen() {
 
   return (
     <Page gap="snug">
-      <PageHead crumb={app} title={m.connections_screen__title()} text={m.connections_screen__text()} size="lead" />
+      <PageHead crumb={app} title={m.connections_screen__title()} text={m.connections_screen__text()} size="lead" developerDetails />
 
       <QueryState query={meta} skeleton={<div className="h-56 animate-pulse rounded-next border border-border bg-secondary" />}>
         {() =>

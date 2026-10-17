@@ -1,12 +1,13 @@
 import { asI18n } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useState } from 'react'
-import { ChevronDown, X } from 'lucide-react'
+import { X } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { ChipRow } from './ChipRow'
 import { FixNotice } from './FixNotice'
 import { useProjectAction, useProjectQuery } from '../lib/projectRpc'
+import { useDeveloperDetails } from '../lib/developer-details'
 
 type Held = { roles: string[]; scopes: string[]; directScopes: string[] }
 type Role = { name: string; description?: string }
@@ -14,7 +15,7 @@ type Role = { name: string; description?: string }
 const HELD = 'admin:scopeListUserRoles'
 
 export function AccountAccess({ projectKey, userId, name }: { projectKey: string; userId: string; name: string }) {
-  const [technical, setTechnical] = useState(false)
+  const [technical] = useDeveloperDetails()
   const [role, setRole] = useState('')
   const [scope, setScope] = useState('')
   const held = useProjectQuery<Held>(projectKey, HELD, { userId })
@@ -86,10 +87,6 @@ export function AccountAccess({ projectKey, userId, name }: { projectKey: string
           onRetry={clear}
         />
       ) : null}
-      <button type="button" aria-expanded={technical} onClick={() => setTechnical((v) => !v)} className="inline-flex items-center gap-1.5 self-start text-px15 font-semibold text-muted-foreground hover:text-foreground">
-        <ChevronDown className={`size-4 transition-transform ${technical ? 'rotate-180' : ''}`} />
-        {technical ? m.accounts_access__hide_developer() : m.accounts_access__show_developer()}
-      </button>
       {technical ? (
         <div className="flex flex-col gap-3 rounded-xl bg-secondary p-4">
           <p className="text-px14 text-ink-2">{m.accounts_access__id()}</p>

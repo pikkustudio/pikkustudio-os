@@ -3,7 +3,6 @@ import { m } from '@/i18n/messages'
 import { useContext, useState } from 'react'
 import { ArrowUpRight, ShieldAlert, ShieldCheck } from 'lucide-react'
 import { Button } from '../ui/button'
-import { Switch } from '../ui/switch'
 import { Page } from '../blocks/Page'
 import { PageHead } from '../blocks/PageHead'
 import { NextCard } from '../blocks/NextCard'
@@ -14,6 +13,7 @@ import { PikkuDot } from '../blocks/PikkuDot'
 import { useProjectKey, useProjectName } from '../lib/project'
 import { useProjectAction, useProjectQuery } from '../lib/projectRpc'
 import { ShellCtx } from '../lib/shell'
+import { useDeveloperDetails } from '../lib/developer-details'
 import { ago } from '../lib/audit'
 
 type Severity = 'critical' | 'high' | 'moderate' | 'low' | 'info'
@@ -167,10 +167,10 @@ export function SecurityScreen() {
   const q = useProjectQuery<Report | null>(key, AUDIT, null)
   const run = useProjectAction(key, 'console:runSecurityAudit', [AUDIT])
   const askAll = useProjectAction<{ title: string; body?: string; route?: string }>(key, 'console:createStudioChange', ['console:listStudioChanges'])
-  const [dev, setDev] = useState(false)
+  const [dev] = useDeveloperDetails()
   const [showTools, setShowTools] = useState(false)
 
-  const head = <PageHead crumb={projectName} title={m.security_screen__title()} text={m.security_screen__text()} size="lead" />
+  const head = <PageHead crumb={projectName} title={m.security_screen__title()} text={m.security_screen__text()} size="lead" developerDetails />
 
   if (q.isError)
     return (
@@ -308,11 +308,6 @@ export function SecurityScreen() {
             </RowStack>
           ) : null}
 
-          <div className="px-1">
-            <Switch checked={dev} onCheckedChange={setDev}>
-              {m.security_screen__developer_details()}
-            </Switch>
-          </div>
         </>
       ) : null}
     </Page>

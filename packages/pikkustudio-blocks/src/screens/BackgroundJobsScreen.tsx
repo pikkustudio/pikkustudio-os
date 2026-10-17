@@ -32,7 +32,7 @@ export function BackgroundJobsScreen() {
   const { say } = useContext(ShellCtx)
   const q = useWorkMeta(key)
 
-  const head = <PageHead crumb={projectName} title={m.background_jobs__title()} text={m.background_jobs__text()} size="lead" />
+  const head = <PageHead crumb={projectName} title={m.background_jobs__title()} text={m.background_jobs__text()} size="lead" developerDetails />
 
   if (q.isError)
     return (

@@ -1,7 +1,7 @@
 import { asI18n, sep, type I18nNode, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useContext, useState } from 'react'
-import { ChevronDown, CircleAlert, ListChecks, Route } from 'lucide-react'
+import { CircleAlert, ListChecks, Route } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Page } from '../blocks/Page'
 import { PageHead } from '../blocks/PageHead'
@@ -18,6 +18,7 @@ import { ShellCtx } from '../lib/shell'
 import { isLocalOnly } from '../lib/code'
 import { ago } from '../lib/virtualUsers'
 import { isProblem, titleOf, useChecks, type Coverage, type Finding, type RunSummary } from '../lib/checks'
+import { useDeveloperDetails } from '../lib/developer-details'
 
 function Art() {
   return (
@@ -92,7 +93,7 @@ export function ChecksScreen() {
   const { verify, runs, latest, coverage, runVerify } = useChecks(key)
   const [drawer, setDrawer] = useState<{ runId: string; focus?: string } | null>(null)
   const [showFine, setShowFine] = useState(false)
-  const [technical, setTechnical] = useState(false)
+  const [technical] = useDeveloperDetails()
 
   const verifyOff = verify.isError && isLocalOnly(verify.error)
   const checking = runVerify.isPending || !!verify.data?.running
@@ -133,7 +134,7 @@ export function ChecksScreen() {
   return (
     <div className={`@container/vu transition-[padding] duration-200 ${drawer ? 'pe-[24rem] @min-[1700px]/app:pe-110' : ''}`}>
       <Page gap="snug">
-        <PageHead crumb={projectName} title={m.checks_screen__title()} text={m.checks_screen__text()} size="lead" />
+        <PageHead crumb={projectName} title={m.checks_screen__title()} text={m.checks_screen__text()} size="lead" developerDetails />
 
         <NextCard label={m.checks_screen__title()} hue={problems > 0 ? 'teal' : 'sea'} art={<Art />} title={title} why={why}>
           <div className="flex flex-wrap gap-3">
@@ -166,17 +167,11 @@ export function ChecksScreen() {
             ) : findings.length === 0 ? (
               <StatusLine tone="ok" text={m.checks_screen__code_clean({ when: ago(verify.data.result.startedAt) })} />
             ) : (
-              <>
-                <RowStack>
-                  {findings.map((f) => (
-                    <FindingRow key={f.id} f={f} technical={technical} />
-                  ))}
-                </RowStack>
-                <button type="button" aria-expanded={technical} onClick={() => setTechnical((v) => !v)} className="inline-flex items-center gap-1.5 self-start px-1 text-px15 font-semibold text-muted-foreground hover:text-foreground">
-                  <ChevronDown className={`size-4 transition-transform ${technical ? 'rotate-180' : ''}`} />
-                  {technical ? m.accounts_access__hide_developer() : m.accounts_access__show_developer()}
-                </button>
-              </>
+              <RowStack>
+                {findings.map((f) => (
+                  <FindingRow key={f.id} f={f} technical={technical} />
+                ))}
+              </RowStack>
             )}
           </Group>
         ) : null}

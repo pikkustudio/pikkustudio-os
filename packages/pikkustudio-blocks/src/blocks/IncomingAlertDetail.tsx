@@ -1,11 +1,12 @@
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 import { m } from '@/i18n/messages'
 import { asI18n, type I18nNode, type I18nString } from '@pikku/react'
-import { BellRing, ChevronDown, Send } from 'lucide-react'
+import { BellRing, Send } from 'lucide-react'
 import { Button } from '../ui/button'
 import { ShellCtx } from '../lib/shell'
 import { useProjectQuery } from '../lib/projectRpc'
 import { ago, exactTime } from '../lib/audit'
+import { useDeveloperDetails } from '../lib/developer-details'
 import { Dot } from './RowCard'
 import { SidePanel } from './SidePanel'
 import { PikkuDot } from './PikkuDot'
@@ -22,28 +23,20 @@ function Fact({ label, children }: { label: I18nString; children: I18nNode }) {
 }
 
 function Technical({ rows }: { rows: Array<[I18nString, string | null | undefined]> }) {
-  const [open, setOpen] = useState(false)
+  const [on] = useDeveloperDetails()
   const shown = rows.filter(([, v]) => v)
-  if (shown.length === 0) return null
+  if (!on || shown.length === 0) return null
   return (
-    <>
-      <button type="button" aria-expanded={open} onClick={() => setOpen((v) => !v)} className="inline-flex items-center gap-1.5 self-start text-px15 font-semibold text-muted-foreground hover:text-foreground">
-        <ChevronDown className={`size-4 transition-transform ${open ? 'rotate-180' : ''}`} />
-        {open ? m.incoming_alerts__hide_technical() : m.incoming_alerts__show_technical()}
-      </button>
-      {open ? (
-        <dl className="m-0 flex flex-col gap-3 rounded-xl bg-secondary p-4">
-          {shown.map(([label, value]) => (
-            <div key={label} className="flex flex-col gap-0.5">
-              <dt className="text-px14 text-ink-2">{label}</dt>
-              <dd className="m-0">
-                <code dir="ltr" className="block font-mono text-px13 break-words whitespace-pre-wrap">{asI18n(value!)}</code>
-              </dd>
-            </div>
-          ))}
-        </dl>
-      ) : null}
-    </>
+    <dl className="m-0 flex flex-col gap-3 rounded-xl bg-secondary p-4">
+      {shown.map(([label, value]) => (
+        <div key={label} className="flex flex-col gap-0.5">
+          <dt className="text-px14 text-ink-2">{label}</dt>
+          <dd className="m-0">
+            <code dir="ltr" className="block font-mono text-px13 break-words whitespace-pre-wrap">{asI18n(value!)}</code>
+          </dd>
+        </div>
+      ))}
+    </dl>
   )
 }
 

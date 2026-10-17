@@ -1,7 +1,7 @@
 import type { I18nNode, I18nString } from '@pikku/react'
 import { useContext, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { ChevronDown, LockKeyhole, Plug, ToggleRight } from 'lucide-react'
+import { LockKeyhole, Plug, ToggleRight } from 'lucide-react'
 import { m } from '@/i18n/messages'
 import { Button } from '../ui/button'
 import { Page } from '../blocks/Page'
@@ -20,6 +20,7 @@ import { useCanEdit } from '../lib/project-target'
 import { ShellCtx } from '../lib/shell'
 import { accountsProblem } from '../lib/accounts'
 import { needsLook, SWITCH_RPCS, type SwitchList } from '../lib/switches'
+import { useDeveloperDetails } from '../lib/developer-details'
 
 const Group = ({ title, children }: { title: I18nString; children: I18nNode }) => (
   <section className="flex flex-col gap-2" aria-label={title}>
@@ -35,7 +36,7 @@ export function SwitchesScreen() {
   const canEdit = useCanEdit()
   const client = useQueryClient()
   const [open, setOpen] = useState<string | null>(null)
-  const [technical, setTechnical] = useState(false)
+  const [technical] = useDeveloperDetails()
   const list = useProjectQuery<SwitchList>(key, 'admin:flagList')
   const refresh = () => {
     for (const n of SWITCH_RPCS) void client.invalidateQueries({ queryKey: ['project', key, n] })
@@ -52,7 +53,7 @@ export function SwitchesScreen() {
 
   return (
     <Page gap="snug">
-      <PageHead crumb={projectName} title={m.switches_screen__title()} text={m.switches_screen__text()} size="lead" />
+      <PageHead crumb={projectName} title={m.switches_screen__title()} text={m.switches_screen__text()} size="lead" developerDetails />
       <SwitchesHero
         total={list.data ? flags.length : undefined}
         on={flags.filter((f) => f.enabled).length}
@@ -109,31 +110,23 @@ export function SwitchesScreen() {
         </QueryState>
       )}
 
-      {list.data ? (
-        <div className="flex flex-col gap-3">
-          <button type="button" aria-expanded={technical} onClick={() => setTechnical((v) => !v)} className="inline-flex items-center gap-1.5 self-start text-px15 font-semibold text-muted-foreground hover:text-foreground">
-            <ChevronDown className={`size-4 transition-transform ${technical ? 'rotate-180' : ''}`} />
-            {technical ? m.switches_screen__hide_technical() : m.switches_screen__show_technical()}
-          </button>
-          {technical ? (
-            <div className="flex flex-col gap-4 rounded-xl bg-secondary p-4">
-              {!list.data.writable ? <p className="text-px14 text-ink-2">{m.switches_screen__read_only_tech()}</p> : null}
-              <div className="flex flex-col items-start gap-2">
-                <p className="text-px14 text-ink-2">{m.switches_screen__sync_explain()}</p>
-                <Button type="button" variant="bordered" size="compact" disabled={!canChange || sync.isPending} aria-busy={sync.isPending} onClick={() => sync.mutate(null)}>
-                  {m.switches_screen__sync()}
-                </Button>
-                {sync.isError ? <StatusLine tone="bad" text={m.switches_screen__sync_failed()} /> : sync.data ? <StatusLine tone="ok" text={m.switches_screen__synced({ count: sync.data.synced })} /> : null}
-              </div>
-              <div className="flex flex-col items-start gap-2">
-                <p className="text-px14 text-ink-2">{m.switches_screen__prune_explain()}</p>
-                <Button type="button" variant="bordered" size="compact" disabled={!canChange || prune.isPending} aria-busy={prune.isPending} onClick={() => prune.mutate(null)}>
-                  {m.switches_screen__prune()}
-                </Button>
-                {prune.isError ? <StatusLine tone="bad" text={m.switches_screen__prune_failed()} /> : prune.data ? <StatusLine tone="ok" text={m.switches_screen__pruned({ count: prune.data.pruned.length })} /> : null}
-              </div>
-            </div>
-          ) : null}
+      {list.data && technical ? (
+        <div className="flex flex-col gap-4 rounded-xl bg-secondary p-4">
+          {!list.data.writable ? <p className="text-px14 text-ink-2">{m.switches_screen__read_only_tech()}</p> : null}
+          <div className="flex flex-col items-start gap-2">
+            <p className="text-px14 text-ink-2">{m.switches_screen__sync_explain()}</p>
+            <Button type="button" variant="bordered" size="compact" disabled={!canChange || sync.isPending} aria-busy={sync.isPending} onClick={() => sync.mutate(null)}>
+              {m.switches_screen__sync()}
+            </Button>
+            {sync.isError ? <StatusLine tone="bad" text={m.switches_screen__sync_failed()} /> : sync.data ? <StatusLine tone="ok" text={m.switches_screen__synced({ count: sync.data.synced })} /> : null}
+          </div>
+          <div className="flex flex-col items-start gap-2">
+            <p className="text-px14 text-ink-2">{m.switches_screen__prune_explain()}</p>
+            <Button type="button" variant="bordered" size="compact" disabled={!canChange || prune.isPending} aria-busy={prune.isPending} onClick={() => prune.mutate(null)}>
+              {m.switches_screen__prune()}
+            </Button>
+            {prune.isError ? <StatusLine tone="bad" text={m.switches_screen__prune_failed()} /> : prune.data ? <StatusLine tone="ok" text={m.switches_screen__pruned({ count: prune.data.pruned.length })} /> : null}
+          </div>
         </div>
       ) : null}
 

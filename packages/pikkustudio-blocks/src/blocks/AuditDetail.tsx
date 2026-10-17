@@ -1,13 +1,14 @@
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 import { m } from '@/i18n/messages'
 import { asI18n, type I18nNode } from '@pikku/react'
-import { ChevronDown, ClipboardCheck } from 'lucide-react'
+import { ClipboardCheck } from 'lucide-react'
 import { Button } from '../ui/button'
 import { ShellCtx } from '../lib/shell'
 import { Dot } from './RowCard'
 import { SidePanel } from './SidePanel'
 import { PikkuDot } from './PikkuDot'
 import { ago, exactTime, extras, outcomeOf, whatHappened, whoDid, type AuditEntry, type AuditUser } from '../lib/audit'
+import { useDeveloperDetails } from '../lib/developer-details'
 
 function Fact({ label, children }: { label: ReturnType<typeof m.audit_screen__detail_who>; children: I18nNode }) {
   return (
@@ -20,7 +21,7 @@ function Fact({ label, children }: { label: ReturnType<typeof m.audit_screen__de
 
 export function AuditDetail({ entry, users, now, onClose }: { entry: AuditEntry; users: Record<string, AuditUser> | undefined; now: number; onClose: () => void }) {
   const { say } = useContext(ShellCtx)
-  const [technical, setTechnical] = useState(false)
+  const [technical] = useDeveloperDetails()
   const outcome = outcomeOf(entry)
   const more = extras(entry.metadata)
   const line = m.audit_screen__line({ who: whoDid(entry, users), did: whatHappened(entry.type) })
@@ -47,10 +48,6 @@ export function AuditDetail({ entry, users, now, onClose }: { entry: AuditEntry;
         <PikkuDot />
         {m.audit_screen__ask_about_line()}
       </Button>
-      <button type="button" aria-expanded={technical} onClick={() => setTechnical((v) => !v)} className="inline-flex items-center gap-1.5 self-start text-px15 font-semibold text-muted-foreground hover:text-foreground">
-        <ChevronDown className={`size-4 transition-transform ${technical ? 'rotate-180' : ''}`} />
-        {technical ? m.audit_screen__hide_technical() : m.audit_screen__show_technical()}
-      </button>
       {technical ? (
         <div className="rounded-xl bg-secondary p-4">
           <p className="text-px14 text-ink-2">{m.audit_screen__detail_called()}</p>
