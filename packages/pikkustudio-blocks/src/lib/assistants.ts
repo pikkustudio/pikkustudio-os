@@ -7,13 +7,21 @@ import { Bot } from 'lucide-react'
 import { ProjectRpcCtx } from './projectRpc'
 import type { Assistant, Past, Turn } from '../blocks/AssistantDrawer'
 
-type AgentMeta = { description?: string; tools?: string[]; agents?: string[] }
+type AgentMeta = { description?: string; summary?: string; model?: string; tools?: string[]; agents?: string[]; scorers?: string[] }
 type Thread = { id: string; title?: string; updatedAt: string }
 const hues: Assistant['hue'][] = ['petrol', 'teal', 'sea']
 const nice = (id: string): I18nString => {
   const label = id.replace(/^.*[:.]/, '').replace(/([a-z])([A-Z])/g, '$1 $2').replace(/[-_]/g, ' ').toLowerCase().replace(/^./, (c) => c.toUpperCase())
   return asI18n(label)
 }
+const brain = (model: string): I18nString =>
+  asI18n(
+    model
+      .replace(/^.*[/:]/, '')
+      .replace(/[-_]+/g, ' ')
+      .replace(/(\d) (\d)(?!\d)/g, '$1.$2')
+      .replace(/\b[a-z]/g, (c) => c.toUpperCase()),
+  )
 const turnsOf = (msgs: unknown[]): Turn[] =>
   convertDbMessages(msgs).flatMap((msg): Turn[] => {
     const parts = typeof msg.content === 'string' ? [{ type: 'text' as const, text: msg.content }] : msg.content
@@ -44,7 +52,7 @@ export const useAssistants = (key: string) => {
               return { id: t.id, who: title ? asI18n(title) : m.assistant_drawer__a_visitor(), when: asI18n(when), outcome: asI18n(outcome), went: 'plain' as const, turns }
             }),
           )
-          const description = a.description
+          const description = a.summary ?? a.description
           return {
             id,
             name: nice(id),
@@ -53,8 +61,9 @@ export const useAssistants = (key: string) => {
             hello: description ? asI18n(description) : m.assistant_drawer__hello_fallback({ name: nice(id).toLowerCase() }),
             does: (a.tools ?? []).map(nice),
             handsOff: (a.agents ?? []).map(nice),
+            thinks: a.model ? brain(a.model) : null,
             chats: threads.length,
-            check: null,
+            check: a.scorers?.length ? a.scorers.map(nice).join(', ') : null,
             history,
           } satisfies Assistant
         }),

@@ -227,7 +227,7 @@
       }
     }
   ],
-  "assistants_screen__check_suffix": "· {check}",
+  "assistants_screen__check_suffix": "· يُفحص من حيث {check}",
   "assistants_screen__each_one_talks_to_people": [
     {
       "declarations": [
@@ -280,7 +280,6 @@
   "assistants_screen__title": "المساعدون",
   "assistants_screen__try_it_for_me": "تجربته لأجلي",
   "assistants_screen__try_one": "جربوا أحدهم",
-  "assistants_screen__try_say": "جربوا مساعد الحجز كما يفعل الزائر",
   "assistants_screen__your_assistants": "مساعدوكم",
   "builder_chat__add_to_queue": "إضافة إلى قائمة الانتظار",
   "builder_chat__bigger_detail": "يمكنني وضعه في قائمة الانتظار وتنفيذه كتغيير مستقل، أو إنجازه الآن في هذه المحادثة.",
@@ -3958,5 +3957,16 @@
       }
     }
   ],
-  "logs_screen__problem_show": "اعرض"
+  "logs_screen__problem_show": "اعرض",
+  "assistants_screen__thinks_with": "يفكر باستخدام {name}",
+  "assistants_screen__search": "ابحثوا عن مساعد",
+  "assistants_screen__no_matches": "لا يوجد مساعد يطابق «{query}».",
+  "assistants_screen__empty": "لا يوجد مساعدون بعد",
+  "assistants_screen__empty_text": "المساعد يتحدث مع زوّاركم نيابةً عنكم. اطلبوا من Pikku إضافة واحد وقولوا له بماذا يساعد.",
+  "assistant_drawer__delete_chat": "احذفوا هذه المحادثة",
+  "assistant_drawer__delete_confirm": "حذف هذه المحادثة نهائيًا؟ لا يمكن استعادتها.",
+  "assistant_drawer__delete_yes": "احذفوها",
+  "assistant_drawer__keep_it": "أبقوها",
+  "assistant_drawer__delete_failed": "لم تُحذف المحادثة",
+  "assistant_drawer__delete_failed_body": "لم يتغير شيء. حاولوا مرة أخرى."
 }

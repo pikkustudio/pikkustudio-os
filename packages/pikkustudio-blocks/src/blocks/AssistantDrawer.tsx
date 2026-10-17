@@ -3,10 +3,11 @@ import { m } from '@/i18n/messages'
 import { asI18n, sep, type I18nString } from '@pikku/react'
 import { useContext, useEffect, useState } from 'react'
 import type { LucideIcon } from 'lucide-react'
-import { ArrowLeft, Check, CircleAlert, KeyRound, Moon, Wrench, X } from 'lucide-react'
+import { ArrowLeft, Check, CircleAlert, KeyRound, Moon, Trash2, Wrench, X } from 'lucide-react'
 import { Button } from '../ui/button'
 import { ProjectAgentApiCtx } from '../lib/chat'
-import { useProjectQuery } from '../lib/projectRpc'
+import { useProjectAction, useProjectQuery } from '../lib/projectRpc'
+import { InlineAlert } from './InlineAlert'
 import { GRADE_NOT_QUITE } from '../lib/tokens'
 
 
@@ -20,6 +21,7 @@ export type Assistant = {
   hello: I18nString
   does: I18nString[]
   handsOff: I18nString[]
+  thinks: I18nString | null
   chats: number
   check: string | null
   history: Past[]
@@ -47,6 +49,8 @@ type Needed = { requirements: { credentialName: string; displayName: string; con
 export function AssistantDrawer({ a, projectKey, start, onClose, onPikku, onFix }: { a: Assistant; projectKey: string; start: 'chat' | 'history'; onClose: () => void; onPikku: () => void; onFix: (text: I18nString) => void }) {
   const [tab, setTab] = useState(start)
   const [seen, setSeen] = useState<string | null>(null)
+  const [asking, setAsking] = useState(false)
+  const remove = useProjectAction<{ threadId: string }>(projectKey, 'console:deleteAgentThread', ['assistants'])
   const api = useContext(ProjectAgentApiCtx)(projectKey)
   const needed = useProjectQuery<Needed>(projectKey, 'console:agentCredentialCheck', { agentName: a.id })
   const missing = needed.data && !needed.data.allConnected ? needed.data.requirements.filter((r) => !r.connected) : []
@@ -69,7 +73,7 @@ export function AssistantDrawer({ a, projectKey, start, onClose, onPikku, onFix 
   }
 
   const tabBtn = (id: 'chat' | 'history', label: I18nString) => (
-    <button type="button" role="tab" aria-selected={tab === id} onClick={() => (setTab(id), setSeen(null))} className={`border-b-[3px] px-4 py-3 text-[16px] font-semibold ${tab === id ? 'border-primary text-accent-foreground' : 'border-transparent text-ink-2'}`}>
+    <button type="button" role="tab" aria-selected={tab === id} onClick={() => (setTab(id), setSeen(null), setAsking(false), remove.reset())} className={`border-b-[3px] px-4 py-3 text-[16px] font-semibold ${tab === id ? 'border-primary text-accent-foreground' : 'border-transparent text-ink-2'}`}>
       {label}
     </button>
   )
@@ -123,7 +127,7 @@ export function AssistantDrawer({ a, projectKey, start, onClose, onPikku, onFix 
       ) : past ? (
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="flex items-center gap-3 border-b border-border px-5 py-3">
-            <Button variant="bordered" size="compact" onClick={() => setSeen(null)}>
+            <Button variant="bordered" size="compact" onClick={() => (setSeen(null), setAsking(false), remove.reset())}>
               <ArrowLeft className="rtl:-scale-x-100 size-4" aria-hidden="true" />
               
               {m.assistant_drawer__all_chats()}
@@ -145,11 +149,36 @@ export function AssistantDrawer({ a, projectKey, start, onClose, onPikku, onFix 
               </div>
             )}
           </div>
-          <div className="flex flex-wrap gap-3 border-t border-border px-5 py-4">
-            <Button variant="bordered" size="compact" onClick={() => onFix(m.assistant_drawer__fix_prompt({ name: a.name, who: past.who, when: past.when }))}>
-              
-              {m.assistant_drawer__it_got_this_wrong()}
-            </Button>
+          <div className="flex flex-col gap-3 border-t border-border px-5 py-4">
+            {remove.isError ? <InlineAlert title={m.assistant_drawer__delete_failed()} body={m.assistant_drawer__delete_failed_body()} /> : null}
+            {asking ? (
+              <div className="flex flex-col gap-3">
+                <p className="text-[15px] text-foreground">{m.assistant_drawer__delete_confirm()}</p>
+                <div className="flex flex-wrap gap-3">
+                  <Button
+                    variant="destructive"
+                    size="compact"
+                    aria-busy={remove.isPending}
+                    onClick={() => remove.mutate({ threadId: past.id }, { onSuccess: () => (setSeen(null), setAsking(false)) })}
+                  >
+                    {m.assistant_drawer__delete_yes()}
+                  </Button>
+                  <Button variant="ghost" size="compact" onClick={() => (setAsking(false), remove.reset())}>
+                    {m.assistant_drawer__keep_it()}
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-3">
+                <Button variant="bordered" size="compact" onClick={() => onFix(m.assistant_drawer__fix_prompt({ name: a.name, who: past.who, when: past.when }))}>
+                  {m.assistant_drawer__it_got_this_wrong()}
+                </Button>
+                <Button variant="ghost" size="compact" onClick={() => setAsking(true)}>
+                  <Trash2 className="size-4" aria-hidden="true" />
+                  {m.assistant_drawer__delete_chat()}
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       ) : (

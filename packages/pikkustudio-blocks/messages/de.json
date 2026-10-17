@@ -223,7 +223,7 @@
       }
     }
   ],
-  "assistants_screen__check_suffix": "· {check}",
+  "assistants_screen__check_suffix": "· geprüft auf {check}",
   "assistants_screen__each_one_talks_to_people": [
     {
       "declarations": [
@@ -268,7 +268,6 @@
   "assistants_screen__title": "Assistenten",
   "assistants_screen__try_it_for_me": "Für mich ausprobieren",
   "assistants_screen__try_one": "Einen ausprobieren",
-  "assistants_screen__try_say": "Probiere den Buchungs-Helfer aus, wie es ein Besucher tun würde",
   "assistants_screen__your_assistants": "Deine Assistenten",
   "builder_chat__add_to_queue": "In die Warteschlange",
   "builder_chat__bigger_detail": "Ich kann es in die Warteschlange stellen und als eigene Änderung bauen oder es gleich hier im Chat erledigen.",
@@ -3670,5 +3669,16 @@
       }
     }
   ],
-  "logs_screen__problem_show": "Zeigen"
+  "logs_screen__problem_show": "Zeigen",
+  "assistants_screen__thinks_with": "Denkt mit {name}",
+  "assistants_screen__search": "Assistenten finden",
+  "assistants_screen__no_matches": "Kein Assistent passt zu „{query}“.",
+  "assistants_screen__empty": "Noch keine Assistenten",
+  "assistants_screen__empty_text": "Ein Assistent spricht für dich mit deinen Besuchern. Bitte Pikku, einen hinzuzufügen, und sag, wobei er helfen soll.",
+  "assistant_drawer__delete_chat": "Diesen Chat löschen",
+  "assistant_drawer__delete_confirm": "Diesen Chat endgültig löschen? Er lässt sich nicht zurückholen.",
+  "assistant_drawer__delete_yes": "Löschen",
+  "assistant_drawer__keep_it": "Behalten",
+  "assistant_drawer__delete_failed": "Der Chat wurde nicht gelöscht",
+  "assistant_drawer__delete_failed_body": "Es wurde nichts geändert. Versuche es noch einmal."
 }

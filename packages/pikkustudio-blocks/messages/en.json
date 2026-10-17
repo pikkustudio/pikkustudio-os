@@ -233,7 +233,7 @@
       }
     }
   ],
-  "assistants_screen__check_suffix": "· {check}",
+  "assistants_screen__check_suffix": "· checked for {check}",
   "assistants_screen__each_one_talks_to_people": [
     {
       "declarations": [
@@ -278,7 +278,6 @@
   "assistants_screen__title": "Assistants",
   "assistants_screen__try_it_for_me": "Try it for me",
   "assistants_screen__try_one": "Try one out",
-  "assistants_screen__try_say": "Try the Booking helper the way a visitor would",
   "assistants_screen__your_assistants": "Your assistants",
   "audit_screen__a_minute_ago": "a minute ago",
   "audit_screen__add_it": "Ask Pikku to add it",
@@ -3878,5 +3877,16 @@
       }
     }
   ],
-  "logs_screen__problem_show": "Show"
+  "logs_screen__problem_show": "Show",
+  "assistants_screen__thinks_with": "Thinks with {name}",
+  "assistants_screen__search": "Find an assistant",
+  "assistants_screen__no_matches": "No assistant matches “{query}”.",
+  "assistants_screen__empty": "No assistants yet",
+  "assistants_screen__empty_text": "An assistant talks with your visitors for you. Ask Pikku to add one and say what it should help with.",
+  "assistant_drawer__delete_chat": "Delete this chat",
+  "assistant_drawer__delete_confirm": "Delete this chat for good? It cannot be brought back.",
+  "assistant_drawer__delete_yes": "Delete it",
+  "assistant_drawer__keep_it": "Keep it",
+  "assistant_drawer__delete_failed": "The chat was not deleted",
+  "assistant_drawer__delete_failed_body": "Nothing was changed. Try again."
 }

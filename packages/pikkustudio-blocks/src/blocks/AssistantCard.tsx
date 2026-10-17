@@ -20,7 +20,7 @@ export function AssistantCard({ x, on, onChat, onPast }: { x: Assistant; on: boo
         {x.handsOff.length > 0 ? sep(' ') : null}
         {x.handsOff.length > 0 ? m.assistants_screen__hands_off({ list: x.handsOff.join(', ') }) : null}
       </p>
-      <small className="mt-auto text-[14px] text-hero-ink-2">{sleeping ? m.assistants_screen__not_used() : m.assistants_screen__chats_month({ count: x.chats })}{sep(' ')}{x.check ? m.assistants_screen__check_suffix({ check: x.check }) : m.assistants_screen__no_check_suffix()}</small>
+      <small className="mt-auto text-[14px] text-hero-ink-2">{sleeping ? m.assistants_screen__not_used() : m.assistants_screen__chats_month({ count: x.chats })}{x.thinks ? sep(' · ') : null}{x.thinks ? m.assistants_screen__thinks_with({ name: x.thinks }) : null}{sep(' ')}{x.check ? m.assistants_screen__check_suffix({ check: x.check }) : m.assistants_screen__no_check_suffix()}</small>
       <div className="flex gap-3">
         <Button variant="hero" size="compact" onClick={() => onChat()}>
           {m.assistants_screen__chat_with_me()}
