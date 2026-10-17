@@ -4403,7 +4403,7 @@
   "project_secrets__secrets": "الأسرار",
   "project_secrets__settings": "الإعدادات",
   "project_secrets__saved": "محفوظ",
-  "project_secrets__optional": "غير مطلوب",
+  "project_secrets__optional": "اختياري",
   "project_secrets__needs_value": "يحتاج إلى قيمة",
   "project_secrets__change": "تغيير",
   "project_secrets__add": "أضفه",
@@ -4458,6 +4458,7 @@
       }
     }
   ],
+  "project_secrets__drawer_optional": "يعمل مشروعك بدونه. أضفه لتشغيل ما هو مخصص له.",
   "bring_project__title": "أحضروا مشروعكم",
   "bring_project__sub": "ابدؤوا بشيء لديكم بالفعل",
   "bring_project__link_title": "الصقوا مكان وجوده",

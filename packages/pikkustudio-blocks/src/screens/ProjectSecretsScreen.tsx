@@ -15,7 +15,7 @@ import { ProjectValueDrawer } from '../blocks/ProjectValueDrawer'
 import { useProjectKey, useProjectName } from '../lib/project'
 import { useProjectAction } from '../lib/projectRpc'
 import { useSlots } from '../lib/slots'
-import { useLocalSettings, useSecretsSet, useProjectSecretsMeta, type ProjectSecret, type ProjectValue } from '../lib/projectSecrets'
+import { useLocalSettings, useSecretsSet, useProjectSecretsMeta, valueState, type ProjectSecret, type ProjectValue, type ValueState } from '../lib/projectSecrets'
 import { useDeveloperDetails } from '../lib/developer-details'
 
 function Art() {
@@ -46,6 +46,9 @@ const Skeleton = () => (
     ))}
   </div>
 )
+
+const StateDot = ({ state }: { state: ValueState }) =>
+  state === 'saved' ? <Dot>{m.project_secrets__saved()}</Dot> : <Dot tone={state === 'optional' ? 'quiet' : 'warn'}>{state === 'optional' ? m.project_secrets__optional() : m.project_secrets__needs_value()}</Dot>
 
 const Tech = ({ show, name, id }: { show: boolean; name: string; id: string }) =>
   show ? (
@@ -146,7 +149,7 @@ export function ProjectSecretsScreen() {
     return (
       <RowCard
         key={s.id}
-        flag={!has && !s.optional}
+        flag={valueState(s, has) === 'needed'}
         tile={s.connected ? <Link2 className="size-5" /> : <KeyRound className="size-5" />}
         title={asI18n(s.label)}
         caption={s.connected ? m.project_secrets__connected() : !has && s.about ? asI18n(s.about) : undefined}
@@ -158,7 +161,7 @@ export function ProjectSecretsScreen() {
           </Button>
         ) : (
           <>
-            {has ? <Dot>{m.project_secrets__saved()}</Dot> : <Dot tone={s.optional ? 'quiet' : 'warn'}>{s.optional ? m.project_secrets__optional() : m.project_secrets__needs_value()}</Dot>}
+            <StateDot state={valueState(s, has)} />
             <Button type="button" variant="bordered" size="compact" onClick={() => open({ kind: 'secret', item: s })}>
               {has ? m.project_secrets__change() : m.project_secrets__add()}
             </Button>
@@ -174,7 +177,7 @@ export function ProjectSecretsScreen() {
     return (
       <RowCard
         key={s.id}
-        flag={!!settingsHere && !has && !s.optional}
+        flag={!!settingsHere && valueState(s, has) === 'needed'}
         tile={<SlidersHorizontal className="size-5" />}
         title={asI18n(s.label)}
         caption={has && v?.value ? asI18n(v.value) : s.about ? asI18n(s.about) : undefined}
@@ -183,7 +186,7 @@ export function ProjectSecretsScreen() {
       >
         {settingsEditable ? (
           <>
-            {settingsHere && !has ? <Dot tone={s.optional ? 'quiet' : 'warn'}>{s.optional ? m.project_secrets__optional() : m.project_secrets__needs_value()}</Dot> : null}
+            {settingsHere && !has ? <StateDot state={valueState(s, has)} /> : null}
             <Button type="button" variant="bordered" size="compact" disabled={!settingsHere} onClick={() => open({ kind: 'setting', item: s })}>
               {has ? m.project_secrets__change() : m.project_secrets__add()}
             </Button>

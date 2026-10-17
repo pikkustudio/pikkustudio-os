@@ -4298,7 +4298,7 @@
   "project_secrets__secrets": "Secrets",
   "project_secrets__settings": "Settings",
   "project_secrets__saved": "Saved",
-  "project_secrets__optional": "Not needed",
+  "project_secrets__optional": "Optional",
   "project_secrets__needs_value": "Needs a value",
   "project_secrets__change": "Change",
   "project_secrets__add": "Add it",
@@ -4353,6 +4353,7 @@
       }
     }
   ],
+  "project_secrets__drawer_optional": "Your project works without this. Add it to turn on what it is for.",
   "bring_project__title": "Bring in your project",
   "bring_project__sub": "Start from something you already have",
   "bring_project__link_title": "Paste where it lives",

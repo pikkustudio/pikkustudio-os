@@ -6,7 +6,7 @@ import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { SidePanel } from './SidePanel'
 import { HintNote } from './HintNote'
-import type { ProjectValue } from '../lib/projectSecrets'
+import { valueState, type ProjectValue } from '../lib/projectSecrets'
 
 /** Fill in one secret or one setting the project asks for. A secret's value is never shown, only replaced. */
 export function ProjectValueDrawer({
@@ -32,6 +32,7 @@ export function ProjectValueDrawer({
 }) {
   const [value, setValue] = useState(current ?? '')
   const secret = kind === 'secret'
+  const state = valueState(item, hasValue)
   const valid = value.length > 0 && value !== (current ?? '')
 
   const submit = async (event: FormEvent) => {
@@ -45,7 +46,7 @@ export function ProjectValueDrawer({
       icon={secret ? KeyRound : SlidersHorizontal}
       label={secret ? m.project_secrets__drawer_secret() : m.project_secrets__drawer_setting()}
       title={asI18n(item.label)}
-      sub={hasValue ? (secret ? m.project_secrets__drawer_replaces() : m.project_secrets__drawer_setting_sub()) : m.project_secrets__drawer_needed()}
+      sub={state === 'saved' ? (secret ? m.project_secrets__drawer_replaces() : m.project_secrets__drawer_setting_sub()) : state === 'optional' ? m.project_secrets__drawer_optional() : m.project_secrets__drawer_needed()}
       onClose={onClose}
     >
       <form onSubmit={submit} className="flex flex-col gap-4.5">

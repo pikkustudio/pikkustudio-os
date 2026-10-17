@@ -11,6 +11,11 @@ type Meta = { secretsMeta?: Record<string, SecretMeta>; variablesMeta?: Record<s
 export type ProjectValue = { id: string; name: string; label: string; about?: string; optional: boolean; docsUrl?: string }
 export type ProjectSecret = ProjectValue & { connected: boolean }
 
+export type ValueState = 'saved' | 'needed' | 'optional'
+
+/** One answer for "does the project need this?", shared by the row and the side panel. */
+export const valueState = (item: Pick<ProjectValue, 'optional'>, has: boolean): ValueState => (has ? 'saved' : item.optional ? 'optional' : 'needed')
+
 const byLabel = (a: ProjectValue, b: ProjectValue) => a.label.localeCompare(b.label)
 
 /** The secrets and settings the project's code declares. Same query, and so the same cache entry, as the other screens that read the meta. */

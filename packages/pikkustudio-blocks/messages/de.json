@@ -4087,7 +4087,7 @@
   "project_secrets__secrets": "Geheimnisse",
   "project_secrets__settings": "Einstellungen",
   "project_secrets__saved": "Gespeichert",
-  "project_secrets__optional": "Nicht nötig",
+  "project_secrets__optional": "Optional",
   "project_secrets__needs_value": "Braucht einen Wert",
   "project_secrets__change": "Ändern",
   "project_secrets__add": "Eintragen",
@@ -4142,6 +4142,7 @@
       }
     }
   ],
+  "project_secrets__drawer_optional": "Dein Projekt läuft auch ohne. Füge es hinzu, um einzuschalten, wofür es da ist.",
   "bring_project__title": "Dein Projekt hereinholen",
   "bring_project__sub": "Mit etwas beginnen, das du schon hast",
   "bring_project__link_title": "Füg ein, wo es liegt",
