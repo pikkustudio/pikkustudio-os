@@ -15,6 +15,24 @@ export type StageAuditPage = {
   users: Record<string, RawPerson>
 }
 
+export type LiveTraffic = { at: number; requests: number; errors: number; avgMs: number; maxMs: number }
+export type LiveFunction = { name: string; requests: number; errors: number; avgMs: number | null; lastRun: number | null }
+export type LiveMetrics = {
+  /** The target name of the published site, or null where nothing is published. */
+  site: string | null
+  found: boolean
+  published: boolean
+  publishing: boolean
+  isPending: boolean
+  error: unknown
+  isFetching: boolean
+  retry: () => void
+  traffic: LiveTraffic[]
+  functions: LiveFunction[]
+  slowHits: number
+  slowLimitMs: number
+}
+
 export type Slots = {
   SignInHero?: ComponentType<{ st: string; loading: boolean; open: Open; done: () => void }>
   SignInOffer?: ComponentType<{ loading: boolean; open: Open; done: () => void }>
@@ -33,6 +51,8 @@ export type Slots = {
   ProjectNav?: ComponentType<{ itemClass: string; labelClass: string; collapsed: boolean }>
   /** History of the deployed copy of a project; absent where nothing deploys. A hook, called every render. */
   useStageAudit?: (projectKey: string, refetchInterval: number) => { data?: StageAuditPage }
+  /** Requests and speed of a published copy, by target name; null asks only where the site is. A hook, called every render. */
+  useLiveMetrics?: (name: string | null, hours: number) => LiveMetrics
   useReleases?: (projectKey: string) => ReleasesView
   useReleaseDetail?: (projectKey: string, id: string, wanted: boolean) => ReleaseDetail
   useLiveUpdates?: (queryKeys: readonly string[]) => void

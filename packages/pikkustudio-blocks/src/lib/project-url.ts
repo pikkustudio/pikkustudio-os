@@ -14,8 +14,8 @@ export const PAGES: Record<string, boolean> = {
   overview: true, project: false, review: false, 'review-ui': false, 'review-fixes': false, resume: false, publish: false, build: false, lab: false,
   billing: false, team: false, settings: false, 'project-settings': false, plans: false, ai: false, domains: false, workspaces: false, 'secret-access': false,
   'changes': true, design: true, emails: true, translations: true, artifacts: true, knowledge: true, content: true,
-  'front-doors': true, code: true, audit: true, apps: true, explore: true, logs: true, performance: true, metrics: true, scorers: true, connections: true, 'incoming-alerts': true,
-  assistants: true, 'virtual-users': true, accounts: true, routines: true, versions: false, addons: true, 'add-ons': true, mocks: true, surface: true, security: true,
+  'front-doors': true, code: true, audit: true, apps: true, explore: true, logs: true, performance: true, metrics: true, scorers: true, 'incoming-alerts': true,
+  assistants: true, 'virtual-users': true, routines: true, versions: false, addons: true, 'add-ons': true, mocks: true, surface: true, permissions: true, security: true,
 }
 const isPage = (name: string) => Object.hasOwn(PAGES, name)
 

@@ -9,6 +9,9 @@ import { NextCard } from '../blocks/NextCard'
 import { Section } from '../blocks/Section'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { useProjectKey } from '../lib/project'
+import { useProjectTarget } from '../lib/project-target'
+import { useSlots } from '../lib/slots'
+import { LivePerformanceScreen, LiveSwitch } from './metrics-live'
 import { Art, Bars, Figure, busyWord, kept, memory, ranges, readMetrics, useRange } from './metrics-shared'
 
 
@@ -55,6 +58,13 @@ function DiskPie({ parts }: { parts: Array<{ label: I18nString; note: I18nString
 }
 
 export function PerformanceScreen() {
+  const target = useProjectTarget()
+  const { useLiveMetrics } = useSlots()
+  if (target.kind === 'stage' && useLiveMetrics) return <LivePerformanceScreen name={target.name} use={useLiveMetrics} />
+  return <LocalPerformance />
+}
+
+function LocalPerformance() {
   const key = useProjectKey()
   const { range, setRange, from, to } = useRange()
   const process = usePikkuQuery('studio:projectMetrics', { key, kind: 'process', since: from, limit: 1000 }, { enabled: !!key, placeholderData: kept } as never)
@@ -86,6 +96,7 @@ export function PerformanceScreen() {
   return (
     <Page gap="snug">
       <PageHead crumb={m.performance_screen__crumb()} title={m.performance_screen__title()} text={m.performance_screen__text()} size="lead">
+        <LiveSwitch />
         <Segmented label={m.performance_screen__time_range()} value={range} options={ranges()} onChange={setRange} />
       </PageHead>
 

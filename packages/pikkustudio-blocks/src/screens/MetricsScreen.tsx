@@ -13,6 +13,9 @@ import { Button } from '../ui/button'
 import { ShellCtx } from '../lib/shell'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { useProjectKey } from '../lib/project'
+import { useProjectTarget } from '../lib/project-target'
+import { useSlots } from '../lib/slots'
+import { AnalyticsEvents, LiveMetricsScreen, LiveSwitch } from './metrics-live'
 import { Art, FAILED_LIMIT, Figure, clock, explain, kept, nameOf, ranges, readMetrics, reason, seconds, speed, useRange } from './metrics-shared'
 
 function CopyDetails({ text, hero }: { text: I18nString; hero?: boolean }) {
@@ -38,6 +41,13 @@ function CopyDetails({ text, hero }: { text: I18nString; hero?: boolean }) {
 export const StudioMetricsScreen = () => <MetricsScreen scope="studio" />
 
 export function MetricsScreen({ scope = 'app' }: { scope?: 'app' | 'studio' }) {
+  const target = useProjectTarget()
+  const { useLiveMetrics } = useSlots()
+  if (scope === 'app' && target.kind === 'stage' && useLiveMetrics) return <LiveMetricsScreen name={target.name} use={useLiveMetrics} />
+  return <LocalMetrics scope={scope} />
+}
+
+function LocalMetrics({ scope }: { scope: 'app' | 'studio' }) {
   const projectKey = useProjectKey()
   const key = scope === 'studio' ? 'studio' : projectKey
   const { say } = useContext(ShellCtx)
@@ -105,6 +115,7 @@ export function MetricsScreen({ scope = 'app' }: { scope?: 'app' | 'studio' }) {
   return (
     <Page gap="snug">
       <PageHead crumb={scope === 'studio' ? m.metrics_screen__crumb_studio() : m.metrics_screen__crumb_app()} title={scope === 'studio' ? m.metrics_screen__title_studio() : m.metrics_screen__title_app()} text={scope === 'studio' ? m.metrics_screen__text_studio() : m.metrics_screen__text_app()} size="lead">
+        {scope === 'app' ? <LiveSwitch /> : null}
         <Segmented label={m.metrics_screen__time_range()} value={range} options={ranges()} onChange={setRange} />
       </PageHead>
 
@@ -208,6 +219,7 @@ export function MetricsScreen({ scope = 'app' }: { scope?: 'app' | 'studio' }) {
           </div>
         </>
       )}
+      {scope === 'app' ? <AnalyticsEvents /> : null}
     </Page>
   )
 }
