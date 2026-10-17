@@ -4387,5 +4387,180 @@
   "switches_screen__synced": "Done. Checked {count} switches.",
   "switches_screen__text": "Turn parts of your app on or off, or try them with a few people first.",
   "switches_screen__title": "Switches",
-  "switches_screen__toggle_failed": "That switch did not change. Try again."
+  "switches_screen__toggle_failed": "That switch did not change. Try again.",
+  "checks_screen__title": "Checks",
+  "checks_screen__text": "Pikku checks your app’s code and walks through it the way your people would, so you hear about problems before they do.",
+  "checks_screen__hero_loading": "Looking at your last checks…",
+  "checks_screen__hero_checking": "Checking your app now",
+  "checks_screen__hero_none": "Your app has not been checked yet",
+  "checks_screen__hero_clean": "Everything checked out",
+  "checks_screen__hero_one": "One thing needs a look",
+  "checks_screen__hero_many": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} thing needs a look",
+        "countPlural=other": "{count} things need a look"
+      }
+    }
+  ],
+  "checks_screen__why_checking": "This takes a minute or two. You can keep working; the results show up here.",
+  "checks_screen__why_none": "A check reads through your app for mistakes. It changes nothing.",
+  "checks_screen__why_clean": "The code has nothing to fix and every walk-through went the way it should.",
+  "checks_screen__why_both": "The last check found {code}, and {walks}.",
+  "checks_screen__why_code": "The last check found {code}. Pikku can fix it for you.",
+  "checks_screen__why_walks": "The last check found {walks}. Pikku can see what happened and fix it.",
+  "checks_screen__code_count": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "one problem in the code",
+        "nPlural=other": "{n} problems in the code"
+      }
+    }
+  ],
+  "checks_screen__walk_count": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "one walk-through that went wrong",
+        "nPlural=other": "{n} walk-throughs that went wrong"
+      }
+    }
+  ],
+  "checks_screen__hero_fix": "Ask Pikku to fix it",
+  "checks_screen__check": "Check my app",
+  "checks_screen__check_again": "Check again",
+  "checks_screen__checking": "Checking…",
+  "checks_screen__checking_what": "checking your app",
+  "checks_screen__checking_line": "Checking your app…",
+  "checks_screen__ask_all": "Please fix what the latest checks on my app found.",
+  "checks_screen__ask_fix": "Ask Pikku to fix it",
+  "checks_screen__ask_finding": "The check on my app found this problem: “{message}” {where}. Please fix it.",
+  "checks_screen__ask_walkthrough": "The walk-through “{name}” went wrong at “{step}”: {message}. Please find out why and fix it.",
+  "checks_screen__ask_write": "Please write walk-throughs that go through my app the way my people use it.",
+  "checks_screen__code_group": "The code",
+  "checks_screen__code_never": "Not checked yet.",
+  "checks_screen__code_clean": "Nothing to fix · checked {when}",
+  "checks_screen__finding_error": "This stops the app from working properly.",
+  "checks_screen__finding_warn": "Worth fixing, but the app still works.",
+  "checks_screen__walks_group": "Walk-throughs",
+  "checks_screen__coverage_both": "Walk-throughs try {covered} of the {required} things people can change in your app, and open {pages} of its pages.",
+  "checks_screen__coverage_changes": "Walk-throughs try {covered} of the {required} things people can change in your app.",
+  "checks_screen__coverage_pages": [
+    {
+      "declarations": [
+        "input pages",
+        "local pagesPlural = pages: plural"
+      ],
+      "selectors": [
+        "pagesPlural"
+      ],
+      "match": {
+        "pagesPlural=one": "Walk-throughs open one page of your app.",
+        "pagesPlural=other": "Walk-throughs open {pages} pages of your app."
+      }
+    }
+  ],
+  "checks_screen__walks_empty": "No walk-throughs have run yet",
+  "checks_screen__walks_empty_text": "A walk-through goes through your app step by step, like a person would, and tells you where it gets stuck.",
+  "checks_screen__walks_empty_ask": "Ask Pikku to write some",
+  "checks_screen__walks_running": "Walk-throughs are going through your app right now.",
+  "checks_screen__walks_fine": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "One walk-through went fine · {when}",
+        "countPlural=other": "{count} walk-throughs went fine · {when}"
+      }
+    }
+  ],
+  "checks_screen__show_them": "Show them",
+  "checks_screen__hide_them": "Hide them",
+  "checks_screen__not_run": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "One walk-through was not run this time.",
+        "countPlural=other": "{count} walk-throughs were not run this time."
+      }
+    }
+  ],
+  "checks_screen__stopped_at": "Got stuck at “{step}”",
+  "checks_screen__stopped": "Stopped before it finished",
+  "checks_screen__ran_when": "Ran {when}",
+  "checks_screen__see_what_happened": "See what happened",
+  "checks_screen__open": "Open",
+  "checks_screen__runs_group": "Earlier runs",
+  "checks_screen__run_title": "Run {when}",
+  "checks_screen__run_loading": "Opening this run…",
+  "checks_screen__run_going": "Going now · {done} finished so far",
+  "checks_screen__run_all_fine": [
+    {
+      "declarations": [
+        "input total",
+        "local totalPlural = total: plural"
+      ],
+      "selectors": [
+        "totalPlural"
+      ],
+      "match": {
+        "totalPlural=one": "It went fine",
+        "totalPlural=other": "All {total} went fine"
+      }
+    }
+  ],
+  "checks_screen__run_some_wrong": "{failed} of {total} went wrong",
+  "checks_screen__run_gone": "This run is no longer kept.",
+  "checks_screen__reading_run": "reading this run",
+  "checks_screen__went_fine": "Went fine",
+  "checks_screen__went_wrong": "Went wrong",
+  "checks_screen__going_now": "Going now",
+  "checks_screen__drawer_aria": "One walk-through run",
+  "checks_screen__all_walkthroughs": "All walk-throughs",
+  "checks_screen__steps": "Step by step",
+  "checks_screen__step_done": "Done",
+  "checks_screen__step_failed": "Went wrong here",
+  "checks_screen__step_not_run": "Not reached",
+  "checks_screen__pictures": "What it saw",
+  "checks_screen__shot": "Picture",
+  "checks_screen__shot_failure": "The moment it went wrong",
+  "checks_screen__shot_video": "Recording",
+  "checks_screen__shot_loading": "Loading the picture…",
+  "checks_screen__shot_missing": "This picture could not be loaded.",
+  "checks_screen__setup_failed": "Getting ready for the walk-throughs went wrong",
+  "checks_screen__forget": "Forget this run",
+  "checks_screen__forget_confirm": "This removes the run with its steps and pictures. It cannot be brought back.",
+  "checks_screen__forget_yes": "Forget it",
+  "checks_screen__forget_failed": "The run could not be removed. Nothing was changed. Try again."
 }

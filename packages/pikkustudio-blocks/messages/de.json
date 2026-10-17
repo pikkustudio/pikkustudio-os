@@ -4179,5 +4179,180 @@
   "switches_panel__make_always_off": "Für sie immer aus",
   "switches_panel__cancel": "Abbrechen",
   "switches_panel__called": "Name im Code",
-  "switches_panel__any_of": "Nur für Leute mit"
+  "switches_panel__any_of": "Nur für Leute mit",
+  "checks_screen__title": "Prüfungen",
+  "checks_screen__text": "Pikku prüft den Code deiner App und geht sie so durch, wie deine Leute es tun würden, damit du Probleme vor ihnen bemerkst.",
+  "checks_screen__hero_loading": "Deine letzten Prüfungen werden geladen…",
+  "checks_screen__hero_checking": "Deine App wird gerade geprüft",
+  "checks_screen__hero_none": "Deine App wurde noch nicht geprüft",
+  "checks_screen__hero_clean": "Alles in Ordnung",
+  "checks_screen__hero_one": "Eine Sache braucht deinen Blick",
+  "checks_screen__hero_many": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Sache braucht deinen Blick",
+        "countPlural=other": "{count} Sachen brauchen deinen Blick"
+      }
+    }
+  ],
+  "checks_screen__why_checking": "Das dauert ein bis zwei Minuten. Du kannst weiterarbeiten; die Ergebnisse erscheinen hier.",
+  "checks_screen__why_none": "Eine Prüfung liest deine App auf Fehler durch. Sie ändert nichts.",
+  "checks_screen__why_clean": "Im Code gibt es nichts zu beheben, und jeder Durchgang lief wie er sollte.",
+  "checks_screen__why_both": "Die letzte Prüfung fand {code} und {walks}.",
+  "checks_screen__why_code": "Die letzte Prüfung fand {code}. Pikku kann es für dich beheben.",
+  "checks_screen__why_walks": "Die letzte Prüfung fand {walks}. Pikku kann nachsehen, was passiert ist, und es beheben.",
+  "checks_screen__code_count": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "ein Problem im Code",
+        "nPlural=other": "{n} Probleme im Code"
+      }
+    }
+  ],
+  "checks_screen__walk_count": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "einen Durchgang, der schiefging",
+        "nPlural=other": "{n} Durchgänge, die schiefgingen"
+      }
+    }
+  ],
+  "checks_screen__hero_fix": "Pikku bitten, es zu beheben",
+  "checks_screen__check": "Meine App prüfen",
+  "checks_screen__check_again": "Erneut prüfen",
+  "checks_screen__checking": "Wird geprüft…",
+  "checks_screen__checking_what": "das Prüfen deiner App",
+  "checks_screen__checking_line": "Deine App wird geprüft…",
+  "checks_screen__ask_all": "Bitte behebe, was die letzten Prüfungen meiner App gefunden haben.",
+  "checks_screen__ask_fix": "Pikku bitten, es zu beheben",
+  "checks_screen__ask_finding": "Die Prüfung meiner App hat dieses Problem gefunden: „{message}“ {where}. Bitte behebe es.",
+  "checks_screen__ask_walkthrough": "Der Durchgang „{name}“ ging bei „{step}“ schief: {message}. Bitte finde heraus, warum, und behebe es.",
+  "checks_screen__ask_write": "Bitte schreibe Durchgänge, die meine App so durchgehen, wie meine Leute sie nutzen.",
+  "checks_screen__code_group": "Der Code",
+  "checks_screen__code_never": "Noch nicht geprüft.",
+  "checks_screen__code_clean": "Nichts zu beheben · geprüft {when}",
+  "checks_screen__finding_error": "Das verhindert, dass die App richtig funktioniert.",
+  "checks_screen__finding_warn": "Lohnt sich zu beheben, aber die App funktioniert noch.",
+  "checks_screen__walks_group": "Durchgänge",
+  "checks_screen__coverage_both": "Die Durchgänge probieren {covered} der {required} Dinge aus, die Leute in deiner App ändern können, und öffnen {pages} ihrer Seiten.",
+  "checks_screen__coverage_changes": "Die Durchgänge probieren {covered} der {required} Dinge aus, die Leute in deiner App ändern können.",
+  "checks_screen__coverage_pages": [
+    {
+      "declarations": [
+        "input pages",
+        "local pagesPlural = pages: plural"
+      ],
+      "selectors": [
+        "pagesPlural"
+      ],
+      "match": {
+        "pagesPlural=one": "Die Durchgänge öffnen eine Seite deiner App.",
+        "pagesPlural=other": "Die Durchgänge öffnen {pages} Seiten deiner App."
+      }
+    }
+  ],
+  "checks_screen__walks_empty": "Es sind noch keine Durchgänge gelaufen",
+  "checks_screen__walks_empty_text": "Ein Durchgang geht deine App Schritt für Schritt durch, wie ein Mensch es tun würde, und sagt dir, wo er hängen bleibt.",
+  "checks_screen__walks_empty_ask": "Pikku bitten, welche zu schreiben",
+  "checks_screen__walks_running": "Gerade gehen Durchgänge durch deine App.",
+  "checks_screen__walks_fine": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Ein Durchgang lief gut · {when}",
+        "countPlural=other": "{count} Durchgänge liefen gut · {when}"
+      }
+    }
+  ],
+  "checks_screen__show_them": "Anzeigen",
+  "checks_screen__hide_them": "Ausblenden",
+  "checks_screen__not_run": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Ein Durchgang lief diesmal nicht.",
+        "countPlural=other": "{count} Durchgänge liefen diesmal nicht."
+      }
+    }
+  ],
+  "checks_screen__stopped_at": "Hängen geblieben bei „{step}“",
+  "checks_screen__stopped": "Vor dem Ende angehalten",
+  "checks_screen__ran_when": "Gelaufen {when}",
+  "checks_screen__see_what_happened": "Ansehen, was passiert ist",
+  "checks_screen__open": "Öffnen",
+  "checks_screen__runs_group": "Frühere Läufe",
+  "checks_screen__run_title": "Lauf {when}",
+  "checks_screen__run_loading": "Dieser Lauf wird geöffnet…",
+  "checks_screen__run_going": "Läuft gerade · {done} bisher fertig",
+  "checks_screen__run_all_fine": [
+    {
+      "declarations": [
+        "input total",
+        "local totalPlural = total: plural"
+      ],
+      "selectors": [
+        "totalPlural"
+      ],
+      "match": {
+        "totalPlural=one": "Er lief gut",
+        "totalPlural=other": "Alle {total} liefen gut"
+      }
+    }
+  ],
+  "checks_screen__run_some_wrong": "{failed} von {total} gingen schief",
+  "checks_screen__run_gone": "Dieser Lauf wird nicht mehr aufbewahrt.",
+  "checks_screen__reading_run": "das Lesen dieses Laufs",
+  "checks_screen__went_fine": "Lief gut",
+  "checks_screen__went_wrong": "Ging schief",
+  "checks_screen__going_now": "Läuft gerade",
+  "checks_screen__drawer_aria": "Ein Lauf der Durchgänge",
+  "checks_screen__all_walkthroughs": "Alle Durchgänge",
+  "checks_screen__steps": "Schritt für Schritt",
+  "checks_screen__step_done": "Erledigt",
+  "checks_screen__step_failed": "Hier ging es schief",
+  "checks_screen__step_not_run": "Nicht erreicht",
+  "checks_screen__pictures": "Was er gesehen hat",
+  "checks_screen__shot": "Bild",
+  "checks_screen__shot_failure": "Der Moment, in dem es schiefging",
+  "checks_screen__shot_video": "Aufnahme",
+  "checks_screen__shot_loading": "Das Bild wird geladen…",
+  "checks_screen__shot_missing": "Dieses Bild konnte nicht geladen werden.",
+  "checks_screen__setup_failed": "Die Vorbereitung der Durchgänge ging schief",
+  "checks_screen__forget": "Diesen Lauf vergessen",
+  "checks_screen__forget_confirm": "Damit wird der Lauf mit seinen Schritten und Bildern entfernt. Das lässt sich nicht rückgängig machen.",
+  "checks_screen__forget_yes": "Vergessen",
+  "checks_screen__forget_failed": "Der Lauf konnte nicht entfernt werden. Es wurde nichts geändert. Versuche es noch einmal."
 }
