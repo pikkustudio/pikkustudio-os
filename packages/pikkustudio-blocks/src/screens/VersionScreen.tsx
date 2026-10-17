@@ -192,7 +192,7 @@ function Detail({ v, view }: { v: Release; view: ReleasesView }) {
               {m.signin__retry()}
             </Button>
           ) : null}
-          {canGoBack(o) && edit ? (
+          {canGoBack(o) && edit && actions?.goBack ? (
             <Button variant="hero" size="page" onClick={() => (setFault(null), setPanel({ kind: 'back' }))}>
               {m.version_screen__go_back()}
             </Button>
@@ -356,7 +356,7 @@ function Detail({ v, view }: { v: Release; view: ReleasesView }) {
         <SidePanel icon={Undo2} label={m.versions_screen__go_back_title()} title={m.versions_screen__go_back_title()} sub={m.versions_screen__go_back_sub()} onClose={() => setPanel(null)}>
           <p className="text-[16px] text-ink-2">{m.version_screen__go_back_detail({ title, liveTitle: live ? titleOf(live) : m.versions_screen__nothing_live_title() })}</p>
           <div className="flex gap-3">
-            <Button variant="destructive" size="page" disabled={busy} onClick={() => void run(() => actions!.goBack(v.id), { text: m.versions_screen__go_back_failed(), ask: m.versions_screen__go_back_failed_ask({ title }) }).then((ok) => ok && setPanel(null))}>
+            <Button variant="destructive" size="page" disabled={busy} onClick={() => void run(() => actions!.goBack!(v.id), { text: m.versions_screen__go_back_failed(), ask: m.versions_screen__go_back_failed_ask({ title }) }).then((ok) => ok && setPanel(null))}>
               {m.version_screen__yes_go_back()}
             </Button>
             <Button variant="bordered" size="page" onClick={() => setPanel(null)}>

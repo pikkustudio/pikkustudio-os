@@ -256,7 +256,7 @@ function History({ view, mode }: { view: ReleasesView; mode: string }) {
             shelf.map((v) =>
               tile(
                 v,
-                edit && canGoBack(v.status) ? (
+                edit && view.actions?.goBack && canGoBack(v.status) ? (
                   <Button variant="bordered" size="compact" onClick={() => (setFault(null), setBack(v))}>
                     {m.versions_screen__go_back_to_this()}
                   </Button>
@@ -279,7 +279,7 @@ function History({ view, mode }: { view: ReleasesView; mode: string }) {
               variant="destructive"
               size="page"
               disabled={busy}
-              onClick={() => void run(() => view.actions!.goBack(back.id), { text: m.versions_screen__go_back_failed(), ask: m.versions_screen__go_back_failed_ask({ title: titleOf(back) }) }).then((ok) => ok && setBack(null))}
+              onClick={() => void run(() => view.actions!.goBack!(back.id), { text: m.versions_screen__go_back_failed(), ask: m.versions_screen__go_back_failed_ask({ title: titleOf(back) }) }).then((ok) => ok && setBack(null))}
             >
               {m.version_screen__yes_go_back()}
             </Button>

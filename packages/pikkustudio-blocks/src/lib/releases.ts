@@ -39,7 +39,7 @@ export type ReleaseActions = {
   dismiss: (id: string) => Promise<void>
   recheck: (id: string) => Promise<boolean>
   fill: (item: ReleaseMissing, value: string) => Promise<void>
-  goBack: (id: string) => Promise<void>
+  goBack: ((id: string) => Promise<void>) | null
   tryAgain: (id: string) => Promise<void>
   setAutoUpdate: (on: boolean) => Promise<void>
 }
