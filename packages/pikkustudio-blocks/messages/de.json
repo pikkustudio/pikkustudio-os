@@ -4552,8 +4552,20 @@
   "connections_screen__disconnect_warning": "Die Teile deiner App, die {name} nutzen, funktionieren erst wieder, wenn es neu verbunden ist.",
   "connections_screen__disconnect_failed": "Das konnte nicht getrennt werden. Nichts wurde geändert. Versuch es noch einmal.",
   "connections_screen__technical_called": "Entwickler nennen das",
+  "connections_screen__hero_problem": "Studio konnte deine Verbindungen nicht prüfen",
+  "connections_screen__hero_problem_why": "Deine App hat mit einem Fehler geantwortet, daher weiß Studio nicht, welche Dienste verbunden sind. Es wurde nichts geändert.",
+  "connections_screen__hero_checking": "Deine Verbindungen werden geprüft",
+  "connections_screen__cannot_see_ask": "Pikku fragen, wie",
+  "connections_screen__cannot_see_say": "Ich kann die Verbindungen dieses Projekts nicht sehen, weil mir die Berechtigung fehlt. Was soll ich tun?",
+  "connections_screen__not_running_ask": "Pikku bitten, sie zu starten",
+  "connections_screen__not_running_say": "Die Seite Verbindungen sagt, meine App läuft nicht. Bitte starte sie, damit ich sehe, welche Dienste verbunden sind.",
   "quick_find__connections": "Verbindungen",
   "cloud_offline__title": "Pikku Studio Cloud ist gerade nicht erreichbar",
   "cloud_offline__body": "Alles auf diesem Computer funktioniert weiter. Dieser Teil liegt in Pikku Studio Cloud und ist wieder da, sobald du online bist.",
-  "cloud_offline__retry": "Erneut prüfen"
+  "cloud_offline__retry": "Erneut prüfen",
+  "audit_screen__hero_loading_title": "Der Verlauf wird gelesen",
+  "audit_screen__hero_error_title": "Der Verlauf konnte nicht gelesen werden",
+  "audit_screen__hero_error_text": "Studio hat dein Projekt nach seinem Verlauf gefragt und einen Fehler zurückbekommen. Es wurde nichts geändert. Pikku kann herausfinden, warum.",
+  "audit_screen__not_running_ask": "Pikku bitten, es zu starten",
+  "audit_screen__not_running_say": "Die Seite Verlauf sagt, mein Projekt läuft nicht. Bitte starte es, damit ich sehe, was passiert ist."
 }

@@ -10,6 +10,7 @@ import { Page } from '../blocks/Page'
 import { PageHead } from '../blocks/PageHead'
 import { NextCard } from '../blocks/NextCard'
 import { EmptyState } from '../blocks/EmptyState'
+import { detailsOf, faultOf } from '../blocks/ErrorState'
 import { QueryState } from '../blocks/QueryState'
 import { RowStack } from '../blocks/RowCard'
 import { Segmented } from '../blocks/Segmented'
@@ -62,8 +63,43 @@ export function AuditScreen() {
   const filtered = !!who || range !== 'all'
   const problem = audits.isError ? auditProblem(audits.error) : null
 
-  const heroTitle = problem && problem !== 'other' ? m.audit_screen__hero_unavailable_title() : unreadable ? m.audit_screen__hero_unreadable_title() : data && entries.length === 0 && !filtered ? m.audit_screen__hero_empty_title() : m.audit_screen__hero_title()
-  const heroText = problem && problem !== 'other' ? m.audit_screen__hero_unavailable_text() : unreadable ? m.audit_screen__hero_unreadable_text() : data && entries.length === 0 && !filtered ? m.audit_screen__hero_empty_text() : m.audit_screen__hero_text()
+  const heroTitle = audits.isPending
+    ? m.audit_screen__hero_loading_title()
+    : problem === 'other'
+      ? m.audit_screen__hero_error_title()
+      : problem === 'forbidden'
+        ? m.audit_screen__cannot_see()
+        : problem
+          ? m.audit_screen__hero_unavailable_title()
+          : unreadable
+            ? m.audit_screen__hero_unreadable_title()
+            : data && entries.length === 0 && !filtered
+              ? m.audit_screen__hero_empty_title()
+              : m.audit_screen__hero_title()
+  const heroText =
+    problem === 'other'
+      ? m.audit_screen__hero_error_text()
+      : problem === 'forbidden'
+        ? m.audit_screen__cannot_see_text()
+        : problem
+          ? m.audit_screen__hero_unavailable_text()
+          : unreadable
+            ? m.audit_screen__hero_unreadable_text()
+            : data && entries.length === 0 && !filtered
+              ? m.audit_screen__hero_empty_text()
+              : m.audit_screen__hero_text()
+  const heroAsk =
+    problem === 'other'
+      ? m.error_state__fix_ask_what({ what: m.audit_screen__title(), details: detailsOf(faultOf(audits.error), m.audit_screen__title()) })
+      : problem === 'forbidden'
+        ? m.audit_screen__ask_access_say()
+        : problem === 'not-running'
+          ? m.audit_screen__not_running_say()
+          : problem === 'no-addon'
+            ? m.audit_screen__add_it_say()
+            : unreadable
+              ? m.audit_screen__unreadable_say()
+              : m.audit_screen__ask_say()
 
   const reset = () => {
     setWho(null)
@@ -81,17 +117,22 @@ export function AuditScreen() {
     <Page gap="snug">
       <PageHead crumb={projectName} title={m.audit_screen__title()} text={m.audit_screen__text()} size="lead" developerDetails />
 
-      <NextCard label={m.audit_screen__title()} hue="sea" art={<Art />} title={heroTitle} why={heroText}>
+      <NextCard label={m.audit_screen__title()} hue={problem || unreadable ? 'teal' : 'sea'} art={<Art />} title={heroTitle} why={heroText}>
         <div>
-          <Button variant="hero" size="pageLg" type="button" onClick={() => say(m.audit_screen__ask_say())}>
+          <Button variant="hero" size="pageLg" type="button" onClick={() => say(heroAsk)}>
             <PikkuDot />
-            {m.audit_screen__ask_pikku()}
+            {problem === 'forbidden' ? m.audit_screen__ask_access() : problem || unreadable ? m.audit_screen__ask_pikku_fix() : m.audit_screen__ask_pikku()}
           </Button>
         </div>
       </NextCard>
 
       {problem === 'not-running' ? (
-        <EmptyState icon={Plug} title={m.audit_screen__not_running_title()} text={m.audit_screen__not_running_text()} />
+        <EmptyState icon={Plug} title={m.audit_screen__not_running_title()} text={m.audit_screen__not_running_text()}>
+          <Button type="button" size="page" onClick={() => say(m.audit_screen__not_running_say())}>
+            <PikkuDot />
+            {m.audit_screen__not_running_ask()}
+          </Button>
+        </EmptyState>
       ) : problem === 'no-addon' ? (
         <EmptyState icon={History} title={m.audit_screen__no_addon_title()} text={m.audit_screen__no_addon_text()}>
           <Button type="button" size="page" onClick={() => say(m.audit_screen__add_it_say())}>

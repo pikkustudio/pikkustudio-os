@@ -9,6 +9,7 @@ import { PageHead } from '../blocks/PageHead'
 import { NextCard } from '../blocks/NextCard'
 import { EmptyState } from '../blocks/EmptyState'
 import { QueryState } from '../blocks/QueryState'
+import { ErrorState, detailsOf, faultOf } from '../blocks/ErrorState'
 import { Dot, RowCard, RowStack } from '../blocks/RowCard'
 import { PikkuDot } from '../blocks/PikkuDot'
 import { ConnectionDrawer } from '../blocks/ConnectionDrawer'
@@ -47,7 +48,24 @@ export function ConnectionsScreen() {
   const missing = shared.filter((c) => isConnected(c.name) === false)
   const first = missing[0]
   const selected = [...shared, ...own].find((c) => c.name === open)
-  const problem = status.isError ? accountsProblem(status.error) : users.isError ? accountsProblem(users.error) : null
+  const problemError = status.isError ? status.error : users.isError ? users.error : null
+  const problem = problemError ? accountsProblem(problemError) : null
+  const problemSay =
+    problem === 'forbidden'
+      ? m.connections_screen__cannot_see_say()
+      : problem === 'not-running'
+        ? m.connections_screen__not_running_say()
+        : problem === 'no-addon'
+          ? m.connections_screen__no_check_say()
+          : m.error_state__fix_ask_what({ what: m.connections_screen__title(), details: detailsOf(faultOf(problemError), m.connections_screen__title()) })
+  const problemWhy =
+    problem === 'forbidden'
+      ? m.connections_screen__cannot_see_text()
+      : problem === 'not-running'
+        ? m.connections_screen__not_running_text()
+        : problem === 'no-addon'
+          ? m.connections_screen__no_check_text()
+          : m.connections_screen__hero_problem_why()
 
   const start = (c: Connection) => (c.signIn ? connect(c.name) : setOpen(c.name))
 
@@ -104,12 +122,19 @@ export function ConnectionsScreen() {
             <>
               <NextCard
                 label={m.connections_screen__hero_label()}
-                hue={first ? 'teal' : 'sea'}
+                hue={first || problem ? 'teal' : 'sea'}
                 art={<Art />}
-                title={first ? m.connections_screen__hero_missing({ count: missing.length }) : m.connections_screen__hero_ok()}
-                why={first ? m.connections_screen__hero_missing_why({ name: asI18n(first.label) }) : m.connections_screen__hero_ok_why()}
+                title={first ? m.connections_screen__hero_missing({ count: missing.length }) : problem ? m.connections_screen__hero_problem() : status.isPending ? m.connections_screen__hero_checking() : m.connections_screen__hero_ok()}
+                why={first ? m.connections_screen__hero_missing_why({ name: asI18n(first.label) }) : problem ? problemWhy : status.isPending ? m.connections_screen__text() : m.connections_screen__hero_ok_why()}
               >
-                {first ? (
+                {problem && !first ? (
+                  <div className="flex flex-wrap gap-3">
+                    <Button variant="hero" size="pageLg" type="button" onClick={() => say(problemSay)}>
+                      <PikkuDot />
+                      {problem === 'forbidden' ? m.connections_screen__cannot_see_ask() : m.connections_screen__no_check_ask()}
+                    </Button>
+                  </div>
+                ) : first ? (
                   <div className="flex flex-wrap gap-3">
                     <Button variant="hero" size="pageLg" type="button" onClick={() => start(first)}>
                       {first.signIn ? m.connections_screen__connect_name({ name: asI18n(first.label) }) : m.connections_screen__add_key_name({ name: asI18n(first.label) })}
@@ -119,9 +144,21 @@ export function ConnectionsScreen() {
               </NextCard>
 
               {problem === 'forbidden' ? (
-                <EmptyState layout="row" icon={LockKeyhole} title={m.connections_screen__cannot_see()} text={m.connections_screen__cannot_see_text()} />
+                <EmptyState layout="row" icon={LockKeyhole} title={m.connections_screen__cannot_see()} text={m.connections_screen__cannot_see_text()}>
+                  <Button type="button" size="page" onClick={() => say(problemSay)}>
+                    <PikkuDot />
+                    {m.connections_screen__cannot_see_ask()}
+                  </Button>
+                </EmptyState>
               ) : problem === 'not-running' ? (
-                <EmptyState layout="row" icon={Plug} title={m.connections_screen__not_running()} text={m.connections_screen__not_running_text()} />
+                <EmptyState layout="row" icon={Plug} title={m.connections_screen__not_running()} text={m.connections_screen__not_running_text()}>
+                  <Button type="button" size="page" onClick={() => say(problemSay)}>
+                    <PikkuDot />
+                    {m.connections_screen__not_running_ask()}
+                  </Button>
+                </EmptyState>
+              ) : problem === 'other' ? (
+                <ErrorState error={problemError} what={m.connections_screen__title()} onRetry={refresh} />
               ) : problem ? (
                 <EmptyState layout="row" icon={Plug} title={m.connections_screen__no_check()} text={m.connections_screen__no_check_text()}>
                   <Button type="button" size="page" onClick={() => say(m.connections_screen__no_check_say())}>

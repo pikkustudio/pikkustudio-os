@@ -4896,8 +4896,20 @@
   "connections_screen__disconnect_warning": "ستتوقف أجزاء تطبيقك التي تستخدم {name} عن العمل حتى يُعاد ربطه.",
   "connections_screen__disconnect_failed": "تعذّر الفصل. لم يتغير شيء. حاول مرة أخرى.",
   "connections_screen__technical_called": "يسميه المطورون",
+  "connections_screen__hero_problem": "تعذّر على Studio فحص اتصالاتك",
+  "connections_screen__hero_problem_why": "ردّ تطبيقك بخطأ، فلا يستطيع Studio معرفة الخدمات المتصلة. لم يتغير شيء.",
+  "connections_screen__hero_checking": "جارٍ فحص اتصالاتك",
+  "connections_screen__cannot_see_ask": "اسأل Pikku كيف",
+  "connections_screen__cannot_see_say": "لا أستطيع رؤية اتصالات هذا المشروع لأنني لا أملك الصلاحية. ماذا أفعل؟",
+  "connections_screen__not_running_ask": "اطلب من Pikku تشغيله",
+  "connections_screen__not_running_say": "تقول صفحة الاتصالات إن تطبيقي لا يعمل. أرجو تشغيله حتى أرى الخدمات المتصلة.",
   "quick_find__connections": "الاتصالات",
   "cloud_offline__title": "لا يمكن الوصول إلى Pikku Studio Cloud الآن",
   "cloud_offline__body": "كل ما على هذا الكمبيوتر يستمر في العمل. هذا الجزء موجود في Pikku Studio Cloud وسيعود عندما تتصل بالإنترنت مجددًا.",
-  "cloud_offline__retry": "تحقق مرة أخرى"
+  "cloud_offline__retry": "تحقق مرة أخرى",
+  "audit_screen__hero_loading_title": "جارٍ قراءة السجل",
+  "audit_screen__hero_error_title": "تعذّرت قراءة السجل",
+  "audit_screen__hero_error_text": "طلب Studio سجل مشروعك فعاد بخطأ. لم يتغير شيء. يستطيع Pikku معرفة السبب.",
+  "audit_screen__not_running_ask": "اطلب من Pikku تشغيله",
+  "audit_screen__not_running_say": "تقول صفحة السجل إن مشروعي لا يعمل. أرجو تشغيله حتى أرى ما حدث."
 }
