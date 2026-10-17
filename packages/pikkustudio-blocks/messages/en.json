@@ -2751,6 +2751,8 @@
   "shell_layout__your_helper": "Pikku, your helper",
   "shell_layout__your_name_and_photo": "Your name and photo",
   "shell_layout__your_workspace": "Your workspace",
+  "shell_layout__open_nav": "Open the menu",
+  "shell_layout__close_nav": "Close the menu",
   "side_panel__close_panel": "Close panel",
   "signin__back_title": "Pick up where you left off.",
   "signin__back_why": "Your projects are waiting on this computer, exactly as you left them.",

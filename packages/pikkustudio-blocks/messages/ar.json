@@ -2824,6 +2824,8 @@
   "shell_layout__your_helper": "Pikku، مساعدكم",
   "shell_layout__your_name_and_photo": "اسمكم وصورتكم",
   "shell_layout__your_workspace": "مساحة عملكم",
+  "shell_layout__open_nav": "افتح القائمة",
+  "shell_layout__close_nav": "أغلق القائمة",
   "side_panel__close_panel": "إغلاق اللوحة",
   "signin__back_title": "أكملوا من حيث توقفتم.",
   "signin__back_why": "مشاريعكم بانتظاركم على هذا الحاسوب، تماما كما تركتموها.",

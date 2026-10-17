@@ -2628,6 +2628,8 @@
   "shell_layout__your_helper": "Pikku, dein Helfer",
   "shell_layout__your_name_and_photo": "Dein Name und Foto",
   "shell_layout__your_workspace": "Dein Arbeitsbereich",
+  "shell_layout__open_nav": "Menü öffnen",
+  "shell_layout__close_nav": "Menü schließen",
   "side_panel__close_panel": "Bereich schließen",
   "signin__back_title": "Mach da weiter, wo du aufgehört hast.",
   "signin__back_why": "Deine Projekte warten auf diesem Computer, genau so, wie du sie verlassen hast.",

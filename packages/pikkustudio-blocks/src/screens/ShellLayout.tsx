@@ -44,7 +44,7 @@ import { ChecksCard, MilestoneCard, OpenScreenCard } from '../blocks/BuilderCard
 import { useCanEdit, useProjectTarget } from '../lib/project-target'
 import { useStickToBottom } from '../lib/stick-to-bottom'
 import { useComposerExtras } from '../lib/composer-extras'
-import { GitPullRequest, Archive, type LucideIcon, ArrowDown, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, History, Home, Info, Compass, KeyRound, ListChecks, Search, Laptop, LayoutGrid, Mail, MessageCircle, MessageCircleQuestion, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, PanelLeftClose, PanelLeftOpen, User, UserRoundCheck, Wrench, X, CheckCheck, ScrollText } from 'lucide-react'
+import { GitPullRequest, Archive, type LucideIcon, ArrowDown, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, History, Home, Info, Compass, KeyRound, ListChecks, Search, Laptop, LayoutGrid, Mail, MessageCircle, MessageCircleQuestion, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, PanelLeftClose, PanelLeftOpen, Menu, User, UserRoundCheck, Wrench, X, CheckCheck, ScrollText } from 'lucide-react'
 
 // The app shell: rail, preview drawer (right edge), Pikku button + bubble, side panels.
 // Every screen route is a child of this layout. Page content lives in the route files.
@@ -189,6 +189,14 @@ function ShellLayoutInner() {
       } catch {}
       return !c
     })
+  const [navOpen, setNavOpen] = useState(false)
+  useEffect(() => setNavOpen(false), [path])
+  useEffect(() => {
+    if (!navOpen) return
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setNavOpen(false)
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [navOpen])
   const tip = (label: I18nString) => (collapsed ? { title: label, 'aria-label': label } : {})
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -341,11 +349,17 @@ function ShellLayoutInner() {
 
         <div className="group/shell relative flex h-full overflow-hidden" data-open={panel !== '' ? '' : undefined}>
           {/* Rail */}
+          {navOpen ? <button type="button" aria-label={m.shell_layout__close_nav()} onClick={() => setNavOpen(false)} className="fixed inset-0 z-55 hidden bg-foreground/30 @max-[640px]/app:block" /> : null}
           <aside
             data-collapsed={collapsed ? '' : undefined}
-            className="group/rail flex min-h-0 w-63 shrink-0 flex-col gap-3.5 overflow-x-hidden overflow-y-auto border-e border-border bg-muted px-4 py-5 transition-[width,padding] duration-200 ease-out motion-reduce:transition-none data-[collapsed]:w-16 data-[collapsed]:px-2 @min-[1700px]/app:w-70 @min-[1700px]/app:data-[collapsed]:w-16"
+            data-nav-open={navOpen ? '' : undefined}
+            id="studio-rail"
+            className="group/rail flex min-h-0 w-63 shrink-0 @max-[640px]/app:fixed @max-[640px]/app:inset-y-0 @max-[640px]/app:start-0 @max-[640px]/app:z-60 @max-[640px]/app:max-w-[85vw] @max-[640px]/app:shadow-xl @max-[640px]/app:not-data-[nav-open]:hidden flex-col gap-3.5 overflow-x-hidden overflow-y-auto border-e border-border bg-muted px-4 py-5 transition-[width,padding] duration-200 ease-out motion-reduce:transition-none data-[collapsed]:w-16 data-[collapsed]:px-2 @min-[1700px]/app:w-70 @min-[1700px]/app:data-[collapsed]:w-16"
             aria-label={m.shell_layout__studio()}
           >
+            <button type="button" onClick={() => setNavOpen(false)} aria-label={m.shell_layout__close_nav()} className={`${iconBtn} hidden self-end @max-[640px]/app:grid`}>
+              <X className="size-5" />
+            </button>
             <Link {...keep} to="/overview" className="flex items-center gap-2.5 px-2 py-1 font-heading text-[24px] font-extrabold tracking-[-0.02em] no-underline group-data-[collapsed]/rail:justify-center group-data-[collapsed]/rail:px-0">
               <PikkuMark label={m.shell_layout__studio()} />
               <span className={lbl}>{m.shell_layout__studio()}</span>
@@ -434,7 +448,7 @@ function ShellLayoutInner() {
                 aria-expanded={!collapsed}
                 aria-label={collapsed ? m.shell_layout__expand_nav() : m.shell_layout__collapse_nav()}
                 title={collapsed ? m.shell_layout__expand_nav() : m.shell_layout__collapse_nav()}
-                className="flex h-9.25 w-full items-center gap-3 rounded-lg px-3 text-start text-[14px] font-semibold text-ink-2 transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3 group-data-[collapsed]/rail:justify-center group-data-[collapsed]/rail:px-0"
+                className="flex h-9.25 w-full items-center gap-3 rounded-lg px-3 text-start text-[14px] font-semibold text-ink-2 transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3 group-data-[collapsed]/rail:justify-center group-data-[collapsed]/rail:px-0 @max-[640px]/app:hidden"
               >
                 {collapsed ? <PanelLeftOpen className="size-5 rtl:-scale-x-100" /> : <PanelLeftClose className="size-5 rtl:-scale-x-100" />}
                 <span className={lbl}>{m.shell_layout__collapse_nav()}</span>
@@ -450,8 +464,17 @@ function ShellLayoutInner() {
           </aside>
 
           {/* Page area */}
-          <div className="flex min-h-0 min-w-0 flex-1 flex-col pe-0 transition-all duration-420 ease-[cubic-bezier(.16,1,.3,1)] group-data-open/shell:pe-102 @min-[1700px]/app:group-data-open/shell:pe-120 [:root:has([data-side-panel])_&]:pe-102 @min-[1700px]/app:[:root:has([data-side-panel])_&]:pe-120">
-            <div className={`min-h-0 flex-1 ${fill ? 'overflow-hidden pt-4 pe-6.5 pb-3.5 ps-6' : 'overflow-auto scroll-smooth [scrollbar-width:thin] px-12 pt-9 pb-7 @min-[1700px]/app:px-16 @min-[1700px]/app:pt-11 @min-[1700px]/app:pb-8'}`}>
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col pe-0 transition-all duration-420 ease-[cubic-bezier(.16,1,.3,1)] group-data-open/shell:pe-102 @min-[1700px]/app:group-data-open/shell:pe-120 [:root:has([data-side-panel])_&]:pe-102 @min-[1700px]/app:[:root:has([data-side-panel])_&]:pe-120 @max-[640px]/app:pe-0">
+            <div className="hidden items-center gap-2 border-b border-border bg-muted px-3 py-2 @max-[640px]/app:flex">
+              <button type="button" onClick={() => setNavOpen(true)} aria-label={m.shell_layout__open_nav()} aria-expanded={navOpen} aria-controls="studio-rail" className={iconBtn}>
+                <Menu className="size-5.5" />
+              </button>
+              <Link {...keep} to="/overview" className="flex items-center gap-2 font-heading text-[20px] font-extrabold tracking-[-0.02em] no-underline">
+                <PikkuMark label={m.shell_layout__studio()} />
+                <span>{m.shell_layout__studio()}</span>
+              </Link>
+            </div>
+            <div className={`min-h-0 flex-1 ${fill ? 'overflow-hidden pt-4 pe-6.5 pb-3.5 ps-6' : 'overflow-auto scroll-smooth [scrollbar-width:thin] px-12 pt-9 pb-7 @max-[640px]/app:px-4 @max-[640px]/app:pt-5 @min-[1700px]/app:px-16 @min-[1700px]/app:pt-11 @min-[1700px]/app:pb-8'}`}>
               {projectMissing ? (
                 <NotFoundState what={m.shell_layout__the_project({ projectSlug })}>
                   <Button asChild variant="hero" size="pageLg">
