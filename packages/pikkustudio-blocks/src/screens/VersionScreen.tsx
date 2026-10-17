@@ -1,7 +1,7 @@
 import { m } from '@/i18n/messages'
 import { useContext, useState } from 'react'
 import { Link } from '../blocks/Link'
-import { ArrowLeft, ArrowLeftRight, Check, FileText, FlaskConical, KeyRound, Settings, ShieldCheck, TriangleAlert, Workflow, Undo2, History, Trash2 } from 'lucide-react'
+import { ArrowLeft, Boxes, Check, Clock, Database, FileText, FlaskConical, Globe, History, KeyRound, RefreshCw, Settings, ShieldCheck, Trash2, TriangleAlert, Undo2, Workflow, type LucideIcon } from 'lucide-react'
 import { Button, buttonVariants } from '../ui/button'
 import { Input } from '../ui/input'
 import { Art } from '../blocks/ExploreHub'
@@ -9,21 +9,30 @@ import { NextCard } from '../blocks/NextCard'
 import { Page } from '../blocks/Page'
 import { PageHead } from '../blocks/PageHead'
 import { PikkuSays } from '../blocks/PikkuSays'
+import { PikkuDot } from '../blocks/PikkuDot'
 import { Dot, RowCard, RowStack } from '../blocks/RowCard'
 import { Section } from '../blocks/Section'
 import { SidePanel } from '../blocks/SidePanel'
-import { ShelfTile } from '../blocks/ShelfTile'
+import { ErrorState } from '../blocks/ErrorState'
+import { StatusLine } from '../blocks/StatusLine'
 import { ShelfStrip } from '../blocks/ShelfStrip'
-import { failWords, ran, shelfPart, shelfTone, shelfWords, when, who } from '../blocks/ShelfMeta'
-import { useVersions, type Group, type Version } from '../lib/versions'
+import { canGoBack, dayTime, failWords, shelfWords, titleOf, when, who } from '../blocks/ShelfMeta'
+import { useReleaseDetail, useReleases, type Release, type ReleaseDetail, type ReleaseGroup, type ReleaseGroupId, type ReleaseMissing, type ReleasesView } from '../lib/releases'
 import { keep } from '../lib/links'
 import { ShellCtx } from '../lib/shell'
 import { asI18n, type I18nString } from '@pikku/react'
 
-const sample = { url: 'https://sunrise.bakeryclasses.example' }
-const groupIcon: Record<string, typeof FileText> = { Pages: FileText, Routines: Workflow, 'Secret codes': KeyRound, Settings }
+const groupLook: Record<ReleaseGroupId, { icon: LucideIcon; label: () => I18nString }> = {
+  functions: { icon: Workflow, label: m.version_screen__group_functions },
+  routes: { icon: Globe, label: m.version_screen__group_routes },
+  jobs: { icon: Clock, label: m.version_screen__group_jobs },
+  migrations: { icon: Database, label: m.version_screen__group_migrations },
+  secrets: { icon: KeyRound, label: m.version_screen__group_secrets },
+  variables: { icon: Settings, label: m.version_screen__group_variables },
+  parts: { icon: Boxes, label: m.version_screen__group_parts },
+}
 
-const back = (
+const backLink = (
   <Link {...keep} to={'/versions' as never} className={buttonVariants({ variant: 'ghost', size: 'compact' }) + ' self-start'}>
     <ArrowLeft className="rtl:-scale-x-100 size-4" aria-hidden="true" />
     {m.version_screen__all_versions()}
@@ -31,41 +40,57 @@ const back = (
 )
 
 export function VersionScreen({ id }: { id: string }) {
-  const { versions, loading } = useVersions()
-  const v = versions.find((x) => x.id === id)
-  if (!v && loading) return null
+  const view = useReleases()
+  const v = view.releases.find((x) => x.id === id)
+  if (view.state === 'loading')
+    return (
+      <Page gap="snug">
+        <div role="status" aria-busy="true" className="h-64 animate-pulse rounded-hero bg-secondary" />
+      </Page>
+    )
+  if (view.state === 'error')
+    return (
+      <Page gap="snug">
+        <PageHead crumb={m.versions_screen__title()} title={m.versions_screen__title()} size="lead" />
+        <ErrorState error={view.error} what={m.versions_screen__title()} onRetry={view.retry} />
+        {backLink}
+      </Page>
+    )
   if (!v)
     return (
       <Page gap="snug">
         <PageHead crumb={m.versions_screen__title()} title={m.version_screen__not_found_title()} text={m.version_screen__not_found_text()} size="lead" />
-        {back}
+        {backLink}
       </Page>
     )
-  return <Detail v={v} />
+  return <Detail v={v} view={view} />
 }
 
-const lines = (g: Group) => [...g.added.map((x) => ['ok', m.version_screen__line_new(), x] as const), ...g.changed.map((x) => ['quiet', m.version_screen__line_changed(), x] as const), ...g.removed.map((x) => ['bad', m.version_screen__line_removed(), x] as const)]
+const changeWord = { added: m.version_screen__line_new, changed: m.version_screen__line_changed, removed: m.version_screen__line_removed }
+const changeTone = { added: 'ok', changed: 'quiet', removed: 'bad' } as const
 
-function GroupRows({ groups }: { groups: Group[] }) {
+function GroupRows({ groups }: { groups: ReleaseGroup[] }) {
+  if (!groups.length) return <p className="text-[14px] text-ink-2">{m.version_screen__no_changes()}</p>
   return (
     <RowStack>
       {groups.map((g) => {
-        const Icon = groupIcon[g.label] ?? FileText
-        const l = lines(g)
+        const look = groupLook[g.id]
         return (
           <RowCard
-            key={g.label}
-            tile={<Icon className="size-5" />}
-            title={g.label}
-            caption={m.version_screen__change({ count: l.length })}
+            key={g.id}
+            tile={<look.icon className="size-5" />}
+            title={look.label()}
+            caption={m.version_screen__change({ count: g.items.length })}
             below={
               <ul className="flex flex-col gap-1.5 ps-14.5 text-[16px]">
-                {l.map(([tone, word, x]) => (
-                  <li key={word + x} className="flex flex-wrap items-center gap-3">
+                {g.items.map((x) => (
+                  <li key={x.change + x.name} className="flex flex-wrap items-center gap-3">
                     <span className="w-24 shrink-0">
-                      <Dot tone={tone}>{word}</Dot>
+                      <Dot tone={changeTone[x.change]}>{changeWord[x.change]()}</Dot>
                     </span>
-                    {x}
+                    <span dir="ltr" className="font-mono text-[14px] break-all">
+                      {asI18n(x.name)}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -77,259 +102,305 @@ function GroupRows({ groups }: { groups: Group[] }) {
   )
 }
 
-function Detail({ v }: { v: Version }) {
-  const { versions } = useVersions()
+type Panel = { kind: 'log' } | { kind: 'back' } | { kind: 'discard' } | { kind: 'fill'; item: ReleaseMissing }
+type Fault = { text: I18nString; ask: I18nString }
+
+function FaultLine({ fault }: { fault: Fault }) {
   const { say } = useContext(ShellCtx)
-  const [panel, setPanel] = useState<'log' | 'back' | 'discard' | 'setting' | null>(null)
-  const [saved, setSaved] = useState<Record<string, string>>({})
-  const [draft, setDraft] = useState<Record<string, string>>({})
+  return (
+    <div role="alert" className="flex flex-wrap items-center gap-3.5">
+      <StatusLine tone="bad" text={fault.text} />
+      <Button variant="bordered" size="compact" className="gap-2.25" onClick={() => say(fault.ask)}>
+        <PikkuDot />
+        {m.versions_screen__ask_pikku()}
+      </Button>
+    </div>
+  )
+}
+
+function Detail({ v, view }: { v: Release; view: ReleasesView }) {
+  const { say } = useContext(ShellCtx)
+  const edit = !view.readOnly && !!view.actions
+  const actions = view.actions
+  const [panel, setPanel] = useState<Panel | null>(null)
+  const [saved, setSaved] = useState<string[]>([])
+  const [draft, setDraft] = useState('')
   const [read, setRead] = useState<string[]>([])
-  const o = v.outcome
+  const [busy, setBusy] = useState(false)
+  const [fault, setFault] = useState<Fault | null>(null)
+  const detail = useReleaseDetail(v.id, true)
+  const o = v.status
   const gate = o === 'waiting'
-  const live = versions.find((x) => x.outcome === 'live')!
-  const ready = v.missing.every((m) => saved[m.id]) && v.flags.every((f) => read.includes(f.id))
-  const left = v.missing.filter((m) => !saved[m.id]).length + v.flags.filter((f) => !read.includes(f.id)).length
+  const title = titleOf(v)
+  const live = view.releases.find((x) => x.status === 'live') ?? null
+  const missing = v.missing.filter((x) => !saved.includes(x.name))
+  const unread = detail.flags.filter((f) => !read.includes(f.id))
+  const stale = gate && v.wait === 'config' && v.missing.length === 0
+  const ready = gate && missing.length === 0 && unread.length === 0 && v.wait !== 'builder'
+  const left = missing.length + unread.length
+
+  const run = async (work: () => Promise<unknown>, failed: Fault) => {
+    setBusy(true)
+    setFault(null)
+    try {
+      await work()
+      return true
+    } catch {
+      setFault(failed)
+      return false
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const approve = () =>
+    run(
+      async () => {
+        if (v.wait === 'config' && !(await actions!.recheck(v.id))) throw new Error('config')
+        await actions!.approve(v.id)
+      },
+      { text: m.version_screen__approve_failed(), ask: m.version_screen__approve_failed_ask({ title }) },
+    )
 
   const hero = {
-    waiting: { hue: 'petrol', title: ready ? m.version_screen__hero_ready_title() : m.version_screen__hero_waiting_title(), why: ready ? m.version_screen__hero_ready_why() : m.version_screen__hero_waiting_why({ count: left }) },
-    working: { hue: 'teal', title: m.version_screen__hero_working_title(), why: m.version_screen__hero_working_why() },
-    live: { hue: 'sea', title: m.version_screen__hero_live_title(), why: m.version_screen__hero_live_why({ since: v.liveSince?.toLowerCase() ?? '', visits: v.visits ?? 0 }) },
+    waiting:
+      v.wait === 'builder'
+        ? { hue: 'petrol', title: m.version_screen__hero_builder_title(), why: m.version_screen__hero_builder_why() }
+        : { hue: 'petrol', title: ready ? m.version_screen__hero_ready_title() : m.version_screen__hero_waiting_title(), why: ready ? m.version_screen__hero_ready_why() : m.version_screen__hero_waiting_why({ count: left }) },
+    working: { hue: 'teal', title: m.version_screen__hero_working_title(), why: v.progress ? asI18n(v.progress) : m.version_screen__hero_working_why() },
+    live: { hue: 'sea', title: m.version_screen__hero_live_title(), why: m.version_screen__hero_live_since_why({ since: dayTime(v.liveAt ?? v.at) }) },
     'was-live': { hue: 'petrol', title: m.version_screen__hero_was_live_title(), why: m.version_screen__hero_was_live_why() },
     'rolled-back': { hue: 'petrol', title: m.version_screen__hero_rolled_back_title(), why: m.version_screen__hero_rolled_back_why() },
-    cancelled: { hue: 'petrol', title: m.version_screen__hero_cancelled_title(), why: v.reason ?? m.version_screen__no_reason() },
-    failed: { hue: 'petrol', title: failWords[v.failedAt ?? 'build'](), why: m.version_screen__hero_failed_why({ reason: v.reason ?? '' }) },
+    cancelled: { hue: 'petrol', title: m.version_screen__hero_cancelled_title(), why: v.reason ? asI18n(v.reason) : m.version_screen__no_reason() },
+    failed: { hue: 'petrol', title: failWords[v.failedAt ?? 'build'](), why: v.reason ? m.version_screen__hero_failed_why({ reason: asI18n(v.reason) }) : m.version_screen__no_reason() },
   }[o] as { hue: 'teal' | 'petrol' | 'sea'; title: I18nString; why: I18nString }
-
-  // The one before it (for the live version) is not in the sample, so it is drawn as a plain slot.
-  const beforeLive = o === 'live'
-  const p = shelfPart(v)
-  const lp = shelfPart(live)
-  // What switching would undo: the changes of every newer version that actually ran.
-  const newer = versions.filter((x) => ran(x.outcome) && versions.indexOf(x) < versions.indexOf(v))
-
-  const status = (x: Version) => shelfWords[x.outcome]()
-  const mini = (x: Version, label: I18nString, meta: I18nString, flag?: boolean) => {
-    const q = shelfPart(x)
-    return <ShelfTile label={label} hue={q.hue} icon={q.icon} flag={flag} title={x.title} text={x.summary} status={status(x)} tone={shelfTone[x.outcome]} meta={meta} />
-  }
 
   return (
     <Page gap="snug">
-      <PageHead crumb={m.versions_screen__title()} title={v.title} text={m.version_screen__byline({ who: who(v), when: when(v).toLowerCase(), summary: v.summary })} size="lead" />
+      <PageHead crumb={m.versions_screen__title()} title={title} text={m.version_screen__byline_short({ who: who(v), when: when(v), version: v.version })} size="lead" />
 
       <NextCard label={shelfWords[o]()} hue={hero.hue} art={<Art />} title={hero.title} why={hero.why}>
-        {o === 'working' && <ShelfStrip phase={v.phase ?? 0} onHero />}
+        {o === 'working' ? <ShelfStrip phase={v.step} since={v.at} onHero /> : null}
         <div className="flex flex-wrap gap-3">
-          {gate && (
-            <Button variant="hero" size="page" disabled={!ready} onClick={() => say(m.version_screen__say_publish({ title: v.title }))}>
+          {gate && edit && v.wait !== 'builder' ? (
+            <Button variant="hero" size="page" disabled={!ready || busy} onClick={() => void approve()}>
               {m.version_screen__publish()}
             </Button>
-          )}
-          {o === 'failed' && (
-            <Button variant="hero" size="page" onClick={() => say(m.version_screen__say_retry({ title: v.title }))}>
+          ) : null}
+          {o === 'failed' && edit ? (
+            <Button variant="hero" size="page" disabled={busy} onClick={() => void run(() => actions!.tryAgain(v.id), { text: m.version_screen__retry_failed(), ask: m.version_screen__say_fix({ title }) })}>
               {m.signin__retry()}
             </Button>
-          )}
-          {o === 'was-live' && (
-            <Button variant="hero" size="page" onClick={() => setPanel('back')}>
+          ) : null}
+          {canGoBack(o) && edit ? (
+            <Button variant="hero" size="page" onClick={() => (setFault(null), setPanel({ kind: 'back' }))}>
               {m.version_screen__go_back()}
             </Button>
-          )}
-          {o === 'live' && (
-            <a href={sample.url} target="_blank" rel="noreferrer" className={buttonVariants({ variant: 'hero', size: 'page' })}>
+          ) : null}
+          {o === 'live' && view.url ? (
+            <a href={view.url} target="_blank" rel="noreferrer" className={buttonVariants({ variant: 'hero', size: 'page' })}>
               {m.version_screen__open_app()}
             </a>
-          )}
-          {o === 'working' && (
-            <Button variant="heroGhost" size="page" onClick={() => say(m.version_screen__say_cancel())}>
-              {m.secret_form__cancel()}
-            </Button>
-          )}
-          {(gate || o === 'failed' || o === 'cancelled') && (
-            <Button variant="heroGhost" size="page" onClick={() => setPanel('discard')}>
+          ) : null}
+          {gate && edit ? (
+            <Button variant="heroGhost" size="page" onClick={() => (setFault(null), setPanel({ kind: 'discard' }))}>
               {m.version_screen__discard()}
             </Button>
-          )}
-          {o !== 'working' && (
-            <Button variant="heroGhost" size="page" onClick={() => setPanel('log')}>
+          ) : null}
+          {o !== 'working' && o !== 'waiting' ? (
+            <Button variant="heroGhost" size="page" onClick={() => setPanel({ kind: 'log' })}>
               {m.version_screen__read_log()}
             </Button>
-          )}
+          ) : null}
         </div>
       </NextCard>
 
-      {back}
+      {backLink}
 
-      <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-stretch gap-3.5" role="group" aria-label={m.version_screen__compare()}>
-        {beforeLive ? (
-          <ShelfTile label={m.version_screen__before_this_one()} hue="grey" icon={Undo2} title={m.version_screen__what_it_replaced()} text={m.version_screen__the_version_that_was_live()} status={m.shelf_meta__was_live()} meta={m.version_screen__until({ when: v.liveSince?.toLowerCase() ?? '' })} />
-        ) : (
-          mini(live, m.version_screen__what_people_see_now(), m.version_screen__live_since({ when: live.liveSince?.toLowerCase() ?? '' }))
-        )}
-        <span className="grid size-11 shrink-0 self-center place-items-center rounded-full border-[1.5px] border-input bg-card text-ink-2" aria-hidden="true">
-          <ArrowLeftRight className="size-5" />
-        </span>
-        <ShelfTile label={m.version_screen__this_version()} hue={p.hue} icon={p.icon} flag={gate} title={v.title} text={v.summary} status={status(v)} tone={shelfTone[o]} meta={v.took ? m.version_screen__meta_took({ who: who(v), when: when(v), took: v.took }) : m.version_screen__meta({ who: who(v), when: when(v) })} />
-      </div>
-      {o === 'failed' && (
-        <PikkuSays text={m.version_screen__i_can_read_what_happened()}>
-          <Button variant="bordered" size="compact" onClick={() => say(m.version_screen__say_fix({ title: v.title }))}>
+      {fault && !panel ? <FaultLine fault={fault} /> : null}
+
+      {o === 'failed' ? (
+        <PikkuSays text={m.version_screen__i_can_read_failed()}>
+          <Button variant="bordered" size="compact" onClick={() => say(m.version_screen__say_fix({ title }))}>
             {m.routine_screen__fix_it()}
           </Button>
         </PikkuSays>
-      )}
+      ) : null}
 
-      {gate && (
-        <Section title={m.version_screen__before_it_goes_live()} sub={m.version_screen__do_these_and_the_publish()}>
+      {gate ? (
+        <Section title={m.version_screen__before_it_goes_live()} sub={edit ? m.version_screen__do_these_and_the_publish() : m.version_screen__read_only_gate()}>
           <RowStack>
             {v.missing.map((mi) => {
-              const note = saved[mi.id] ?? mi.why
+              const done = saved.includes(mi.name)
               return (
-                <RowCard key={mi.id} flag={!saved[mi.id]} tile={<Settings className="size-5" />} title={mi.name} caption={asI18n(note)}>
-                  {saved[mi.id] ? (
+                <RowCard key={mi.name} flag={!done} tile={<KeyRound className="size-5" />} title={asI18n(mi.name)} caption={mi.description ? asI18n(mi.description) : mi.kind === 'secret' ? m.version_screen__missing_secret() : m.version_screen__missing_setting()}>
+                  {done ? (
                     <Dot>{m.version_screen__saved()}</Dot>
-                  ) : (
-                    <Button variant="bordered" size="compact" onClick={() => setPanel('setting')}>
+                  ) : edit ? (
+                    <Button variant="bordered" size="compact" onClick={() => (setDraft(''), setFault(null), setPanel({ kind: 'fill', item: mi }))}>
                       {m.version_screen__fill_in()}
                     </Button>
+                  ) : (
+                    <Dot tone="warn">{m.version_screen__needs_filling()}</Dot>
                   )}
                 </RowCard>
               )
             })}
-            {v.flags.map((f) => (
-              <RowCard key={f.id} flag={!read.includes(f.id)} tile={<TriangleAlert className="size-5" />} title={f.level === 'breaking' ? m.version_screen__flag_breaking() : f.level === 'security' ? m.version_screen__flag_security() : m.version_screen__flag_failed()} caption={f.text}>
-                {read.includes(f.id) ? (
-                  <Dot>{m.version_screen__read()}</Dot>
-                ) : (
-                  <Button variant="bordered" size="compact" onClick={() => setRead((r) => [...r, f.id])}>
-                    {m.version_screen__have_read()}
+            {stale ? (
+              <RowCard tile={<RefreshCw className="size-5" />} title={m.version_screen__stale_title()} caption={m.version_screen__stale_text()}>
+                {edit ? (
+                  <Button variant="bordered" size="compact" disabled={busy} onClick={() => void run(async () => { if (!(await actions!.recheck(v.id))) throw new Error('config') }, { text: m.version_screen__still_missing(), ask: m.version_screen__approve_failed_ask({ title }) })}>
+                    {m.version_screen__check_again()}
                   </Button>
-                )}
+                ) : null}
               </RowCard>
-            ))}
-          </RowStack>
-        </Section>
-      )}
-
-      {(o === 'working' || o === 'waiting' || o === 'live') && (
-        <Section title={o === 'live' ? m.version_screen__compared_title() : m.version_screen__will_change_title()}>
-          <GroupRows groups={v.groups} />
-        </Section>
-      )}
-
-      {(o === 'was-live' || o === 'rolled-back') && (
-        <Section title={m.version_screen__if_you_switched_this_would()} sub={m.version_screen__compared_with_what_people_see()}>
-          <RowStack>
-            {newer.map((x) => {
-              const items = x.groups.flatMap((g) => [...g.added, ...g.changed])
-              const Icon = shelfPart(x).icon
+            ) : null}
+            {detail.flags.map((f) => {
+              const done = read.includes(f.id)
               return (
-                <RowCard key={x.id} tile={<Icon className="size-5" />} title={x.title} caption={m.version_screen__would_go_back({ items: items.join(', ') })}>
-                  <Dot tone="warn">{m.version_screen__would_stop()}</Dot>
+                <RowCard key={f.id} flag={!done} tile={<TriangleAlert className="size-5" />} title={f.level === 'breaking' ? m.version_screen__flag_breaking() : f.level === 'security' ? m.version_screen__flag_security() : m.version_screen__flag_failed()} caption={asI18n(f.why)} note={asI18n(f.name)}>
+                  {done ? (
+                    <Button variant="quietMuted" onClick={() => setRead((r) => r.filter((x) => x !== f.id))}>
+                      {m.version_screen__read()}
+                    </Button>
+                  ) : edit ? (
+                    <Button variant="bordered" size="compact" onClick={() => setRead((r) => [...r, f.id])}>
+                      {m.version_screen__have_read()}
+                    </Button>
+                  ) : null}
                 </RowCard>
               )
             })}
-            {v.groups.map((g) => {
-              const Icon = groupIcon[g.label] ?? FileText
-              const touched = [...g.added, ...g.changed].join(', ')
-              return (
-                <RowCard key={g.label} tile={<Icon className="size-5" />} title={m.version_screen__group_in_version({ label: g.label })} caption={asI18n(touched)}>
-                  <Dot>{m.version_screen__would_come_back()}</Dot>
-                </RowCard>
-              )
-            })}
+            {v.wait === 'builder' ? <RowCard tile={<History className="size-5" />} title={m.version_screen__hero_builder_title()} caption={m.version_screen__hero_builder_why()} /> : null}
+            {!v.missing.length && !detail.flags.length && !stale && v.wait !== 'builder' ? <RowCard on tile={<Check className="size-5" />} title={m.version_screen__nothing_to_do()} caption={m.version_screen__hero_ready_why()} /> : null}
           </RowStack>
         </Section>
-      )}
+      ) : null}
 
-      {o === 'failed' && (
+      {o === 'failed' ? (
         <Section title={m.routine_screen__what_went_wrong()}>
           <RowStack>
-            <RowCard tile={<TriangleAlert className="size-5" />} title={failWords[v.failedAt ?? 'build']()} caption={v.reason}>
+            <RowCard tile={<TriangleAlert className="size-5" />} title={failWords[v.failedAt ?? 'build']()} caption={v.reason ? asI18n(v.reason) : m.version_screen__no_reason()}>
               <Dot tone="bad">{m.version_screen__did_not_go_live()}</Dot>
             </RowCard>
-            <RowCard on tile={<Check className="size-5" />} title={m.version_screen__live_is_fine()} caption={m.version_screen__still_what_people_see({ title: live.title })}>
-              <Dot>{m.version_screen__still_live()}</Dot>
-            </RowCard>
+            {live ? (
+              <RowCard on tile={<Check className="size-5" />} title={m.version_screen__live_is_fine()} caption={m.version_screen__still_what_people_see({ title: titleOf(live) })}>
+                <Dot>{m.version_screen__still_live()}</Dot>
+              </RowCard>
+            ) : null}
           </RowStack>
         </Section>
-      )}
+      ) : null}
 
-      {(o === 'was-live' || o === 'rolled-back' || o === 'failed' || o === 'cancelled') && (
-        <Section title={m.version_screen__what_is_in_it()} sub={o === 'failed' || o === 'cancelled' ? m.version_screen__would_have_changed() : undefined}>
-          <GroupRows groups={v.groups} />
-        </Section>
-      )}
+      <Section title={o === 'live' ? m.version_screen__compared_title() : o === 'working' || gate ? m.version_screen__will_change_title() : m.version_screen__what_is_in_it()} sub={o === 'failed' || o === 'cancelled' ? m.version_screen__would_have_changed() : undefined}>
+        <GroupRows groups={v.groups} />
+      </Section>
 
-      {o !== 'working' && (
-        <Section title={m.version_screen__checks()}>
-          <RowStack>
-            <RowCard tile={<FlaskConical className="size-5" />} title={m.version_screen__check_works()} caption={v.tests ? m.version_screen__tests_line({ passed: v.tests.passed, failed: v.tests.failed ? m.version_screen__tests_failed({ n: v.tests.failed }) : '', skipped: v.tests.skipped ? m.version_screen__tests_skipped({ n: v.tests.skipped }) : '', secs: v.tests.secs }) : o === 'failed' ? m.version_screen__tests_not_run_build() : m.version_screen__tests_not_run()}>
-              <Dot tone={v.tests ? (v.tests.failed ? 'bad' : 'ok') : 'quiet'}>{v.tests ? (v.tests.failed ? m.version_screen__needs_look() : m.version_screen__all_passed()) : m.version_screen__did_not_run()}</Dot>
-            </RowCard>
-            <RowCard tile={<ShieldCheck className="size-5" />} title={m.version_screen__check_safe()} caption={v.flags.length ? (m.version_screen__things({ count: v.flags.length })) : v.tests ? m.version_screen__nothing_risky() : m.version_screen__not_checked_line()}>
-              <Dot tone={v.flags.length ? 'warn' : v.tests ? 'ok' : 'quiet'}>{v.flags.length ? m.version_screen__read_it() : v.tests ? m.version_screen__nothing_found() : m.version_screen__not_checked()}</Dot>
-            </RowCard>
-          </RowStack>
-        </Section>
-      )}
+      {o !== 'working' ? <Checks v={v} detail={detail} /> : null}
 
-      {panel === 'log' && (
+      {panel?.kind === 'log' ? (
         <SidePanel icon={History} label={m.routine_screen__what_happened()} title={m.routine_screen__what_happened()} sub={m.version_screen__the_record_from_building_and()} onClose={() => setPanel(null)}>
-          <pre dir="ltr" className="overflow-auto rounded-card bg-secondary p-4 font-mono text-[13px] leading-[1.6] whitespace-pre-wrap">{asI18n(v.log)}</pre>
+          {detail.logLoading ? (
+            <div role="status" aria-busy="true" className="h-48 animate-pulse rounded-card bg-secondary" />
+          ) : detail.logError ? (
+            <ErrorState error={detail.logError} what={m.routine_screen__what_happened()} />
+          ) : detail.log ? (
+            <pre dir="ltr" className="max-h-[70vh] overflow-auto rounded-card bg-secondary p-4 font-mono text-[13px] leading-[1.6] whitespace-pre-wrap">
+              {asI18n(detail.log)}
+            </pre>
+          ) : (
+            <p className="text-[16px] text-ink-2">{m.version_screen__no_log()}</p>
+          )}
+          {o === 'failed' ? (
+            <Button variant="bordered" size="page" className="gap-2.25 self-start" onClick={() => say(m.version_screen__say_fix({ title }))}>
+              <PikkuDot />
+              {m.versions_screen__ask_pikku()}
+            </Button>
+          ) : null}
         </SidePanel>
-      )}
-      {panel === 'setting' && (
-        <SidePanel icon={FileText} label={v.missing[0]?.name ?? m.version_screen__fill_it_in()} title={v.missing[0]?.name ?? m.version_screen__fill_it_in()} sub={v.missing[0]?.why} onClose={() => setPanel(null)}>
-          {v.missing.map((mi) => (
-            <form
-              key={mi.id}
-              className="flex flex-col gap-3"
-              onSubmit={(e) => {
-                e.preventDefault()
-                if (draft[mi.id]?.trim()) (setSaved((s) => ({ ...s, [mi.id]: draft[mi.id].trim() })), setPanel(null))
-              }}
-            >
-              <Input shape="pill" value={draft[mi.id] ?? ''} onChange={(e) => setDraft((d) => ({ ...d, [mi.id]: e.target.value }))} placeholder={mi.placeholder} aria-label={mi.name} className="h-12 border-[1.5px] border-input bg-card text-[16px]" />
-              <div className="flex gap-3">
-                <Button type="submit" variant="default" size="page" disabled={!draft[mi.id]?.trim()}>
-                  {m.version_screen__save()}
-                </Button>
-                <Button type="button" variant="bordered" size="page" onClick={() => setPanel(null)}>
-                  {m.shell_layout__not_now()}
-                </Button>
-              </div>
-            </form>
-          ))}
+      ) : null}
+
+      {panel?.kind === 'fill' ? (
+        <SidePanel icon={FileText} label={asI18n(panel.item.name)} title={asI18n(panel.item.name)} sub={panel.item.description ? asI18n(panel.item.description) : panel.item.kind === 'secret' ? m.version_screen__missing_secret() : m.version_screen__missing_setting()} onClose={() => setPanel(null)}>
+          <form
+            className="flex flex-col gap-3"
+            onSubmit={(e) => {
+              e.preventDefault()
+              const item = panel.item
+              const value = draft.trim()
+              if (!value) return
+              void run(() => actions!.fill(item, value), { text: m.version_screen__fill_failed(), ask: m.version_screen__fill_failed_ask({ name: asI18n(item.name) }) }).then((ok) => {
+                if (!ok) return
+                setSaved((s) => [...s, item.name])
+                setDraft('')
+                setPanel(null)
+              })
+            }}
+          >
+            <Input shape="pill" type={panel.item.kind === 'secret' ? 'password' : 'text'} autoComplete="off" value={draft} onChange={(e) => setDraft(e.target.value)} aria-label={asI18n(panel.item.name)} className="h-12 border-[1.5px] border-input bg-card text-[16px]" />
+            {panel.item.kind === 'secret' ? <p className="text-[14px] text-ink-2">{m.version_screen__secret_hidden()}</p> : null}
+            <div className="flex gap-3">
+              <Button type="submit" variant="default" size="page" disabled={!draft.trim() || busy}>
+                {m.version_screen__save()}
+              </Button>
+              <Button type="button" variant="bordered" size="page" onClick={() => setPanel(null)}>
+                {m.shell_layout__not_now()}
+              </Button>
+            </div>
+            {fault ? <FaultLine fault={fault} /> : null}
+          </form>
         </SidePanel>
-      )}
-      {panel === 'back' && (
+      ) : null}
+
+      {panel?.kind === 'back' ? (
         <SidePanel icon={Undo2} label={m.versions_screen__go_back_title()} title={m.versions_screen__go_back_title()} sub={m.versions_screen__go_back_sub()} onClose={() => setPanel(null)}>
-          <p className="text-[16px] text-ink-2">
-            {m.version_screen__go_back_detail({ title: v.title, liveTitle: live.title })}
-          </p>
+          <p className="text-[16px] text-ink-2">{m.version_screen__go_back_detail({ title, liveTitle: live ? titleOf(live) : m.versions_screen__nothing_live_title() })}</p>
           <div className="flex gap-3">
-            <Button variant="default" size="page" onClick={() => (setPanel(null), say(m.version_screen__say_go_back({ title: v.title })))}>
+            <Button variant="destructive" size="page" disabled={busy} onClick={() => void run(() => actions!.goBack(v.id), { text: m.versions_screen__go_back_failed(), ask: m.versions_screen__go_back_failed_ask({ title }) }).then((ok) => ok && setPanel(null))}>
               {m.version_screen__yes_go_back()}
             </Button>
             <Button variant="bordered" size="page" onClick={() => setPanel(null)}>
               {m.version_screen__keep_live()}
             </Button>
           </div>
+          {fault ? <FaultLine fault={fault} /> : null}
         </SidePanel>
-      )}
-      {panel === 'discard' && (
+      ) : null}
+
+      {panel?.kind === 'discard' ? (
         <SidePanel icon={Trash2} label={m.version_screen__discard_this_version()} title={m.version_screen__discard_this_version()} sub={m.version_screen__it_leaves_your_history_the()} onClose={() => setPanel(null)}>
           <div className="flex gap-3">
-            <Button variant="destructive" size="page" onClick={() => (setPanel(null), say(m.version_screen__say_discard({ title: v.title })))}>
+            <Button variant="destructive" size="page" disabled={busy} onClick={() => void run(() => actions!.dismiss(v.id), { text: m.version_screen__discard_failed(), ask: m.version_screen__approve_failed_ask({ title }) }).then((ok) => ok && setPanel(null))}>
               {m.version_screen__yes_discard()}
             </Button>
             <Button variant="bordered" size="page" onClick={() => setPanel(null)}>
               {m.secrets_list__keep_it()}
             </Button>
           </div>
+          {fault ? <FaultLine fault={fault} /> : null}
         </SidePanel>
-      )}
+      ) : null}
     </Page>
+  )
+}
+
+function Checks({ v, detail }: { v: Release; detail: ReleaseDetail }) {
+  const t = detail.tests
+  const flags = detail.flags.length
+  return (
+    <Section title={m.version_screen__checks()}>
+      <RowStack>
+        <RowCard
+          tile={<FlaskConical className="size-5" />}
+          title={m.version_screen__check_works()}
+          caption={t ? m.version_screen__tests_count({ passed: t.passed, failed: t.failed, skipped: t.skipped }) : v.status === 'failed' ? m.version_screen__tests_not_run_build() : m.version_screen__tests_not_run()}
+        >
+          <Dot tone={t ? (t.failed ? 'bad' : 'ok') : 'quiet'}>{t ? (t.failed ? m.version_screen__needs_look() : m.version_screen__all_passed()) : m.version_screen__did_not_run()}</Dot>
+        </RowCard>
+        <RowCard tile={<ShieldCheck className="size-5" />} title={m.version_screen__check_safe()} caption={flags ? m.version_screen__things({ count: flags }) : m.version_screen__nothing_risky()}>
+          <Dot tone={flags ? 'warn' : 'ok'}>{flags ? m.version_screen__read_it() : m.version_screen__nothing_found()}</Dot>
+        </RowCard>
+      </RowStack>
+    </Section>
   )
 }

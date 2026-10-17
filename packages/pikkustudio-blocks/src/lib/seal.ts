@@ -22,11 +22,10 @@ const concat = (a: Uint8Array, b: Uint8Array): Uint8Array<ArrayBuffer> => {
   return out
 }
 
-export const sealSecret = async (
-  publicKey: string,
-  keyId: string,
-  value: unknown
-): Promise<string> => {
+export const sealSecret = (publicKey: string, keyId: string, value: unknown): Promise<string> =>
+  sealText(publicKey, keyId, JSON.stringify(value))
+
+export const sealText = async (publicKey: string, keyId: string, text: string): Promise<string> => {
   const recipientDer = fromBase64(publicKey)
   const recipient = await crypto.subtle.importKey('spki', recipientDer, { name: 'X25519' }, false, [])
   const ephemeral = (await crypto.subtle.generateKey({ name: 'X25519' }, true, ['deriveBits'])) as CryptoKeyPair
@@ -42,7 +41,7 @@ export const sealSecret = async (
   )
   const iv = crypto.getRandomValues(new Uint8Array(12))
   const sealed = new Uint8Array(
-    await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, contentKey, new TextEncoder().encode(JSON.stringify(value)))
+    await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, contentKey, new TextEncoder().encode(text))
   )
   return JSON.stringify({
     alg: ALGORITHM,
