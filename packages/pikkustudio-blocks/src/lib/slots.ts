@@ -27,6 +27,8 @@ export type Slots = {
   AccountName?: ComponentType
   TeamName?: ComponentType<{ children: (name: string) => ReactNode }>
   TeamScope?: ComponentType<TeamScopeProps>
+  ProjectTargetProvider?: ComponentType<{ children: ReactNode }>
+  ProjectTargetSwitcher?: ComponentType<{ collapsed: boolean }>
   /** History of the deployed copy of a project; absent where nothing deploys. A hook, called every render. */
   useStageAudit?: (projectKey: string, refetchInterval: number) => { data?: StageAuditPage }
 }

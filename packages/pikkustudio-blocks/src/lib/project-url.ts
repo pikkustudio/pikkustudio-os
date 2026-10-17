@@ -46,25 +46,31 @@ export const projectRewrite: LocationRewrite = {
       url.pathname = `/${[second, ...more].join('/')}`
     } else {
       url.searchParams.set('project', JSON.stringify(second))
-      url.pathname = `/${more.length ? more.join('/') : 'overview'}`
+      const [kind, name, ...page] = more
+      const rest = (kind === 'workspace' || kind === 'stage') && name ? page : more
+      if (rest !== more) url.searchParams.set('target', JSON.stringify(`${kind}/${name}`))
+      url.pathname = `/${rest.length ? rest.join('/') : 'overview'}`
     }
     return url
   },
   output: ({ url }) => {
     const team = url.searchParams.get('team')
     const project = url.searchParams.get('project')
+    const target = url.searchParams.get('target')
+    url.searchParams.delete('target')
     if (team === null && project === null) return url
     url.searchParams.delete('team')
     url.searchParams.delete('project')
+    const at = target ? `/${unquote(target)}` : ''
     const first = url.pathname.split('/').filter(Boolean)[0]
     if (!first || GLOBAL.has(first)) return url
     if (team === null) {
       // No team known yet: keep the project in the URL so it survives until the guard scopes it.
-      if (project !== null && !TEAM_PAGES.has(first)) url.pathname = `/${unquote(project)}${url.pathname}`
+      if (project !== null && !TEAM_PAGES.has(first)) url.pathname = `/${unquote(project)}${at}${url.pathname}`
       return url
     }
     const scope = `/${unquote(team)}`
-    url.pathname = project !== null && !TEAM_PAGES.has(first) ? `${scope}/${bareSlug(project)}${url.pathname}` : `${scope}${url.pathname}`
+    url.pathname = project !== null && !TEAM_PAGES.has(first) ? `${scope}/${bareSlug(project)}${at}${url.pathname}` : `${scope}${url.pathname}`
     return url
   },
 }

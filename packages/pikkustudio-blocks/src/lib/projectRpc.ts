@@ -1,5 +1,6 @@
 import { createContext, useContext } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { ProjectTargetContext } from './project-target'
 
 export type ProjectInvoke = (key: string, name: string, data?: unknown) => Promise<any>
 
@@ -11,9 +12,10 @@ const IDLE_MS = 30_000
 
 export function useProjectQuery<T>(key: string, name: string, data?: unknown, options?: { refetchInterval?: number; enabled?: boolean; optional?: boolean }) {
   const invoke = useContext(ProjectRpcCtx)
+  const { kind, name: at } = useContext(ProjectTargetContext)
   return useQuery<T>({
     enabled: !!key && options?.enabled !== false,
-    queryKey: ['project', key, name, data ?? null],
+    queryKey: ['project', key, name, data ?? null, `${kind}/${at}`],
     queryFn: () => invoke(key, name, data),
     // A cloud workspace that is off (409) or still starting (503) is checked on far less often.
     refetchInterval: (query) => {

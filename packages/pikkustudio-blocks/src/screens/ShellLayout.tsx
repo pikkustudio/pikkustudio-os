@@ -34,7 +34,8 @@ import { FullTranscript } from '../blocks/FullTranscript'
 import { QuickFind } from '../blocks/QuickFind'
 import { SlashMenu, slashMatches, slashOptionId } from '../blocks/SlashMenu'
 import { UpdatesFeed } from '../blocks/UpdatesFeed'
-import { ProjectRunGate } from '../blocks/ProjectRunGate'
+import { TargetRunGate } from '../blocks/TargetRunGate'
+import { LocalProjectTargetProvider } from '../lib/project-target'
 import { Toaster } from '../blocks/Toaster'
 import { ComposerTools } from '../blocks/ComposerTools'
 import { NoAiCard } from '../blocks/NoAiCard'
@@ -145,6 +146,15 @@ function Note({
 }
 
 export function ShellLayout() {
+  const Target = useSlots().ProjectTargetProvider ?? LocalProjectTargetProvider
+  return (
+    <Target>
+      <ShellLayoutInner />
+    </Target>
+  )
+}
+
+function ShellLayoutInner() {
   const projectName = useProjectName()
   const projectSlug = useProjectSlug()
   const projectMissing = useProjectMissing()
@@ -376,6 +386,7 @@ export function ShellLayout() {
             ) : /\/studio-metrics$/.test(path) || !projectSlug || projectMissing ? null : (
             <div className="flex flex-col gap-0.5 px-1">
               <div className={`mb-1.5 px-3 text-[13px] font-semibold text-muted-foreground ${lbl}`}>{projectName}</div>
+              {slots.ProjectTargetSwitcher ? <slots.ProjectTargetSwitcher collapsed={collapsed} /> : null}
               <Link {...keep} {...tip(m.shell_layout__explore())} to={'/explore' as never} className={navItem}>
                 <Compass className="size-5" />
                 <span className={lbl}>{m.shell_layout__explore()}</span>
@@ -439,9 +450,9 @@ export function ShellLayout() {
                   </Button>
                 </NotFoundState>
               ) : needsApp ? (
-                <ProjectRunGate>
+                <TargetRunGate>
                   <Outlet />
-                </ProjectRunGate>
+                </TargetRunGate>
               ) : (
                 <Outlet />
               )}
