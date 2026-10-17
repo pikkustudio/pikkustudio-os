@@ -84,3 +84,19 @@ export const readOnlyInvoke = (invoke: ProjectInvoke, target: string): ProjectIn
   if (!isReadCall(name)) throw new ReadOnlyTargetError(name, target)
   return invoke(key, name, data)
 }
+
+const LAST_TARGET = 'studio:last-target:'
+
+export const lastTarget = (team: string, project: string): TargetRef | undefined => {
+  try {
+    return parseTarget(localStorage.getItem(`${LAST_TARGET}${team}/${project}`))
+  } catch {
+    return undefined
+  }
+}
+
+export const rememberTarget = (team: string, project: string, target: TargetRef) => {
+  try {
+    localStorage.setItem(`${LAST_TARGET}${team}/${project}`, formatTarget(target))
+  } catch {}
+}
