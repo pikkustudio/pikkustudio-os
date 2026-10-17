@@ -419,6 +419,7 @@ function ShellLayoutInner() {
             </div>
             )}
             <div className="mt-auto flex flex-col gap-2.5">
+              {slots.RailFoot ? <slots.RailFoot collapsed={collapsed} /> : null}
               <button
                 type="button"
                 onClick={toggleRail}

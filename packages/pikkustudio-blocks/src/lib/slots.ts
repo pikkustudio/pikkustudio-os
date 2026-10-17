@@ -31,6 +31,8 @@ export type Slots = {
   ProjectTargetSwitcher?: ComponentType<{ collapsed: boolean }>
   /** History of the deployed copy of a project; absent where nothing deploys. A hook, called every render. */
   useStageAudit?: (projectKey: string, refetchInterval: number) => { data?: StageAuditPage }
+  useLiveUpdates?: (queryKeys: readonly string[]) => void
+  RailFoot?: ComponentType<{ collapsed: boolean }>
 }
 
 export const SlotsCtx = createContext<Slots>({})
