@@ -2,7 +2,7 @@ import { type I18nString, asI18n } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { Activity, BellRing, BookOpen, ClipboardCheck, Bot, Gauge, Compass, FileCode, FileText, FolderOpen, Globe, Palette, KeyRound, LayoutGrid, Mail, ScrollText, Wrench, Search, Smartphone, ShieldCheck, Upload, Users, UserRound, UserRoundCheck, Workflow, History, Link2, ToggleRight, ListChecks } from 'lucide-react'
+import { Activity, BellRing, BookOpen, ClipboardCheck, Bot, Gauge, Compass, FileCode, FileText, FolderOpen, Globe, Palette, KeyRound, LayoutGrid, Mail, ScrollText, Wrench, Search, Smartphone, ShieldCheck, Upload, Users, UserRound, UserRoundCheck, Workflow, History, Link2, ToggleRight, ListChecks, Clock, Layers } from 'lucide-react'
 import { keep } from '../lib/links'
 
 type Hit = { key: string; label: string; hint: string; id: string; Icon: typeof Search }
@@ -34,6 +34,8 @@ const pages = (): Hit[] => (
     [m.quick_find__how_its_running(), '/performance', Activity],
     [m.quick_find__metrics(), '/metrics', Gauge],
     [m.quick_find__scorers(), '/scorers', ClipboardCheck],
+    [m.quick_find__timed_tasks(), '/timed-tasks', Clock],
+    [m.quick_find__background_jobs(), '/background-jobs', Layers],
     [m.checks_screen__title(), '/checks', ListChecks],
     [m.quick_find__switches(), '/switches', ToggleRight],
     [m.quick_find__connections(), '/connections', Link2],
