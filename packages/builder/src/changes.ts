@@ -22,6 +22,7 @@ export interface ChangesReport {
 }
 
 export const pikkuBin = (cwd: string): string[] => {
+  if (process.env.PIKKU_CLI_BIN && existsSync(process.env.PIKKU_CLI_BIN)) return [process.env.PIKKU_CLI_BIN]
   try {
     return [process.execPath, createRequire(import.meta.url).resolve('@pikku/cli')]
   } catch {
