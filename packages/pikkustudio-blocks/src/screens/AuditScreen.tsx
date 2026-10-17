@@ -53,8 +53,8 @@ export function AuditScreen() {
   const [open, setOpen] = useState<AuditEntry | null>(null)
   const [stamp] = useState(() => Date.now())
   const from = useMemo(() => since(range, stamp), [range, stamp])
-  const filters = useProjectQuery<Filters>(key, 'admin:getAuditFilters', {})
-  const audits = useProjectQuery<Page>(key, 'admin:getAudits', { limit, ...(who ? { userIds: [who] } : {}), ...(from ? { from } : {}) })
+  const filters = useProjectQuery<Filters>(key, 'admin:getAuditFilters', {}, { handlesErrors: true })
+  const audits = useProjectQuery<Page>(key, 'admin:getAudits', { limit, ...(who ? { userIds: [who] } : {}), ...(from ? { from } : {}) }, { handlesErrors: true })
   const now = audits.dataUpdatedAt || stamp
   const data = audits.data
   const entries = (data?.events ?? []) as AuditEntry[]

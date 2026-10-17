@@ -10,7 +10,7 @@ export const ProjectRpcCtx = createContext<ProjectInvoke>(async (_key, name) => 
 
 const IDLE_MS = 30_000
 
-export function useProjectQuery<T>(key: string, name: string, data?: unknown, options?: { refetchInterval?: number; enabled?: boolean; optional?: boolean }) {
+export function useProjectQuery<T>(key: string, name: string, data?: unknown, options?: { refetchInterval?: number; enabled?: boolean; optional?: boolean; handlesErrors?: boolean }) {
   const invoke = useContext(ProjectRpcCtx)
   const { kind, name: at } = useContext(ProjectTargetContext)
   return useQuery<T>({
@@ -23,6 +23,7 @@ export function useProjectQuery<T>(key: string, name: string, data?: unknown, op
       return options?.refetchInterval && (status === 409 || status === 503) ? Math.max(options.refetchInterval, IDLE_MS) : options?.refetchInterval
     },
     retry: false,
+    ...(options?.handlesErrors ? { meta: { handlesErrors: true } } : {}),
     ...(options?.optional ? { retryOnMount: false, refetchOnWindowFocus: false, staleTime: 300_000 } : {}),
   })
 }

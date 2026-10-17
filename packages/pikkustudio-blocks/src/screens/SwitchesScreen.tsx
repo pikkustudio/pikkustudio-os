@@ -37,7 +37,7 @@ export function SwitchesScreen() {
   const client = useQueryClient()
   const [open, setOpen] = useState<string | null>(null)
   const [technical] = useDeveloperDetails()
-  const list = useProjectQuery<SwitchList>(key, 'admin:flagList')
+  const list = useProjectQuery<SwitchList>(key, 'admin:flagList', undefined, { handlesErrors: true })
   const refresh = () => {
     for (const n of SWITCH_RPCS) void client.invalidateQueries({ queryKey: ['project', key, n] })
   }

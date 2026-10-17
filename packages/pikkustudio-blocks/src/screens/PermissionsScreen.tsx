@@ -31,8 +31,8 @@ export function PermissionsScreen() {
   const projectName = useProjectName()
   const [open, setOpen] = useState<string | null>(null)
   const [creating, setCreating] = useState(false)
-  const roles = useProjectQuery<{ roles: Role[] }>(key, 'admin:scopeListRoles')
-  const declared = useProjectQuery<{ scopes: DeclaredPermission[] }>(key, 'admin:scopeListDeclared')
+  const roles = useProjectQuery<{ roles: Role[] }>(key, 'admin:scopeListRoles', undefined, { handlesErrors: true })
+  const declared = useProjectQuery<{ scopes: DeclaredPermission[] }>(key, 'admin:scopeListDeclared', undefined, { handlesErrors: true })
   const vocabulary = declared.data?.scopes
   const problem = roles.isError ? accountsProblem(roles.error) : declared.isError ? accountsProblem(declared.error) : null
   const selected = open ? roles.data?.roles.find((r) => r.name === open) : undefined

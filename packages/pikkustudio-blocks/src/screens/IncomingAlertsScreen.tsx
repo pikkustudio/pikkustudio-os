@@ -61,7 +61,7 @@ export function IncomingAlertsScreen() {
   const [confirm, setConfirm] = useState<string | null>(null)
 
   const meta = useProjectQuery<Meta>(key, 'console:getAllMeta')
-  const rows = useProjectQuery<{ sources: SourceRow[] }>(key, 'admin:triggerSourceList', null)
+  const rows = useProjectQuery<{ sources: SourceRow[] }>(key, 'admin:triggerSourceList', null, { handlesErrors: true })
   const deliveries = useProjectQuery<Delivery[]>(key, 'console:listWebhookDeliveries', { limit: 50 })
   const enable = useProjectAction<{ name: string }>(key, 'admin:triggerSourceEnable', ['admin:triggerSourceList'])
   const disable = useProjectAction<{ name: string }>(key, 'admin:triggerSourceDisable', ['admin:triggerSourceList'])

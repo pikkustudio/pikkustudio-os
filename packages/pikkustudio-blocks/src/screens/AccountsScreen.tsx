@@ -31,7 +31,7 @@ export function AccountsScreen() {
   const [open, setOpen] = useState<string | null>(null)
   const [inviting, setInviting] = useState(false)
   const search = term.trim()
-  const people = useProjectQuery<AccountsPage>(key, 'admin:listUsers', { limit, offset: 0, ...(search ? { search } : {}) })
+  const people = useProjectQuery<AccountsPage>(key, 'admin:listUsers', { limit, offset: 0, ...(search ? { search } : {}) }, { handlesErrors: true })
   const refresh = () => void client.invalidateQueries({ queryKey: ['project', key, 'admin:listUsers'] })
   const problem = people.isError ? accountsProblem(people.error) : null
   const selected: Account | undefined = open ? people.data?.users.find((u) => u.id === open) : undefined

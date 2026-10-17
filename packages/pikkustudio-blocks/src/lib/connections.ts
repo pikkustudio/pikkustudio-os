@@ -41,7 +41,7 @@ export function useConnections(key: string) {
     .sort((a, b) => a.label.localeCompare(b.label))
   const shared = all.filter((c) => !c.perPerson)
   const own = all.filter((c) => c.perPerson)
-  const status = useProjectQuery<{ statuses: Record<string, boolean> }>(key, 'admin:credentialStatus', { names: shared.map((c) => c.name) }, { enabled: shared.length > 0 })
+  const status = useProjectQuery<{ statuses: Record<string, boolean> }>(key, 'admin:credentialStatus', { names: shared.map((c) => c.name) }, { enabled: shared.length > 0, handlesErrors: true })
   const users = useProjectQuery<{ users: { userId: string; credentials: Record<string, boolean> }[] }>(key, 'admin:credentialListUsers', undefined, { enabled: own.length > 0 })
   const people = useProjectQuery<AccountsPage>(key, 'admin:listUsers', { limit: 200, offset: 0 }, { enabled: own.length > 0, optional: true })
   const names = new Map((people.data?.users ?? []).map((u) => [u.id, u.name?.trim() || u.email]))
