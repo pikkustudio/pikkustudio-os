@@ -1,4 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { ProjectHomeGate } from '@pikkustudio/blocks/screens/ProjectHomeGate'
+import { OverviewScreen } from '@pikkustudio/blocks/screens/OverviewScreen'
 
-export const Route = createFileRoute('/_studio/overview')({ component: ProjectHomeGate })
+export const Route = createFileRoute('/_studio/overview')({ component: OverviewScreen })

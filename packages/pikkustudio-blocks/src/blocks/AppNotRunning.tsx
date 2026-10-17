@@ -1,6 +1,6 @@
 import { asI18n, type I18nNode, type I18nString } from '@pikku/react'
 import { useContext, useState } from 'react'
-import { Check, ChevronDown, Copy, LoaderCircle, Play, RefreshCw } from 'lucide-react'
+import { Check, ChevronDown, Cloud, Copy, Laptop, LoaderCircle, Play, RefreshCw } from 'lucide-react'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { m } from '@/i18n/messages'
 import { useProjectKey } from '../lib/project'
@@ -12,16 +12,27 @@ import { StateScreen } from './StateScreen'
 
 export type AppNotRunningState = 'off' | 'starting' | 'failed'
 
-type StartingApp = { state: 'starting' | 'ready' | 'failed' }
+export type LaunchWhere = 'cloud' | 'local'
+export type StageWayOut = { name: string; onPublish: () => void; onWorkspace: () => void }
+export type LaunchChoices = { primary: LaunchWhere; onPick: (where: LaunchWhere) => void; cloudOff?: boolean }
 
-export function startSteps(opened: boolean, apps: StartingApp[]): OpeningStep[] {
-  const up = opened || apps.length > 0
-  const ready = apps.length > 0 && apps.every((a) => a.state === 'ready')
-  return [
-    { label: m.app_not_running__step_server(), state: up ? 'done' : 'now' },
-    { label: m.app_not_running__step_wait(), state: !up ? 'wait' : ready ? 'done' : 'now' },
-    { label: m.app_not_running__step_open(), state: ready ? 'done' : 'wait' },
-  ]
+export type LaunchPhase = 'machine' | 'studio' | 'sync' | 'project' | 'connect'
+
+export const CLOUD_LAUNCH: LaunchPhase[] = ['machine', 'studio', 'sync', 'project', 'connect']
+export const LOCAL_LAUNCH: LaunchPhase[] = ['sync', 'project', 'connect']
+
+const phaseLabel = (phase: LaunchPhase) =>
+  ({
+    machine: m.project_launch__step_machine,
+    studio: m.project_launch__step_studio,
+    sync: m.project_launch__step_sync,
+    project: m.project_launch__step_project,
+    connect: m.project_launch__step_connect,
+  })[phase]()
+
+export function launchSteps(phases: LaunchPhase[], now: LaunchPhase): OpeningStep[] {
+  const at = phases.indexOf(now)
+  return phases.map((phase, i) => ({ label: phaseLabel(phase), state: i < at ? 'done' : i === at ? 'now' : 'wait' }))
 }
 
 const reasonOf = (log: string) =>
@@ -105,6 +116,8 @@ export function AppNotRunning({
   reason,
   logText,
   fixSay,
+  choices,
+  stage,
 }: {
   state: AppNotRunningState
   name?: string
@@ -116,6 +129,8 @@ export function AppNotRunning({
   reason?: I18nString
   logText?: string
   fixSay?: (log: string) => I18nString
+  choices?: LaunchChoices
+  stage?: StageWayOut
 }) {
   const { say } = useContext(ShellCtx)
   const [explain, setExplain] = useState(false)
@@ -137,8 +152,8 @@ export function AppNotRunning({
 
   if (state === 'starting' && steps) {
     return (
-      <AppStage label={title}>
-        <MachineOpening title={title} lead={text} steps={steps} />
+      <AppStage label={m.project_launch__opening_title()}>
+        <MachineOpening title={m.project_launch__opening_title()} lead={m.project_launch__opening_lead()} steps={steps} />
       </AppStage>
     )
   }
@@ -184,6 +199,49 @@ export function AppNotRunning({
           ) : null}
         </div>
       </AppStage>
+    )
+  }
+
+  if (stage) {
+    const title = m.project_launch__stage_title({ name: asI18n(stage.name) })
+    return (
+      <StateScreen label={title} hue="teal" art={<Art state="off" />} title={title} why={m.project_launch__stage_why({ name: asI18n(stage.name) })}>
+        <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-3" data-testid="stage-not-live">
+          <Button variant="hero" size="page" type="button" onClick={stage.onPublish}>
+            {m.project_launch__stage_publish()}
+          </Button>
+          <Button variant="heroGhost" size="page" type="button" onClick={stage.onWorkspace}>
+            {m.project_launch__stage_workspace()}
+          </Button>
+        </div>
+      </StateScreen>
+    )
+  }
+
+  if (choices) {
+    const order: LaunchWhere[] = choices.primary === 'cloud' ? ['cloud', 'local'] : ['local', 'cloud']
+    const title = m.project_launch__title()
+    return (
+      <StateScreen label={title} hue="teal" art={<Art state="off" />} title={title} why={choices.cloudOff ? m.project_launch__cloud_off() : m.project_launch__why()}>
+        <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-3" data-testid="project-launch-choices">
+          {order.map((where, i) => {
+            const Icon = where === 'cloud' ? Cloud : Laptop
+            return (
+              <Button
+                key={where}
+                variant={i === 0 ? 'hero' : 'heroGhost'}
+                size="page"
+                type="button"
+                disabled={where === 'cloud' && choices.cloudOff}
+                onClick={() => choices.onPick(where)}
+              >
+                <Icon className="size-5" aria-hidden="true" />
+                {where === 'cloud' ? m.project_launch__cloud() : m.project_launch__local()}
+              </Button>
+            )
+          })}
+        </div>
+      </StateScreen>
     )
   }
 

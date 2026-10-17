@@ -6,7 +6,7 @@ import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/ap
 import { m } from '@/i18n/messages'
 import { PreviewBar } from '../blocks/PreviewBar'
 import { DesignInspector } from '../blocks/DesignInspector'
-import { AppNotRunning, startSteps } from '../blocks/AppNotRunning'
+import { AppNotRunning } from '../blocks/AppNotRunning'
 import { HintRow } from '../blocks/HintRow'
 import { ImpersonatePanel } from '../blocks/ImpersonatePanel'
 import { LiveAppFrame, liveAppUrl, type PickedElement } from '../blocks/LiveAppFrame'
@@ -50,7 +50,6 @@ export function DesignScreen() {
   const key = useProjectKey()
   const { attached, attach } = useContext(ShellCtx)
   const [reloadKey, setReloadKey] = useState(0)
-  const [wanted, setWanted] = useState(false)
   const [picked, setPicked] = useState<PickedElement | null>(null)
   const [styles, setStyles] = useState<Styles>({})
   const [wordingKey, setWordingKey] = useState<string | null>(null)
@@ -63,8 +62,6 @@ export function DesignScreen() {
     enabled: !!key,
     refetchInterval: (query: { state: { data?: LiveApp[] } }) => ((query.state.data ?? []).every((a) => a.state === 'ready') && (query.state.data ?? []).length > 0 ? 15000 : 2000),
   } as never)
-  const start = usePikkuMutation('studio:openProject', { onSuccess: () => apps.refetch() })
-  const restart = usePikkuMutation('studio:closeProject', { onSuccess: () => start.mutate({ key }) })
 
   const list = ((apps.data as LiveApp[] | undefined) ?? [])
   const current = list.find((a) => a.slug === q.app) ?? list[0]
@@ -86,9 +83,7 @@ export function DesignScreen() {
 
   const device: Device = q.screen ?? 'computer'
   const tool = q.mode === 'translations' || q.mode === 'chat' || q.mode === 'impersonate' || q.mode === 'none' ? q.mode : 'design'
-  const failed = list.some((a) => a.state === 'failed') || start.isError
 
-  const app = current ? label(current.slug) : undefined
   let stage
   if (parts) {
     const url = design?.url
@@ -103,14 +98,8 @@ export function DesignScreen() {
     } else {
       stage = <PartsWaiting text={design?.state === 'restarting' ? m.design_parts__restarting() : m.design_parts__starting()} />
     }
-  } else if (!key || apps.isPending) {
+  } else if (!key || !current?.url || current.state !== 'ready') {
     stage = <PartsWaiting text={m.design_live__loading()} />
-  } else if (failed) {
-    stage = <AppNotRunning state="failed" name={app} error={start.error ?? restart.error} onStart={() => restart.mutate({ key })} starting={restart.isPending || start.isPending} />
-  } else if (list.length === 0) {
-    stage = <AppNotRunning state="off" onStart={() => { setWanted(true); start.mutate({ key }) }} starting={wanted && start.isPending} />
-  } else if (!current?.url || current.state !== 'ready') {
-    stage = <AppNotRunning state="starting" name={app} steps={startSteps(start.isSuccess, list)} onStart={() => undefined} />
   } else {
     stage = (
       <LiveAppFrame
@@ -133,7 +122,6 @@ export function DesignScreen() {
   }
 
   function start_parts() {
-    setWanted(true)
     startPreview.mutate({ key })
   }
 

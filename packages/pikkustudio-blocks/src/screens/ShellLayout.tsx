@@ -34,7 +34,7 @@ import { FullTranscript } from '../blocks/FullTranscript'
 import { QuickFind } from '../blocks/QuickFind'
 import { SlashMenu, slashMatches, slashOptionId } from '../blocks/SlashMenu'
 import { UpdatesFeed } from '../blocks/UpdatesFeed'
-import { ProjectRunGate } from '../blocks/ProjectRunGate'
+import { TargetRunGate } from '../blocks/TargetRunGate'
 import { LocalProjectTargetProvider } from '../lib/project-target'
 import { Toaster } from '../blocks/Toaster'
 import { ComposerTools } from '../blocks/ComposerTools'
@@ -452,9 +452,9 @@ function ShellLayoutInner() {
                   </Button>
                 </NotFoundState>
               ) : needsApp ? (
-                <ProjectRunGate>
+                <TargetRunGate>
                   <Outlet />
-                </ProjectRunGate>
+                </TargetRunGate>
               ) : (
                 <Outlet />
               )}

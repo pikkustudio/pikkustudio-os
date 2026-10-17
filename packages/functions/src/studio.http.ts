@@ -36,6 +36,7 @@ const studioRoutes = defineHTTPRoutes({
     removeProject: { method: 'post', route: '/studio/removeProject', func: ref('studio:removeProject') },
     openProject: { method: 'post', route: '/studio/openProject', func: ref('studio:openProject') },
     workspaceLink: { method: 'post', route: '/studio/workspaceLink', func: ref('studio:workspaceLink') },
+    workspaceStatus: { method: 'post', route: '/studio/workspaceStatus', func: ref('studio:workspaceStatus') },
     updateDatabase: { method: 'post', route: '/studio/updateDatabase', func: ref('studio:updateDatabase') },
     closeProject: { method: 'post', route: '/studio/closeProject', func: ref('studio:closeProject') },
     closeAllProjects: { method: 'post', route: '/studio/closeAllProjects', func: ref('studio:closeAllProjects') },

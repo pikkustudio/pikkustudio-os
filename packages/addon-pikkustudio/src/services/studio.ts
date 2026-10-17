@@ -142,7 +142,7 @@ export { kyselyLogStore } from './log-store.js'
 export type { ProjectStore, RegistryEntry, StudioProject } from './projects.js'
 export { StudioPublisher } from './publish.js'
 export type { PublishTarget, Runner } from './publish.js'
-export type { AccountProvider, CloudProject, StudioAccount } from './projects.js'
+export type { AccountProvider, CloudProject, StudioAccount, WorkspacePhase, WorkspaceProgress } from './projects.js'
 export { StudioHooks } from './hooks.js'
 export type { SignInChoice, StudioSettings } from './settings.js'
 export type { BuilderSession }

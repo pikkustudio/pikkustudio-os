@@ -161,8 +161,12 @@ export interface WorkspaceLink {
   token?: string
 }
 
-/** A workspace that is `off` has none yet, or is asleep; only opening it on purpose starts it. */
-export type WorkspaceStatus = WorkspaceLink | { url: string; state: 'off'; token?: string }
+export type WorkspacePhase = 'machine' | 'studio' | 'sync' | 'project' | 'connect'
+
+/** A workspace that is `off` has none yet, or is asleep; only opening it on purpose starts it. `failed` stopped while starting. */
+export type WorkspaceStatus = (WorkspaceLink | { url: string; state: 'off' | 'failed'; token?: string }) & { phase?: WorkspacePhase; error?: string | null }
+
+export type WorkspaceProgress = { state: 'off' | 'starting' | 'ready' | 'failed'; phase: WorkspacePhase | null; error: string | null }
 
 export interface WorkspaceTarget {
   state: 'ready'
@@ -894,7 +898,7 @@ export class StudioProjectsService {
       await cloneLayout(root, project.gitRepoUrl, this.home, async (path) => {
         await this.account.adopt(project.projectId, path)
         await commitPaths(path, ['pikku.config.json'], 'Link to the account')
-      }, credential)
+      }, credential, project.productionBranch)
     } catch (error) {
       await rm(root, { recursive: true, force: true })
       throw error
@@ -957,7 +961,7 @@ export class StudioProjectsService {
     const remote = await execFileAsync('git', ['remote', 'get-url', 'origin'], { cwd: bare }).then((r) => r.stdout.trim(), () => '')
     if (!remote) return { pushed: false, remote: '', branches: [] }
     await run('git', ['push', '-u', 'origin', '--all'], bare)
-    return { pushed: true, remote, branches: [MAIN, ...(await listWorktrees(root))] }
+    return { pushed: true, remote, branches: [readFileSync(join(bare, 'HEAD'), 'utf8').trim().replace(/^ref: refs\/heads\//, ''), ...(await listWorktrees(root))] }
   }
 
   private intakeFile(key: string) {
@@ -1420,6 +1424,18 @@ export class StudioProjectsService {
     return this.account.workspaceLink(key.slice('cloud:'.length))
   }
 
+  /** Where a cloud project's workspace stands and how far its start has got, without starting it. */
+  async workspaceStatus(key: string): Promise<WorkspaceProgress> {
+    if (!key.startsWith('cloud:')) throw new Error('Only a cloud project has a workspace')
+    if (!this.account.workspaceStatus) return { state: 'off', phase: null, error: null }
+    const link = await this.account.workspaceStatus(key.slice('cloud:'.length))
+    if (link.state === 'off') return { state: 'off', phase: null, error: null }
+    if (link.state === 'failed') return { state: 'failed', phase: link.phase ?? null, error: link.error ?? null }
+    if (link.state === 'starting') return { state: 'starting', phase: link.phase ?? 'machine', error: null }
+    const target = await this.workspaceTarget(key).catch(() => ({ state: 'starting' as const }))
+    return target.state === 'ready' ? { state: 'ready', phase: null, error: null } : { state: 'starting', phase: 'connect', error: null }
+  }
+
   private workspaceTargets = new Map<string, { at: number; target: WorkspaceTarget }>()
 
   /** Where to send a cloud project's requests. Passing a request through never starts a workspace; that is for opening it. */
@@ -1427,7 +1443,7 @@ export class StudioProjectsService {
     const cached = this.workspaceTargets.get(key)
     if (cached && Date.now() - cached.at < WORKSPACE_TARGET_TTL) return cached.target
     const link = this.account.workspaceStatus ? await this.account.workspaceStatus(key.slice('cloud:'.length)) : await this.workspaceLink(key)
-    if (link.state === 'off') return { state: 'off' }
+    if (link.state === 'off' || link.state === 'failed') return { state: 'off' }
     if (link.state !== 'ready' || !link.url) return { state: 'starting' }
     const headers: Record<string, string> = link.token ? { authorization: `Bearer ${link.token}` } : {}
     const res = await fetch(`${link.url}/studio/listProjects`, { method: 'POST', headers: { ...headers, 'content-type': 'application/json' }, body: '{}' })
