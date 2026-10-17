@@ -69,7 +69,7 @@ export function VersionScreen({ id }: { id: string }) {
 const changeWord = { added: m.version_screen__line_new, changed: m.version_screen__line_changed, removed: m.version_screen__line_removed }
 const changeTone = { added: 'ok', changed: 'quiet', removed: 'bad' } as const
 
-function GroupRows({ groups }: { groups: ReleaseGroup[] }) {
+export function GroupRows({ groups }: { groups: ReleaseGroup[] }) {
   if (!groups.length) return <p className="text-[14px] text-ink-2">{m.version_screen__no_changes()}</p>
   return (
     <RowStack>
