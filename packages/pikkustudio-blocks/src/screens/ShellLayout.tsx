@@ -416,6 +416,7 @@ function ShellLayoutInner() {
                   </Link>
                 )
               })}
+              {slots.ProjectNav ? <slots.ProjectNav itemClass={navItem} labelClass={lbl} collapsed={collapsed} /> : null}
             </div>
             )}
             <div className="mt-auto flex flex-col gap-2.5">

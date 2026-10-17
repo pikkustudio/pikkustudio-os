@@ -29,6 +29,7 @@ export type Slots = {
   TeamScope?: ComponentType<TeamScopeProps>
   ProjectTargetProvider?: ComponentType<{ children: ReactNode }>
   ProjectTargetSwitcher?: ComponentType<{ collapsed: boolean }>
+  ProjectNav?: ComponentType<{ itemClass: string; labelClass: string; collapsed: boolean }>
   /** History of the deployed copy of a project; absent where nothing deploys. A hook, called every render. */
   useStageAudit?: (projectKey: string, refetchInterval: number) => { data?: StageAuditPage }
   useLiveUpdates?: (queryKeys: readonly string[]) => void
