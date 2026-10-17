@@ -138,7 +138,7 @@ export function piArgs(options: { ai?: BuilderAi; skills: string; mode?: 'rpc'; 
   for (const path of extensionPaths()) args.push('-e', path)
   if (options.session) args.push('--session-id', options.session.replace(/[^A-Za-z0-9_.-]/g, '-'))
   if (options.ai?.proxy) args.push('--provider', 'pikku-proxy')
-  else if (options.ai?.provider) args.push('--provider', PROVIDERS[options.ai.provider] ?? options.ai.provider)
+  else if (options.ai?.provider && options.ai.model) args.push('--provider', PROVIDERS[options.ai.provider] ?? options.ai.provider)
   if (options.ai?.model) args.push('--model', options.ai.model)
   return args
 }
