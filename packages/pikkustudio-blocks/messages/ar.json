@@ -1478,8 +1478,8 @@
   "new_project__folder_title": "حولوا مجلد ملفات إلى تطبيق",
   "new_project__ideas_title": "اطلعوا على أفكار للإلهام",
   "new_project__import_say": "لدي مشروع Pikku في مستودع git وأود إحضاره إلى هنا. من فضلك اسألني عن عنوانه (يصلح git@github.com:your-team/your-project.git أو https://github.com/your-team/your-project.git)، ثم انسخه إلى هذا الحاسوب وأبقه متزامنا مع مكانه الأصلي.",
-  "new_project__import_text": "أعطوني عنوان git وسأحضر نسخة إلى هنا وأبقيها متزامنة مع مكانها الأصلي.",
-  "new_project__import_title": "افتحوا مشروع Pikku لديكم",
+  "new_project__import_text": "أخبروني أين يوجد مشروعكم وسأحضر نسخة منه إلى هنا تبقى متوافقة مع الأصل.",
+  "new_project__import_title": "ابدؤوا بشيء لديكم بالفعل",
   "new_project__more_label": "طرق أخرى للبدء",
   "new_project__more_lead": "لا يلزمكم البدء من صفحة فارغة. اختاروا واحدا وسأتحدث معكم بشأنه.",
   "new_project__more_title": "لديكم شيء جاهز؟ أحضروه معكم.",
@@ -4394,5 +4394,22 @@
         "countPlural=other": "{count} عناصر مُدخلة"
       }
     }
-  ]
+  ],
+  "bring_project__title": "أحضروا مشروعكم",
+  "bring_project__sub": "ابدؤوا بشيء لديكم بالفعل",
+  "bring_project__link_title": "الصقوا مكان وجوده",
+  "bring_project__link_title_other": "أو الصقوا مكان وجوده",
+  "bring_project__link_text": "العنوان الذي تستخدمونه لنسخ المشروع، أينما كان محفوظًا.",
+  "bring_project__link_label": "عنوانه",
+  "bring_project__link_placeholder": "https://example.com/your-team/your-project.git",
+  "bring_project__name_label": "ماذا تسمّونه هنا (اختياري)",
+  "bring_project__name_placeholder": "اتركوه فارغًا للإبقاء على اسمه",
+  "bring_project__stays_connected": "يبقى مشروعكم في مكانه. كل ما تغيّرونه هنا يُرسل إليه.",
+  "bring_project__bring_it_in": "أحضروه",
+  "bring_project__bringing": "جارٍ إحضاره",
+  "bring_project__failed_title": "لم أتمكن من إحضار هذا المشروع.",
+  "bring_project__failed_text": "تحققوا من العنوان وحاولوا مرة أخرى. لم يتغير شيء.",
+  "bring_project__failed_say": "حاولت إحضار مشروعي من {url} ولم ينجح ذلك. هل يمكنك معرفة السبب ومساعدتي؟",
+  "bring_project__ask_pikku": "اسألوا Pikku",
+  "bring_project__developer_details": "للمطوّرين"
 }

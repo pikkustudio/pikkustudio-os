@@ -1370,8 +1370,8 @@
   "new_project__folder_title": "Aus einem Ordner voller Dateien eine App machen",
   "new_project__ideas_title": "Beispielideen ansehen",
   "new_project__import_say": "Ich habe schon ein Pikku-Projekt in einem Git-Repository und möchte es hierher holen. Bitte frag mich nach seiner Adresse (git@github.com:your-team/your-project.git oder https://github.com/your-team/your-project.git funktionieren beide), kopiere es dann auf diesen Computer und halte es mit dem Original synchron.",
-  "new_project__import_text": "Gib mir die Git-Adresse, dann hole ich eine Kopie hierher und halte sie mit dem Original synchron.",
-  "new_project__import_title": "Ein vorhandenes Pikku-Projekt öffnen",
+  "new_project__import_text": "Zeig mir, wo dein Projekt liegt, dann hole ich eine Kopie hierher und halte sie mit dem Original synchron.",
+  "new_project__import_title": "Mit etwas beginnen, das du schon hast",
   "new_project__more_label": "Andere Wege zu starten",
   "new_project__more_lead": "Du musst nicht bei null anfangen. Such dir etwas aus, dann besprechen wir es zusammen.",
   "new_project__more_title": "Schon etwas da? Bring es mit.",
@@ -4082,5 +4082,22 @@
         "countPlural=other": "{count} Angaben eingetragen"
       }
     }
-  ]
+  ],
+  "bring_project__title": "Dein Projekt hereinholen",
+  "bring_project__sub": "Mit etwas beginnen, das du schon hast",
+  "bring_project__link_title": "Füg ein, wo es liegt",
+  "bring_project__link_title_other": "Oder füg ein, wo es liegt",
+  "bring_project__link_text": "Die Adresse, mit der du das Projekt kopieren würdest, egal wo es aufbewahrt wird.",
+  "bring_project__link_label": "Seine Adresse",
+  "bring_project__link_placeholder": "https://example.com/dein-team/dein-projekt.git",
+  "bring_project__name_label": "Wie es hier heißen soll (optional)",
+  "bring_project__name_placeholder": "Leer lassen, um seinen eigenen Namen zu behalten",
+  "bring_project__stays_connected": "Dein Projekt bleibt, wo es ist. Alles, was du hier änderst, wird dorthin zurückgeschickt.",
+  "bring_project__bring_it_in": "Hereinholen",
+  "bring_project__bringing": "Wird hereingeholt",
+  "bring_project__failed_title": "Ich konnte dieses Projekt nicht hereinholen.",
+  "bring_project__failed_text": "Prüf die Adresse und versuch es noch einmal. Es wurde nichts verändert.",
+  "bring_project__failed_say": "Ich wollte mein Projekt von {url} hereinholen, und es hat nicht geklappt. Kannst du sehen, warum, und mir helfen?",
+  "bring_project__ask_pikku": "Pikku fragen",
+  "bring_project__developer_details": "Für Entwickler"
 }

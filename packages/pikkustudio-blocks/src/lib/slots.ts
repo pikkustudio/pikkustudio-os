@@ -70,6 +70,14 @@ export type Slots = {
   StageLogs?: ComponentType<{ name: string }>
   /** Where the project is published, shown in the chat panel above the message box. */
   ChatPublishStatus?: ComponentType<{ projectKey: string }>
+  /**
+   * The host's own place to bring a project in from, shown first in the New project "bring it in" panel.
+   * It renders nothing when it cannot be reached and reports through onActive whether it is showing, so the
+   * link import below stays the main way in when the host is offline.
+   */
+  ImportSource?: ComponentType<{ onImported: (project: string, team?: string) => void; onActive: (active: boolean) => void }>
+  /** Starting from a terminal instead, folded under developer details in the same panel. */
+  ImportDeveloper?: ComponentType
 }
 
 export const SlotsCtx = createContext<Slots>({})

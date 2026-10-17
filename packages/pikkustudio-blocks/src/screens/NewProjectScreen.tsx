@@ -9,6 +9,7 @@ import { ArrowRight, ChevronRight, CircleAlert, FileSpreadsheet, FolderOpen, Glo
 import { OnbCtx } from './OnboardingLayout'
 import { ShellCtx } from '../lib/shell'
 import { NewProjectForm } from './NewProjectForm'
+import { BringProjectPanel } from '../blocks/BringProjectPanel'
 import { m } from '@/i18n/messages'
 import { type ProjectRun } from '../lib/onboarding'
 
@@ -97,11 +98,11 @@ function progress(run?: ProjectRun, interview?: boolean) {
 }
 
 
-type Tile = { hue: 'teal' | 'petrol' | 'sea'; Icon: LucideIcon; title: () => I18nString; text: () => I18nString; say: () => I18nString }
+type Tile = { hue: 'teal' | 'petrol' | 'sea'; Icon: LucideIcon; title: () => I18nString; text: () => I18nString; say: () => I18nString; bring?: true }
 
 const TILES: Tile[] = [
   { hue: 'teal', Icon: Wand2, title: () => m.new_project__vibe_title(), text: () => m.new_project__vibe_text(), say: () => m.new_project__vibe_say() },
-  { hue: 'petrol', Icon: GitBranch, title: () => m.new_project__import_title(), text: () => m.new_project__import_text(), say: () => m.new_project__import_say() },
+  { hue: 'petrol', Icon: GitBranch, title: () => m.new_project__import_title(), text: () => m.new_project__import_text(), say: () => m.new_project__import_say(), bring: true },
   { hue: 'sea', Icon: FileSpreadsheet, title: () => m.new_project__sheets_title(), text: () => m.new_project__sheets_text(), say: () => m.new_project__sheets_say() },
   { hue: 'teal', Icon: Globe, title: () => m.new_project__site_title(), text: () => m.new_project__site_text(), say: () => m.new_project__site_say() },
   { hue: 'petrol', Icon: FolderOpen, title: () => m.new_project__folder_title(), text: () => m.new_project__folder_text(), say: () => m.new_project__folder_say() },
@@ -109,6 +110,7 @@ const TILES: Tile[] = [
 
 function OtherWays() {
   const { say } = useContext(ShellCtx)
+  const [bringing, setBringing] = useState(false)
   return (
     <section aria-label={m.new_project__more_label()}>
       <div className="mb-4">
@@ -120,7 +122,8 @@ function OtherWays() {
           <button
             key={t.title()}
             type="button"
-            onClick={() => say(t.say())}
+            aria-expanded={t.bring ? bringing : undefined}
+            onClick={() => (t.bring ? setBringing(true) : say(t.say()))}
             className="flex w-full items-center gap-4 px-5 py-4 text-start transition-colors duration-140 hover:bg-secondary"
           >
             <span data-hue={t.hue} className="grid size-11 shrink-0 place-items-center rounded-xl bg-hero text-hero-ink">
@@ -134,6 +137,7 @@ function OtherWays() {
           </button>
         ))}
       </div>
+      {bringing ? <BringProjectPanel onClose={() => setBringing(false)} /> : null}
     </section>
   )
 }

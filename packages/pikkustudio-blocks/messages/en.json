@@ -1489,8 +1489,8 @@
   "new_project__folder_title": "Turn a folder of files into an app",
   "new_project__ideas_title": "See some example ideas",
   "new_project__import_say": "I already have a Pikku project in a git repository and I would like to bring it in. Please ask me for its address (either git@github.com:your-team/your-project.git or https://github.com/your-team/your-project.git works), then copy it to this computer and keep it in step with where it lives.",
-  "new_project__import_text": "Give me its git address and I will bring a copy here and keep it in step with where it lives.",
-  "new_project__import_title": "Open a Pikku project you already have",
+  "new_project__import_text": "Point me to where your project lives and I will bring a copy here, kept in step with the original.",
+  "new_project__import_title": "Start from something you already have",
   "new_project__more_label": "Other ways to begin",
   "new_project__more_lead": "You do not have to start from a blank page. Pick one and I will talk it through with you.",
   "new_project__more_title": "Already have something? Bring it along.",
@@ -4290,5 +4290,22 @@
         "countPlural=other": "{count} things filled in"
       }
     }
-  ]
+  ],
+  "bring_project__title": "Bring in your project",
+  "bring_project__sub": "Start from something you already have",
+  "bring_project__link_title": "Paste where it lives",
+  "bring_project__link_title_other": "Or paste where it lives",
+  "bring_project__link_text": "The address you would use to copy the project, from wherever it is kept.",
+  "bring_project__link_label": "Its address",
+  "bring_project__link_placeholder": "https://example.com/your-team/your-project.git",
+  "bring_project__name_label": "What to call it here (optional)",
+  "bring_project__name_placeholder": "Leave empty to keep its own name",
+  "bring_project__stays_connected": "Your project stays where it is. Everything you change here is sent back to it.",
+  "bring_project__bring_it_in": "Bring it in",
+  "bring_project__bringing": "Bringing it in",
+  "bring_project__failed_title": "I could not bring that project in.",
+  "bring_project__failed_text": "Check the address and try again. Nothing was changed.",
+  "bring_project__failed_say": "I tried to bring in my project from {url} and it did not work. Can you see why and help me get it in?",
+  "bring_project__ask_pikku": "Ask Pikku",
+  "bring_project__developer_details": "Developer details"
 }
