@@ -208,7 +208,7 @@
   "assistants_screen__add_say": "أضف مساعدا جديدا إلى تطبيقي",
   "assistants_screen__ask_new": "اطلبوا من Pikku مساعدا جديدا",
   "assistants_screen__chat_with_me": "تحدثوا معي",
-  "assistants_screen__chats_month": [
+  "assistants_screen__chats_recent": [
     {
       "declarations": [
         "input count",
@@ -218,15 +218,16 @@
         "countPlural"
       ],
       "match": {
-        "countPlural=zero": "{count} محادثة هذا الشهر",
-        "countPlural=one": "محادثة واحدة هذا الشهر",
-        "countPlural=two": "محادثتان هذا الشهر",
-        "countPlural=few": "{count} محادثات هذا الشهر",
-        "countPlural=many": "{count} محادثة هذا الشهر",
-        "countPlural=other": "{count} محادثة هذا الشهر"
+        "countPlural=zero": "{count} محادثة حديثة",
+        "countPlural=one": "محادثة حديثة واحدة",
+        "countPlural=two": "محادثتان حديثتان",
+        "countPlural=few": "{count} محادثات حديثة",
+        "countPlural=many": "{count} محادثة حديثة",
+        "countPlural=other": "{count} محادثة حديثة"
       }
     }
   ],
+  "assistants_screen__chats_capped": "أكثر من 10 محادثات حديثة",
   "assistants_screen__check_suffix": "· يُفحص من حيث {check}",
   "assistants_screen__each_one_talks_to_people": [
     {
@@ -1478,8 +1479,8 @@
   "new_project__folder_title": "حولوا مجلد ملفات إلى تطبيق",
   "new_project__ideas_title": "اطلعوا على أفكار للإلهام",
   "new_project__import_say": "لدي مشروع Pikku في مستودع git وأود إحضاره إلى هنا. من فضلك اسألني عن عنوانه (يصلح git@github.com:your-team/your-project.git أو https://github.com/your-team/your-project.git)، ثم انسخه إلى هذا الحاسوب وأبقه متزامنا مع مكانه الأصلي.",
-  "new_project__import_text": "أخبروني أين يوجد مشروعكم وسأحضر نسخة منه إلى هنا تبقى متوافقة مع الأصل.",
-  "new_project__import_title": "ابدؤوا بشيء لديكم بالفعل",
+  "new_project__import_text": "أعطوني عنوان git وسأحضر نسخة إلى هنا وأبقيها متزامنة مع مكانها الأصلي.",
+  "new_project__import_title": "افتحوا مشروع Pikku لديكم",
   "new_project__more_label": "طرق أخرى للبدء",
   "new_project__more_lead": "لا يلزمكم البدء من صفحة فارغة. اختاروا واحدا وسأتحدث معكم بشأنه.",
   "new_project__more_title": "لديكم شيء جاهز؟ أحضروه معكم.",
@@ -3755,31 +3756,6 @@
   "accounts_panel__failed_title": "لم ينجح ذلك",
   "accounts_panel__failed_body": "لم يتغير شيء. يمكنك المحاولة مجددًا أو أن تطلب من Pikku معرفة السبب.",
   "accounts_panel__failed_ask": "لم ينجح تغيير حساب {name}. من فضلك اكتشف السبب وأصلحه. {details}",
-  "accounts_access__title": "ما يمكنه فعله",
-  "accounts_access__unavailable": "هذا التطبيق لا يتتبع بعد من يمكنه فعل ماذا.",
-  "accounts_access__no_roles_in_app": "لا توجد أدوار في هذا التطبيق بعد، لذا يستطيع كل من يسجل الدخول فعل الأشياء نفسها.",
-  "accounts_access__no_role": "ليس لدى {name} دور بعد، لذا يمكنه فعل ما يفعله أي شخص مسجل الدخول فقط.",
-  "accounts_access__take_away": "اسحب",
-  "accounts_access__pick_role": "اختر دورًا",
-  "accounts_access__give_role": "امنحه هذا الدور",
-  "accounts_access__show_developer": "أظهر تفاصيل المطورين",
-  "accounts_access__hide_developer": "أخفِ تفاصيل المطورين",
-  "accounts_access__id": "معرّف الحساب",
-  "accounts_access__direct": "صلاحيات ممنوحة مباشرة، خارج أي دور",
-  "accounts_access__no_direct": "لا شيء.",
-  "accounts_access__remove_scope": "أزل {scope}",
-  "accounts_access__pick_scope": "اختر صلاحية",
-  "accounts_access__grant_scope": "امنح الصلاحية",
-  "accounts_access__all": "كل ما هو مسموح له، بما في ذلك الأدوار",
-  "accounts_access__none_at_all": "لا شيء أكثر مما يستطيعه أي شخص مسجل الدخول.",
-  "accounts_password__title": "كلمة المرور",
-  "accounts_password__explain": "إذا لم يستطع {name} الدخول مجددًا، يمكنك اختيار كلمة مرور جديدة له. أخبره بها بنفسك.",
-  "accounts_password__choose": "اختر كلمة مرور جديدة",
-  "accounts_password__new": "كلمة المرور الجديدة",
-  "accounts_password__save": "احفظ كلمة المرور",
-  "accounts_password__saved": "تم الحفظ. يمكن لـ {name} تسجيل الدخول بكلمة المرور الجديدة.",
-  "accounts_password__failed_title": "لم تُحفظ كلمة المرور",
-  "accounts_password__failed_body": "ربما هي قصيرة جدًا أو طويلة جدًا. جرّب أخرى، أو اطلب من Pikku معرفة السبب.",
   "accounts_invite__title": "ادعُ شخصًا",
   "accounts_invite__sub": "سيصله بريد إلكتروني برابط لتسجيل الدخول.",
   "accounts_invite__email": "بريده الإلكتروني",
@@ -4419,305 +4395,5 @@
         "countPlural=other": "{count} عناصر مُدخلة"
       }
     }
-  ],
-  "bring_project__title": "أحضروا مشروعكم",
-  "bring_project__sub": "ابدؤوا بشيء لديكم بالفعل",
-  "bring_project__link_title": "الصقوا مكان وجوده",
-  "bring_project__link_title_other": "أو الصقوا مكان وجوده",
-  "bring_project__link_text": "العنوان الذي تستخدمونه لنسخ المشروع، أينما كان محفوظًا.",
-  "bring_project__link_label": "عنوانه",
-  "bring_project__link_placeholder": "https://example.com/your-team/your-project.git",
-  "bring_project__name_label": "ماذا تسمّونه هنا (اختياري)",
-  "bring_project__name_placeholder": "اتركوه فارغًا للإبقاء على اسمه",
-  "bring_project__stays_connected": "يبقى مشروعكم في مكانه. كل ما تغيّرونه هنا يُرسل إليه.",
-  "bring_project__bring_it_in": "أحضروه",
-  "bring_project__bringing": "جارٍ إحضاره",
-  "bring_project__failed_title": "لم أتمكن من إحضار هذا المشروع.",
-  "bring_project__failed_text": "تحققوا من العنوان وحاولوا مرة أخرى. لم يتغير شيء.",
-  "bring_project__failed_say": "حاولت إحضار مشروعي من {url} ولم ينجح ذلك. هل يمكنك معرفة السبب ومساعدتي؟",
-  "bring_project__ask_pikku": "اسألوا Pikku",
-  "bring_project__developer_details": "للمطوّرين",
-  "quick_find__switches": "المفاتيح",
-  "switches_screen__title": "المفاتيح",
-  "switches_screen__text": "شغّل أجزاء من تطبيقك أو أوقفها، أو جرّبها مع عدد قليل من الناس أولاً.",
-  "switches_screen__needs_look": "تحتاج إلى نظرة",
-  "switches_screen__all": "مفاتيحك",
-  "switches_screen__none_title": "لا توجد مفاتيح بعد",
-  "switches_screen__none_text": "عندما يكون في تطبيقك جزء يمكنك تشغيله وإيقافه، سيظهر هنا.",
-  "switches_screen__add_say": "أضف مفتاحاً حتى أتمكن من تشغيل جزء من تطبيقي أو إيقافه دون تغيير أي شيء آخر.",
-  "switches_screen__not_running_title": "تطبيقك لا يعمل",
-  "switches_screen__not_running_text": "شغّل تطبيقك وستظهر مفاتيحك هنا.",
-  "switches_screen__no_addon_title": "المفاتيح غير مُعدّة بعد",
-  "switches_screen__no_addon_text": "يحتاج تطبيقك إلى أدوات الإدارة قبل أن تتمكن من التشغيل والإيقاف هنا.",
-  "switches_screen__add_it": "اطلب من Pikku إعدادها",
-  "switches_screen__add_it_say": "أعدّ أدوات الإدارة في تطبيقي حتى أتمكن من إدارة المفاتيح.",
-  "switches_screen__cannot_see": "لا يمكنك رؤية المفاتيح",
-  "switches_screen__cannot_see_text": "اطلب من مالك هذا المشروع أن يمنحك الوصول.",
-  "switches_screen__toggle_failed": "لم يتغير هذا المفتاح. حاول مرة أخرى.",
-  "switches_screen__show_technical": "إظهار التفاصيل التقنية",
-  "switches_screen__hide_technical": "إخفاء التفاصيل التقنية",
-  "switches_screen__read_only_tech": "تُدار هذه المفاتيح من خدمة أخرى، لذا هذه الأدوات متوقفة.",
-  "switches_screen__sync_explain": "أعدّ كل مفتاح يعرفه تطبيقك ولم يُعدّ بعد. حتى ذلك الحين هو مُشغّل للجميع.",
-  "switches_screen__sync": "إعداد المفاتيح الناقصة",
-  "switches_screen__synced": "تم. فُحص {count} مفتاح.",
-  "switches_screen__sync_failed": "لم يتغير شيء. حاول مرة أخرى.",
-  "switches_screen__prune_explain": "أزل المفاتيح التي لم يعد تطبيقك يستخدمها، مع استثناءاتها.",
-  "switches_screen__prune": "إزالة المفاتيح غير المستخدمة",
-  "switches_screen__pruned": "تم. أُزيل {count}.",
-  "switches_screen__prune_failed": "لم يُزل شيء. حاول مرة أخرى.",
-  "switches_hero__label": "المفاتيح",
-  "switches_hero__title": "شغّل أجزاء تطبيقك وأوقفها",
-  "switches_hero__text": "جرّب الجديد مع عدد قليل من الناس أولاً، ثم افتحه للجميع. لا يتغير شيء آخر.",
-  "switches_hero__read_only": "تُدار هذه المفاتيح من خدمة أخرى، لذا يمكنك رؤيتها هنا دون تغييرها.",
-  "switches_hero__count": "{on} من {total} مُشغّلة",
-  "switches_hero__attention_title": "بعض المفاتيح تحتاج إلى نظرة",
-  "switches_hero__attention_text": "إنها مُشغّلة للجميع دون أن يختار أحد ذلك، أو أن تطبيقك لم يعد يستخدمها.",
-  "switches_hero__look": "ألقِ نظرة",
-  "switches_hero__empty_title": "لا توجد مفاتيح في تطبيقك بعد",
-  "switches_hero__empty_text": "يتيح لك المفتاح تشغيل جزء من تطبيقك أو إيقافه، أو إظهاره لبعض الناس فقط.",
-  "switches_hero__ask": "اطلب من Pikku إضافة واحد",
-  "switches_row__off": "متوقف",
-  "switches_row__on_everyone": "مُشغّل للجميع",
-  "switches_row__on_some": "مُشغّل لـ {percent}% من الناس",
-  "switches_row__unset": "مُشغّل للجميع، لم يُعدّ أبداً",
-  "switches_row__unused": "لم يعد مستخدماً",
-  "switches_row__toggle": "تشغيل {name} أو إيقافه",
-  "switches_row__open": "فتح",
-  "switches_panel__label": "مفتاح",
-  "switches_panel__unset_note": "لم يُعدّ أحد هذا المفتاح بعد، لذا يراه الجميع. أوقفه إن لم يكن جاهزاً.",
-  "switches_panel__unused_note": "لم يعد تطبيقك يستخدم هذا المفتاح. يمكنك إزالته من التفاصيل التقنية.",
-  "switches_panel__failed_title": "لم يُحفظ ذلك",
-  "switches_panel__failed_body": "لم يتغير شيء. حاول مرة أخرى، أو اطلب من Pikku أن يتحقق.",
-  "switches_panel__failed_ask": "فشل تغيير المفتاح {name}: {details}",
-  "switches_panel__who": "من يراه",
-  "switches_panel__is_on": "مُشغّل",
-  "switches_panel__is_off": "متوقف",
-  "switches_panel__on_explain": "يمكن للناس استخدام هذا الجزء من تطبيقك.",
-  "switches_panel__off_explain": "لا أحد يرى هذا الجزء من تطبيقك، باستثناء من تضيفهم أدناه.",
-  "switches_panel__how_many": "كم من الناس",
-  "switches_panel__everyone": "الجميع",
-  "switches_panel__some": "بعض الناس",
-  "switches_panel__some_explain": "مُشغّل لـ {percent}% من الناس. يراه الأشخاص أنفسهم في كل مرة يعودون فيها.",
-  "switches_panel__save": "حفظ",
-  "switches_panel__exceptions": "الاستثناءات",
-  "switches_panel__exceptions_explain": "اجعله مُشغّلاً دائماً أو متوقفاً دائماً لشخص واحد، مهما كان الإعداد أعلاه.",
-  "switches_panel__exceptions_none": "لا توجد استثناءات. الجميع يتبع الإعداد أعلاه.",
-  "switches_panel__exceptions_failed": "تعذّر تحميل الاستثناءات الآن.",
-  "switches_panel__exceptions_elsewhere": "استثناءات هذا المفتاح محفوظة في خدمة أخرى.",
-  "switches_panel__a_person": "شخص ما",
-  "switches_panel__a_team": "فريق",
-  "switches_panel__always_on": "مُشغّل دائماً",
-  "switches_panel__always_off": "متوقف دائماً",
-  "switches_panel__remove": "إزالة",
-  "switches_panel__remove_exception": "إزالة الاستثناء لـ {name}",
-  "switches_panel__find_person": "ابحث عن شخص بالاسم أو البريد",
-  "switches_panel__nobody_found": "لا أحد يطابق ذلك.",
-  "switches_panel__make_always_on": "مُشغّل دائماً له",
-  "switches_panel__make_always_off": "متوقف دائماً له",
-  "switches_panel__cancel": "إلغاء",
-  "switches_panel__called": "الاسم في الكود",
-  "switches_panel__any_of": "فقط لمن لديه",
-  "checks_screen__title": "الفحوصات",
-  "checks_screen__text": "يفحص Pikku شيفرة تطبيقك ويمرّ عليه كما يفعل الناس، لتعرف بالمشكلات قبلهم.",
-  "checks_screen__hero_loading": "جارٍ عرض آخر فحوصاتك…",
-  "checks_screen__hero_checking": "جارٍ فحص تطبيقك الآن",
-  "checks_screen__hero_none": "لم يُفحص تطبيقك بعد",
-  "checks_screen__hero_clean": "كل شيء سليم",
-  "checks_screen__hero_one": "أمر واحد يحتاج إلى نظرة",
-  "checks_screen__hero_many": [
-    {
-      "declarations": [
-        "input count",
-        "local countPlural = count: plural"
-      ],
-      "selectors": [
-        "countPlural"
-      ],
-      "match": {
-        "countPlural=zero": "لا شيء يحتاج إلى نظرة",
-        "countPlural=one": "أمر واحد يحتاج إلى نظرة",
-        "countPlural=two": "أمران يحتاجان إلى نظرة",
-        "countPlural=few": "{count} أمور تحتاج إلى نظرة",
-        "countPlural=many": "{count} أمرًا يحتاج إلى نظرة",
-        "countPlural=other": "{count} أمر يحتاج إلى نظرة"
-      }
-    }
-  ],
-  "checks_screen__why_checking": "يستغرق هذا دقيقة أو دقيقتين. يمكنك متابعة العمل؛ ستظهر النتائج هنا.",
-  "checks_screen__why_none": "يقرأ الفحص تطبيقك بحثًا عن الأخطاء. لا يغيّر شيئًا.",
-  "checks_screen__why_clean": "لا شيء يحتاج إلى إصلاح في الشيفرة، وكل جولة سارت كما ينبغي.",
-  "checks_screen__why_both": "وجد آخر فحص {code}، و{walks}.",
-  "checks_screen__why_code": "وجد آخر فحص {code}. يستطيع Pikku إصلاحه لك.",
-  "checks_screen__why_walks": "وجد آخر فحص {walks}. يستطيع Pikku معرفة ما حدث وإصلاحه.",
-  "checks_screen__code_count": [
-    {
-      "declarations": [
-        "input n",
-        "local nPlural = n: plural"
-      ],
-      "selectors": [
-        "nPlural"
-      ],
-      "match": {
-        "nPlural=zero": "لا مشكلات في الشيفرة",
-        "nPlural=one": "مشكلة واحدة في الشيفرة",
-        "nPlural=two": "مشكلتين في الشيفرة",
-        "nPlural=few": "{n} مشكلات في الشيفرة",
-        "nPlural=many": "{n} مشكلة في الشيفرة",
-        "nPlural=other": "{n} مشكلة في الشيفرة"
-      }
-    }
-  ],
-  "checks_screen__walk_count": [
-    {
-      "declarations": [
-        "input n",
-        "local nPlural = n: plural"
-      ],
-      "selectors": [
-        "nPlural"
-      ],
-      "match": {
-        "nPlural=zero": "لا جولات تعثّرت",
-        "nPlural=one": "جولة واحدة تعثّرت",
-        "nPlural=two": "جولتين تعثّرتا",
-        "nPlural=few": "{n} جولات تعثّرت",
-        "nPlural=many": "{n} جولة تعثّرت",
-        "nPlural=other": "{n} جولة تعثّرت"
-      }
-    }
-  ],
-  "checks_screen__hero_fix": "اطلب من Pikku إصلاحه",
-  "checks_screen__check": "افحص تطبيقي",
-  "checks_screen__check_again": "افحص مجددًا",
-  "checks_screen__checking": "جارٍ الفحص…",
-  "checks_screen__checking_what": "فحص تطبيقك",
-  "checks_screen__checking_line": "جارٍ فحص تطبيقك…",
-  "checks_screen__ask_all": "أصلح من فضلك ما وجدته آخر فحوصات تطبيقي.",
-  "checks_screen__ask_fix": "اطلب من Pikku إصلاحه",
-  "checks_screen__ask_finding": "وجد فحص تطبيقي هذه المشكلة: «{message}» {where}. أصلحها من فضلك.",
-  "checks_screen__ask_walkthrough": "تعثّرت الجولة «{name}» عند «{step}»: {message}. اكتشف السبب وأصلحه من فضلك.",
-  "checks_screen__ask_write": "اكتب من فضلك جولات تمرّ على تطبيقي كما يستخدمه الناس.",
-  "checks_screen__code_group": "الشيفرة",
-  "checks_screen__code_never": "لم تُفحص بعد.",
-  "checks_screen__code_clean": "لا شيء لإصلاحه · فُحص {when}",
-  "checks_screen__finding_error": "هذا يمنع التطبيق من العمل كما ينبغي.",
-  "checks_screen__finding_warn": "يستحق الإصلاح، لكن التطبيق ما زال يعمل.",
-  "checks_screen__walks_group": "الجولات",
-  "checks_screen__coverage_both": "تجرّب الجولات {covered} من {required} أمرًا يمكن للناس تغييره في تطبيقك، وتفتح {pages} من صفحاته.",
-  "checks_screen__coverage_changes": "تجرّب الجولات {covered} من {required} أمرًا يمكن للناس تغييره في تطبيقك.",
-  "checks_screen__coverage_pages": [
-    {
-      "declarations": [
-        "input pages",
-        "local pagesPlural = pages: plural"
-      ],
-      "selectors": [
-        "pagesPlural"
-      ],
-      "match": {
-        "pagesPlural=zero": "لا تفتح الجولات أي صفحة من تطبيقك.",
-        "pagesPlural=one": "تفتح الجولات صفحة واحدة من تطبيقك.",
-        "pagesPlural=two": "تفتح الجولات صفحتين من تطبيقك.",
-        "pagesPlural=few": "تفتح الجولات {pages} صفحات من تطبيقك.",
-        "pagesPlural=many": "تفتح الجولات {pages} صفحة من تطبيقك.",
-        "pagesPlural=other": "تفتح الجولات {pages} صفحة من تطبيقك."
-      }
-    }
-  ],
-  "checks_screen__walks_empty": "لم تُشغَّل أي جولة بعد",
-  "checks_screen__walks_empty_text": "تمرّ الجولة على تطبيقك خطوة خطوة كما يفعل الإنسان، وتخبرك أين تتعثّر.",
-  "checks_screen__walks_empty_ask": "اطلب من Pikku كتابة بعضها",
-  "checks_screen__walks_running": "تمرّ الجولات على تطبيقك الآن.",
-  "checks_screen__walks_fine": [
-    {
-      "declarations": [
-        "input count",
-        "local countPlural = count: plural"
-      ],
-      "selectors": [
-        "countPlural"
-      ],
-      "match": {
-        "countPlural=zero": "لم تسر أي جولة · {when}",
-        "countPlural=one": "سارت جولة واحدة بخير · {when}",
-        "countPlural=two": "سارت جولتان بخير · {when}",
-        "countPlural=few": "سارت {count} جولات بخير · {when}",
-        "countPlural=many": "سارت {count} جولة بخير · {when}",
-        "countPlural=other": "سارت {count} جولة بخير · {when}"
-      }
-    }
-  ],
-  "checks_screen__show_them": "اعرضها",
-  "checks_screen__hide_them": "أخفها",
-  "checks_screen__not_run": [
-    {
-      "declarations": [
-        "input count",
-        "local countPlural = count: plural"
-      ],
-      "selectors": [
-        "countPlural"
-      ],
-      "match": {
-        "countPlural=zero": "شُغّلت كل الجولات هذه المرة.",
-        "countPlural=one": "لم تُشغَّل جولة واحدة هذه المرة.",
-        "countPlural=two": "لم تُشغَّل جولتان هذه المرة.",
-        "countPlural=few": "لم تُشغَّل {count} جولات هذه المرة.",
-        "countPlural=many": "لم تُشغَّل {count} جولة هذه المرة.",
-        "countPlural=other": "لم تُشغَّل {count} جولة هذه المرة."
-      }
-    }
-  ],
-  "checks_screen__stopped_at": "تعثّرت عند «{step}»",
-  "checks_screen__stopped": "توقفت قبل أن تنتهي",
-  "checks_screen__ran_when": "شُغّلت {when}",
-  "checks_screen__see_what_happened": "شاهد ما حدث",
-  "checks_screen__open": "افتح",
-  "checks_screen__runs_group": "التشغيلات السابقة",
-  "checks_screen__run_title": "تشغيل {when}",
-  "checks_screen__run_loading": "جارٍ فتح هذا التشغيل…",
-  "checks_screen__run_going": "جارٍ الآن · انتهت {done} حتى الآن",
-  "checks_screen__run_all_fine": [
-    {
-      "declarations": [
-        "input total",
-        "local totalPlural = total: plural"
-      ],
-      "selectors": [
-        "totalPlural"
-      ],
-      "match": {
-        "totalPlural=zero": "لم تُشغَّل أي جولة",
-        "totalPlural=one": "سارت بخير",
-        "totalPlural=two": "سارت الاثنتان بخير",
-        "totalPlural=few": "سارت كل الـ{total} بخير",
-        "totalPlural=many": "سارت كل الـ{total} بخير",
-        "totalPlural=other": "سارت كل الـ{total} بخير"
-      }
-    }
-  ],
-  "checks_screen__run_some_wrong": "تعثّرت {failed} من {total}",
-  "checks_screen__run_gone": "لم يعد هذا التشغيل محفوظًا.",
-  "checks_screen__reading_run": "قراءة هذا التشغيل",
-  "checks_screen__went_fine": "سارت بخير",
-  "checks_screen__went_wrong": "تعثّرت",
-  "checks_screen__going_now": "جارية الآن",
-  "checks_screen__drawer_aria": "تشغيل واحد للجولات",
-  "checks_screen__all_walkthroughs": "كل الجولات",
-  "checks_screen__steps": "خطوة خطوة",
-  "checks_screen__step_done": "تمّت",
-  "checks_screen__step_failed": "تعثّرت هنا",
-  "checks_screen__step_not_run": "لم تصل إليها",
-  "checks_screen__pictures": "ما رأته",
-  "checks_screen__shot": "صورة",
-  "checks_screen__shot_failure": "لحظة التعثّر",
-  "checks_screen__shot_video": "تسجيل",
-  "checks_screen__shot_loading": "جارٍ تحميل الصورة…",
-  "checks_screen__shot_missing": "تعذّر تحميل هذه الصورة.",
-  "checks_screen__setup_failed": "تعثّر التحضير للجولات",
-  "checks_screen__forget": "انسَ هذا التشغيل",
-  "checks_screen__forget_confirm": "سيُزال التشغيل مع خطواته وصوره. لا يمكن استعادته.",
-  "checks_screen__forget_yes": "انسه",
-  "checks_screen__forget_failed": "تعذّرت إزالة التشغيل. لم يتغيّر شيء. حاول مجددًا."
+  ]
 }
