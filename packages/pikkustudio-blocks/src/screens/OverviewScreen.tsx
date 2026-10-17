@@ -8,7 +8,7 @@ import { useContext, useState } from 'react'
 import { useProjectKey, useProjectName } from '../lib/project'
 import { useProjectQuery } from '../lib/projectRpc'
 import { Button } from '../ui/button'
-import { Check, ChevronRight, CircleAlert, Info, MessageCircle, RotateCw, Blocks } from 'lucide-react'
+import { Check, ChevronRight, CircleAlert, MessageCircle, RotateCw, Blocks } from 'lucide-react'
 import { ShellCtx } from '../lib/shell'
 import { keep } from '../lib/links'
 import { useFrontDoors, API_KINDS } from '../lib/frontDoors'
@@ -55,7 +55,6 @@ export function OverviewScreen() {
   const doorCount = useFrontDoors(useProjectKey()).doors.filter((d) => !API_KINDS.includes(d.kind)).length
   const [checking, setChecking] = useState(false)
   const [checked, setChecked] = useState<Status>()
-  const [introHidden, setIntroHidden] = useState(false)
   const [areaMsg, setAreaMsg] = useState<Status>()
   const { LiveAppHealth } = useSlots()
 
@@ -183,63 +182,6 @@ export function OverviewScreen() {
                 </div>
         </div>
       </section>
-
-      {/* New here? */}
-      {introHidden ? (
-        <div>
-          <button
-            type="button"
-            onClick={() => setIntroHidden(false)}
-            className="inline-flex items-center gap-1.5 rounded-sm px-1 py-1.5 text-[14.5px] font-bold text-ink-2 underline-offset-3 hover:underline"
-          >
-            <Info className="size-4" strokeWidth={2.5} />
-            {m.overview_screen__show_intro_again()}
-          </button>
-        </div>
-      ) : (
-        <section
-          className="grid grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] items-center gap-7 rounded-card border border-border bg-card px-7 py-6.5 shadow-card group-data-open/shell:grid-cols-1"
-          aria-label={m.overview_screen__new_here()}
-        >
-          <div>
-            <h3 className="mb-1.5 text-[22px] font-bold tracking-[-0.012em] text-balance">{m.overview_screen__new_here_title()}</h3>
-            <p className="text-ink-2 text-pretty">{m.overview_screen__intro_close()}</p>
-            <div className="mt-3 flex gap-2">
-              <Button variant="bordered" size="compact" type="button" onClick={() => setIntroHidden(true)}>
-                
-                {m.overview_screen__got_it_hide_this()}
-              </Button>
-            </div>
-          </div>
-          <ol className="grid grid-cols-3 gap-3.5 group-data-open/shell:grid-cols-1">
-            <li className="flex flex-col gap-1.5 text-[15px] leading-[1.4] text-ink-2">
-              <b className="flex items-center gap-2.5 text-[16px] text-foreground">
-                <span className="grid size-6.5 shrink-0 place-items-center rounded-full bg-primary text-[14px] text-primary-foreground">{1}</span>
-                {m.overview_screen__step1_title()}
-              </b>
-              {m.overview_screen__step1_text()}
-            </li>
-            <li className="flex flex-col gap-1.5 text-[15px] leading-[1.4] text-ink-2">
-              <b className="flex items-center gap-2.5 text-[16px] text-foreground">
-                <span className="grid size-6.5 shrink-0 place-items-center rounded-full bg-primary text-[14px] text-primary-foreground">{2}</span>
-                {m.overview_screen__step2_title()}
-              </b>
-              {m.overview_screen__step2_text()}
-            </li>
-            <li className="flex flex-col gap-1.5 text-[15px] leading-[1.4] text-ink-2">
-              <b className="flex items-center gap-2.5 text-[16px] text-foreground">
-                <span className="grid size-6.5 shrink-0 place-items-center rounded-full bg-primary text-[14px] text-primary-foreground">{3}</span>
-                {m.overview_screen__step3_title()}
-              </b>
-              {m.overview_screen__step3_before()}
-              <Link {...keep} to="/publish" className="inline-flex items-center gap-1.5 rounded-sm p-0 text-[14.5px] font-bold text-accent-foreground no-underline underline-offset-3 hover:underline">
-                {m.overview_screen__step3_link()}
-              </Link>
-              {m.overview_screen__step3_after()}
-            </li>
-          </ol>
-        </section>
-      )}
 
       {/* What your app is made of */}
       <section className="flex flex-col gap-3.5" aria-label={m.overview_screen__made_of()}>
