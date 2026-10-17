@@ -3968,5 +3968,96 @@
   "assistant_drawer__delete_yes": "احذفوها",
   "assistant_drawer__keep_it": "أبقوها",
   "assistant_drawer__delete_failed": "لم تُحذف المحادثة",
-  "assistant_drawer__delete_failed_body": "لم يتغير شيء. حاولوا مرة أخرى."
+  "assistant_drawer__delete_failed_body": "لم يتغير شيء. حاولوا مرة أخرى.",
+  "security_screen__title": "فحص الأمان",
+  "security_screen__text": "تطبيقك مبني من أجزاء جاهزة. يقارنها Pikku بقائمة عامة لنقاط الضعف المعروفة ويخبرك بما يجب إصلاحه.",
+  "security_screen__hero_loading": "جارٍ عرض آخر فحص…",
+  "security_screen__hero_running": "جارٍ فحص تطبيقك…",
+  "security_screen__hero_never": "افحص تطبيقك بحثًا عن نقاط ضعف معروفة.",
+  "security_screen__hero_failed": "تعذّر إكمال الفحص.",
+  "security_screen__hero_clear": "لا شيء يحتاج إلى إصلاح.",
+  "security_screen__hero_one": "أمر واحد يحتاج إلى إصلاح.",
+  "security_screen__hero_many": "{count} أمور تحتاج إلى إصلاح.",
+  "security_screen__why_running": "يستغرق ذلك عادة أقل من دقيقة. يمكنك مغادرة هذه الصفحة.",
+  "security_screen__why_never": "يستغرق نحو دقيقة ولا يغيّر شيئًا. سترى ما يحتاج إلى إصلاح بكلمات بسيطة.",
+  "security_screen__why_failed": "لم يتغيّر شيء. حاول مرة أخرى، أو شغّل تفاصيل المطوّرين أدناه لمعرفة السبب.",
+  "security_screen__why_clear": "لا يوجد في أجزاء تطبيقك أي نقطة ضعف معروفة. آخر فحص {when}.",
+  "security_screen__why_problems": "أخطرها موسوم بـ {worst}. يستطيع Pikku إصلاحها لك والتأكد من أن تطبيقك ما زال يعمل. آخر فحص {when}.",
+  "security_screen__run_check": "ابدأ الفحص",
+  "security_screen__check_again": "افحص مجددًا",
+  "security_screen__checking": "جارٍ الفحص",
+  "security_screen__run_failed": "تعذّر تشغيل الفحص. لم يتغيّر شيء. حاول مرة أخرى.",
+  "security_screen__ask_pikku": "اطلب من Pikku الإصلاح",
+  "security_screen__ask_pikku_all": "اطلب من Pikku إصلاحها كلها",
+  "security_screen__ask_failed": "تعذّر على Pikku تولّي ذلك. لم يتغيّر شيء. حاول مرة أخرى.",
+  "security_screen__on_the_list": "في قائمة Pikku",
+  "security_screen__on_the_list_all": "اطّلع على ما يصلحه Pikku",
+  "security_screen__change_title_one": "إصلاح نقطة ضعف أمنية: {what}",
+  "security_screen__change_title_all": "إصلاح {count} من نقاط الضعف الأمنية",
+  "security_screen__to_fix": "ما يجب إصلاحه",
+  "security_screen__all_clear_line": "كل شيء سليم، آخر فحص {when}",
+  "security_screen__update_it": "حدّثه",
+  "security_screen__updating": "جارٍ التحديث",
+  "security_screen__update_failed": "لم ينجح التحديث. لم يتغيّر شيء. حاول مرة أخرى أو اسأل Pikku.",
+  "security_screen__fix_ready": "إصدار أحدث يصلح هذا.",
+  "security_screen__no_fix_yet": "لا يوجد إصدار مُصلَح بعد. يستطيع Pikku الالتفاف عليه.",
+  "security_screen__read_more": "اقرأ المزيد",
+  "security_screen__developer_details": "تفاصيل المطوّرين",
+  "security_screen__tools_show": "اعرضها",
+  "security_screen__tools_hide": "أخفها",
+  "security_screen__sev_critical": "عاجل",
+  "security_screen__sev_critical_advice": "أصلحه اليوم. قد يُستغل ضد تطبيقك الآن.",
+  "security_screen__sev_high": "خطير",
+  "security_screen__sev_high_advice": "أصلحه قريبًا. قد يعرّض تطبيقك أو زوّارك للخطر.",
+  "security_screen__sev_moderate": "يستحق الإصلاح",
+  "security_screen__sev_moderate_advice": "ليس عاجلًا، لكن يستحق الإصلاح هذا الأسبوع.",
+  "security_screen__sev_low": "بسيط",
+  "security_screen__sev_low_advice": "خطر منخفض. أصلحه متى ناسبك.",
+  "security_screen__kind_code": "قد يجعل أحدهم تطبيقك ينفّذ أوامره الخاصة",
+  "security_screen__kind_pollution": "قد يغيّر أحدهم سلوك تطبيقك بإرسال بيانات مصمّمة لذلك",
+  "security_screen__kind_reach": "قد يستخدم أحدهم تطبيقك للوصول إلى أماكن لا ينبغي له الوصول إليها",
+  "security_screen__kind_leak": "قد تُرسل كلمات المرور أو بيانات الدخول إلى المكان الخطأ",
+  "security_screen__kind_header": "قد يدسّ أحدهم أوامر إضافية في رسائل تطبيقك",
+  "security_screen__kind_trick": "قد يُخدع زائر ليفعل شيئًا لم يقصده",
+  "security_screen__kind_slow": "قد يبطئ أحدهم تطبيقك أو يجعله يتوقف عن الاستجابة",
+  "security_screen__kind_files": "قد يصل أحدهم إلى ملفات لا ينبغي له رؤيتها",
+  "security_screen__kind_other": "أحد الأجزاء التي يستخدمها تطبيقك فيه نقطة ضعف معروفة",
+  "security_screen__tools_line": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "لا شيء آخر.",
+        "countPlural=one": "نقطة أخرى تخص فقط الأدوات المستخدمة لبناء تطبيقك. لا يصل إليها زوّارك أبدًا.",
+        "countPlural=two": "نقطتان أخريان تخصان فقط الأدوات المستخدمة لبناء تطبيقك. لا يصل إليهما زوّارك أبدًا.",
+        "countPlural=few": "{count} نقاط أخرى تخص فقط الأدوات المستخدمة لبناء تطبيقك. لا يصل إليها زوّارك أبدًا.",
+        "countPlural=many": "{count} نقطة أخرى تخص فقط الأدوات المستخدمة لبناء تطبيقك. لا يصل إليها زوّارك أبدًا.",
+        "countPlural=other": "{count} نقطة أخرى تخص فقط الأدوات المستخدمة لبناء تطبيقك. لا يصل إليها زوّارك أبدًا."
+      }
+    }
+  ],
+  "security_screen__newer_line": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "لا توجد إصدارات أحدث.",
+        "countPlural=one": "جزء واحد له إصدار أحدث. لا شيء عاجل.",
+        "countPlural=two": "جزءان لهما إصدارات أحدث. لا شيء عاجل.",
+        "countPlural=few": "{count} أجزاء لها إصدارات أحدث. لا شيء عاجل.",
+        "countPlural=many": "{count} جزءًا لها إصدارات أحدث. لا شيء عاجل.",
+        "countPlural=other": "{count} جزء لها إصدارات أحدث. لا شيء عاجل."
+      }
+    }
+  ]
 }

@@ -2,7 +2,7 @@ import { type I18nString, asI18n } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { Activity, BookOpen, ClipboardCheck, Bot, Gauge, Compass, FileCode, FileText, FolderOpen, Globe, Palette, KeyRound, LayoutGrid, Mail, ScrollText, Wrench, Search, Smartphone, Upload, Users, UserRoundCheck, Workflow, History } from 'lucide-react'
+import { Activity, BookOpen, ClipboardCheck, Bot, Gauge, Compass, FileCode, FileText, FolderOpen, Globe, Palette, KeyRound, LayoutGrid, Mail, ScrollText, Wrench, Search, Smartphone, ShieldCheck, Upload, Users, UserRoundCheck, Workflow, History } from 'lucide-react'
 import { keep } from '../lib/links'
 
 type Hit = { key: string; label: string; hint: string; id: string; Icon: typeof Search }
@@ -33,6 +33,7 @@ const pages = (): Hit[] => (
     [m.quick_find__how_its_running(), '/performance', Activity],
     [m.quick_find__metrics(), '/metrics', Gauge],
     [m.quick_find__scorers(), '/scorers', ClipboardCheck],
+    [m.security_screen__title(), '/security', ShieldCheck],
     [m.quick_find__ask_pikku(), '', Bot],
   ] as const
 ).map(([label, to, Icon]) => ({ key: `page-${to || 'ask'}`, label, hint: to ? '' : m.quick_find__ask_in_your_own_words(), id: to, Icon }))

@@ -3888,5 +3888,88 @@
   "assistant_drawer__delete_yes": "Delete it",
   "assistant_drawer__keep_it": "Keep it",
   "assistant_drawer__delete_failed": "The chat was not deleted",
-  "assistant_drawer__delete_failed_body": "Nothing was changed. Try again."
+  "assistant_drawer__delete_failed_body": "Nothing was changed. Try again.",
+  "security_screen__title": "Security check",
+  "security_screen__text": "Your app is built from ready-made parts. Pikku checks them against a public list of known weaknesses and tells you what to fix.",
+  "security_screen__hero_loading": "Looking at your last check…",
+  "security_screen__hero_running": "Checking your app…",
+  "security_screen__hero_never": "Check your app for known weaknesses.",
+  "security_screen__hero_failed": "The check could not finish.",
+  "security_screen__hero_clear": "Nothing to fix.",
+  "security_screen__hero_one": "One thing needs fixing.",
+  "security_screen__hero_many": "{count} things need fixing.",
+  "security_screen__why_running": "This usually takes under a minute. You can leave this page.",
+  "security_screen__why_never": "It takes about a minute and changes nothing. You will see what needs fixing, in plain words.",
+  "security_screen__why_failed": "Nothing was changed. Try again, or turn on developer details below to see why.",
+  "security_screen__why_clear": "None of the parts your app is made from has a known weakness. Checked {when}.",
+  "security_screen__why_problems": "The most serious is marked {worst}. Pikku can fix them for you and test that your app still works. Checked {when}.",
+  "security_screen__run_check": "Run the check",
+  "security_screen__check_again": "Check again",
+  "security_screen__checking": "Checking",
+  "security_screen__run_failed": "The check could not run. Nothing was changed. Try again.",
+  "security_screen__ask_pikku": "Ask Pikku to fix",
+  "security_screen__ask_pikku_all": "Ask Pikku to fix them all",
+  "security_screen__ask_failed": "Pikku could not take this on. Nothing was changed. Try again.",
+  "security_screen__on_the_list": "On Pikku's list",
+  "security_screen__on_the_list_all": "See what Pikku is fixing",
+  "security_screen__change_title_one": "Fix a security weakness: {what}",
+  "security_screen__change_title_all": "Fix {count} security weaknesses",
+  "security_screen__to_fix": "What to fix",
+  "security_screen__all_clear_line": "All clear, checked {when}",
+  "security_screen__update_it": "Update it",
+  "security_screen__updating": "Updating",
+  "security_screen__update_failed": "The update did not go in. Nothing was changed. Try again, or ask Pikku.",
+  "security_screen__fix_ready": "A newer version fixes this.",
+  "security_screen__no_fix_yet": "No fixed version yet. Pikku can work around it.",
+  "security_screen__read_more": "Read more",
+  "security_screen__developer_details": "Developer details",
+  "security_screen__tools_show": "Show them",
+  "security_screen__tools_hide": "Hide them",
+  "security_screen__sev_critical": "Urgent",
+  "security_screen__sev_critical_advice": "Fix this today. It could be used against your app right now.",
+  "security_screen__sev_high": "Serious",
+  "security_screen__sev_high_advice": "Fix this soon. It could put your app or your visitors at risk.",
+  "security_screen__sev_moderate": "Worth fixing",
+  "security_screen__sev_moderate_advice": "Not urgent, but worth fixing this week.",
+  "security_screen__sev_low": "Minor",
+  "security_screen__sev_low_advice": "Low risk. Fix it when it suits you.",
+  "security_screen__kind_code": "Someone could make your app run their own instructions",
+  "security_screen__kind_pollution": "Someone could change how your app behaves by sending it crafted data",
+  "security_screen__kind_reach": "Someone could use your app to reach places it should not",
+  "security_screen__kind_leak": "Passwords or sign-in details could be sent to the wrong place",
+  "security_screen__kind_header": "Someone could slip extra instructions into your app's messages",
+  "security_screen__kind_trick": "A visitor could be tricked into doing something they did not mean to",
+  "security_screen__kind_slow": "Someone could slow your app down or make it stop answering",
+  "security_screen__kind_files": "Someone could reach files they should not see",
+  "security_screen__kind_other": "One of the parts your app uses has a known weakness",
+  "security_screen__tools_line": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "One more only affects the tools used to build your app. Your visitors never reach it.",
+        "countPlural=other": "{count} more only affect the tools used to build your app. Your visitors never reach them."
+      }
+    }
+  ],
+  "security_screen__newer_line": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "One part has a newer version. Nothing urgent.",
+        "countPlural=other": "{count} parts have newer versions. Nothing urgent."
+      }
+    }
+  ]
 }

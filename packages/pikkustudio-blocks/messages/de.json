@@ -3680,5 +3680,88 @@
   "assistant_drawer__delete_yes": "Löschen",
   "assistant_drawer__keep_it": "Behalten",
   "assistant_drawer__delete_failed": "Der Chat wurde nicht gelöscht",
-  "assistant_drawer__delete_failed_body": "Es wurde nichts geändert. Versuche es noch einmal."
+  "assistant_drawer__delete_failed_body": "Es wurde nichts geändert. Versuche es noch einmal.",
+  "security_screen__title": "Sicherheitscheck",
+  "security_screen__text": "Deine App besteht aus fertigen Bausteinen. Pikku gleicht sie mit einer öffentlichen Liste bekannter Schwachstellen ab und sagt dir, was zu beheben ist.",
+  "security_screen__hero_loading": "Dein letzter Check wird geladen…",
+  "security_screen__hero_running": "Deine App wird geprüft…",
+  "security_screen__hero_never": "Prüfe deine App auf bekannte Schwachstellen.",
+  "security_screen__hero_failed": "Der Check konnte nicht abgeschlossen werden.",
+  "security_screen__hero_clear": "Nichts zu beheben.",
+  "security_screen__hero_one": "Eine Sache muss behoben werden.",
+  "security_screen__hero_many": "{count} Dinge müssen behoben werden.",
+  "security_screen__why_running": "Das dauert meist unter einer Minute. Du kannst die Seite verlassen.",
+  "security_screen__why_never": "Das dauert etwa eine Minute und ändert nichts. Du siehst in einfachen Worten, was zu beheben ist.",
+  "security_screen__why_failed": "Es wurde nichts geändert. Versuch es noch einmal oder schalte unten die Entwicklerdetails ein, um den Grund zu sehen.",
+  "security_screen__why_clear": "Keiner der Bausteine deiner App hat eine bekannte Schwachstelle. Geprüft {when}.",
+  "security_screen__why_problems": "Das Ernsteste ist als {worst} markiert. Pikku kann es für dich beheben und testen, dass deine App weiter funktioniert. Geprüft {when}.",
+  "security_screen__run_check": "Check starten",
+  "security_screen__check_again": "Erneut prüfen",
+  "security_screen__checking": "Wird geprüft",
+  "security_screen__run_failed": "Der Check konnte nicht laufen. Es wurde nichts geändert. Versuch es noch einmal.",
+  "security_screen__ask_pikku": "Pikku beheben lassen",
+  "security_screen__ask_pikku_all": "Pikku alles beheben lassen",
+  "security_screen__ask_failed": "Pikku konnte das nicht übernehmen. Es wurde nichts geändert. Versuch es noch einmal.",
+  "security_screen__on_the_list": "Auf Pikkus Liste",
+  "security_screen__on_the_list_all": "Ansehen, was Pikku behebt",
+  "security_screen__change_title_one": "Sicherheitslücke beheben: {what}",
+  "security_screen__change_title_all": "{count} Sicherheitslücken beheben",
+  "security_screen__to_fix": "Was zu beheben ist",
+  "security_screen__all_clear_line": "Alles in Ordnung, geprüft {when}",
+  "security_screen__update_it": "Aktualisieren",
+  "security_screen__updating": "Wird aktualisiert",
+  "security_screen__update_failed": "Die Aktualisierung hat nicht geklappt. Es wurde nichts geändert. Versuch es noch einmal oder frag Pikku.",
+  "security_screen__fix_ready": "Eine neuere Version behebt das.",
+  "security_screen__no_fix_yet": "Noch keine behobene Version. Pikku kann es umgehen.",
+  "security_screen__read_more": "Mehr lesen",
+  "security_screen__developer_details": "Entwicklerdetails",
+  "security_screen__tools_show": "Anzeigen",
+  "security_screen__tools_hide": "Ausblenden",
+  "security_screen__sev_critical": "Dringend",
+  "security_screen__sev_critical_advice": "Heute beheben. Es könnte gerade jetzt gegen deine App genutzt werden.",
+  "security_screen__sev_high": "Ernst",
+  "security_screen__sev_high_advice": "Bald beheben. Es könnte deine App oder deine Besucher gefährden.",
+  "security_screen__sev_moderate": "Lohnt sich",
+  "security_screen__sev_moderate_advice": "Nicht dringend, aber diese Woche beheben.",
+  "security_screen__sev_low": "Gering",
+  "security_screen__sev_low_advice": "Geringes Risiko. Beheb es, wann es dir passt.",
+  "security_screen__kind_code": "Jemand könnte deine App eigene Befehle ausführen lassen",
+  "security_screen__kind_pollution": "Jemand könnte mit präparierten Daten verändern, wie deine App sich verhält",
+  "security_screen__kind_reach": "Jemand könnte deine App nutzen, um an Orte zu gelangen, die tabu sind",
+  "security_screen__kind_leak": "Passwörter oder Anmeldedaten könnten an die falsche Stelle gelangen",
+  "security_screen__kind_header": "Jemand könnte zusätzliche Befehle in die Nachrichten deiner App schmuggeln",
+  "security_screen__kind_trick": "Ein Besucher könnte zu etwas verleitet werden, das er nicht wollte",
+  "security_screen__kind_slow": "Jemand könnte deine App ausbremsen oder lahmlegen",
+  "security_screen__kind_files": "Jemand könnte an Dateien gelangen, die er nicht sehen soll",
+  "security_screen__kind_other": "Einer der Bausteine deiner App hat eine bekannte Schwachstelle",
+  "security_screen__tools_line": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Eine weitere betrifft nur die Werkzeuge, mit denen deine App gebaut wird. Deine Besucher erreichen sie nie.",
+        "countPlural=other": "{count} weitere betreffen nur die Werkzeuge, mit denen deine App gebaut wird. Deine Besucher erreichen sie nie."
+      }
+    }
+  ],
+  "security_screen__newer_line": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Ein Baustein hat eine neuere Version. Nichts Dringendes.",
+        "countPlural=other": "{count} Bausteine haben neuere Versionen. Nichts Dringendes."
+      }
+    }
+  ]
 }
