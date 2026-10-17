@@ -6,6 +6,8 @@ import { Button } from '../ui/button'
 import { SidePanel } from './SidePanel'
 import { Dot } from './RowCard'
 import { FixNotice } from './FixNotice'
+import { AccountAccess } from './AccountAccess'
+import { AccountPassword } from './AccountPassword'
 import { useProjectAction } from '../lib/projectRpc'
 import { accountName, joinedOn, type Account } from '../lib/accounts'
 
@@ -67,6 +69,8 @@ export function AccountPanel({ projectKey, account, onChanged, onClose }: { proj
           </Button>
         </>
       )}
+      <AccountAccess projectKey={projectKey} userId={account.id} name={name} />
+      <AccountPassword projectKey={projectKey} userId={account.id} name={name} />
       <p className="text-px15 text-ink-2">{m.accounts_panel__signout_explain()}</p>
       <Button type="button" variant="bordered" size="page" className="self-start" disabled={busy} aria-busy={out.isPending} onClick={signOut}>
         <LogOut className="size-4.5" />
