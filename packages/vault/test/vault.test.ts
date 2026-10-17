@@ -47,3 +47,14 @@ test('missing key and wrong-key envelope are rejected', async () => {
   const forged = JSON.stringify({ alg: 'sealed-x25519-v1', kid: 'other', epk: 'a', iv: 'a', ct: 'a', tag: 'a' })
   await expect(admin.setEncryptedSecret('k', forged)).rejects.toThrow('400')
 })
+
+test('a scoped token reads its own namespaced key before the shared one', async () => {
+  await admin.setSecret('shared', 'global')
+  await admin.setSecret('project:a:shared', 'mine')
+  const token = await control.mintToken('project:a', '*')
+  const scoped = new VaultClientSecretService({ socketPath: vaultPaths(home).socket, token })
+  expect((await scoped.getSecret<string>('shared')).reveal()).toBe('mine')
+  const other = new VaultClientSecretService({ socketPath: vaultPaths(home).socket, token: await control.mintToken('project:b', '*') })
+  expect((await other.getSecret<string>('shared')).reveal()).toBe('global')
+  expect(await other.hasSecret('missing')).toBe(false)
+})

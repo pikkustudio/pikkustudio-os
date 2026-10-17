@@ -14,7 +14,7 @@ import {
   vaultPersonalSource,
 } from '@pikkustudio/addon-studio/services'
 import type { Kysely } from 'kysely'
-import { connectVault } from '@pikkustudio/vault/connect'
+import { connectVault, projectVaultEnv } from '@pikkustudio/vault/connect'
 import { installEmbeddedRuntime } from './runtime.js'
 import { holdWhileStreaming } from './sleep.js'
 import { ToolResolver } from './tools/resolver.js'
@@ -56,11 +56,7 @@ export async function createStudio(home = studioHome(), db?: Kysely<any>): Promi
         },
         projectId
       ),
-    projectEnv: async (key) => {
-      const vault = await connectVault(home)
-      const token = await vault.admin.mintToken(`project:${key}`, '*')
-      return { PIKKU_VAULT_SOCKET: vault.socketPath, PIKKU_VAULT_TOKEN: token }
-    },
+    projectEnv: (key, generated) => projectVaultEnv(home, key, generated),
   })
   const audit = new StudioAudit(home)
   instrumentStudio(audit, core)

@@ -39,7 +39,7 @@ export interface StudioServicesOptions {
   publishTargets?: PublishTarget[]
   account?: AccountProvider
   builder?: BuilderSession
-  projectEnv?: (key: string) => Promise<Record<string, string>>
+  projectEnv?: (key: string, generated: Record<string, string>) => Promise<Record<string, string>>
   personalSource?: (projectId: string) => ScopedSource | undefined
   teamSource?: (projectId: string, projectPath: string) => ScopedSource | undefined
   projectStore?: ProjectStore
@@ -79,7 +79,7 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
       personalSource: options.personalSource,
       teamSource: options.teamSource,
       owner: async () => (await new StudioSettingsFile(join(home, 'settings.json')).read()).name ?? '',
-      env: async (key) => ({ ...(await studioAi.env()), ...((await options.projectEnv?.(key)) ?? {}) }),
+      env: async (key, generated) => ({ ...(await studioAi.env()), ...((await options.projectEnv?.(key, generated)) ?? {}) }),
     })
   const studioModels = new Map<string, string>()
   const studioBuilder =

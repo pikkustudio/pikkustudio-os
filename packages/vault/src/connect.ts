@@ -55,3 +55,18 @@ export const connectVault = async (
     socketPath: paths.socket,
   }
 }
+
+export const projectVaultEnv = async (
+  home: string,
+  key: string,
+  generated: Record<string, string>
+): Promise<{ PIKKU_VAULT_SOCKET: string; PIKKU_VAULT_TOKEN: string }> => {
+  const vault = await connectVault(home)
+  const name = `project:${key}`
+  for (const [secret, value] of Object.entries(generated)) {
+    if (await vault.secrets.hasSecret(secret)) continue
+    if (!(await vault.secrets.hasSecret(`${name}:${secret}`))) await vault.secrets.setSecret(`${name}:${secret}`, value)
+  }
+  const token = await vault.admin.mintToken(name, '*')
+  return { PIKKU_VAULT_SOCKET: vault.socketPath, PIKKU_VAULT_TOKEN: token }
+}

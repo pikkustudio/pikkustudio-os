@@ -98,18 +98,20 @@ export const startVault = async (home: string): Promise<RunningVault | null> => 
     }
 
     if (resource === 'secrets' && key) {
+      const own = scoped ? `${scoped.name}:${key}` : undefined
+      const stored = own && store.has(own) ? own : key
       if (action === 'exists' && method === 'GET') {
-        return send(res, 200, { exists: canRead(key) && store.has(key) })
+        return send(res, 200, { exists: canRead(key) && store.has(stored) })
       }
       if (method === 'GET') {
         if (!canRead(key)) {
           await record(caller, 'secret.read', key, 'denied')
           return send(res, 403, { error: 'forbidden' })
         }
-        const row = store.sealed(key)
+        const row = store.sealed(stored)
         if (!row) return send(res, 404, { error: 'not_found' })
         const value = unseal(keypair.privateKey, parseSealedValue(row.sealed))
-        await record(caller, 'secret.read', key, 'success')
+        await record(caller, 'secret.read', stored, 'success')
         return send(res, 200, { value })
       }
       if (!isAdmin) {
