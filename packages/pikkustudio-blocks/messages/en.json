@@ -4803,5 +4803,6 @@
   "quick_find__connections": "Connections",
   "cloud_offline__title": "Pikku Studio Cloud can't be reached right now",
   "cloud_offline__body": "Everything on this computer keeps working. This part lives in Pikku Studio Cloud and comes back once you are online again.",
-  "cloud_offline__retry": "Check again"
+  "cloud_offline__retry": "Check again",
+  "studio_loading__label": "Opening Pikku Studio"
 }

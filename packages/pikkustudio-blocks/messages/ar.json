@@ -4941,5 +4941,6 @@
   "audit_screen__hero_error_title": "تعذّرت قراءة السجل",
   "audit_screen__hero_error_text": "طلب Studio سجل مشروعك فعاد بخطأ. لم يتغير شيء. يستطيع Pikku معرفة السبب.",
   "audit_screen__not_running_ask": "اطلب من Pikku تشغيله",
-  "audit_screen__not_running_say": "تقول صفحة السجل إن مشروعي لا يعمل. أرجو تشغيله حتى أرى ما حدث."
+  "audit_screen__not_running_say": "تقول صفحة السجل إن مشروعي لا يعمل. أرجو تشغيله حتى أرى ما حدث.",
+  "studio_loading__label": "جارٍ فتح Pikku Studio"
 }

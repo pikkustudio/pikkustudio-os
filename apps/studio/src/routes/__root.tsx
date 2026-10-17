@@ -18,6 +18,7 @@ import { DefaultNotFoundPage } from '@/components/DefaultNotFoundPage'
 import { SlotsCtx } from '@pikkustudio/blocks/lib/slots'
 import { TeamGuard } from '@pikkustudio/blocks/blocks/TeamGuard'
 import { useAccount } from '@pikkustudio/blocks/lib/onboarding'
+import { StudioLoading } from '@pikkustudio/blocks/blocks/StudioLoading'
 import { validateStudioSearch } from '@pikkustudio/blocks/lib/search'
 import { CustomizeMount } from '@/components/CustomizeMount'
 import { paletteScript, schemeScript } from '@pikkustudio/theme'
@@ -48,7 +49,7 @@ const localeScript = `try{var l=localStorage.getItem('${LOCALE_KEY}')||localStor
 
 function SessionGate({ children }: { children: ReactNode }) {
   const account = useAccount()
-  if (account.isPending) return null
+  if (account.isPending) return <StudioLoading />
   return (
     <SlotsCtx.Provider value={{}}>
       <TeamGuard />

@@ -4597,5 +4597,6 @@
   "audit_screen__hero_error_title": "Der Verlauf konnte nicht gelesen werden",
   "audit_screen__hero_error_text": "Studio hat dein Projekt nach seinem Verlauf gefragt und einen Fehler zurückbekommen. Es wurde nichts geändert. Pikku kann herausfinden, warum.",
   "audit_screen__not_running_ask": "Pikku bitten, es zu starten",
-  "audit_screen__not_running_say": "Die Seite Verlauf sagt, mein Projekt läuft nicht. Bitte starte es, damit ich sehe, was passiert ist."
+  "audit_screen__not_running_say": "Die Seite Verlauf sagt, mein Projekt läuft nicht. Bitte starte es, damit ich sehe, was passiert ist.",
+  "studio_loading__label": "Pikku Studio wird geöffnet"
 }
