@@ -1,7 +1,7 @@
-import { sep, type I18nNode, type I18nString } from '@pikku/react'
+import { asI18n, sep, type I18nNode, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useContext, useState } from 'react'
-import { BellRing, CircleAlert, Send } from 'lucide-react'
+import { BellRing, CircleAlert, Inbox, Send } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Page } from '../blocks/Page'
 import { PageHead } from '../blocks/PageHead'
@@ -11,12 +11,12 @@ import { EmptyState } from '../blocks/EmptyState'
 import { ErrorState } from '../blocks/ErrorState'
 import { QueryState } from '../blocks/QueryState'
 import { PikkuDot } from '../blocks/PikkuDot'
-import { AlertSourceDetail, DeliveryDetail } from '../blocks/IncomingAlertDetail'
+import { AlertSourceDetail, DeliveryDetail, ReceiptDetail } from '../blocks/IncomingAlertDetail'
 import { useProjectKey, useProjectName } from '../lib/project'
 import { useProjectAction, useProjectQuery } from '../lib/projectRpc'
 import { ShellCtx } from '../lib/shell'
 import { ago } from '../lib/audit'
-import { alertName, deliveryState, hostOf, mergeSources, sourceState, type AlertSource, type Delivery, type SourceMeta, type SourceRow } from '../lib/incomingAlerts'
+import { alertName, deliveryState, hostOf, mergeSources, receiptState, sourceState, type AlertSource, type Delivery, type Receipt, type SourceMeta, type SourceRow } from '../lib/incomingAlerts'
 
 type Meta = { webhookSourceMeta?: Record<string, SourceMeta> }
 
@@ -58,11 +58,13 @@ export function IncomingAlertsScreen() {
   const [stamp] = useState(() => Date.now())
   const [openSource, setOpenSource] = useState<string | null>(null)
   const [openDelivery, setOpenDelivery] = useState<Delivery | null>(null)
+  const [openReceipt, setOpenReceipt] = useState<Receipt | null>(null)
   const [confirm, setConfirm] = useState<string | null>(null)
 
   const meta = useProjectQuery<Meta>(key, 'console:getAllMeta')
   const rows = useProjectQuery<{ sources: SourceRow[] }>(key, 'admin:triggerSourceList', null, { handlesErrors: true })
   const deliveries = useProjectQuery<Delivery[]>(key, 'console:listWebhookDeliveries', { limit: 50 })
+  const receipts = useProjectQuery<Receipt[]>(key, 'admin:listIncomingWebhookReceipts', { limit: 50 }, { optional: true, handlesErrors: true })
   const enable = useProjectAction<{ name: string }>(key, 'admin:triggerSourceEnable', ['admin:triggerSourceList'])
   const disable = useProjectAction<{ name: string }>(key, 'admin:triggerSourceDisable', ['admin:triggerSourceList'])
   const forget = useProjectAction<{ name: string }>(key, 'admin:triggerSourceForget', ['admin:triggerSourceList'])
@@ -120,7 +122,7 @@ export function IncomingAlertsScreen() {
         flag={needs}
         tile={<BellRing className="size-5" />}
         title={
-          <button type="button" className="text-start hover:underline hover:underline-offset-3" onClick={() => (setOpenDelivery(null), setOpenSource(s.name))}>
+          <button type="button" className="text-start hover:underline hover:underline-offset-3" onClick={() => (setOpenDelivery(null), setOpenReceipt(null), setOpenSource(s.name))}>
             {alertName(s.name)}
           </button>
         }
@@ -131,7 +133,7 @@ export function IncomingAlertsScreen() {
               <p className="min-w-0 flex-1 basis-64 text-px15 text-ink-2">
                 {state.kind === 'manual' ? m.incoming_alerts__manual_text({ name: alertName(s.name) }) : m.incoming_alerts__failed_text({ name: alertName(s.name) })}
               </p>
-              <Button type="button" variant="bordered" size="compact" onClick={() => (setOpenDelivery(null), setOpenSource(s.name))}>
+              <Button type="button" variant="bordered" size="compact" onClick={() => (setOpenDelivery(null), setOpenReceipt(null), setOpenSource(s.name))}>
                 {m.incoming_alerts__see_what()}
               </Button>
             </div>
@@ -192,7 +194,7 @@ export function IncomingAlertsScreen() {
                   flag
                   tile={<BellRing className="size-5" />}
                   title={
-                    <button type="button" className="text-start hover:underline hover:underline-offset-3" onClick={() => (setOpenDelivery(null), setOpenSource(s.name))}>
+                    <button type="button" className="text-start hover:underline hover:underline-offset-3" onClick={() => (setOpenDelivery(null), setOpenReceipt(null), setOpenSource(s.name))}>
                       {alertName(s.name)}
                     </button>
                   }
@@ -244,6 +246,44 @@ export function IncomingAlertsScreen() {
           )}
         </Group>
 
+        {receipts.isSuccess && (receipts.data.length > 0 || sources.length > 0) ? (
+          <Group title={m.incoming_alerts__received()}>
+            {receipts.data.length === 0 ? (
+              <p className="px-1 text-px15 text-ink-2">{m.incoming_alerts__received_none()}</p>
+            ) : (
+              <RowStack>
+                {receipts.data.map((r) => {
+                  const state = receiptState(r)
+                  const title = alertName(r.event)
+                  const from = alertName(r.source)
+                  return (
+                    <RowCard
+                      key={r.receiptId}
+                      flag={state.kind === 'failed'}
+                      tile={<Inbox className="size-5" />}
+                      title={
+                        <button type="button" className="text-start hover:underline hover:underline-offset-3" onClick={() => (setOpenSource(null), setOpenDelivery(null), setOpenReceipt(r))}>
+                          {title}
+                        </button>
+                      }
+                      caption={m.incoming_alerts__received_from({ source: from })}
+                      note={<>{ago(r.createdAt, receipts.dataUpdatedAt || stamp)}{r.attempts > 1 ? <>{sep(' · ')}{m.incoming_alerts__tries_count({ n: r.attempts })}</> : null}</>}
+                    >
+                      <Dot tone={state.tone}>{state.text}</Dot>
+                      {state.kind === 'failed' ? (
+                        <Button type="button" variant="bordered" size="compact" onClick={() => say(m.incoming_alerts__ask_receipt_say({ what: title, source: from, error: asI18n(r.lastError ?? '') }))}>
+                          <PikkuDot />
+                          {m.incoming_alerts__ask_fix()}
+                        </Button>
+                      ) : null}
+                    </RowCard>
+                  )
+                })}
+              </RowStack>
+            )}
+          </Group>
+        ) : null}
+
         <Group title={m.incoming_alerts__sent()}>
           <QueryState
             query={deliveries}
@@ -260,7 +300,7 @@ export function IncomingAlertsScreen() {
                       flag={state.kind === 'failed'}
                       tile={<Send className="size-5" />}
                       title={
-                        <button type="button" className="text-start hover:underline hover:underline-offset-3" onClick={() => (setOpenSource(null), setOpenDelivery(x))}>
+                        <button type="button" className="text-start hover:underline hover:underline-offset-3" onClick={() => (setOpenSource(null), setOpenReceipt(null), setOpenDelivery(x))}>
                           {x.event ? alertName(x.event) : m.incoming_alerts__delivery_untitled()}
                         </button>
                       }
@@ -278,6 +318,7 @@ export function IncomingAlertsScreen() {
       </div>
 
       {shownSource ? <AlertSourceDetail source={shownSource} now={now} onClose={() => setOpenSource(null)} /> : null}
+      {openReceipt ? <ReceiptDetail projectKey={key} receipt={openReceipt} now={receipts.dataUpdatedAt || stamp} onClose={() => setOpenReceipt(null)} /> : null}
       {openDelivery ? <DeliveryDetail projectKey={key} delivery={openDelivery} now={deliveries.dataUpdatedAt || stamp} onClose={() => setOpenDelivery(null)} /> : null}
     </Page>
   )

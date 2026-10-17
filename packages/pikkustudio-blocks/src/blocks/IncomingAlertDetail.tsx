@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { m } from '@/i18n/messages'
 import { asI18n, type I18nNode, type I18nString } from '@pikku/react'
-import { BellRing, Send } from 'lucide-react'
+import { BellRing, Inbox, Send } from 'lucide-react'
 import { Button } from '../ui/button'
 import { ShellCtx } from '../lib/shell'
 import { useProjectQuery } from '../lib/projectRpc'
@@ -11,7 +11,7 @@ import { Dot } from './RowCard'
 import { SidePanel } from './SidePanel'
 import { PikkuDot } from './PikkuDot'
 import { QueryState } from './QueryState'
-import { alertName, deliveryState, hostOf, sourceState, type AlertSource, type Delivery, type DeliveryDetailData } from '../lib/incomingAlerts'
+import { alertName, deliveryState, hostOf, receiptState, sourceState, type AlertSource, type Delivery, type DeliveryDetailData, type Receipt } from '../lib/incomingAlerts'
 
 function Fact({ label, children }: { label: I18nString; children: I18nNode }) {
   return (
@@ -151,6 +151,48 @@ export function DeliveryDetail({ projectKey, delivery, now, onClose }: { project
             m.incoming_alerts__tech_try({ n: a.attemptNumber }),
             [a.statusCode !== null ? `HTTP ${a.statusCode}` : null, a.error, a.responseBody].filter(Boolean).join('\n') || null,
           ]),
+        ]}
+      />
+    </SidePanel>
+  )
+}
+
+export function ReceiptDetail({ projectKey, receipt, now, onClose }: { projectKey: string; receipt: Receipt; now: number; onClose: () => void }) {
+  const { say } = useContext(ShellCtx)
+  const q = useProjectQuery<Receipt | null>(projectKey, 'admin:getIncomingWebhookReceipt', { receiptId: receipt.receiptId }, { handlesErrors: true })
+  const r = q.data ?? receipt
+  const title = alertName(r.event)
+  const from = alertName(r.source)
+  const state = receiptState(r)
+  return (
+    <SidePanel icon={Inbox} label={title} title={title} sub={m.incoming_alerts__received_from({ source: from })} onClose={onClose}>
+      <dl className="m-0 flex flex-col gap-4">
+        <Fact label={m.incoming_alerts__detail_state()}>
+          <Dot tone={state.tone}>{state.text}</Dot>
+        </Fact>
+        <Fact label={m.incoming_alerts__detail_arrived()}>
+          {exactTime(r.createdAt)}
+          <small className="block text-px14 text-ink-2">{ago(r.createdAt, now)}</small>
+        </Fact>
+        {r.deliveredAt ? <Fact label={m.incoming_alerts__detail_handled()}>{exactTime(r.deliveredAt)}</Fact> : null}
+        {r.attempts > 1 ? <Fact label={m.incoming_alerts__detail_tries()}>{m.incoming_alerts__tries_count({ n: r.attempts })}</Fact> : null}
+      </dl>
+      {state.kind === 'failed' ? (
+        <>
+          <p className="text-px15 text-ink-2 text-pretty">{m.incoming_alerts__receipt_failed_text({ source: from })}</p>
+          <Button type="button" variant="default" size="page" className="self-start" onClick={() => say(m.incoming_alerts__ask_receipt_say({ what: title, source: from, error: asI18n(r.lastError ?? '') }))}>
+            <PikkuDot />
+            {m.incoming_alerts__ask_fix()}
+          </Button>
+        </>
+      ) : null}
+      <Technical
+        rows={[
+          [m.incoming_alerts__tech_event(), r.event],
+          [m.incoming_alerts__tech_source(), r.source],
+          [m.incoming_alerts__tech_provider_id(), r.providerEventId],
+          [m.incoming_alerts__tech_receipt_id(), r.receiptId],
+          [m.incoming_alerts__tech_error(), r.lastError],
         ]}
       />
     </SidePanel>

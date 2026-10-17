@@ -7,6 +7,7 @@ export type AlertSource = { name: string; meta: SourceMeta | null; row: SourceRo
 
 export type Delivery = { deliveryId: string; url: string; event: string | null; status: 'pending' | 'delivered' | 'failed'; attempts: number; createdAt: string; deliveredAt: string | null }
 export type Attempt = { attemptId: string; attemptNumber: number; statusCode: number | null; responseBody: string | null; error: string | null; createdAt: string }
+export type Receipt = { receiptId: string; source: string; providerEventId: string | null; event: string; status: 'pending' | 'delivered' | 'failed'; attempts: number; lastError: string | null; createdAt: string; deliveredAt: string | null }
 export type DeliveryDetailData = { delivery: Delivery; attempts: Attempt[] }
 
 type Tone = 'ok' | 'warn' | 'bad' | 'quiet'
@@ -58,3 +59,10 @@ export const mergeSources = (meta: Record<string, SourceMeta> | undefined, rows:
   const names = new Set([...Object.keys(meta ?? {}), ...byName.keys()])
   return [...names].sort().map((name) => ({ name, meta: meta?.[name] ?? null, row: byName.get(name) ?? null }))
 }
+
+export const receiptState = (r: Receipt): { kind: Receipt['status']; tone: Tone; text: I18nString } =>
+  r.status === 'delivered'
+    ? { kind: r.status, tone: 'ok', text: m.incoming_alerts__receipt_handled() }
+    : r.status === 'failed'
+      ? { kind: r.status, tone: 'bad', text: m.incoming_alerts__receipt_failed() }
+      : { kind: r.status, tone: 'quiet', text: m.incoming_alerts__still_trying() }
