@@ -1371,8 +1371,8 @@
   "new_project__folder_title": "Aus einem Ordner voller Dateien eine App machen",
   "new_project__ideas_title": "Beispielideen ansehen",
   "new_project__import_say": "Ich habe schon ein Pikku-Projekt in einem Git-Repository und möchte es hierher holen. Bitte frag mich nach seiner Adresse (git@github.com:your-team/your-project.git oder https://github.com/your-team/your-project.git funktionieren beide), kopiere es dann auf diesen Computer und halte es mit dem Original synchron.",
-  "new_project__import_text": "Gib mir die Git-Adresse, dann hole ich eine Kopie hierher und halte sie mit dem Original synchron.",
-  "new_project__import_title": "Ein vorhandenes Pikku-Projekt öffnen",
+  "new_project__import_text": "Zeig mir, wo dein Projekt liegt, dann hole ich eine Kopie hierher und halte sie mit dem Original synchron.",
+  "new_project__import_title": "Mit etwas beginnen, das du schon hast",
   "new_project__more_label": "Andere Wege zu starten",
   "new_project__more_lead": "Du musst nicht bei null anfangen. Such dir etwas aus, dann besprechen wir es zusammen.",
   "new_project__more_title": "Schon etwas da? Bring es mit.",
@@ -3488,6 +3488,31 @@
   "accounts_panel__failed_title": "Das hat nicht geklappt",
   "accounts_panel__failed_body": "Es wurde nichts geändert. Versuche es noch einmal oder bitte Pikku herauszufinden, warum.",
   "accounts_panel__failed_ask": "Die Änderung am Konto von {name} hat nicht geklappt. Bitte finde heraus, warum, und behebe es. {details}",
+  "accounts_access__title": "Was diese Person darf",
+  "accounts_access__unavailable": "Diese App merkt sich noch nicht, wer was darf.",
+  "accounts_access__no_roles_in_app": "Diese App hat noch keine Rollen, also dürfen alle Angemeldeten dasselbe.",
+  "accounts_access__no_role": "{name} hat noch keine Rolle und darf nur, was alle Angemeldeten dürfen.",
+  "accounts_access__take_away": "Wegnehmen",
+  "accounts_access__pick_role": "Rolle wählen",
+  "accounts_access__give_role": "Diese Rolle geben",
+  "accounts_access__show_developer": "Details für Entwickler zeigen",
+  "accounts_access__hide_developer": "Details für Entwickler ausblenden",
+  "accounts_access__id": "Konto-ID",
+  "accounts_access__direct": "Direkt gegebene Rechte, außerhalb jeder Rolle",
+  "accounts_access__no_direct": "Keine.",
+  "accounts_access__remove_scope": "{scope} entfernen",
+  "accounts_access__pick_scope": "Recht wählen",
+  "accounts_access__grant_scope": "Recht geben",
+  "accounts_access__all": "Alles, was diese Person darf, mit Rollen",
+  "accounts_access__none_at_all": "Nichts über das hinaus, was alle Angemeldeten dürfen.",
+  "accounts_password__title": "Passwort",
+  "accounts_password__explain": "Wenn {name} nicht mehr hineinkommt, können Sie ein neues Passwort wählen. Sagen Sie es der Person selbst.",
+  "accounts_password__choose": "Neues Passwort wählen",
+  "accounts_password__new": "Neues Passwort",
+  "accounts_password__save": "Passwort speichern",
+  "accounts_password__saved": "Gespeichert. {name} kann sich mit dem neuen Passwort anmelden.",
+  "accounts_password__failed_title": "Das Passwort wurde nicht gespeichert",
+  "accounts_password__failed_body": "Vielleicht ist es zu kurz oder zu lang. Versuchen Sie ein anderes oder fragen Sie Pikku, warum.",
   "accounts_invite__title": "Jemanden einladen",
   "accounts_invite__sub": "Die Person bekommt eine E-Mail mit einem Link zum Anmelden.",
   "accounts_invite__email": "E-Mail der Person",
@@ -4083,5 +4108,277 @@
         "countPlural=other": "{count} Angaben eingetragen"
       }
     }
-  ]
+  ],
+  "bring_project__title": "Dein Projekt hereinholen",
+  "bring_project__sub": "Mit etwas beginnen, das du schon hast",
+  "bring_project__link_title": "Füg ein, wo es liegt",
+  "bring_project__link_title_other": "Oder füg ein, wo es liegt",
+  "bring_project__link_text": "Die Adresse, mit der du das Projekt kopieren würdest, egal wo es aufbewahrt wird.",
+  "bring_project__link_label": "Seine Adresse",
+  "bring_project__link_placeholder": "https://example.com/dein-team/dein-projekt.git",
+  "bring_project__name_label": "Wie es hier heißen soll (optional)",
+  "bring_project__name_placeholder": "Leer lassen, um seinen eigenen Namen zu behalten",
+  "bring_project__stays_connected": "Dein Projekt bleibt, wo es ist. Alles, was du hier änderst, wird dorthin zurückgeschickt.",
+  "bring_project__bring_it_in": "Hereinholen",
+  "bring_project__bringing": "Wird hereingeholt",
+  "bring_project__failed_title": "Ich konnte dieses Projekt nicht hereinholen.",
+  "bring_project__failed_text": "Prüf die Adresse und versuch es noch einmal. Es wurde nichts verändert.",
+  "bring_project__failed_say": "Ich wollte mein Projekt von {url} hereinholen, und es hat nicht geklappt. Kannst du sehen, warum, und mir helfen?",
+  "bring_project__ask_pikku": "Pikku fragen",
+  "bring_project__developer_details": "Für Entwickler",
+  "quick_find__switches": "Schalter",
+  "switches_screen__title": "Schalter",
+  "switches_screen__text": "Schalte Teile deiner App ein oder aus, oder probiere sie zuerst mit wenigen Leuten aus.",
+  "switches_screen__needs_look": "Bitte ansehen",
+  "switches_screen__all": "Deine Schalter",
+  "switches_screen__none_title": "Noch keine Schalter",
+  "switches_screen__none_text": "Sobald deine App einen Teil hat, den du ein- und ausschalten kannst, erscheint er hier.",
+  "switches_screen__add_say": "Füge einen Schalter hinzu, damit ich einen Teil meiner App ein- oder ausschalten kann, ohne sonst etwas zu ändern.",
+  "switches_screen__not_running_title": "Deine App läuft nicht",
+  "switches_screen__not_running_text": "Starte deine App, dann erscheinen deine Schalter hier.",
+  "switches_screen__no_addon_title": "Schalter sind noch nicht eingerichtet",
+  "switches_screen__no_addon_text": "Deine App braucht die Verwaltungswerkzeuge, bevor du hier etwas ein- und ausschalten kannst.",
+  "switches_screen__add_it": "Pikku einrichten lassen",
+  "switches_screen__add_it_say": "Richte die Verwaltungswerkzeuge in meiner App ein, damit ich Schalter verwalten kann.",
+  "switches_screen__cannot_see": "Du kannst die Schalter nicht sehen",
+  "switches_screen__cannot_see_text": "Bitte die Person, der dieses Projekt gehört, dir Zugang zu geben.",
+  "switches_screen__toggle_failed": "Der Schalter hat sich nicht geändert. Versuch es noch einmal.",
+  "switches_screen__show_technical": "Technische Details zeigen",
+  "switches_screen__hide_technical": "Technische Details ausblenden",
+  "switches_screen__read_only_tech": "Diese Schalter werden von einem anderen Dienst gesteuert, deshalb sind diese Werkzeuge aus.",
+  "switches_screen__sync_explain": "Richte jeden Schalter ein, den deine App kennt, der aber noch nicht eingerichtet ist. Bis dahin ist er für alle an.",
+  "switches_screen__sync": "Fehlende Schalter einrichten",
+  "switches_screen__synced": "Erledigt. {count} Schalter geprüft.",
+  "switches_screen__sync_failed": "Nichts wurde geändert. Versuch es noch einmal.",
+  "switches_screen__prune_explain": "Räume Schalter weg, die deine App nicht mehr nutzt, samt ihren Ausnahmen.",
+  "switches_screen__prune": "Ungenutzte Schalter wegräumen",
+  "switches_screen__pruned": "Erledigt. {count} weggeräumt.",
+  "switches_screen__prune_failed": "Nichts wurde weggeräumt. Versuch es noch einmal.",
+  "switches_hero__label": "Schalter",
+  "switches_hero__title": "Schalte Teile deiner App ein und aus",
+  "switches_hero__text": "Probiere Neues zuerst mit wenigen Leuten aus und öffne es dann für alle. Sonst ändert sich nichts.",
+  "switches_hero__read_only": "Diese Schalter werden von einem anderen Dienst gesteuert. Du kannst sie hier ansehen, aber nicht ändern.",
+  "switches_hero__count": "{on} von {total} eingeschaltet",
+  "switches_hero__attention_title": "Einige Schalter brauchen deinen Blick",
+  "switches_hero__attention_text": "Sie sind für alle an, ohne dass es jemand entschieden hat, oder deine App nutzt sie nicht mehr.",
+  "switches_hero__look": "Ansehen",
+  "switches_hero__empty_title": "Deine App hat noch keine Schalter",
+  "switches_hero__empty_text": "Mit einem Schalter kannst du einen Teil deiner App ein- oder ausschalten oder ihn nur einigen Leuten zeigen.",
+  "switches_hero__ask": "Pikku einen hinzufügen lassen",
+  "switches_row__off": "Aus",
+  "switches_row__on_everyone": "Für alle an",
+  "switches_row__on_some": "Für {percent} % der Leute an",
+  "switches_row__unset": "Für alle an, nie eingerichtet",
+  "switches_row__unused": "Nicht mehr genutzt",
+  "switches_row__toggle": "{name} ein- oder ausschalten",
+  "switches_row__open": "Öffnen",
+  "switches_panel__label": "Schalter",
+  "switches_panel__unset_note": "Niemand hat diesen Schalter eingerichtet, deshalb sehen ihn alle. Schalte ihn aus, wenn er noch nicht fertig ist.",
+  "switches_panel__unused_note": "Deine App nutzt diesen Schalter nicht mehr. Du kannst ihn in den technischen Details wegräumen.",
+  "switches_panel__failed_title": "Das wurde nicht gespeichert",
+  "switches_panel__failed_body": "Nichts wurde geändert. Versuch es noch einmal oder bitte Pikku, nachzusehen.",
+  "switches_panel__failed_ask": "Das Ändern des Schalters {name} ist fehlgeschlagen: {details}",
+  "switches_panel__who": "Wer es sieht",
+  "switches_panel__is_on": "An",
+  "switches_panel__is_off": "Aus",
+  "switches_panel__on_explain": "Leute können diesen Teil deiner App nutzen.",
+  "switches_panel__off_explain": "Niemand sieht diesen Teil deiner App, außer den Leuten, die du unten einträgst.",
+  "switches_panel__how_many": "Wie viele Leute",
+  "switches_panel__everyone": "Alle",
+  "switches_panel__some": "Einige Leute",
+  "switches_panel__some_explain": "Für {percent} % der Leute an. Es sind jedes Mal dieselben Leute.",
+  "switches_panel__save": "Speichern",
+  "switches_panel__exceptions": "Ausnahmen",
+  "switches_panel__exceptions_explain": "Für eine Person immer an oder immer aus, egal was oben eingestellt ist.",
+  "switches_panel__exceptions_none": "Keine Ausnahmen. Alle folgen der Einstellung oben.",
+  "switches_panel__exceptions_failed": "Die Ausnahmen konnten gerade nicht geladen werden.",
+  "switches_panel__exceptions_elsewhere": "Ausnahmen für diesen Schalter liegen in einem anderen Dienst.",
+  "switches_panel__a_person": "Jemand",
+  "switches_panel__a_team": "Ein Team",
+  "switches_panel__always_on": "Immer an",
+  "switches_panel__always_off": "Immer aus",
+  "switches_panel__remove": "Entfernen",
+  "switches_panel__remove_exception": "Ausnahme für {name} entfernen",
+  "switches_panel__find_person": "Person nach Name oder E-Mail suchen",
+  "switches_panel__nobody_found": "Niemand passt dazu.",
+  "switches_panel__make_always_on": "Für sie immer an",
+  "switches_panel__make_always_off": "Für sie immer aus",
+  "switches_panel__cancel": "Abbrechen",
+  "switches_panel__called": "Name im Code",
+  "switches_panel__any_of": "Nur für Leute mit",
+  "checks_screen__title": "Prüfungen",
+  "checks_screen__text": "Pikku prüft den Code deiner App und geht sie so durch, wie deine Leute es tun würden, damit du Probleme vor ihnen bemerkst.",
+  "checks_screen__hero_loading": "Deine letzten Prüfungen werden geladen…",
+  "checks_screen__hero_checking": "Deine App wird gerade geprüft",
+  "checks_screen__hero_none": "Deine App wurde noch nicht geprüft",
+  "checks_screen__hero_clean": "Alles in Ordnung",
+  "checks_screen__hero_one": "Eine Sache braucht deinen Blick",
+  "checks_screen__hero_many": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Sache braucht deinen Blick",
+        "countPlural=other": "{count} Sachen brauchen deinen Blick"
+      }
+    }
+  ],
+  "checks_screen__why_checking": "Das dauert ein bis zwei Minuten. Du kannst weiterarbeiten; die Ergebnisse erscheinen hier.",
+  "checks_screen__why_none": "Eine Prüfung liest deine App auf Fehler durch. Sie ändert nichts.",
+  "checks_screen__why_clean": "Im Code gibt es nichts zu beheben, und jeder Durchgang lief wie er sollte.",
+  "checks_screen__why_both": "Die letzte Prüfung fand {code} und {walks}.",
+  "checks_screen__why_code": "Die letzte Prüfung fand {code}. Pikku kann es für dich beheben.",
+  "checks_screen__why_walks": "Die letzte Prüfung fand {walks}. Pikku kann nachsehen, was passiert ist, und es beheben.",
+  "checks_screen__code_count": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "ein Problem im Code",
+        "nPlural=other": "{n} Probleme im Code"
+      }
+    }
+  ],
+  "checks_screen__walk_count": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "einen Durchgang, der schiefging",
+        "nPlural=other": "{n} Durchgänge, die schiefgingen"
+      }
+    }
+  ],
+  "checks_screen__hero_fix": "Pikku bitten, es zu beheben",
+  "checks_screen__check": "Meine App prüfen",
+  "checks_screen__check_again": "Erneut prüfen",
+  "checks_screen__checking": "Wird geprüft…",
+  "checks_screen__checking_what": "das Prüfen deiner App",
+  "checks_screen__checking_line": "Deine App wird geprüft…",
+  "checks_screen__ask_all": "Bitte behebe, was die letzten Prüfungen meiner App gefunden haben.",
+  "checks_screen__ask_fix": "Pikku bitten, es zu beheben",
+  "checks_screen__ask_finding": "Die Prüfung meiner App hat dieses Problem gefunden: „{message}“ {where}. Bitte behebe es.",
+  "checks_screen__ask_walkthrough": "Der Durchgang „{name}“ ging bei „{step}“ schief: {message}. Bitte finde heraus, warum, und behebe es.",
+  "checks_screen__ask_write": "Bitte schreibe Durchgänge, die meine App so durchgehen, wie meine Leute sie nutzen.",
+  "checks_screen__code_group": "Der Code",
+  "checks_screen__code_never": "Noch nicht geprüft.",
+  "checks_screen__code_clean": "Nichts zu beheben · geprüft {when}",
+  "checks_screen__finding_error": "Das verhindert, dass die App richtig funktioniert.",
+  "checks_screen__finding_warn": "Lohnt sich zu beheben, aber die App funktioniert noch.",
+  "checks_screen__walks_group": "Durchgänge",
+  "checks_screen__coverage_both": "Die Durchgänge probieren {covered} der {required} Dinge aus, die Leute in deiner App ändern können, und öffnen {pages} ihrer Seiten.",
+  "checks_screen__coverage_changes": "Die Durchgänge probieren {covered} der {required} Dinge aus, die Leute in deiner App ändern können.",
+  "checks_screen__coverage_pages": [
+    {
+      "declarations": [
+        "input pages",
+        "local pagesPlural = pages: plural"
+      ],
+      "selectors": [
+        "pagesPlural"
+      ],
+      "match": {
+        "pagesPlural=one": "Die Durchgänge öffnen eine Seite deiner App.",
+        "pagesPlural=other": "Die Durchgänge öffnen {pages} Seiten deiner App."
+      }
+    }
+  ],
+  "checks_screen__walks_empty": "Es sind noch keine Durchgänge gelaufen",
+  "checks_screen__walks_empty_text": "Ein Durchgang geht deine App Schritt für Schritt durch, wie ein Mensch es tun würde, und sagt dir, wo er hängen bleibt.",
+  "checks_screen__walks_empty_ask": "Pikku bitten, welche zu schreiben",
+  "checks_screen__walks_running": "Gerade gehen Durchgänge durch deine App.",
+  "checks_screen__walks_fine": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Ein Durchgang lief gut · {when}",
+        "countPlural=other": "{count} Durchgänge liefen gut · {when}"
+      }
+    }
+  ],
+  "checks_screen__show_them": "Anzeigen",
+  "checks_screen__hide_them": "Ausblenden",
+  "checks_screen__not_run": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Ein Durchgang lief diesmal nicht.",
+        "countPlural=other": "{count} Durchgänge liefen diesmal nicht."
+      }
+    }
+  ],
+  "checks_screen__stopped_at": "Hängen geblieben bei „{step}“",
+  "checks_screen__stopped": "Vor dem Ende angehalten",
+  "checks_screen__ran_when": "Gelaufen {when}",
+  "checks_screen__see_what_happened": "Ansehen, was passiert ist",
+  "checks_screen__open": "Öffnen",
+  "checks_screen__runs_group": "Frühere Läufe",
+  "checks_screen__run_title": "Lauf {when}",
+  "checks_screen__run_loading": "Dieser Lauf wird geöffnet…",
+  "checks_screen__run_going": "Läuft gerade · {done} bisher fertig",
+  "checks_screen__run_all_fine": [
+    {
+      "declarations": [
+        "input total",
+        "local totalPlural = total: plural"
+      ],
+      "selectors": [
+        "totalPlural"
+      ],
+      "match": {
+        "totalPlural=one": "Er lief gut",
+        "totalPlural=other": "Alle {total} liefen gut"
+      }
+    }
+  ],
+  "checks_screen__run_some_wrong": "{failed} von {total} gingen schief",
+  "checks_screen__run_gone": "Dieser Lauf wird nicht mehr aufbewahrt.",
+  "checks_screen__reading_run": "das Lesen dieses Laufs",
+  "checks_screen__went_fine": "Lief gut",
+  "checks_screen__went_wrong": "Ging schief",
+  "checks_screen__going_now": "Läuft gerade",
+  "checks_screen__drawer_aria": "Ein Lauf der Durchgänge",
+  "checks_screen__all_walkthroughs": "Alle Durchgänge",
+  "checks_screen__steps": "Schritt für Schritt",
+  "checks_screen__step_done": "Erledigt",
+  "checks_screen__step_failed": "Hier ging es schief",
+  "checks_screen__step_not_run": "Nicht erreicht",
+  "checks_screen__pictures": "Was er gesehen hat",
+  "checks_screen__shot": "Bild",
+  "checks_screen__shot_failure": "Der Moment, in dem es schiefging",
+  "checks_screen__shot_video": "Aufnahme",
+  "checks_screen__shot_loading": "Das Bild wird geladen…",
+  "checks_screen__shot_missing": "Dieses Bild konnte nicht geladen werden.",
+  "checks_screen__setup_failed": "Die Vorbereitung der Durchgänge ging schief",
+  "checks_screen__forget": "Diesen Lauf vergessen",
+  "checks_screen__forget_confirm": "Damit wird der Lauf mit seinen Schritten und Bildern entfernt. Das lässt sich nicht rückgängig machen.",
+  "checks_screen__forget_yes": "Vergessen",
+  "checks_screen__forget_failed": "Der Lauf konnte nicht entfernt werden. Es wurde nichts geändert. Versuche es noch einmal."
 }

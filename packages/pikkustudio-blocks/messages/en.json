@@ -1490,8 +1490,8 @@
   "new_project__folder_title": "Turn a folder of files into an app",
   "new_project__ideas_title": "See some example ideas",
   "new_project__import_say": "I already have a Pikku project in a git repository and I would like to bring it in. Please ask me for its address (either git@github.com:your-team/your-project.git or https://github.com/your-team/your-project.git works), then copy it to this computer and keep it in step with where it lives.",
-  "new_project__import_text": "Give me its git address and I will bring a copy here and keep it in step with where it lives.",
-  "new_project__import_title": "Open a Pikku project you already have",
+  "new_project__import_text": "Point me to where your project lives and I will bring a copy here, kept in step with the original.",
+  "new_project__import_title": "Start from something you already have",
   "new_project__more_label": "Other ways to begin",
   "new_project__more_lead": "You do not have to start from a blank page. Pick one and I will talk it through with you.",
   "new_project__more_title": "Already have something? Bring it along.",
@@ -3696,6 +3696,31 @@
   "accounts_panel__failed_title": "That did not work",
   "accounts_panel__failed_body": "Nothing was changed. You can try again, or ask Pikku to find out why.",
   "accounts_panel__failed_ask": "Changing the account of {name} did not work. Please find out why and fix it. {details}",
+  "accounts_access__title": "What they can do",
+  "accounts_access__unavailable": "This app does not keep track of who can do what yet.",
+  "accounts_access__no_roles_in_app": "This app has no roles yet, so everyone who signs in can do the same things.",
+  "accounts_access__no_role": "{name} has no role yet, so they can only do what anyone signed in can do.",
+  "accounts_access__take_away": "Take away",
+  "accounts_access__pick_role": "Choose a role",
+  "accounts_access__give_role": "Give them this role",
+  "accounts_access__show_developer": "Show developer details",
+  "accounts_access__hide_developer": "Hide developer details",
+  "accounts_access__id": "Account id",
+  "accounts_access__direct": "Permissions given directly, outside any role",
+  "accounts_access__no_direct": "None.",
+  "accounts_access__remove_scope": "Remove {scope}",
+  "accounts_access__pick_scope": "Choose a permission",
+  "accounts_access__grant_scope": "Give permission",
+  "accounts_access__all": "Everything they are allowed, roles included",
+  "accounts_access__none_at_all": "Nothing beyond what anyone signed in can do.",
+  "accounts_password__title": "Password",
+  "accounts_password__explain": "If {name} cannot get back in, you can choose a new password for them. Tell them yourself.",
+  "accounts_password__choose": "Choose a new password",
+  "accounts_password__new": "New password",
+  "accounts_password__save": "Save password",
+  "accounts_password__saved": "Saved. {name} can sign in with the new password.",
+  "accounts_password__failed_title": "The password was not saved",
+  "accounts_password__failed_body": "It may be too short or too long. Try another, or ask Pikku to find out why.",
   "accounts_invite__title": "Invite someone",
   "accounts_invite__sub": "They get an email with a link to sign in.",
   "accounts_invite__email": "Their email",
@@ -4291,5 +4316,277 @@
         "countPlural=other": "{count} things filled in"
       }
     }
-  ]
+  ],
+  "bring_project__title": "Bring in your project",
+  "bring_project__sub": "Start from something you already have",
+  "bring_project__link_title": "Paste where it lives",
+  "bring_project__link_title_other": "Or paste where it lives",
+  "bring_project__link_text": "The address you would use to copy the project, from wherever it is kept.",
+  "bring_project__link_label": "Its address",
+  "bring_project__link_placeholder": "https://example.com/your-team/your-project.git",
+  "bring_project__name_label": "What to call it here (optional)",
+  "bring_project__name_placeholder": "Leave empty to keep its own name",
+  "bring_project__stays_connected": "Your project stays where it is. Everything you change here is sent back to it.",
+  "bring_project__bring_it_in": "Bring it in",
+  "bring_project__bringing": "Bringing it in",
+  "bring_project__failed_title": "I could not bring that project in.",
+  "bring_project__failed_text": "Check the address and try again. Nothing was changed.",
+  "bring_project__failed_say": "I tried to bring in my project from {url} and it did not work. Can you see why and help me get it in?",
+  "bring_project__ask_pikku": "Ask Pikku",
+  "bring_project__developer_details": "Developer details",
+  "quick_find__switches": "Switches",
+  "switches_hero__ask": "Ask Pikku to add one",
+  "switches_hero__attention_text": "They are on for everyone without anyone choosing it, or your app no longer uses them.",
+  "switches_hero__attention_title": "Some switches need a look",
+  "switches_hero__count": "{on} of {total} switched on",
+  "switches_hero__empty_text": "A switch lets you turn one part of your app on or off, or show it to only some people.",
+  "switches_hero__empty_title": "Your app has no switches yet",
+  "switches_hero__label": "Switches",
+  "switches_hero__look": "Take a look",
+  "switches_hero__read_only": "These switches are run from another service, so you can look at them here but not change them.",
+  "switches_hero__text": "Try something new with a few people first, then open it to everyone. Nothing else changes.",
+  "switches_hero__title": "Turn parts of your app on and off",
+  "switches_panel__a_person": "Someone",
+  "switches_panel__a_team": "A team",
+  "switches_panel__always_off": "Always off",
+  "switches_panel__always_on": "Always on",
+  "switches_panel__any_of": "Only for people with",
+  "switches_panel__called": "Called in the code",
+  "switches_panel__cancel": "Cancel",
+  "switches_panel__everyone": "Everyone",
+  "switches_panel__exceptions": "Exceptions",
+  "switches_panel__exceptions_elsewhere": "Exceptions for this switch are kept in another service.",
+  "switches_panel__exceptions_explain": "Keep it always on or always off for one person, whatever the setting above says.",
+  "switches_panel__exceptions_failed": "The exceptions could not be loaded right now.",
+  "switches_panel__exceptions_none": "No exceptions. Everyone follows the setting above.",
+  "switches_panel__failed_ask": "Changing the switch {name} failed: {details}",
+  "switches_panel__failed_body": "Nothing was changed. Try again, or ask Pikku to look into it.",
+  "switches_panel__failed_title": "That did not save",
+  "switches_panel__find_person": "Find a person by name or email",
+  "switches_panel__how_many": "How many people",
+  "switches_panel__is_off": "Off",
+  "switches_panel__is_on": "On",
+  "switches_panel__label": "Switch",
+  "switches_panel__make_always_off": "Always off for them",
+  "switches_panel__make_always_on": "Always on for them",
+  "switches_panel__nobody_found": "Nobody matches that.",
+  "switches_panel__off_explain": "Nobody sees this part of your app, except the people you list below.",
+  "switches_panel__on_explain": "People can use this part of your app.",
+  "switches_panel__remove": "Remove",
+  "switches_panel__remove_exception": "Remove the exception for {name}",
+  "switches_panel__save": "Save",
+  "switches_panel__some": "Some people",
+  "switches_panel__some_explain": "On for {percent}% of people. The same people keep seeing it every time they come back.",
+  "switches_panel__unset_note": "Nobody has set this switch up yet, so everyone sees it. Turn it off if it is not ready.",
+  "switches_panel__unused_note": "Your app no longer uses this switch. You can clear it away in the technical details.",
+  "switches_panel__who": "Who sees it",
+  "switches_row__off": "Off",
+  "switches_row__on_everyone": "On for everyone",
+  "switches_row__on_some": "On for {percent}% of people",
+  "switches_row__open": "Open",
+  "switches_row__toggle": "Turn {name} on or off",
+  "switches_row__unset": "On for everyone, never set up",
+  "switches_row__unused": "No longer used",
+  "switches_screen__add_it": "Ask Pikku to set it up",
+  "switches_screen__add_it_say": "Set up the admin tools in my app so I can manage switches.",
+  "switches_screen__add_say": "Add a switch so I can turn a part of my app on or off without changing anything else.",
+  "switches_screen__all": "Your switches",
+  "switches_screen__cannot_see": "You cannot see the switches",
+  "switches_screen__cannot_see_text": "Ask the person who owns this project to give you access.",
+  "switches_screen__hide_technical": "Hide technical details",
+  "switches_screen__needs_look": "Needs a look",
+  "switches_screen__no_addon_text": "Your app needs the admin tools before you can turn things on and off here.",
+  "switches_screen__no_addon_title": "Switches are not set up yet",
+  "switches_screen__none_text": "When your app has a part you can turn on and off, it shows up here.",
+  "switches_screen__none_title": "No switches yet",
+  "switches_screen__not_running_text": "Start your app and your switches will show up here.",
+  "switches_screen__not_running_title": "Your app is not running",
+  "switches_screen__prune": "Clear away unused switches",
+  "switches_screen__prune_explain": "Clear away switches your app no longer uses, together with their exceptions.",
+  "switches_screen__prune_failed": "Nothing was cleared. Try again.",
+  "switches_screen__pruned": "Done. Cleared away {count}.",
+  "switches_screen__read_only_tech": "These switches are run from another service, so these tools are off.",
+  "switches_screen__show_technical": "Show technical details",
+  "switches_screen__sync": "Set up missing switches",
+  "switches_screen__sync_explain": "Add every switch your app knows about but has not been set up yet. Until then they are on for everyone.",
+  "switches_screen__sync_failed": "Nothing was changed. Try again.",
+  "switches_screen__synced": "Done. Checked {count} switches.",
+  "switches_screen__text": "Turn parts of your app on or off, or try them with a few people first.",
+  "switches_screen__title": "Switches",
+  "switches_screen__toggle_failed": "That switch did not change. Try again.",
+  "checks_screen__title": "Checks",
+  "checks_screen__text": "Pikku checks your app’s code and walks through it the way your people would, so you hear about problems before they do.",
+  "checks_screen__hero_loading": "Looking at your last checks…",
+  "checks_screen__hero_checking": "Checking your app now",
+  "checks_screen__hero_none": "Your app has not been checked yet",
+  "checks_screen__hero_clean": "Everything checked out",
+  "checks_screen__hero_one": "One thing needs a look",
+  "checks_screen__hero_many": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} thing needs a look",
+        "countPlural=other": "{count} things need a look"
+      }
+    }
+  ],
+  "checks_screen__why_checking": "This takes a minute or two. You can keep working; the results show up here.",
+  "checks_screen__why_none": "A check reads through your app for mistakes. It changes nothing.",
+  "checks_screen__why_clean": "The code has nothing to fix and every walk-through went the way it should.",
+  "checks_screen__why_both": "The last check found {code}, and {walks}.",
+  "checks_screen__why_code": "The last check found {code}. Pikku can fix it for you.",
+  "checks_screen__why_walks": "The last check found {walks}. Pikku can see what happened and fix it.",
+  "checks_screen__code_count": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "one problem in the code",
+        "nPlural=other": "{n} problems in the code"
+      }
+    }
+  ],
+  "checks_screen__walk_count": [
+    {
+      "declarations": [
+        "input n",
+        "local nPlural = n: plural"
+      ],
+      "selectors": [
+        "nPlural"
+      ],
+      "match": {
+        "nPlural=one": "one walk-through that went wrong",
+        "nPlural=other": "{n} walk-throughs that went wrong"
+      }
+    }
+  ],
+  "checks_screen__hero_fix": "Ask Pikku to fix it",
+  "checks_screen__check": "Check my app",
+  "checks_screen__check_again": "Check again",
+  "checks_screen__checking": "Checking…",
+  "checks_screen__checking_what": "checking your app",
+  "checks_screen__checking_line": "Checking your app…",
+  "checks_screen__ask_all": "Please fix what the latest checks on my app found.",
+  "checks_screen__ask_fix": "Ask Pikku to fix it",
+  "checks_screen__ask_finding": "The check on my app found this problem: “{message}” {where}. Please fix it.",
+  "checks_screen__ask_walkthrough": "The walk-through “{name}” went wrong at “{step}”: {message}. Please find out why and fix it.",
+  "checks_screen__ask_write": "Please write walk-throughs that go through my app the way my people use it.",
+  "checks_screen__code_group": "The code",
+  "checks_screen__code_never": "Not checked yet.",
+  "checks_screen__code_clean": "Nothing to fix · checked {when}",
+  "checks_screen__finding_error": "This stops the app from working properly.",
+  "checks_screen__finding_warn": "Worth fixing, but the app still works.",
+  "checks_screen__walks_group": "Walk-throughs",
+  "checks_screen__coverage_both": "Walk-throughs try {covered} of the {required} things people can change in your app, and open {pages} of its pages.",
+  "checks_screen__coverage_changes": "Walk-throughs try {covered} of the {required} things people can change in your app.",
+  "checks_screen__coverage_pages": [
+    {
+      "declarations": [
+        "input pages",
+        "local pagesPlural = pages: plural"
+      ],
+      "selectors": [
+        "pagesPlural"
+      ],
+      "match": {
+        "pagesPlural=one": "Walk-throughs open one page of your app.",
+        "pagesPlural=other": "Walk-throughs open {pages} pages of your app."
+      }
+    }
+  ],
+  "checks_screen__walks_empty": "No walk-throughs have run yet",
+  "checks_screen__walks_empty_text": "A walk-through goes through your app step by step, like a person would, and tells you where it gets stuck.",
+  "checks_screen__walks_empty_ask": "Ask Pikku to write some",
+  "checks_screen__walks_running": "Walk-throughs are going through your app right now.",
+  "checks_screen__walks_fine": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "One walk-through went fine · {when}",
+        "countPlural=other": "{count} walk-throughs went fine · {when}"
+      }
+    }
+  ],
+  "checks_screen__show_them": "Show them",
+  "checks_screen__hide_them": "Hide them",
+  "checks_screen__not_run": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "One walk-through was not run this time.",
+        "countPlural=other": "{count} walk-throughs were not run this time."
+      }
+    }
+  ],
+  "checks_screen__stopped_at": "Got stuck at “{step}”",
+  "checks_screen__stopped": "Stopped before it finished",
+  "checks_screen__ran_when": "Ran {when}",
+  "checks_screen__see_what_happened": "See what happened",
+  "checks_screen__open": "Open",
+  "checks_screen__runs_group": "Earlier runs",
+  "checks_screen__run_title": "Run {when}",
+  "checks_screen__run_loading": "Opening this run…",
+  "checks_screen__run_going": "Going now · {done} finished so far",
+  "checks_screen__run_all_fine": [
+    {
+      "declarations": [
+        "input total",
+        "local totalPlural = total: plural"
+      ],
+      "selectors": [
+        "totalPlural"
+      ],
+      "match": {
+        "totalPlural=one": "It went fine",
+        "totalPlural=other": "All {total} went fine"
+      }
+    }
+  ],
+  "checks_screen__run_some_wrong": "{failed} of {total} went wrong",
+  "checks_screen__run_gone": "This run is no longer kept.",
+  "checks_screen__reading_run": "reading this run",
+  "checks_screen__went_fine": "Went fine",
+  "checks_screen__went_wrong": "Went wrong",
+  "checks_screen__going_now": "Going now",
+  "checks_screen__drawer_aria": "One walk-through run",
+  "checks_screen__all_walkthroughs": "All walk-throughs",
+  "checks_screen__steps": "Step by step",
+  "checks_screen__step_done": "Done",
+  "checks_screen__step_failed": "Went wrong here",
+  "checks_screen__step_not_run": "Not reached",
+  "checks_screen__pictures": "What it saw",
+  "checks_screen__shot": "Picture",
+  "checks_screen__shot_failure": "The moment it went wrong",
+  "checks_screen__shot_video": "Recording",
+  "checks_screen__shot_loading": "Loading the picture…",
+  "checks_screen__shot_missing": "This picture could not be loaded.",
+  "checks_screen__setup_failed": "Getting ready for the walk-throughs went wrong",
+  "checks_screen__forget": "Forget this run",
+  "checks_screen__forget_confirm": "This removes the run with its steps and pictures. It cannot be brought back.",
+  "checks_screen__forget_yes": "Forget it",
+  "checks_screen__forget_failed": "The run could not be removed. Nothing was changed. Try again."
 }
