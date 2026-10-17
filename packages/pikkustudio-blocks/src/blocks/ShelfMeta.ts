@@ -3,6 +3,7 @@ import { Flag, type LucideIcon } from 'lucide-react'
 import { asI18n, type I18nString } from '@pikku/react'
 import type { Release, ReleaseStatus } from '../lib/releases'
 import type { ShelfHue } from './ShelfArt'
+import { numbered, versionLabel, versionLine } from '../lib/releaseLabels'
 
 export const shelfPart = (v: Release): { icon: LucideIcon; hue: ShelfHue } =>
   v.status === 'failed' || v.status === 'cancelled' ? { icon: Flag, hue: 'grey' } : { icon: Flag, hue: 'teal' }
@@ -34,4 +35,5 @@ export const ago = (at: number): I18nString => {
 
 export const when = (v: Release): I18nString => dayTime(v.at)
 export const who = (v: { by: string | null }): I18nString => (v.by ? asI18n(v.by) : m.shelf_meta__someone())
-export const titleOf = (v: Release): I18nString => (v.title ? asI18n(v.title) : m.shelf_meta__version_named({ version: v.version }))
+export { numbered, versionLabel, versionLine }
+export const titleOf = (v: Release): I18nString => (v.title ? asI18n(v.title) : versionLabel(v))

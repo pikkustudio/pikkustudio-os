@@ -16,7 +16,7 @@ import { SidePanel } from '../blocks/SidePanel'
 import { ErrorState } from '../blocks/ErrorState'
 import { StatusLine } from '../blocks/StatusLine'
 import { ShelfStrip } from '../blocks/ShelfStrip'
-import { canGoBack, dayTime, failWords, shelfWords, titleOf, when, who } from '../blocks/ShelfMeta'
+import { canGoBack, dayTime, failWords, shelfWords, numbered, titleOf, when, who } from '../blocks/ShelfMeta'
 import { useReleaseDetail, useReleases, type Release, type ReleaseDetail, type ReleaseGroup, type ReleaseGroupId, type ReleaseMissing, type ReleasesView } from '../lib/releases'
 import { keep } from '../lib/links'
 import { ShellCtx } from '../lib/shell'
@@ -177,7 +177,7 @@ function Detail({ v, view }: { v: Release; view: ReleasesView }) {
 
   return (
     <Page gap="snug">
-      <PageHead crumb={m.versions_screen__title()} title={title} text={m.version_screen__byline_short({ who: who(v), when: when(v), version: v.version })} size="lead" />
+      <PageHead crumb={m.versions_screen__title()} title={title} text={numbered(v) ? m.version_screen__byline_short({ who: who(v), when: when(v), version: v.version }) : m.version_screen__byline_unnumbered({ who: who(v), when: when(v) })} size="lead" />
 
       <NextCard label={shelfWords[o]()} hue={hero.hue} art={<Art />} title={hero.title} why={hero.why}>
         {o === 'working' ? <ShelfStrip phase={v.step} since={v.at} onHero /> : null}

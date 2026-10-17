@@ -17,7 +17,7 @@ import { ShelfTile } from '../blocks/ShelfTile'
 import { ErrorState } from '../blocks/ErrorState'
 import { StatusLine } from '../blocks/StatusLine'
 import { PikkuDot } from '../blocks/PikkuDot'
-import { ago, canGoBack, dayTime, failWords, shelfPart, shelfTone, shelfWords, titleOf, when, who } from '../blocks/ShelfMeta'
+import { ago, canGoBack, dayTime, failWords, shelfPart, shelfTone, shelfWords, titleOf, versionLine, when, who } from '../blocks/ShelfMeta'
 import { stepNames } from '../blocks/ShelfStrip'
 import { useReleasePreview, useReleases, type Release, type ReleasesView } from '../lib/releases'
 import { useSlots } from '../lib/slots'
@@ -36,7 +36,7 @@ const blurb = (v: Release): I18nString => {
     const step = Math.min(v.step, names.length - 1)
     return m.versions_screen__blurb_working({ step: names[step], n: step + 1, total: names.length })
   }
-  return m.versions_screen__version_line({ version: v.version })
+  return versionLine(v)
 }
 
 const matches = (v: Release, q: string) => {
@@ -216,7 +216,7 @@ function History({ view, mode }: { view: ReleasesView; mode: string }) {
 
       <Section title={m.versions_screen__what_people_see()}>
         {live ? (
-          <ShelfTile wide hue="sea" icon={shelfPart(live).icon} title={openLink(live.id, titleOf(live))} text={m.versions_screen__version_line({ version: live.version })} status={m.shelf_meta__live()} tone="ok" meta={m.versions_screen__live_since_by({ since: dayTime(live.liveAt ?? live.at), who: who(live) })}>
+          <ShelfTile wide hue="sea" icon={shelfPart(live).icon} title={openLink(live.id, titleOf(live))} text={versionLine(live)} status={m.shelf_meta__live()} tone="ok" meta={m.versions_screen__live_since_by({ since: dayTime(live.liveAt ?? live.at), who: who(live) })}>
             {openButton(live.id, m.versions_screen__whats_in_it())}
           </ShelfTile>
         ) : (
