@@ -78,10 +78,11 @@ export class ReadOnlyTargetError extends Error {
 }
 
 const READ_VERB = /^(get|list|read|search|find|count|describe|preview|load|query|fetch|has|is|check|explain|show|stats|status|meta|all|summary|health|ping|whoami|me|my|session)(?=[A-Z_\-.:]|$)/
+const STAGE_ALLOWED = new Set(['admin:createUser', 'admin:setUserBanned', 'admin:removeUser'])
 export const isReadCall = (rpcName: string) => READ_VERB.test(rpcName.split(':').pop() ?? rpcName)
 
 export const readOnlyInvoke = (invoke: ProjectInvoke, target: string): ProjectInvoke => async (key, name, data) => {
-  if (!isReadCall(name)) throw new ReadOnlyTargetError(name, target)
+  if (!isReadCall(name) && !STAGE_ALLOWED.has(name)) throw new ReadOnlyTargetError(name, target)
   return invoke(key, name, data)
 }
 
