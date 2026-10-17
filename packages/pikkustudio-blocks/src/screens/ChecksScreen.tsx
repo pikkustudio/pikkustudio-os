@@ -1,7 +1,7 @@
 import { asI18n, sep, type I18nNode, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useContext, useState } from 'react'
-import { CircleAlert, ListChecks, Route } from 'lucide-react'
+import { CircleAlert, ListChecks, Play, Route } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Page } from '../blocks/Page'
 import { PageHead } from '../blocks/PageHead'
@@ -10,6 +10,7 @@ import { RowCard, RowStack, Dot } from '../blocks/RowCard'
 import { EmptyState } from '../blocks/EmptyState'
 import { ErrorState } from '../blocks/ErrorState'
 import { StatusLine } from '../blocks/StatusLine'
+import { InlineAlert } from '../blocks/InlineAlert'
 import { PikkuDot } from '../blocks/PikkuDot'
 import { CheckRunDrawer } from '../blocks/CheckRunDrawer'
 import { useProjectKey, useProjectName } from '../lib/project'
@@ -90,7 +91,7 @@ export function ChecksScreen() {
   const projectName = useProjectName()
   const { say } = useContext(ShellCtx)
   const canEdit = useCanEdit()
-  const { verify, runs, latest, coverage, runVerify } = useChecks(key)
+  const { verify, runs, latest, coverage, runVerify, walk } = useChecks(key)
   const [drawer, setDrawer] = useState<{ runId: string; focus?: string } | null>(null)
   const [showFine, setShowFine] = useState(false)
   const [technical] = useDeveloperDetails()
@@ -177,6 +178,54 @@ export function ChecksScreen() {
         ) : null}
 
         <Group title={m.checks_screen__walks_group()} sub={coverageLine(coverage.data)}>
+          {canEdit ? (
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 px-1">
+              <Button variant="bordered" size="compact" type="button" disabled={walk.watching} aria-busy={walk.watching} onClick={walk.start}>
+                <Play className="size-4" />
+                {walk.watching ? m.checks_screen__walks_run_going() : m.checks_screen__walks_run()}
+              </Button>
+              {walk.state === 'starting' ? <StatusLine tone="wait" text={m.checks_screen__walks_starting()} /> : null}
+              {walk.state === 'running' && walk.tracked ? <StatusLine tone="wait" text={m.checks_screen__run_going({ done: walk.tracked.passed + walk.tracked.failed })} /> : null}
+            </div>
+          ) : null}
+          {walk.failed ? <ErrorState error={walk.error} what={m.checks_screen__walks_run_what()} onRetry={walk.dismiss} /> : null}
+          {walk.state === 'not_started' ? (
+            <InlineAlert
+              title={m.checks_screen__walks_not_started()}
+              body={m.checks_screen__walks_not_started_text()}
+              action={
+                <>
+                  <Button variant="default" size="compact" type="button" onClick={() => say(m.checks_screen__walks_not_started_say())}>
+                    <PikkuDot />
+                    {m.checks_screen__ask_fix()}
+                  </Button>
+                  <Button variant="ghost" size="compact" type="button" onClick={walk.dismiss}>
+                    {m.checks_screen__walks_dismiss()}
+                  </Button>
+                </>
+              }
+            />
+          ) : null}
+          {walk.state === 'timed_out' ? (
+            <InlineAlert
+              title={m.checks_screen__walks_timed_out()}
+              body={m.checks_screen__walks_timed_out_text()}
+              action={
+                <>
+                  <Button variant="default" size="compact" type="button" onClick={() => say(m.checks_screen__walks_timed_out_say({ done: walk.tracked ? walk.tracked.passed + walk.tracked.failed : 0 }))}>
+                    <PikkuDot />
+                    {m.checks_screen__ask_fix()}
+                  </Button>
+                  <Button variant="bordered" size="compact" type="button" onClick={walk.keepWaiting}>
+                    {m.checks_screen__walks_keep_waiting()}
+                  </Button>
+                  <Button variant="ghost" size="compact" type="button" onClick={walk.dismiss}>
+                    {m.checks_screen__walks_dismiss()}
+                  </Button>
+                </>
+              }
+            />
+          ) : null}
           {runs.isPending || (runs.data?.length && latest.isPending) ? (
             <Skeleton />
           ) : runs.isError ? (
@@ -192,7 +241,7 @@ export function ChecksScreen() {
             </EmptyState>
           ) : (
             <>
-              {lastRun.status === 'running' ? <StatusLine tone="wait" text={m.checks_screen__walks_running()} /> : null}
+              {lastRun.status === 'running' && walk.state === 'idle' ? <StatusLine tone="wait" text={m.checks_screen__walks_running()} /> : null}
               {failing.length ? (
                 <RowStack>
                   {failing.map((r) => (

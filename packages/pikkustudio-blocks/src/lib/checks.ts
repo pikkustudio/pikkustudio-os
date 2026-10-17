@@ -31,6 +31,12 @@ export type Coverage = {
 }
 
 const POLL_MS = 2500
+/** A walk-through run that has not appeared by then never started. */
+export const WALK_START_TIMEOUT_MS = 60_000
+/** Studio stops watching a run after this; the run itself may still finish. */
+export const WALK_RUN_TIMEOUT_MS = 5 * 60_000
+
+export type WalkState = 'idle' | 'starting' | 'running' | 'not_started' | 'timed_out'
 
 /** Walk-through names come from the project's own code, so they are not ours to translate. */
 export const plainName = (name: string) => {
@@ -42,19 +48,67 @@ export const titleOf = (r: ScenarioResult) => r.title?.trim() || plainName(r.nam
 
 export const isProblem = (f: Finding) => f.severity !== 'info'
 
+/** Starts every walk-through and follows that one run until it finishes, never started, or outlasts the timeout. */
+function useWalkRun(key: string, runs: RunSummary[] | undefined) {
+  const [started, setStarted] = useState<{ runId: string; at: number } | null>(null)
+  const [now, setNow] = useState(() => Date.now())
+  const action = useProjectAction<{ names?: string[] }, { runId: string }>(key, 'console:runScenarios', ['console:listScenarioRuns'])
+  const tracked = started ? runs?.find((r) => r.runId === started.runId) : undefined
+  const elapsed = started ? now - started.at : 0
+  const state: WalkState = !started
+    ? action.isPending
+      ? 'starting'
+      : 'idle'
+    : !tracked
+      ? elapsed < WALK_START_TIMEOUT_MS
+        ? 'starting'
+        : 'not_started'
+      : tracked.status === 'running'
+        ? elapsed < WALK_RUN_TIMEOUT_MS
+          ? 'running'
+          : 'timed_out'
+        : 'idle'
+  const watching = state === 'starting' || state === 'running'
+  useEffect(() => {
+    if (!started || !watching) return
+    const t = setInterval(() => setNow(Date.now()), 1000)
+    return () => clearInterval(t)
+  }, [started, watching])
+  useEffect(() => {
+    if (started && tracked && tracked.status !== 'running') setStarted(null)
+  }, [started, tracked])
+  const start = () =>
+    action.mutate(
+      {},
+      {
+        onSuccess: (r) => {
+          setNow(Date.now())
+          setStarted({ runId: r.runId, at: Date.now() })
+        },
+      },
+    )
+  const keepWaiting = () => started && setStarted({ ...started, at: Date.now() })
+  const dismiss = () => {
+    setStarted(null)
+    action.reset()
+  }
+  return { state, watching, tracked, start, keepWaiting, dismiss, error: action.error, failed: action.isError }
+}
+
 export function useChecks(key: string) {
   const [pollVerify, setPollVerify] = useState(false)
   const [pollRuns, setPollRuns] = useState(false)
   const verify = useProjectQuery<VerifyState>(key, 'console:getVerifyResults', {}, { refetchInterval: pollVerify ? POLL_MS : undefined })
   const runs = useProjectQuery<RunSummary[]>(key, 'console:listScenarioRuns', { limit: 20 }, { refetchInterval: pollRuns ? POLL_MS : undefined })
+  const walk = useWalkRun(key, runs.data)
   const latestId = runs.data?.[0]?.runId
   const latest = useProjectQuery<RunRecord | null>(key, 'console:getScenarioRun', { runId: latestId }, { enabled: !!latestId, refetchInterval: pollRuns ? POLL_MS : undefined })
   const coverage = useProjectQuery<Coverage>(key, 'console:getScenarioCoverage', {}, { optional: true })
   const runVerify = useProjectAction<Record<string, never>>(key, 'console:runVerify', ['console:getVerifyResults'])
   const anyRunning = !!runs.data?.some((r) => r.status === 'running')
   useEffect(() => setPollVerify(!!verify.data?.running || runVerify.isPending), [verify.data?.running, runVerify.isPending])
-  useEffect(() => setPollRuns(anyRunning), [anyRunning])
-  return { verify, runs, latest, coverage, runVerify }
+  useEffect(() => setPollRuns(anyRunning || walk.watching), [anyRunning, walk.watching])
+  return { verify, runs, latest, coverage, runVerify, walk }
 }
 
 export function useRun(key: string, runId: string) {
