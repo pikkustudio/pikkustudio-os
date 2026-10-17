@@ -2,6 +2,7 @@ import { useParams, useSearch } from '@tanstack/react-router'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { asI18n, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
+import { LOCAL_WORKSPACE, useUrlTarget, type TargetRef } from './project-target'
 
 export const useProjectSlug = () => {
   const { project } = useSearch({ strict: false })
@@ -9,11 +10,18 @@ export const useProjectSlug = () => {
   return project ?? key ?? ''
 }
 
+export const onlineKey = (p: { key: string; cloudProjectId?: string | null }, target: TargetRef | undefined) =>
+  target?.kind === 'workspace' && target.name !== LOCAL_WORKSPACE && p.cloudProjectId && !p.key.startsWith('cloud:') ? `cloud:${p.cloudProjectId}` : p.key
+
 export const useProjectKey = () => {
   const slug = useProjectSlug()
+  const target = useUrlTarget()
   const found = usePikkuQuery('studio:listProjects', {}, {
     enabled: !!slug,
-    select: (d: { projects: { key: string; slug: string; owner?: string }[] }) => d.projects.find((p) => `${p.owner}/${p.slug}` === slug || p.slug === slug || p.key === slug)?.key ?? '',
+    select: (d: { projects: { key: string; slug: string; owner?: string; cloudProjectId?: string | null }[] }) => {
+      const p = d.projects.find((p) => `${p.owner}/${p.slug}` === slug || p.slug === slug || p.key === slug)
+      return p ? onlineKey(p, target) : ''
+    },
   } as never)
   return (found.data as string | undefined) ?? ''
 }

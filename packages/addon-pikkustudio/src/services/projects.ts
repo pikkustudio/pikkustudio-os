@@ -1456,6 +1456,14 @@ export class StudioProjectsService {
     return target
   }
 
+  async workspaceStudio<T>(key: string, name: string, data: Record<string, unknown>): Promise<T | null> {
+    const target = await this.workspaceTarget(key)
+    if (target.state !== 'ready') return null
+    const res = await fetch(`${target.url}/studio/${name}`, { method: 'POST', headers: { ...target.headers, 'content-type': 'application/json' }, body: JSON.stringify({ ...data, key: target.remoteKey }) })
+    if (!res.ok) throw new Error(`The workspace answered ${res.status}`)
+    return (await res.json()) as T
+  }
+
   async open(key: string): Promise<RunningProject> {
     if (this.options.pinned) {
       const only = (await this.list())[0]

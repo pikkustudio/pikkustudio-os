@@ -21,7 +21,7 @@ export function ProjectRunGate({ children }: { children: I18nNode }) {
   const key = useProjectKey()
   const target = useProjectTarget()
   const navigate = useNavigate()
-  const project = useTeamProjects().data?.find((p) => p.key === key)
+  const project = useTeamProjects().data?.find((p) => p.key === key || `cloud:${p.cloudProjectId}` === key)
   if (target.kind === 'stage') {
     if (target.live !== false) return <>{children}</>
     const wayOut = {
@@ -32,7 +32,7 @@ export function ProjectRunGate({ children }: { children: I18nNode }) {
     return <AppNotRunning state="off" onStart={wayOut.onWorkspace} stage={wayOut} />
   }
   if (!key || !project) return <>{children}</>
-  return project.location === 'cloud' ? <CloudGate project={project}>{children}</CloudGate> : <LocalGate project={project}>{children}</LocalGate>
+  return key.startsWith('cloud:') ? <CloudGate project={{ ...project, key }}>{children}</CloudGate> : <LocalGate project={project}>{children}</LocalGate>
 }
 
 function CloudGate({ project, children }: { project: ListedProject; children: I18nNode }) {

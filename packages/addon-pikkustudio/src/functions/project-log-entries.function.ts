@@ -28,7 +28,8 @@ export const projectLogEntries = pikkuSessionlessFunc({
   description: "A project's recent log lines, newest first, from every place it runs.",
   input: ProjectLogEntriesInput,
   output: ProjectLogEntriesOutput,
-  func: async ({ studioLogs }, { key, since, limit }) => ({
-    entries: await studioLogs.list(key, { since, limit: Math.min(limit ?? 500, 2000) }),
-  }),
+  func: async ({ studioLogs, studioProjects }, { key, since, limit }) => {
+    if (key.startsWith('cloud:')) return (await studioProjects.workspaceStudio<z.infer<typeof ProjectLogEntriesOutput>>(key, 'projectLogEntries', { since, limit })) ?? { entries: [] }
+    return { entries: await studioLogs.list(key, { since, limit: Math.min(limit ?? 500, 2000) }) }
+  },
 })
