@@ -37,6 +37,8 @@ export type Slots = {
   useReleaseDetail?: (projectKey: string, id: string, wanted: boolean) => ReleaseDetail
   useLiveUpdates?: (queryKeys: readonly string[]) => void
   RailFoot?: ComponentType<{ collapsed: boolean }>
+  /** Where the project is published, shown in the chat panel above the message box. */
+  ChatPublishStatus?: ComponentType<{ projectKey: string }>
 }
 
 export const SlotsCtx = createContext<Slots>({})

@@ -39,6 +39,9 @@ import { LocalProjectTargetProvider } from '../lib/project-target'
 import { Toaster } from '../blocks/Toaster'
 import { ComposerTools } from '../blocks/ComposerTools'
 import { NoAiCard } from '../blocks/NoAiCard'
+import { BuilderActivity } from '../blocks/BuilderActivity'
+import { ChecksCard, MilestoneCard, OpenScreenCard } from '../blocks/BuilderCards'
+import { useCanEdit, useProjectTarget } from '../lib/project-target'
 import { useStickToBottom } from '../lib/stick-to-bottom'
 import { useComposerExtras } from '../lib/composer-extras'
 import { GitPullRequest, Archive, type LucideIcon, ArrowDown, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, History, Home, Info, Compass, KeyRound, ListChecks, Search, Laptop, LayoutGrid, Mail, MessageCircle, MessageCircleQuestion, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, PanelLeftClose, PanelLeftOpen, User, UserRoundCheck, Wrench, X, CheckCheck, ScrollText } from 'lucide-react'
@@ -237,6 +240,9 @@ function ShellLayoutInner() {
     })
   const guide = usePikkuChat(projectKey)
   const builder = useBuilderChat(projectKey, workMode)
+  const canEdit = useCanEdit()
+  const ChatPublishStatus = slots.ChatPublishStatus
+  const { openWorkspace } = useProjectTarget()
   const chat = workMode ? builder : guide
   const changesQ = useProjectQuery<{ changes: { changeId: string; title: string; body: string | null; status: string; createdAt: string }[] }>(projectKey, 'console:listStudioChanges', { status: ['open', 'claimed', 'needs_answer', 'in_progress'] }, { refetchInterval: 6000 })
   const pending = (changesQ.data?.changes ?? []).map((c) => {
@@ -288,6 +294,7 @@ function ShellLayoutInner() {
   const say = (text: I18nString) => {
     setPanel('chat')
     log.toBottom()
+    if (!canEdit && (workMode || /^\/experiment\b/.test(text))) return
     if (!workMode && /^\/experiment\s+\S/.test(text)) {
       void builder.send(text)
       navigate({ to: '/artifacts', search: ((prev: object) => prev) as never })
@@ -618,6 +625,12 @@ function ShellLayoutInner() {
                           </details>
                         ) : null}
                       </div>
+                    ) : it.kind === 'open' ? (
+                      <OpenScreenCard key={it.id} screen={it.screen} title={it.title} />
+                    ) : it.kind === 'milestone' ? (
+                      <MilestoneCard key={it.id} title={it.title} />
+                    ) : it.kind === 'checks' ? (
+                      <ChecksCard key={it.id} output={it.output} busy={chat.busy || !canEdit} onFix={() => say(m.builder_cards__checks_say())} />
                     ) : it.kind === 'card' && it.options && it.state === 'ask' ? (
                       <article key={it.id} className={`flex flex-col gap-3 rounded-card border-[1.5px] bg-card p-4.5 shadow-card ${ASK_TONE[it.tone ?? 'info'].box}`} data-testid="ask-card">
                         <div className="flex items-center gap-2.5">
@@ -679,7 +692,9 @@ function ShellLayoutInner() {
                       </div>
                     ),
                   )}
-                  {chat.busy && !chat.items.some((i) => i.kind === 'pikku' && !i.text) ? <p className="flex items-center gap-2 text-[14px] text-muted-foreground">
+                  {workMode && builder.activity ? (
+                    <BuilderActivity since={builder.activity.since} doing={builder.activity.doing} canStop={builder.canStop && canEdit} stopping={builder.stopping} onStop={() => void builder.stop()} />
+                  ) : chat.busy && !chat.items.some((i) => i.kind === 'pikku' && !i.text) ? <p className="flex items-center gap-2 text-[14px] text-muted-foreground">
                       <AiSpinner />
                       {m.shell_layout__thinking()}
                     </p> : null}
@@ -697,6 +712,18 @@ function ShellLayoutInner() {
                   </button>
                 )}
                 </div>
+                {ChatPublishStatus && projectKey ? <ChatPublishStatus projectKey={projectKey} /> : null}
+                {workMode && !canEdit ? (
+                  <div className="flex flex-wrap items-center gap-3 border-t border-border bg-card px-5 py-3.5" role="status" data-testid="chat-read-only">
+                    <p className="min-w-0 flex-1 text-[14px] text-ink-2">{m.builder_chat__stage_read_only()}</p>
+                    {openWorkspace ? (
+                      <Button variant="default" size="compact" type="button" onClick={openWorkspace}>
+                        {m.builder_chat__open_workspace()}
+                      </Button>
+                    ) : null}
+                  </div>
+                ) : (
+                <>
                 <AttachedChips attached={attached} onRemove={detach} />
                 <form
                   className="relative flex items-end gap-2 border-t border-border bg-card px-5 py-3.5"
@@ -764,6 +791,8 @@ function ShellLayoutInner() {
                   </button>
                 </form>
                 <ComposerTools projectKey={projectKey} extras={extras} field={composerRef} onText={dictate} />
+                </>
+                )}
                 </>
                 )}
               </div>

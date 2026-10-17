@@ -4,6 +4,7 @@ import { useNavigate } from '@tanstack/react-router'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { useProjectKey } from '../lib/project'
 import { Meta, Pill } from './parts'
+import { SaveWork } from './SaveWork'
 import type { State } from './data'
 
 type Status = 'open' | 'claimed' | 'in_progress' | 'needs_answer' | 'done' | 'dismissed'
@@ -75,11 +76,16 @@ export function ChangesPanel() {
   const q = usePikkuQuery('studio:changes', { key }, { enabled: !!key, refetchInterval: 5000 } as never)
   const rows = forPanel(((q.data as { changes: PanelChange[] } | undefined)?.changes ?? []))
   const pick = (id: string) => nav({ to: '/changes' as never, search: ((p: Record<string, unknown>) => ({ ...p, change: id, panel: 'changes' })) as never })
-  if (!key || q.isPending) return <p className="px-5 py-4 text-[15px] text-ink-2">{m.changes_timeline__loading()}</p>
-  if (q.isError) return <p className="px-5 py-4 text-[15px] text-ink-2">{m.changes_timeline__error()}</p>
-  if (!rows.length) return <p className="px-5 py-4 text-[15px] text-ink-2">{m.changes_timeline__empty()}</p>
+  const note = !key || q.isPending ? m.changes_timeline__loading() : q.isError ? m.changes_timeline__error() : !rows.length ? m.changes_timeline__empty() : null
+  if (note) return (
+    <div className="flex min-h-0 flex-1 flex-col overflow-auto">
+      {key ? <SaveWork projectKey={key} /> : null}
+      <p className="px-5 py-4 text-[15px] text-ink-2">{note}</p>
+    </div>
+  )
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-auto">
+      <SaveWork projectKey={key} />
       <Dock working={rows.find((x) => x.state === 'working')?.c} waiting={rows.filter((x) => x.state === 'needs').length} />
       <ul className="flex flex-col gap-2.5 px-5 py-4">
         {rows.map(({ c, state }) => (

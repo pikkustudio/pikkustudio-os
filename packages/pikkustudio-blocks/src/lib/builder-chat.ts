@@ -78,7 +78,38 @@ const TIMED_OUT = /timed out|took too long/i
 /** The builder had no AI to build with: not signed in to Cloud and no key of the user's own. */
 export const NO_AI = /Sign in to Pikku Studio Cloud to build with|Choose your AI before building/i
 
-export type BuilderItem = { kind: string; text?: string; at: number; id?: string; name?: string; summary?: string; args?: string; output?: string; status?: string }
+export type BuilderItem = { kind: string; text?: string; at: number; id?: string; name?: string; summary?: string; args?: string; output?: string; status?: string; screen?: string; title?: string }
+
+export type Doing = 'thinking' | 'reading' | 'writing' | 'checking' | 'answering' | 'working'
+
+const CHECK_RUN = /\btsc\b|pikku (all|verify)|bun (run )?test/
+const CHECK_FAILED = /error TS\d+|\[PKU\d+\]|pikku all failed/
+
+const doingOf = (item: BuilderItem | undefined): Doing => {
+  if (!item) return 'thinking'
+  if (item.kind === 'thinking') return 'thinking'
+  if (item.kind === 'assistant') return 'answering'
+  if (item.kind !== 'tool' || item.status !== 'running') return 'thinking'
+  const name = (item.name ?? '').toLowerCase()
+  if (/read|ls|grep|find|glob|search/.test(name)) return 'reading'
+  if (/edit|write/.test(name)) return 'writing'
+  if (CHECK_RUN.test(item.summary ?? '')) return 'checking'
+  return 'working'
+}
+
+export const activityOf = (items: BuilderItem[], busy: boolean): { since: number; doing: Doing } | null => {
+  if (!busy) return null
+  const asked = [...items].reverse().find((i) => i.kind === 'user')
+  return { since: asked?.at ?? items[0]?.at ?? Date.now(), doing: doingOf(items.at(-1)) }
+}
+
+export const failedChecks = (items: BuilderItem[]): string | null => {
+  const turn = items.slice(items.map((i) => i.kind).lastIndexOf('user') + 1)
+  const check = turn.reverse().find((i) => i.kind === 'tool' && CHECK_RUN.test(i.summary ?? ''))
+  return check && check.status !== 'running' && CHECK_FAILED.test(check.output ?? '') ? (check.output ?? '') : null
+}
+
+const MERGED = /^Merged (.+)$/
 type Timed = { at: number; item: ChatItem }
 
 const KICKOFF_TAG = '[[kickoff]]'
@@ -95,6 +126,7 @@ const toChat = (all: BuilderItem[], prefix: string, agent?: I18nString): Timed[]
     return true
   }
   return all.flatMap((item, index): Timed[] => {
+    if (item.kind === 'navigate' && item.screen) return [{ at: item.at, item: { id: `${prefix}${index}`, kind: 'open', screen: item.screen, ...(item.id ? { target: item.id } : {}), ...(item.title ? { title: item.title } : {}) } }]
     if (!item.text) return []
     const id = `${prefix}${index}`
     if (item.kind === 'assistant' && !closing(index)) return []
@@ -107,6 +139,8 @@ const toChat = (all: BuilderItem[], prefix: string, agent?: I18nString): Timed[]
       return text ? [{ at: item.at, item: { id, kind: 'pikku', text, ...(agent ? { agent } : {}) } }] : []
     }
     if (item.kind === 'error') return [{ at: item.at, item: { id, kind: 'error', detail: item.text, retry: TIMED_OUT.test(item.text), noAi: NO_AI.test(item.text) } }]
+    const merged = item.kind === 'loop' ? MERGED.exec(item.text) : null
+    if (merged) return [{ at: item.at, item: { id, kind: 'milestone', title: merged[1]!.trim() } }]
     return []
   })
 }
@@ -121,6 +155,8 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
   const guideSay = usePikkuMutation('studio:projectGuideSay' as never) as unknown as UseMutationResult<unknown, Error, { key: string; message?: string; kickoff?: boolean; greet?: boolean; changed?: { step: string; state: string }; skip?: boolean }>
   const guideAct = useGuideAct()
   const archiveChat = usePikkuMutation('studio:builderArchive')
+  const cancel = usePikkuMutation('studio:builderCancel')
+  const [stopping, setStopping] = useState(false)
   const [local, setLocal] = useState<Timed[]>([])
   const [sending, setSending] = useState(false)
   const [dismissed, setDismissed] = useState('')
@@ -157,7 +193,9 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
         : offered
           ? [{ id: 'offer', kind: 'card', toolCallId: 'offer', runId: 'offer', title: m.builder_chat__bigger_title(), detail: m.builder_chat__bigger_detail(), state: 'ask', yes: m.builder_chat__add_to_queue(), no: m.builder_chat__do_it_now() }]
           : []
-    return [...said, ...card]
+    const failed = data && !data.busy ? failedChecks(data.items) : null
+    const checks: ChatItem[] = failed ? [{ id: `checks${data?.items.length}`, kind: 'checks', output: failed }] : []
+    return [...said, ...checks, ...card]
   }, [data, designData, local, handoff, guideMode, list?.questionsOpen, lastText, doOffer])
 
   const push = useCallback((item: { kind: 'me' | 'pikku'; text: string }) => {
@@ -279,6 +317,20 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
     }
   }, [key, mode, archiveChat.mutateAsync, state.refetch, fail])
 
+  const designBusy = !!designData?.busy
+  const stop = useCallback(async () => {
+    setStopping(true)
+    try {
+      const slots = [mode ?? undefined, ...(handoff && designBusy ? ['frontend' as const] : [])]
+      await Promise.all(slots.map((specialist) => (cancel.mutateAsync as (input: unknown) => Promise<unknown>)({ key, specialist })))
+      await state.refetch()
+    } catch (error) {
+      fail(error)
+    } finally {
+      setStopping(false)
+    }
+  }, [key, mode, handoff, designBusy, cancel.mutateAsync, state.refetch, fail])
+
   const decide = useCallback(
     async (id: string, yes: boolean) => {
       if (id === 'offer') await send(yes ? m.builder_chat__say_add_to_queue() : m.builder_chat__say_do_it_now())
@@ -296,7 +348,9 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
     [send, doOffer, doStamp, guideAct.mutateAsync, key, state.refetch, checklist.refetch, fail],
   )
 
-  return { items, raw: data?.items ?? [], busy: sending || !!data?.busy, send, decide, push, archive, skipQuestion, archiving: archiveChat.isPending, canArchive: !!mode && !sending && !data?.busy && !archiveChat.isPending && (data?.items ?? []).some((i) => !!i.text && (i.kind === 'user' || i.kind === 'assistant')) }
+  const working = !!data?.busy || designBusy
+  const activity = activityOf(designBusy && !data?.busy ? designData?.items ?? [] : data?.items ?? [], working)
+  return { items, raw: data?.items ?? [], busy: sending || !!data?.busy, activity, stop, stopping, canStop: !!mode && working && !stopping, send, decide, push, archive, skipQuestion, archiving: archiveChat.isPending, canArchive: !!mode && !sending && !data?.busy && !archiveChat.isPending && (data?.items ?? []).some((i) => !!i.text && (i.kind === 'user' || i.kind === 'assistant')) }
 }
 
 export type SavedChat = { id: string; title: string; at: number }
