@@ -1,5 +1,5 @@
 import { useContext, useMemo } from 'react'
-import { useQueries } from '@tanstack/react-query'
+import { useQueries, useQueryClient } from '@tanstack/react-query'
 import { ProjectRpcCtx, useProjectQuery } from './projectRpc'
 import { ProjectTargetContext } from './project-target'
 
@@ -47,6 +47,43 @@ export function useSecretsSet(key: string, ids: string[], enabled: boolean) {
       retry: () => results.forEach((r) => r.refetch()),
     }),
   })
+}
+
+const asText = (value: unknown): string | null => (value == null ? null : typeof value === 'string' ? value : JSON.stringify(value))
+
+const missingCall = (error: unknown) => (error as { status?: number } | null)?.status === 404
+
+/**
+ * Each setting's value where the project runs on this computer or in a workspace, read and saved
+ * through the project's own variables. A project on an older Pikku has no such calls: `supported`
+ * is then false and the settings stay read-only here.
+ */
+export function useLocalSettings(key: string, ids: string[], enabled: boolean) {
+  const invoke = useContext(ProjectRpcCtx)
+  const client = useQueryClient()
+  const { kind, name: at } = useContext(ProjectTargetContext)
+  const read = useQueries({
+    queries: ids.map((variableId) => ({
+      enabled: enabled && !!key,
+      queryKey: ['project', key, 'console:variableGet', { variableId }, `${kind}/${at}`],
+      queryFn: () => invoke(key, 'console:variableGet', { variableId }) as Promise<{ exists: boolean; value: unknown }>,
+      retry: false,
+    })),
+    combine: (results) => {
+      const error = results.find((r) => r.error)?.error ?? null
+      return {
+        settings: results.every((r) => r.data) ? Object.fromEntries(ids.map((id, i) => [id, { exists: results[i]!.data!.exists, value: asText(results[i]!.data!.value) }])) : undefined,
+        supported: !results.some((r) => missingCall(r.error)),
+        error: missingCall(error) ? null : error,
+        retry: () => results.forEach((r) => r.refetch()),
+      }
+    },
+  })
+  const save = async (variableId: string, value: string) => {
+    await invoke(key, 'console:variableSet', { variableId, value })
+    await client.invalidateQueries({ queryKey: ['project', key, 'console:variableGet'] })
+  }
+  return { ...read, save }
 }
 
 /** A published copy of the project. Its secrets are sealed in this browser to that copy's own key before they are sent. */

@@ -15,7 +15,7 @@ import { ProjectValueDrawer } from '../blocks/ProjectValueDrawer'
 import { useProjectKey, useProjectName } from '../lib/project'
 import { useProjectAction } from '../lib/projectRpc'
 import { useSlots } from '../lib/slots'
-import { useSecretsSet, useProjectSecretsMeta, type ProjectSecret, type ProjectValue } from '../lib/projectSecrets'
+import { useLocalSettings, useSecretsSet, useProjectSecretsMeta, type ProjectSecret, type ProjectValue } from '../lib/projectSecrets'
 import { useDeveloperDetails } from '../lib/developer-details'
 
 function Art() {
@@ -74,6 +74,9 @@ export function ProjectSecretsScreen() {
   const settingIds = useMemo(() => settings.map((s) => s.id), [settings])
   const stage = useStageSettings?.(key, settingIds) ?? null
   const local = useSecretsSet(key, secrets.filter((s) => !s.connected).map((s) => s.id), !stage && !!meta.data)
+  const localSettings = useLocalSettings(key, settingIds, !stage && !!meta.data)
+  const settingsHere = stage ? stage.settings : localSettings.supported ? localSettings.settings : undefined
+  const settingsEditable = !!stage || localSettings.supported
   const [editing, setEditing] = useState<Editing | null>(null)
   const [failed, setFailed] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -81,14 +84,19 @@ export function ProjectSecretsScreen() {
   const setLocal = useProjectAction<{ secretId: string; value: unknown }>(key, 'console:secretSet', ['console:secretHas'])
 
   const setIds = stage ? (stage.secretIds ? new Set(stage.secretIds) : undefined) : local.set
-  const statusError = stage ? stage.error : local.error
-  const retryStatus = stage ? stage.retry : local.retry
+  const statusError = stage ? stage.error : (local.error ?? localSettings.error)
+  const retryStatus = stage
+    ? stage.retry
+    : () => {
+        local.retry()
+        localSettings.retry()
+      }
   const isSet = (s: ProjectSecret) => s.connected || !!setIds?.has(s.id)
-  const settingValue = (id: string) => stage?.settings?.[id]
+  const settingValue = (id: string) => settingsHere?.[id]
   const missingSecrets = setIds ? secrets.filter((s) => !s.connected && !s.optional && !setIds.has(s.id)) : []
-  const missingSettings = stage?.settings ? settings.filter((s) => !s.optional && !stage.settings![s.id]?.exists) : []
+  const missingSettings = settingsHere ? settings.filter((s) => !s.optional && !settingsHere[s.id]?.exists) : []
   const missing = [...missingSecrets.map((item) => ({ kind: 'secret' as const, item })), ...missingSettings.map((item) => ({ kind: 'setting' as const, item }))]
-  const known = !!meta.data && !!setIds && (!stage || !!stage.settings)
+  const known = !!meta.data && !!setIds && (!settingsEditable || settings.length === 0 || !!settingsHere)
 
   const open = (e: Editing) => {
     setFailed(false)
@@ -105,6 +113,8 @@ export function ProjectSecretsScreen() {
         else await setLocal.mutateAsync({ secretId: editing.item.id, value })
       } else if (stage) {
         await stage.saveSetting(editing.item.id, value)
+      } else {
+        await localSettings.save(editing.item.id, value)
       }
       setEditing(null)
     } catch {
@@ -164,17 +174,17 @@ export function ProjectSecretsScreen() {
     return (
       <RowCard
         key={s.id}
-        flag={!!stage?.settings && !has && !s.optional}
+        flag={!!settingsHere && !has && !s.optional}
         tile={<SlidersHorizontal className="size-5" />}
         title={asI18n(s.label)}
         caption={has && v?.value ? asI18n(v.value) : s.about ? asI18n(s.about) : undefined}
-        note={stage ? undefined : m.project_secrets__setting_local()}
+        note={settingsEditable ? undefined : m.project_secrets__setting_local()}
         below={<Tech show={technical} name={s.name} id={s.id} />}
       >
-        {stage ? (
+        {settingsEditable ? (
           <>
-            {stage.settings && !has ? <Dot tone={s.optional ? 'quiet' : 'warn'}>{s.optional ? m.project_secrets__optional() : m.project_secrets__needs_value()}</Dot> : null}
-            <Button type="button" variant="bordered" size="compact" disabled={!stage.settings} onClick={() => open({ kind: 'setting', item: s })}>
+            {settingsHere && !has ? <Dot tone={s.optional ? 'quiet' : 'warn'}>{s.optional ? m.project_secrets__optional() : m.project_secrets__needs_value()}</Dot> : null}
+            <Button type="button" variant="bordered" size="compact" disabled={!settingsHere} onClick={() => open({ kind: 'setting', item: s })}>
               {has ? m.project_secrets__change() : m.project_secrets__add()}
             </Button>
           </>
