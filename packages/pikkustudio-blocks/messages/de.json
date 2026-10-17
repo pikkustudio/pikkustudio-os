@@ -3457,5 +3457,8 @@
   "composer_tools__model_when": "Gilt ab deiner nächsten Nachricht.",
   "composer_tools__model_failed": "Das Modell konnte nicht gewechselt werden. Deine letzte Auswahl gilt weiter.",
   "injected_panel__tab": "Als jemand anderes testen",
-  "injected_panel__open": "Pikku-Studio-Bereich öffnen"
+  "injected_panel__open": "Pikku-Studio-Bereich öffnen",
+  "read_only_notice__title": "Du siehst {name} – nur zum Ansehen",
+  "read_only_notice__body": "Hier lässt sich nichts ändern. Ändere Dinge in deinem Arbeitsbereich – beim Veröffentlichen kommen sie bei {name} an.",
+  "read_only_notice__open_workspace": "Arbeitsbereich öffnen, um etwas zu ändern"
 }

@@ -3725,5 +3725,8 @@
   "composer_tools__model_when": "يسري ابتداءً من رسالتكم التالية.",
   "composer_tools__model_failed": "تعذّر تبديل النموذج. يبقى اختياركم الأخير ساريًا.",
   "injected_panel__tab": "جرّبوا بصفة شخص آخر",
-  "injected_panel__open": "فتح لوحة Pikku Studio"
+  "injected_panel__open": "فتح لوحة Pikku Studio",
+  "read_only_notice__title": "أنت تشاهد {name}، وهو للعرض فقط",
+  "read_only_notice__body": "لا يمكن تغيير أي شيء هنا. أجرِ التغييرات في مساحة عملك، وستصل إلى {name} عند النشر.",
+  "read_only_notice__open_workspace": "افتح مساحة عملك لإجراء التغييرات"
 }

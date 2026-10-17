@@ -3668,5 +3668,8 @@
   "composer_tools__model_when": "Applies from your next message.",
   "composer_tools__model_failed": "Couldn't switch the model. Your last choice still applies.",
   "injected_panel__tab": "Try as someone else",
-  "injected_panel__open": "Open the Pikku Studio panel"
+  "injected_panel__open": "Open the Pikku Studio panel",
+  "read_only_notice__title": "You're looking at {name}, which is view only",
+  "read_only_notice__body": "Nothing here can be changed. Make changes in your workspace, and they reach {name} when you publish.",
+  "read_only_notice__open_workspace": "Open your workspace to make changes"
 }
