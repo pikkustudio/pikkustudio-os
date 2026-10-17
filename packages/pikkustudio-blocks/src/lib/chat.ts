@@ -85,7 +85,7 @@ const cardFor = (value: { toolName: string; args: Record<string, unknown> }) => 
   return { title: m.chat__wants_to_do_something(), detail: asI18n(detail) }
 }
 
-export const usePikkuChat = (projectKey: string) => {
+export const usePikkuChat = (projectKey: string, screen?: string | null) => {
   const transport = useContext(ChatTransportCtx)
   const [items, setItems] = useState<ChatItem[]>([])
   const [busy, setBusy] = useState(false)
@@ -121,10 +121,10 @@ export const usePikkuChat = (projectKey: string) => {
     (text: string) => {
       push({ kind: 'me', text })
       const language = new Intl.DisplayNames(['en'], { type: 'language' }).of(getLocale())
-      const context = `${projectKey ? `(The owner is working in the project with key ${projectKey}.) ` : ''}(The owner reads ${language}: answer in ${language}.) `
+      const context = `${projectKey ? `(The owner is working in the project with key ${projectKey}.) ` : ''}${screen ? `(The owner is looking at the "${screen}" screen.) ` : ''}(The owner reads ${language}: answer in ${language}.) `
       return run('/rpc/agent/pikku/stream', { message: `${context}${text}`, threadId: thread.current, resourceId: 'studio' })
     },
-    [push, run, projectKey],
+    [push, run, projectKey, screen],
   )
 
   const decide = useCallback(

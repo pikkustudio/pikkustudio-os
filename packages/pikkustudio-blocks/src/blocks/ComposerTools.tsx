@@ -5,6 +5,7 @@ import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/ap
 import { m } from '@/i18n/messages'
 import type { ComposerExtras } from '../lib/composer-extras'
 import { MicButton } from './MicButton'
+import { friendlyModel } from '../lib/model-names'
 
 const size = (bytes: number) => (bytes < 1024 * 1024 ? `${Math.max(1, Math.round(bytes / 1024))} KB` : `${(bytes / 1024 / 1024).toFixed(1)} MB`)
 
@@ -88,10 +89,11 @@ function ModelPicker({ projectKey }: { projectKey: string }) {
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
         data-testid="model-picker"
+        title={now ?? undefined}
         className="inline-flex h-9 max-w-full items-center gap-1.5 rounded-full px-3 text-[13px] text-muted-foreground transition-colors duration-140 hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
       >
         <span className="truncate font-medium">{current ? tierLabel(current.tier) : m.composer_tools__model_default()}</span>
-        <span dir="ltr" className="truncate font-mono text-[11px] opacity-70">{now}</span>
+        {now ? <span className="truncate text-[12px] opacity-80">{friendlyModel(now)}</span> : null}
         <ChevronUp className="size-3.5 shrink-0" aria-hidden="true" />
       </button>
       {open ? (
@@ -106,7 +108,7 @@ function ModelPicker({ projectKey }: { projectKey: string }) {
                       {x.id === data.fallback ? <span className="ms-2 text-[12px] font-normal text-muted-foreground">{m.composer_tools__model_default()}</span> : null}
                     </span>
                     <span className="block text-[12px] text-muted-foreground">{tierHint(x.tier)}</span>
-                    <span dir="ltr" className="block truncate text-start font-mono text-[11px] text-muted-foreground">{x.id}</span>
+                    <span className="block truncate text-start text-[12px] font-medium text-ink-2" title={x.id}>{friendlyModel(x.id)}</span>
                   </span>
                   {x.id === now ? <Check className="size-4 shrink-0 text-primary" /> : null}
                 </button>
@@ -166,7 +168,7 @@ export function ComposerTools({ projectKey, extras, field, onText }: { projectKe
   }, [field, add])
 
   return (
-    <div className="flex flex-col gap-2 bg-card px-5 pb-3.5" data-testid="composer-tools">
+    <div className="flex shrink-0 flex-col gap-2 bg-card px-5 pb-[max(0.875rem,env(safe-area-inset-bottom))]" data-testid="composer-tools">
       {extras.files.length ? (
         <ul className="flex flex-wrap gap-2" aria-label={m.composer_tools__attached_files()}>
           {extras.files.map((f) => (

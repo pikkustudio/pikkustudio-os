@@ -20,6 +20,7 @@ import { useSlots } from '../lib/slots'
 import { useCopy } from '../lib/copy'
 import { SCREEN_NAME, agentName } from '../lib/screen-names'
 import { modeForPath, useBuilderChat } from '../lib/builder-chat'
+import { usePageTitle } from '../lib/page-title'
 import { useProjectQuery } from '../lib/projectRpc'
 import { MOVABLE, usePins, type Movable } from '../lib/pins'
 import { AttachedChips } from '../blocks/AttachedChips'
@@ -246,7 +247,8 @@ function ShellLayoutInner() {
       } catch {}
       return !on
     })
-  const guide = usePikkuChat(projectKey)
+  const pageTitle = usePageTitle()
+  const guide = usePikkuChat(projectKey, pageTitle)
   const builder = useBuilderChat(projectKey, workMode)
   const canEdit = useCanEdit()
   const ChatPublishStatus = slots.ChatPublishStatus
@@ -325,7 +327,7 @@ function ShellLayoutInner() {
   const unread = needsPerson && isDismissed
 
   const panelTitle: Record<PanelId, I18nString> = { chat: workMode ? agentName(workMode) : m.parts__talk_to_pikku(), updates: m.shell_layout__updates(), changes: m.shell_layout__changes(), workspace: m.shell_layout__your_workspace(), account: m.shell_layout__your_account(), pitch: m.cloud_panel__title() }
-  const aboutScreen: I18nString | null = onEmails || fill ? null : onArtifacts ? SCREEN_NAME.artifacts() : onKnowledge ? SCREEN_NAME.knowledge() : onProject ? SCREEN_NAME.project() : onPublish ? m.shell_layout__publish() : m.shell_layout__overview()
+  const aboutScreen: I18nString | null = onEmails || fill ? null : onArtifacts ? SCREEN_NAME.artifacts() : onKnowledge ? SCREEN_NAME.knowledge() : onProject ? SCREEN_NAME.project() : onPublish ? m.shell_layout__publish() : (pageTitle ?? null)
   const bubbleActions: { label: I18nString; yes: boolean; run: () => void }[] = pending.length
     ? [
         { label: m.shell_layout__tell_me_more(), yes: true, run: () => setPanel('updates') },
@@ -498,7 +500,7 @@ function ShellLayoutInner() {
           {/* Side panel: Chat, Updates, This workspace */}
           <aside
             aria-hidden={panel === ''}
-            className={`absolute inset-y-0 end-0 z-5 flex w-102 flex-col border-s border-border bg-card shadow-[0_24px_56px_-14px_rgba(8,40,52,0.35)] transition-all duration-420 ease-[cubic-bezier(.16,1,.3,1)] @min-[1700px]/app:w-120 ${panel !== '' ? 'visible translate-x-0' : 'invisible translate-x-full rtl:-translate-x-full'}`}
+            className={`absolute inset-y-0 end-0 z-5 flex w-102 max-w-full flex-col border-s border-border bg-card shadow-[0_24px_56px_-14px_rgba(8,40,52,0.35)] transition-all duration-420 ease-[cubic-bezier(.16,1,.3,1)] @min-[1700px]/app:w-120 ${panel !== '' ? 'visible translate-x-0' : 'invisible translate-x-full rtl:-translate-x-full'}`}
           >
             <div className="flex items-center gap-0.5 pt-4 pe-3 pb-2.5 ps-6">
               <h2 className="flex-1 text-[24px] leading-[1.2] font-bold tracking-[-0.012em] text-balance">{panel ? panelTitle[panel] : null}</h2>
