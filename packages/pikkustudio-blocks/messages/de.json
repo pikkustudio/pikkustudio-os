@@ -2491,6 +2491,7 @@
   "shelf_meta__fail_data": "Deine Daten konnten nicht aktualisiert werden",
   "shelf_meta__fail_publish": "Es konnte nicht veröffentlicht werden",
   "shelf_meta__fail_start": "Es wurde gebaut, startet aber nicht",
+  "shelf_meta__fail_tests": "Es hat seine Prüfungen nicht bestanden",
   "shelf_meta__failed": "Nicht live gegangen",
   "shelf_meta__live": "Online",
   "shelf_meta__rolled_back": "Davon zurückgegangen",

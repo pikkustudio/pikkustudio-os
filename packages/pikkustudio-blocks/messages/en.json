@@ -2609,6 +2609,7 @@
   "shelf_meta__fail_data": "Your data could not be updated",
   "shelf_meta__fail_publish": "It could not be put live",
   "shelf_meta__fail_start": "It built, but would not start",
+  "shelf_meta__fail_tests": "It did not pass its checks",
   "shelf_meta__failed": "Didn't go live",
   "shelf_meta__live": "Live",
   "shelf_meta__rolled_back": "Went back from it",

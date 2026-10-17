@@ -2683,6 +2683,7 @@
   "shelf_meta__fail_data": "تعذر تحديث بياناتكم",
   "shelf_meta__fail_publish": "تعذر نشره",
   "shelf_meta__fail_start": "تم بناؤه لكنه لم يعمل",
+  "shelf_meta__fail_tests": "لم يجتز فحوصاته",
   "shelf_meta__failed": "لم ينشر",
   "shelf_meta__live": "منشور",
   "shelf_meta__rolled_back": "تم التراجع عنه",

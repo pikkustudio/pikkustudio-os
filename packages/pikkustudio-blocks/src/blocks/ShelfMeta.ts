@@ -13,7 +13,7 @@ export const canGoBack = (o: ReleaseStatus) => o === 'was-live' || o === 'rolled
 export const shelfWords: Record<ReleaseStatus, () => I18nString> = { live: m.shelf_meta__live, 'was-live': m.shelf_meta__was_live, failed: m.shelf_meta__failed, 'rolled-back': m.shelf_meta__rolled_back, cancelled: m.shelf_meta__cancelled, working: m.shelf_meta__working, waiting: m.shelf_meta__waiting }
 export const shelfTone: Record<ReleaseStatus, 'ok' | 'warn' | 'bad' | 'quiet'> = { live: 'ok', 'was-live': 'quiet', failed: 'bad', 'rolled-back': 'quiet', cancelled: 'quiet', working: 'ok', waiting: 'warn' }
 
-export const failWords = { build: m.shelf_meta__fail_build, start: m.shelf_meta__fail_start, publish: m.shelf_meta__fail_publish, data: m.shelf_meta__fail_data }
+export const failWords = { build: m.shelf_meta__fail_build, tests: m.shelf_meta__fail_tests, start: m.shelf_meta__fail_start, publish: m.shelf_meta__fail_publish, data: m.shelf_meta__fail_data }
 
 const sameDay = (a: Date, b: Date) => a.toDateString() === b.toDateString()
 

@@ -6,7 +6,7 @@ import { useLiveUpdates } from './live'
 
 export type ReleaseStatus = 'live' | 'was-live' | 'rolled-back' | 'failed' | 'cancelled' | 'working' | 'waiting'
 export type ReleaseWait = 'approval' | 'config' | 'attention' | 'builder'
-export type ReleaseFailedAt = 'build' | 'start' | 'publish' | 'data'
+export type ReleaseFailedAt = 'build' | 'tests' | 'start' | 'publish' | 'data'
 export type ReleaseChange = 'added' | 'changed' | 'removed'
 export type ReleaseGroupId = 'functions' | 'routes' | 'jobs' | 'migrations' | 'secrets' | 'variables' | 'parts'
 
