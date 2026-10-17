@@ -12,6 +12,7 @@ import { Check, ChevronRight, CircleAlert, Info, MessageCircle, RotateCw, Blocks
 import { ShellCtx } from '../lib/shell'
 import { keep } from '../lib/links'
 import { useFrontDoors, API_KINDS } from '../lib/frontDoors'
+import { useSlots } from '../lib/slots'
 
 
 const dot = { ok: 'bg-success ring-success-soft', warn: 'bg-warning ring-card', info: 'bg-info ring-info-soft' }
@@ -56,6 +57,7 @@ export function OverviewScreen() {
   const [checked, setChecked] = useState<Status>()
   const [introHidden, setIntroHidden] = useState(false)
   const [areaMsg, setAreaMsg] = useState<Status>()
+  const { LiveAppHealth } = useSlots()
 
   const check = () => {
     setChecking(true)
@@ -151,6 +153,8 @@ export function OverviewScreen() {
           <BlobStage step={checking ? 'checking' : pending.length ? 'question' : 'choosing'} size={420} />
         </div>
       </section>
+
+      {LiveAppHealth ? <LiveAppHealth /> : null}
 
       {/* How it is going */}
       <section data-testid="health-row" className="flex flex-col gap-3.5" aria-label={m.overview_screen__how_going()}>

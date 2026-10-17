@@ -3588,5 +3588,87 @@
   "shelf_strip__step_build": "Bauen",
   "shelf_strip__step_test": "Prüfen, ob es läuft",
   "shelf_strip__step_check": "Vorbereiten",
-  "shelf_strip__step_live": "Live schalten"
+  "shelf_strip__step_live": "Live schalten",
+  "logs_screen__problems_label": "Was schiefging",
+  "logs_screen__problems_title": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Einmal ging etwas schief",
+        "countPlural=other": "{count}-mal ging etwas schief"
+      }
+    }
+  ],
+  "logs_screen__problems_text": "Die häufigsten stehen unten. Pikku kann sie beheben.",
+  "logs_screen__warnings_title": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Nichts kaputt, eine Warnung",
+        "countPlural=other": "Nichts kaputt, {count} Warnungen"
+      }
+    }
+  ],
+  "logs_screen__warnings_text": "Warnungen lohnen einen Blick, aber nichts hat aufgehört zu funktionieren.",
+  "logs_screen__quiet_title": "Nichts ging schief",
+  "logs_screen__quiet_text": [
+    {
+      "declarations": [
+        "input lines",
+        "local linesPlural = lines: plural"
+      ],
+      "selectors": [
+        "linesPlural"
+      ],
+      "match": {
+        "linesPlural=one": "Eine Zeile, alles gut.",
+        "linesPlural=other": "{lines} Zeilen, alles gut."
+      }
+    }
+  ],
+  "logs_screen__busiest": "Am meisten los: {name}",
+  "logs_screen__problems_filtered": "Gezählt aus allen Zeilen in diesem Zeitraum, nicht nur den gefilterten.",
+  "logs_screen__problem_where": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Einmal, in {name}",
+        "countPlural=other": "{count}-mal, in {name}"
+      }
+    }
+  ],
+  "logs_screen__problem_times": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Einmal",
+        "countPlural=other": "{count}-mal"
+      }
+    }
+  ],
+  "logs_screen__problem_show": "Zeigen"
 }

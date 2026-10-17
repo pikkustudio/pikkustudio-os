@@ -3856,5 +3856,107 @@
   "shelf_strip__step_build": "البناء",
   "shelf_strip__step_test": "التحقق من عمله",
   "shelf_strip__step_check": "التجهيز",
-  "shelf_strip__step_live": "النشر"
+  "shelf_strip__step_live": "النشر",
+  "logs_screen__problems_label": "ما الذي فشل",
+  "logs_screen__problems_title": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "لم يفشل شيء ({count})",
+        "countPlural=one": "فشل شيء مرة واحدة",
+        "countPlural=two": "فشل شيء مرتين",
+        "countPlural=few": "فشل شيء {count} مرات",
+        "countPlural=many": "فشل شيء {count} مرة",
+        "countPlural=other": "فشل شيء {count} مرة"
+      }
+    }
+  ],
+  "logs_screen__problems_text": "الأكثر تكرارًا بالأسفل. يمكن لـ Pikku إصلاحها.",
+  "logs_screen__warnings_title": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "لا أعطال، ولا تحذيرات ({count})",
+        "countPlural=one": "لا أعطال، تحذير واحد",
+        "countPlural=two": "لا أعطال، تحذيران",
+        "countPlural=few": "لا أعطال، {count} تحذيرات",
+        "countPlural=many": "لا أعطال، {count} تحذيرًا",
+        "countPlural=other": "لا أعطال، {count} تحذير"
+      }
+    }
+  ],
+  "logs_screen__warnings_text": "التحذيرات تستحق نظرة لكن لم يتوقف شيء عن العمل.",
+  "logs_screen__quiet_title": "لم يفشل شيء",
+  "logs_screen__quiet_text": [
+    {
+      "declarations": [
+        "input lines",
+        "local linesPlural = lines: plural"
+      ],
+      "selectors": [
+        "linesPlural"
+      ],
+      "match": {
+        "linesPlural=zero": "لا أسطر ({lines}).",
+        "linesPlural=one": "سطر واحد، كله سليم.",
+        "linesPlural=two": "سطران، كلها سليمة.",
+        "linesPlural=few": "{lines} أسطر، كلها سليمة.",
+        "linesPlural=many": "{lines} سطرًا، كلها سليمة.",
+        "linesPlural=other": "{lines} سطر، كلها سليمة."
+      }
+    }
+  ],
+  "logs_screen__busiest": "الجزء الأكثر نشاطًا: {name}",
+  "logs_screen__problems_filtered": "محسوبة من كل الأسطر في هذه الفترة، لا من نتائج البحث فقط.",
+  "logs_screen__problem_where": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "لا مرات ({count})، في {name}",
+        "countPlural=one": "مرة واحدة، في {name}",
+        "countPlural=two": "مرتان، في {name}",
+        "countPlural=few": "{count} مرات، في {name}",
+        "countPlural=many": "{count} مرة، في {name}",
+        "countPlural=other": "{count} مرة، في {name}"
+      }
+    }
+  ],
+  "logs_screen__problem_times": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "لا مرات ({count})",
+        "countPlural=one": "مرة واحدة",
+        "countPlural=two": "مرتان",
+        "countPlural=few": "{count} مرات",
+        "countPlural=many": "{count} مرة",
+        "countPlural=other": "{count} مرة"
+      }
+    }
+  ],
+  "logs_screen__problem_show": "اعرض"
 }

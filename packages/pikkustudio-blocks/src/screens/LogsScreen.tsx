@@ -1,4 +1,4 @@
-import { asI18n, sep, type I18nString } from '@pikku/react'
+import { asI18n, sep, type I18nNode, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { Fragment, useContext, useMemo, useState } from 'react'
 import {
@@ -25,20 +25,25 @@ import {
   type SortingState,
 } from '@tanstack/react-table'
 import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, Columns3, Copy, Download, Search } from 'lucide-react'
+import { Dot } from '../blocks/RowCard'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Switch } from '../ui/switch'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { PageHead } from '../blocks/PageHead'
 import { Segmented } from '../blocks/Segmented'
 import { Page } from '../blocks/Page'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { useProjectKey } from '../lib/project'
 import { ShellCtx } from '../lib/shell'
+import { useSlots } from '../lib/slots'
+import { useProjectTarget } from '../lib/project-target'
+import { ErrorState } from '../blocks/ErrorState'
 
 type Level = 'error' | 'warn' | 'info'
 type Source = 'Server' | 'Website'
 type Entry = { id: number; at: number; level: Level; source: Source; fn: I18nString; wire: I18nString; ms: number | null; trace: I18nString; text: I18nString }
-type Row = { id: number; at: number; level: Level; source: string; wire: string | null; fn: string | null; ms: number | null; trace: string | null; text: string }
+export type LogRow = { id: number; at: number; level: Level; source: string; wire: string | null; fn: string | null; ms: number | null; trace: string | null; text: string }
 const sample = (): { levels: Array<[string, I18nString]>; ranges: Array<[string, I18nString]> } => ({
   levels: [
     ['all', m.logs_screen__level_all()],
@@ -54,7 +59,7 @@ const sample = (): { levels: Array<[string, I18nString]>; ranges: Array<[string,
 })
 
 /** What a log line says, and which function, wire and trace it belongs to, comes from the running app, not from us. */
-const fromRow = (r: Row): Entry => {
+const fromRow = (r: LogRow): Entry => {
   const wire = r.wire ?? ''
   const fn = r.fn ?? ''
   const trace = r.trace ?? ''
@@ -67,7 +72,7 @@ const clock = (at: number): I18nString => {
   return asI18n(time)
 }
 const sourceName = (source: Source): I18nString => (source === 'Server' ? m.logs_screen__source_server() : m.logs_screen__source_website())
-const tone: Record<Level, string> = { error: 'bg-destructive text-white', warn: 'bg-warning text-warning-foreground', info: 'bg-secondary text-ink-2' }
+const levelTone: Record<Level, string> = { error: 'bg-destructive text-white', warn: 'bg-warning text-warning-foreground', info: 'bg-secondary text-ink-2' }
 const name = (level: Level): I18nString => ({ error: m.logs_screen__name_error(), warn: m.logs_screen__name_warn(), info: m.logs_screen__name_info() })[level]
 /** Column titles, as functions so they follow the language. */
 const labels: Record<string, () => I18nString> = {
@@ -114,7 +119,7 @@ const columns = col.columns([
     header: () => labels.level(),
     filterFn: 'equalsString',
     sortFn: (a, b) => severity[a.original.level] - severity[b.original.level],
-    cell: (c) => <span className={`rounded-full px-2.5 py-0.5 text-[12px] font-bold ${tone[c.getValue()]}`}>{name(c.getValue())}</span>,
+    cell: (c) => <span className={`rounded-full px-2.5 py-0.5 text-[12px] font-bold ${levelTone[c.getValue()]}`}>{name(c.getValue())}</span>,
   }),
   col.accessor('source', { header: () => labels.source(), filterFn: 'equalsString', cell: (c) => <span className="text-[14px] text-ink-2">{sourceName(c.getValue())}</span> }),
   col.accessor('wire', { header: () => labels.wire(), filterFn: 'equalsString', cell: (c) => <span dir="ltr" className="rounded-md border border-border px-2 py-0.5 font-mono text-[12px] text-ink-2">{c.getValue()}</span> }),
@@ -129,16 +134,38 @@ const columns = col.columns([
   }),
 ])
 const widths: Record<string, string> = { open: 'w-9', at: 'w-32', level: 'w-26', source: 'w-24', wire: 'w-28', fn: 'w-36', ms: 'w-24', trace: 'w-28' }
-const empty: Entry[] = []
+const empty: LogRow[] = []
+const noEntries: Entry[] = []
+
+export type LogsFeed = { rows: LogRow[]; isPending: boolean; error: unknown; isFetching: boolean; updatedAt: number; retry: () => void }
 
 export function LogsScreen() {
-  const { say } = useContext(ShellCtx)
-  const [range, setRange] = useState('1440')
+  const target = useProjectTarget()
+  const { StageLogs } = useSlots()
+  if (target.kind === 'stage' && StageLogs) return <StageLogs name={target.name} />
+  return <WorkspaceLogs />
+}
+
+function WorkspaceLogs() {
   const [live, setLive] = useState(false)
   const key = useProjectKey()
   const logs = usePikkuQuery('studio:projectLogEntries', { key, limit: 1000 }, { enabled: !!key, refetchInterval: live ? 2000 : false })
-  const rows = useMemo(() => ((logs.data as { entries: Row[] } | undefined)?.entries ?? []).map(fromRow), [logs.data])
-  const now = logs.dataUpdatedAt || Date.now()
+  const feed: LogsFeed = {
+    rows: (logs.data as { entries: LogRow[] } | undefined)?.entries ?? empty,
+    isPending: !!key && logs.isPending,
+    error: logs.error,
+    isFetching: logs.isFetching,
+    updatedAt: logs.dataUpdatedAt,
+    retry: () => void logs.refetch(),
+  }
+  return <LogsView feed={feed} live={live} onLive={setLive} head={<PageHead crumb={m.logs_screen__crumb()} title={m.logs_screen__title()} text={m.logs_screen__text()} size="lead" />} />
+}
+
+export function LogsView({ feed, live, onLive, head }: { feed: LogsFeed; live: boolean; onLive: (on: boolean) => void; head: I18nNode }) {
+  const { say } = useContext(ShellCtx)
+  const [range, setRange] = useState('1440')
+  const rows = useMemo(() => (feed.rows.length ? feed.rows.map(fromRow) : noEntries), [feed.rows])
+  const now = feed.updatedAt || Date.now()
   const [globalFilter, setGlobalFilter] = useState('')
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [sorting, setSorting] = useState<SortingState>([{ id: 'at', desc: true }])
@@ -146,7 +173,7 @@ export function LogsScreen() {
   const [expanded, setExpanded] = useState<ExpandedState>({})
   const [visibility, setVisibility] = useState<ColumnVisibilityState>({ source: false })
   const [picking, setPicking] = useState(false)
-  const inRange = useMemo(() => (rows.length ? rows.filter((r) => now - r.at <= Number(range) * 60_000) : empty), [rows, range, now])
+  const inRange = useMemo(() => (rows.length ? rows.filter((r) => now - r.at <= Number(range) * 60_000) : noEntries), [rows, range, now])
   const table = useTable({
     features,
     columns,
@@ -173,10 +200,20 @@ export function LogsScreen() {
   const copy = (value: string) => void navigator.clipboard?.writeText(value).catch(() => undefined)
   const clear = globalFilter || columnFilters.length > 0
   const from = pagination.pageIndex * pagination.pageSize
+  const functions = useMemo(() => [...new Set(inRange.map((r) => String(r.fn)).filter(Boolean))].sort(), [inRange])
+  const show = (entry: Entry) => {
+    setGlobalFilter('')
+    setColumnFilters([{ id: 'level', value: entry.level }, ...(entry.fn ? [{ id: 'fn', value: String(entry.fn) }] : [])])
+    setSorting([{ id: 'at', desc: true }])
+    const index = inRange.filter((r) => r.level === entry.level && r.fn === entry.fn).sort((a, b) => b.at - a.at).findIndex((r) => r.id === entry.id)
+    setPagination({ pageIndex: Math.max(0, Math.floor(index / pageSize)), pageSize })
+    setExpanded({ [String(entry.id)]: true })
+  }
 
   return (
     <Page gap="snug">
-      <PageHead crumb={m.logs_screen__crumb()} title={m.logs_screen__title()} text={m.logs_screen__text()} size="lead" />
+      {head}
+      {feed.isPending ? null : <LogProblems entries={inRange} filtered={!!clear} onShow={show} />}
 
       <div className="flex flex-wrap items-center gap-3">
         <label className="relative min-w-60 flex-1 basis-72">
@@ -195,11 +232,26 @@ export function LogsScreen() {
           onChange={(v) => setFilter('source', v)}
         />
         <Segmented label={m.logs_screen__time_range()} value={range} options={sample().ranges} onChange={setRange} />
+        {functions.length > 1 ? (
+          <Select value={filter('fn')} onValueChange={(v) => setFilter('fn', v)}>
+            <SelectTrigger shape="pill" aria-label={m.logs_screen__function()} className="max-w-64">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{m.logs_screen__level_all()}</SelectItem>
+              {functions.map((fn) => (
+                <SelectItem key={fn} value={fn}>{asI18n(fn)}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : null}
       </div>
+
+      {feed.error ? <ErrorState error={feed.error} onRetry={feed.retry} retrying={feed.isFetching} /> : null}
 
       <div className="flex flex-wrap items-center gap-4 text-[14px] text-ink-2">
         <label className="flex items-center gap-2.5 font-semibold text-foreground">
-          <Switch checked={live} onCheckedChange={setLive} aria-label={m.logs_screen__live_switch()} />
+          <Switch checked={live} onCheckedChange={onLive} aria-label={m.logs_screen__live_switch()} />
           {m.project_card__live()}
           {live ? <i className="size-2 animate-pulse rounded-full bg-hero" data-hue="teal" aria-hidden="true" /> : null}
         </label>
@@ -341,5 +393,64 @@ export function LogsScreen() {
         </div>
       ) : null}
     </Page>
+  )
+}
+
+type Problem = { latest: Entry; count: number }
+
+const groupOf = (entries: readonly Entry[], level: Level): Problem[] => {
+  const groups = new Map<string, Problem>()
+  for (const e of entries) {
+    if (e.level !== level) continue
+    const key = `${e.fn}\u0000${e.text}`
+    const g = groups.get(key)
+    if (g) g.count += 1
+    else groups.set(key, { latest: e, count: 1 })
+  }
+  return [...groups.values()].sort((a, b) => b.count - a.count)
+}
+
+function LogProblems({ entries, filtered, onShow }: { entries: readonly Entry[]; filtered: boolean; onShow: (entry: Entry) => void }) {
+  const { say } = useContext(ShellCtx)
+  const errors = useMemo(() => groupOf(entries, 'error'), [entries])
+  const warnings = useMemo(() => groupOf(entries, 'warn'), [entries])
+  if (entries.length === 0) return null
+  const errorCount = errors.reduce((n, g) => n + g.count, 0)
+  const warnCount = warnings.reduce((n, g) => n + g.count, 0)
+  const busiest = [...entries.reduce((map, e) => map.set(String(e.fn), (map.get(String(e.fn)) ?? 0) + 1), new Map<string, number>())].filter(([fn]) => fn).sort((a, b) => b[1] - a[1])[0]?.[0]
+  const tone = errorCount ? 'bad' : warnCount ? 'warn' : 'ok'
+  const title = errorCount ? m.logs_screen__problems_title({ count: errorCount }) : warnCount ? m.logs_screen__warnings_title({ count: warnCount }) : m.logs_screen__quiet_title()
+  const text = errorCount ? m.logs_screen__problems_text() : warnCount ? m.logs_screen__warnings_text() : m.logs_screen__quiet_text({ lines: entries.length })
+  const top = [...errors.slice(0, 6), ...warnings.slice(0, 3)]
+  return (
+    <section aria-label={m.logs_screen__problems_label()} className={`flex flex-col gap-3 rounded-card border bg-card px-5 py-4 shadow-card ${tone === 'bad' ? 'border-destructive/40' : tone === 'warn' ? 'border-warning' : 'border-border'}`}>
+      <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+        <Dot tone={tone}>{title}</Dot>
+        <span className="text-[14px] text-ink-2">{text}</span>
+        {busiest ? <span className="ms-auto text-[13px] text-muted-foreground">{m.logs_screen__busiest({ name: asI18n(busiest) })}</span> : null}
+      </div>
+      {filtered ? <p className="text-[13px] text-muted-foreground">{m.logs_screen__problems_filtered()}</p> : null}
+      {top.length ? (
+        <ul className="flex flex-col gap-2">
+          {top.map(({ latest, count }) => (
+            <li key={latest.id} className="flex flex-wrap items-center gap-3 rounded-xl bg-secondary/60 px-3.5 py-2.5">
+              <span className={`rounded-full px-2.5 py-0.5 text-[12px] font-bold ${levelTone[latest.level]}`}>{name(latest.level)}</span>
+              <span className="min-w-0 flex-1 basis-60">
+                <code dir="ltr" className="block truncate font-mono text-[13px]">{latest.text}</code>
+                <small className="block text-[13px] text-ink-2">{latest.fn ? m.logs_screen__problem_where({ count, name: latest.fn }) : m.logs_screen__problem_times({ count })}</small>
+              </span>
+              <Button variant="bordered" size="compact" onClick={() => onShow(latest)}>
+                {m.logs_screen__problem_show()}
+              </Button>
+              {latest.level === 'error' ? (
+                <Button variant="default" size="compact" onClick={() => say(m.logs_screen__fix_say({ text: latest.text }))}>
+                  {m.logs_screen__ask_pikku_fix()}
+                </Button>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </section>
   )
 }

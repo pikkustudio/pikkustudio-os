@@ -3796,5 +3796,87 @@
   "shelf_strip__step_build": "Building",
   "shelf_strip__step_test": "Checking it works",
   "shelf_strip__step_check": "Getting ready",
-  "shelf_strip__step_live": "Going live"
+  "shelf_strip__step_live": "Going live",
+  "logs_screen__problems_label": "What went wrong",
+  "logs_screen__problems_title": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Something went wrong once",
+        "countPlural=other": "Something went wrong {count} times"
+      }
+    }
+  ],
+  "logs_screen__problems_text": "The most common ones are below. Pikku can fix them.",
+  "logs_screen__warnings_title": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Nothing broke, one warning",
+        "countPlural=other": "Nothing broke, {count} warnings"
+      }
+    }
+  ],
+  "logs_screen__warnings_text": "Warnings are worth a look but nothing stopped working.",
+  "logs_screen__quiet_title": "Nothing went wrong",
+  "logs_screen__quiet_text": [
+    {
+      "declarations": [
+        "input lines",
+        "local linesPlural = lines: plural"
+      ],
+      "selectors": [
+        "linesPlural"
+      ],
+      "match": {
+        "linesPlural=one": "One line, all fine.",
+        "linesPlural=other": "{lines} lines, all fine."
+      }
+    }
+  ],
+  "logs_screen__busiest": "Busiest part: {name}",
+  "logs_screen__problems_filtered": "Counted from every line in this time range, not only the ones your search shows.",
+  "logs_screen__problem_where": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Once, in {name}",
+        "countPlural=other": "{count} times, in {name}"
+      }
+    }
+  ],
+  "logs_screen__problem_times": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Once",
+        "countPlural=other": "{count} times"
+      }
+    }
+  ],
+  "logs_screen__problem_show": "Show"
 }
