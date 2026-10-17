@@ -11,7 +11,8 @@ import { ErrorState } from '../blocks/ErrorState'
 import { PikkuDot } from '../blocks/PikkuDot'
 import { useProjectKey, useProjectName } from '../lib/project'
 import { ShellCtx } from '../lib/shell'
-import { toWorkItems, useWorkMeta, WorkList, WorkSkeleton } from './work-shared'
+import { Dot } from '../blocks/RowCard'
+import { failedRunsSay, RecentRuns, toWorkItems, useJobHistory, useWorkMeta, WorkList, WorkSkeleton, type JobRecord, type RunRow } from './work-shared'
 
 function Art() {
   return (
@@ -26,11 +27,21 @@ function Art() {
   )
 }
 
+const jobState = (job: JobRecord): Pick<RunRow, 'tone' | 'state'> =>
+  job.status === 'failed'
+    ? { tone: 'bad', state: m.work_list__went_wrong() }
+    : job.status === 'completed'
+      ? { tone: 'ok', state: m.work_list__went_fine() }
+      : job.status === 'active'
+        ? { tone: 'quiet', state: m.work_list__running() }
+        : { tone: 'quiet', state: m.work_list__waiting() }
+
 export function BackgroundJobsScreen() {
   const key = useProjectKey()
   const projectName = useProjectName()
   const { say } = useContext(ShellCtx)
   const q = useWorkMeta(key)
+  const history = useJobHistory(key)
 
   const head = <PageHead crumb={projectName} title={m.background_jobs__title()} text={m.background_jobs__text()} size="lead" developerDetails />
 
@@ -53,22 +64,34 @@ export function BackgroundJobsScreen() {
   })
   const ask = () => say(m.background_jobs__ask_say())
   const add = () => say(m.background_jobs__add_say())
+  const queues = history.data
+  const titleOf = (name: string) => items.find((i) => i.id === name || wires[i.id]?.name === name)?.title ?? name
+  const runRows: RunRow[] = Object.entries(queues ?? {})
+    .flatMap(([name, q]) => q.recent.map((job) => ({ name, job })))
+    .sort((a, b) => new Date(b.job.createdAt).getTime() - new Date(a.job.createdAt).getTime())
+    .map(({ name, job }) => ({ id: `${name}-${job.jobId}`, title: titleOf(name), at: job.finishedAt ?? job.processedAt ?? job.createdAt, error: job.error, ...jobState(job) }))
+  const failed = runRows.filter((r) => r.tone === 'bad').length
+  const fixAll = () => say(failedRunsSay(runRows))
   const title = q.isPending
     ? m.background_jobs__hero_loading()
-    : items.length === 0
-      ? m.background_jobs__hero_none()
-      : items.length === 1
-        ? m.background_jobs__hero_one()
-        : m.background_jobs__hero_many({ count: items.length })
+    : failed === 1
+      ? m.work_list__hero_failed_one()
+      : failed > 1
+        ? m.work_list__hero_failed_many({ count: failed })
+        : items.length === 0
+          ? m.background_jobs__hero_none()
+          : items.length === 1
+            ? m.background_jobs__hero_one()
+            : m.background_jobs__hero_many({ count: items.length })
 
   return (
     <Page gap="snug">
       {head}
-      <NextCard label={m.background_jobs__title()} hue="petrol" art={<Art />} title={title} why={items.length ? m.background_jobs__why() : m.background_jobs__why_none()}>
+      <NextCard label={m.background_jobs__title()} hue="petrol" art={<Art />} title={title} why={failed ? m.work_list__why_failed() : items.length ? m.background_jobs__why() : m.background_jobs__why_none()}>
         <div>
-          <Button variant="hero" size="pageLg" type="button" onClick={items.length ? ask : add}>
+          <Button variant="hero" size="pageLg" type="button" onClick={failed ? fixAll : items.length ? ask : add}>
             <PikkuDot />
-            {items.length ? m.background_jobs__hero_ask() : m.background_jobs__hero_add()}
+            {failed ? m.work_list__fix_all() : items.length ? m.background_jobs__hero_ask() : m.background_jobs__hero_add()}
           </Button>
         </div>
       </NextCard>
@@ -91,10 +114,21 @@ export function BackgroundJobsScreen() {
           noDescription={m.work_list__no_description()}
           side={(id) => {
             const at = wires[id].config?.batchSize
-            return at && at > 1 ? <span className="text-px14 font-semibold text-ink-2">{m.background_jobs__at_once({ count: at })}</span> : null
+            const counts = (queues?.[id] ?? queues?.[wires[id].name])?.counts
+            const waiting = counts ? counts.waiting + counts.delayed : 0
+            return (
+              <span className="flex flex-col items-end gap-1">
+                {at && at > 1 ? <span className="text-px14 font-semibold text-ink-2">{m.background_jobs__at_once({ count: at })}</span> : null}
+                {counts?.active ? <Dot tone="quiet">{m.background_jobs__working_count({ count: counts.active })}</Dot> : null}
+                {waiting ? <Dot tone="quiet">{m.background_jobs__waiting_count({ count: waiting })}</Dot> : null}
+                {counts?.failed ? <Dot tone="bad">{m.background_jobs__failed_count({ count: counts.failed })}</Dot> : null}
+              </span>
+            )
           }}
         />
       )}
+
+      {!q.isPending && items.length > 0 && history.isSuccess ? <RecentRuns rows={runRows} icon={Layers} /> : null}
     </Page>
   )
 }

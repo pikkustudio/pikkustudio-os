@@ -1,11 +1,15 @@
 import { asI18n, type I18nNode, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
-import { useState, type ComponentType } from 'react'
+import { useContext, useState, type ComponentType } from 'react'
 import { Search } from 'lucide-react'
 import { Input } from '../ui/input'
-import { RowCard, RowStack } from '../blocks/RowCard'
+import { Button } from '../ui/button'
+import { RowCard, RowStack, Dot } from '../blocks/RowCard'
+import { PikkuDot } from '../blocks/PikkuDot'
 import { useProjectQuery } from '../lib/projectRpc'
 import { useDeveloperDetails } from '../lib/developer-details'
+import { ShellCtx } from '../lib/shell'
+import { ago } from '../lib/virtualUsers'
 
 type Wire = { name: string; pikkuFuncId: string; packageName?: string; title?: string; summary?: string; description?: string }
 export type TimedWire = Wire & { schedule: string }
@@ -15,6 +19,73 @@ type WorkMeta = { functions?: Fn[]; schedulerMeta?: Record<string, TimedWire>; q
 
 /** Same query, and so the same cache entry, as the other screens that read the project's meta. */
 export const useWorkMeta = (key: string) => useProjectQuery<WorkMeta>(key, 'console:getAllMeta', {})
+
+export type TaskRun = { startedAt: string; status: 'completed' | 'failed' | 'skipped'; durationMs: number; error: string | null }
+export type TaskRuns = { nextRun: string | null; lastRun: TaskRun | null; history: TaskRun[] }
+export type JobStatus = 'waiting' | 'active' | 'completed' | 'failed' | 'delayed'
+export type JobRecord = { jobId: string; status: JobStatus; attemptsMade: number; maxAttempts: number; createdAt: string; processedAt: string | null; finishedAt: string | null; durationMs: number | null; error: string | null }
+export type QueueInspection = { counts: Record<JobStatus, number>; recent: JobRecord[] }
+
+const HISTORY_POLL_MS = 15_000
+
+/** Run history the project keeps. A project on an older Pikku has no such call, so a failure just leaves the history out. */
+export const useTimedHistory = (key: string) =>
+  useProjectQuery<Record<string, TaskRuns>>(key, 'admin:getSchedulerHistory', undefined, { optional: true, handlesErrors: true, refetchInterval: HISTORY_POLL_MS })
+
+export const useJobHistory = (key: string) =>
+  useProjectQuery<Record<string, QueueInspection>>(key, 'admin:getQueueHistory', { limit: 20 }, { optional: true, handlesErrors: true, refetchInterval: HISTORY_POLL_MS })
+
+export type RunTone = 'ok' | 'bad' | 'quiet'
+export type RunRow = { id: string; title: string; at: string; tone: RunTone; state: I18nString; error: string | null }
+
+const SHOWN_RUNS = 8
+
+/** Newest runs first, each its own card; one that went wrong is flagged and offers Pikku's fix. */
+export function RecentRuns({ rows, icon: Icon }: { rows: RunRow[]; icon: ComponentType<{ className?: string }> }) {
+  const { say } = useContext(ShellCtx)
+  const [technical] = useDeveloperDetails()
+  const [all, setAll] = useState(false)
+  const shown = all ? rows : rows.slice(0, SHOWN_RUNS)
+  return (
+    <Group title={m.work_list__recent()}>
+      {rows.length === 0 ? (
+        <p className="px-1 text-px15 text-ink-2">{m.work_list__no_runs()}</p>
+      ) : (
+        <RowStack>
+          {shown.map((r) => (
+            <RowCard
+              key={r.id}
+              flag={r.tone === 'bad'}
+              tile={<Icon className="size-5" />}
+              title={asI18n(r.title)}
+              caption={ago(r.at)}
+              note={r.error && (r.tone === 'bad' || technical) ? m.work_list__it_said({ error: asI18n(r.error) }) : undefined}
+            >
+              <Dot tone={r.tone}>{r.state}</Dot>
+              {r.tone === 'bad' ? (
+                <Button variant="bordered" size="compact" type="button" onClick={() => say(m.work_list__fix_say({ title: asI18n(r.title), when: ago(r.at), error: asI18n(r.error ?? '') }))}>
+                  <PikkuDot />
+                  {m.work_list__fix()}
+                </Button>
+              ) : null}
+            </RowCard>
+          ))}
+        </RowStack>
+      )}
+      {rows.length > SHOWN_RUNS ? (
+        <div className="px-1">
+          <Button variant="quiet" size="link" type="button" aria-expanded={all} onClick={() => setAll((v) => !v)}>
+            {all ? m.work_list__fewer_runs() : m.work_list__all_runs({ count: rows.length })}
+          </Button>
+        </div>
+      ) : null}
+    </Group>
+  )
+}
+
+/** What to tell Pikku when several recent runs went wrong. */
+export const failedRunsSay = (rows: RunRow[]) =>
+  m.work_list__fix_all_say({ list: asI18n(rows.filter((r) => r.tone === 'bad').map((r) => `- ${r.title}: ${r.error ?? ''}`).join('\n')) })
 
 /** Names come from the project's own code, so they are not ours to translate. */
 const nice = (name: string) => {
