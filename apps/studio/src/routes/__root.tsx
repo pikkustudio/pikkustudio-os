@@ -20,7 +20,6 @@ import { TeamGuard } from '@pikkustudio/blocks/blocks/TeamGuard'
 import { useAccount } from '@pikkustudio/blocks/lib/onboarding'
 import { StudioLoading } from '@pikkustudio/blocks/blocks/StudioLoading'
 import { validateStudioSearch } from '@pikkustudio/blocks/lib/search'
-import { CustomizeMount } from '@/components/CustomizeMount'
 import { paletteScript, schemeScript } from '@pikkustudio/theme'
 import globals from '@/styles/globals.css?url'
 
@@ -123,7 +122,6 @@ function RootDocument({ children }: { children: ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: paletteScript }} />
       </head>
       <body>
-        <CustomizeMount>
         <DirectionProvider dir={dir}>
         <PreferencesContext.Provider value={{ locale, themeId: 'default', setLocale, setThemeId: () => {} }}>
           <QueryClientProvider client={queryClient}>
@@ -137,7 +135,6 @@ function RootDocument({ children }: { children: ReactNode }) {
           </QueryClientProvider>
         </PreferencesContext.Provider>
         </DirectionProvider>
-        </CustomizeMount>
         <Scripts />
       </body>
     </html>
