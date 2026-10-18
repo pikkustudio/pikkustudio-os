@@ -3,6 +3,7 @@ name: Desktop
 on:
   push:
     branches: [main]
+    tags: ['v*']
 
 jobs:
   desktop:
@@ -53,3 +54,16 @@ jobs:
           name: studio-${{ matrix.target }}-${{ github.sha }}
           path: ${{ matrix.paths }}
           if-no-files-found: error
+      - name: Upload to R2
+        if: github.ref_type == 'tag' && matrix.target == 'macos'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          AWS_ENDPOINT_URL: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+        run: |
+          v="${GITHUB_REF_NAME#v}"
+          dmg=$(ls apps/studio/src-tauri/target/release/bundle/dmg/*.dmg)
+          aws s3 cp "$dmg" "s3://prod-builds/studio-os/$v/Pikku-Studio-OS-$v-arm64.dmg"
+          echo "{\"version\":\"$v\"}" > latest.json
+          aws s3 cp latest.json s3://prod-builds/studio-os/latest.json --content-type application/json
