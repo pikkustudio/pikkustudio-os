@@ -61,7 +61,7 @@ export const askLiveApp = <T,>(type: string, extra: Record<string, unknown>, tim
       reject(new Error(`The preview did not answer "${type}". It is running an older Studio picker; restarting the app loads the new one.`))
     }, timeout)
     window.addEventListener('message', onMessage)
-    frame.contentWindow.postMessage({ source: 'fabric-console', type, id, ...extra }, '*')
+    frame.contentWindow.postMessage({ source: 'cloud-console', type, id, ...extra }, '*')
   })
 
 const pickedOf = (data: Record<string, unknown>): PickedElement => ({
@@ -90,7 +90,7 @@ const useInspect = ({ mode, styles, marks, onPick, onWording }: Inspect) => {
   useEffect(() => {
     const node = frame.current
     if (!node) return
-    const post = (message: Record<string, unknown>) => node.contentWindow?.postMessage({ source: 'fabric-console', ...message }, '*')
+    const post = (message: Record<string, unknown>) => node.contentWindow?.postMessage({ source: 'cloud-console', ...message }, '*')
     const sync = () => {
       post({ type: 'set-inspect-mode', mode })
       post({ type: 'set-styles', rules: JSON.parse(rules) })

@@ -9,7 +9,7 @@ import { StudioProjectsService, type AccountProvider, type CloudProject } from '
 const target: PublishTarget = {
   id: 'cloud',
   readiness: (project, account) => (!account.signedIn ? 'sign-in' : !project.cloudProjectId ? 'not-in-cloud' : 'ready'),
-  deploy: (from, run, onLine) => run('npx', ['pikku', 'fabric', 'deploy', 'apply', '-y'], from, onLine),
+  deploy: (from, run, onLine) => run('npx', ['pikku', 'cloud', 'deploy', 'apply', '-y'], from, onLine),
 }
 import { publishPrompt, StudioPublisher, type PublishTarget, type Runner } from '../../src/services/publish.js'
 
@@ -22,7 +22,7 @@ const account = (signedIn: boolean, cloud: CloudProject[]): AccountProvider => (
   pollSignIn: async () => 'confirmed',
   locate: async (path, cloud) => {
     try {
-      const projectId = JSON.parse(await readFile(join(path, 'pikku.config.json'), 'utf8')).fabric?.projectId as string | undefined
+      const projectId = JSON.parse(await readFile(join(path, 'pikku.config.json'), 'utf8')).cloud?.projectId as string | undefined
       if (projectId) return { projectId, project: cloud.find((p) => p.projectId === projectId) ?? null }
     } catch {}
     try {
@@ -35,7 +35,7 @@ const account = (signedIn: boolean, cloud: CloudProject[]): AccountProvider => (
     }
   },
   adopt: async (projectId, path) => {
-    await writeFile(join(path, 'pikku.config.json'), JSON.stringify({ fabric: { projectId } }, null, 2) + '\n')
+    await writeFile(join(path, 'pikku.config.json'), JSON.stringify({ cloud: { projectId } }, null, 2) + '\n')
   },
   signOut: async () => {},
 })
@@ -95,7 +95,7 @@ describe('StudioPublisher', () => {
     assert.equal(job.phase, 'deploy')
     assert.ok(job.startedAt)
     assert.deepEqual(calls.map((c) => c.split(' ').slice(0, 2).join(' ')), ['git add', 'git -c', 'git push', 'npx pikku'])
-    assert.equal(calls[3], 'npx pikku fabric deploy apply -y')
+    assert.equal(calls[3], 'npx pikku cloud deploy apply -y')
   })
 
   test('reports a failed step', async () => {

@@ -16,7 +16,7 @@ const fakeAccount = (projects: CloudProject[]): AccountProvider => ({
   pollSignIn: async () => 'confirmed',
   locate: async (path, cloud) => {
     try {
-      const projectId = JSON.parse(await readFile(join(path, 'pikku.config.json'), 'utf8')).fabric?.projectId as string | undefined
+      const projectId = JSON.parse(await readFile(join(path, 'pikku.config.json'), 'utf8')).cloud?.projectId as string | undefined
       if (projectId) return { projectId, project: cloud.find((p) => p.projectId === projectId) ?? null }
     } catch {}
     try {
@@ -29,7 +29,7 @@ const fakeAccount = (projects: CloudProject[]): AccountProvider => ({
     }
   },
   adopt: async (projectId, path) => {
-    await writeFile(join(path, 'pikku.config.json'), JSON.stringify({ fabric: { projectId } }, null, 2) + '\n')
+    await writeFile(join(path, 'pikku.config.json'), JSON.stringify({ cloud: { projectId } }, null, 2) + '\n')
   },
   signOut: async () => {},
 })
@@ -418,7 +418,7 @@ describe('StudioProjectsService', () => {
     assert.equal(project.location, 'both')
     assert.ok(existsSync(join(project.path!, 'package.json')))
     const config = JSON.parse(await readFile(join(project.path!, 'pikku.config.json'), 'utf8'))
-    assert.equal(config.fabric.projectId, 'p-blog')
+    assert.equal(config.cloud.projectId, 'p-blog')
     const opened = await service.open(project.key)
     assert.match(await readFile(join(opened.worktree, 'pikku.config.json'), 'utf8'), /p-blog/)
     service.close(project.key)

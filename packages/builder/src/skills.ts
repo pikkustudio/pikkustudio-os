@@ -7,7 +7,7 @@ import { STUDIO_SKILLS } from './studio-skills.js'
 import { createHash } from 'node:crypto'
 import { listSkillFiles, listSkillNames, readSkillFile, SKILL_FILES } from '@pikku/skills'
 
-const CLOUD_ONLY = /fabric/
+const CLOUD_ONLY = /cloud/
 
 export const builderHome = () => process.env.PIKKU_BUILDER_HOME ?? join(homedir(), '.pikku', 'builder')
 
