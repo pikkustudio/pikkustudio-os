@@ -47,7 +47,7 @@ export async function installArtifact(
   await rm(staging, { recursive: true, force: true })
   await mkdir(staging, { recursive: true })
   try {
-    await extractArchive(await Bun.file(part).bytes(), artifact.format, staging)
+    await extractArchive(part, artifact.format, staging)
     for (const bin of artifact.bin) await chmod(join(staging, bin), 0o755)
     await clearQuarantine(staging)
     const record: InstalledRecord = { sha256: artifact.sha256, url: artifact.url, installedAt: new Date().toISOString() }
