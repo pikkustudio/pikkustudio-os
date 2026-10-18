@@ -10,13 +10,16 @@ export interface BuilderAi {
   proxy?: { url: string; key: string }
 }
 
-export const EXTENSIONS = ['proxy-provider.mjs', 'codegen-diagnostics.mjs', 'edit-files-extension.mjs', 'write-files-extension.mjs', 'navigate-extension.mjs', 'heal-report-extension.mjs']
+export const EXTENSIONS = ['proxy-provider.mjs', 'codegen-diagnostics.mjs', 'edit-files-extension.mjs', 'write-files-extension.mjs', 'navigate-extension.mjs', 'heal-report-extension.mjs', 'studio-mcp-extension.mjs']
+
+const WRITE_ONLY_EXTENSIONS = ['studio-mcp-extension.mjs']
 
 export const packageRoot = join(dirname(fileURLToPath(import.meta.url)), '..')
 
 export const extensionsDir = () => process.env.PIKKU_BUILDER_EXTENSIONS ?? join(packageRoot, 'extensions')
 
-export const extensionPaths = () => EXTENSIONS.map((name) => join(extensionsDir(), name))
+export const extensionPaths = (role?: 'explore' | 'inspect') =>
+  EXTENSIONS.filter((name) => !role || !WRITE_ONLY_EXTENSIONS.includes(name)).map((name) => join(extensionsDir(), name))
 
 export const TALK = [
   'How you talk to the owner: they are not a developer and have never opened a code editor.',
@@ -135,7 +138,7 @@ export function piArgs(options: { ai?: BuilderAi; skills: string; mode?: 'rpc'; 
   if (options.role === 'inspect') args.push('--approve', '--no-skills', '--no-context-files', '--append-system-prompt', INSPECT_PROMPT)
   else if (options.role) args.push('--approve', '--no-skills', '--no-context-files', '--skill', directionsSkill(), '--append-system-prompt', EXPLORE_PROMPT)
   else args.push('--approve', '--skill', options.skills, '--append-system-prompt', options.scope && options.scope !== 'build' ? [MODE_PROMPTS[options.scope], TALK, options.briefing].filter(Boolean).join('\n\n') : SYSTEM_PROMPT)
-  for (const path of extensionPaths()) args.push('-e', path)
+  for (const path of extensionPaths(options.role)) args.push('-e', path)
   if (options.session) args.push('--session-id', options.session.replace(/[^A-Za-z0-9_.-]/g, '-'))
   if (options.ai?.proxy) args.push('--provider', 'pikku-proxy')
   else if (options.ai?.provider && options.ai.model) args.push('--provider', PROVIDERS[options.ai.provider] ?? options.ai.provider)
