@@ -163,3 +163,27 @@ describe('builder work across a wake', () => {
     assert.ok(result.error)
   })
 })
+
+describe('a workspace checkout worked in place', () => {
+  test('the builder works on the checkout branch itself, and keeping commits there', async () => {
+    const repo = mkdtempSync(join(tmpdir(), 'studio-inplace-'))
+    const sh = (cwd: string, ...args: string[]) => execFileSync('git', args, { cwd, encoding: 'utf8' }).trim()
+    sh(repo, 'init', '-q', '-b', 'develop')
+    writeFileSync(join(repo, 'app.ts'), 'one\n')
+    sh(repo, 'add', '-A')
+    sh(repo, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '-m', 'start')
+    process.env.PIKKU_STUDIO_IN_PLACE = '1'
+    try {
+      const worktree = await ensureWorktree(repo, mkdtempSync(join(tmpdir(), 'studio-home-')), 'app')
+      assert.equal(worktree.branch, 'develop')
+      assert.equal(sh(worktree.path, 'rev-parse', '--show-toplevel'), sh(repo, 'rev-parse', '--show-toplevel'))
+      writeFileSync(join(worktree.path, 'app.ts'), 'two\n')
+      assert.equal((await keepStatus(repo, worktree)).unsaved, 1)
+      assert.deepEqual(await keepChanges(repo, worktree), { ok: true, kept: 1 })
+      assert.equal(sh(repo, 'log', '-1', '--format=%s'), 'Changes from the builder')
+      assert.deepEqual(sh(repo, 'branch', '--format=%(refname:short)').split('\n'), ['develop'])
+    } finally {
+      delete process.env.PIKKU_STUDIO_IN_PLACE
+    }
+  })
+})

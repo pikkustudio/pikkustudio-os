@@ -147,6 +147,19 @@ export async function ensureWorktree(
   await restoreChanges(repo, studioHome)
   const prefix = await git(repo, 'rev-parse', '--show-prefix')
   const path = join(studioHome, 'worktrees', id)
+  // A checkout that is already the person's own isolated workspace (a cloud workspace on its own
+  // branch) is worked in directly, so the branch they picked is the one they see the builder's work on.
+  // A builder worktree made before this keeps being used, so the work on it is not hidden.
+  if (process.env.PIKKU_STUDIO_IN_PLACE === '1' && !existsSync(path)) {
+    const top = await git(repo, 'rev-parse', '--show-toplevel')
+    const common = await git(top, 'rev-parse', '--git-common-dir')
+    return {
+      path: top,
+      branch: (await tryGit(top, 'symbolic-ref', '--short', '-q', 'HEAD')).output || 'HEAD',
+      gitDir: isAbsolute(common) ? common : resolve(top, common),
+      projectDir: prefix ? join(top, prefix.replace(/\/$/, '')) : top,
+    }
+  }
   const branch = `studio/${id}`
   // The studio home outlives the checkout: a sandbox that wakes re-clones the repo, and the worktree
   // folder left behind then names a git directory that is gone. Set the folder aside (it may hold
@@ -259,9 +272,11 @@ export async function keepChanges(repo: string, worktree: StudioWorktree, env: R
   const folder = await git(repo, 'rev-parse', '--show-toplevel')
   await trackLargeFiles(worktree.path).catch(() => [])
   await git(worktree.path, 'add', '-A', ...SCRATCH)
-  if (!(await tryGit(worktree.path, 'diff', '--cached', '--quiet')).ok) {
+  const dirty = !(await tryGit(worktree.path, 'diff', '--cached', '--quiet')).ok
+  if (dirty) {
     await git(worktree.path, ...IDENTITY, 'commit', '-q', '--no-verify', '-m', 'Changes from the builder')
   }
+  if (resolve(worktree.path) === resolve(folder)) return { ok: true, kept: dirty ? 1 : 0 }
   const head = await git(folder, 'rev-parse', 'HEAD')
   const synced = await tryGit(worktree.path, ...IDENTITY, 'merge', '-q', '--no-edit', head)
   if (!synced.ok) {
