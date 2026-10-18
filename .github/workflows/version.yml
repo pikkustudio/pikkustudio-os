@@ -1,0 +1,31 @@
+name: Version
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: version-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+jobs:
+  version:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.1
+      - uses: changesets/action@v1
+        with:
+          version: sh scripts/version.sh
+          publish: sh scripts/tag-release.sh
+          title: Version Packages
+          commit: Version Packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -312,6 +312,11 @@
         "react": "^19.0.0",
       },
     },
+    "packages/release": {
+      "name": "@pikkustudio/release-os",
+      "version": "0.0.0",
+    },
+
     "packages/supervisor": {
       "name": "@pikkustudio/supervisor",
       "version": "0.0.1",
@@ -864,6 +869,8 @@
     "@pikkustudio/builder": ["@pikkustudio/builder@workspace:packages/builder"],
 
     "@pikkustudio/design-server": ["@pikkustudio/design-server@workspace:packages/design-server"],
+
+    "@pikkustudio/release-os": ["@pikkustudio/release-os@workspace:packages/release"],
 
     "@pikkustudio/supervisor": ["@pikkustudio/supervisor@workspace:packages/supervisor"],
 
