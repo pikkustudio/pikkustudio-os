@@ -254,7 +254,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
   const ChatPublishStatus = slots.ChatPublishStatus
   const { openWorkspace } = useProjectTarget()
   const chat = workMode ? builder : guide
-  const changesQ = useProjectQuery<{ changes: { changeId: string; title: string; body: string | null; status: string; createdAt: string }[] }>(projectKey, 'console:listStudioChanges', { status: ['open', 'claimed', 'needs_answer', 'in_progress'] }, { refetchInterval: 6000 })
+  const changesQ = useProjectQuery<{ changes: { changeId: string; title: string; body: string | null; status: string; createdAt: string }[] }>(projectKey, 'console:listStudioChanges', { status: ['open', 'claimed', 'needs_answer', 'in_progress'] }, { refetchInterval: 6000, handlesErrors: true })
   const pending = (changesQ.data?.changes ?? []).map((c) => {
     const title = asI18n(c.title)
     const text = c.body
