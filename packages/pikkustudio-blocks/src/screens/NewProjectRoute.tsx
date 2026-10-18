@@ -2,7 +2,7 @@ import { m } from '@/i18n/messages'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
-import { newProjectName, useAttachFile, useProjectRun, useStartProjectRun } from '../lib/onboarding'
+import { newProjectName, useAttachFile, useProjectRun, useStartProjectRun, type ProjectRun } from '../lib/onboarding'
 import { useNoteRun } from '../lib/project-flow'
 import { OnbCtx, type OnbState, type Uses } from './OnboardingLayout'
 import { NewProjectScreen } from './NewProjectScreen'
@@ -20,6 +20,7 @@ export function NewProjectRoute() {
           : 'loading'
         : 'normal'
   const [override, setSt] = useState<OnbState | null>(null)
+  const [failure, setFailure] = useState('')
   useEffect(() => setSt(null), [base])
   const st = override ?? base
   const [idea, setIdea] = useState('')
@@ -45,6 +46,7 @@ export function NewProjectRoute() {
 
   const begin = async (key?: string, path?: 'interview') => {
     setSt('loading')
+    setFailure('')
     const name = newProjectName()
     let uploadId: string | undefined
     try {
@@ -54,7 +56,13 @@ export function NewProjectRoute() {
     }
     start.mutate(
       { name, idea: idea.trim(), ...(uploadId ? { uploadId } : {}), ...(key ? { key } : {}), surfaces: uses.surfaces, ...(uses.surfaces.includes('screens') ? { devices: uses.devices } : {}), ...(path ? { path } : {}) },
-      { onSuccess: (r: { runId: string }) => set({ run: r.runId, path }), onError: () => setSt('error') },
+      {
+        onSuccess: (r: { runId: string }) => set({ run: r.runId, path }),
+        onError: (e: Error) => {
+          setFailure(e.message)
+          setSt('error')
+        },
+      },
     )
   }
 
@@ -92,7 +100,7 @@ export function NewProjectRoute() {
         files,
         setFiles,
         example: m.onboarding__example(),
-        run: run.data,
+        run: run.data ?? (failure ? ({ error: failure } as ProjectRun) : undefined),
       }}
     >
       <NewProjectScreen />
