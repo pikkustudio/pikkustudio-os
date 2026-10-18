@@ -13,7 +13,7 @@ import { StateScreen } from './StateScreen'
 export type AppNotRunningState = 'off' | 'starting' | 'failed'
 
 export type LaunchWhere = 'cloud' | 'local'
-export type StageWayOut = { name: string; onPublish: () => void; onWorkspace: () => void }
+export type StageWayOut = { name: string; onPublish: () => void; onWorkspace: () => void; outdated?: boolean }
 export type LaunchChoices = { primary: LaunchWhere; onPick: (where: LaunchWhere) => void; cloudOff?: boolean }
 
 export type LaunchPhase = 'machine' | 'studio' | 'sync' | 'project' | 'connect'
@@ -203,12 +203,14 @@ export function AppNotRunning({
   }
 
   if (stage) {
-    const title = m.project_launch__stage_title({ name: asI18n(stage.name) })
+    const name = asI18n(stage.name)
+    const title = stage.outdated ? m.project_launch__stage_outdated_title({ name }) : m.project_launch__stage_title({ name })
+    const why = stage.outdated ? m.project_launch__stage_outdated_why({ name }) : m.project_launch__stage_why({ name })
     return (
-      <StateScreen label={title} hue="teal" art={<Art state="off" />} title={title} why={m.project_launch__stage_why({ name: asI18n(stage.name) })}>
+      <StateScreen label={title} hue="teal" art={<Art state="off" />} title={title} why={why}>
         <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-3" data-testid="stage-not-live">
           <Button variant="hero" size="page" type="button" onClick={stage.onPublish}>
-            {m.project_launch__stage_publish()}
+            {stage.outdated ? m.project_launch__stage_publish_again() : m.project_launch__stage_publish()}
           </Button>
           <Button variant="heroGhost" size="page" type="button" onClick={stage.onWorkspace}>
             {m.project_launch__stage_workspace()}

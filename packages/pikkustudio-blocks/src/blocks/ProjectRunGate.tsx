@@ -6,7 +6,8 @@ import { m } from '@/i18n/messages'
 import { useNavigate } from '@tanstack/react-router'
 import { isCloudKeyOf, useProjectKey } from '../lib/project'
 import { DEFAULT_TARGET, formatTarget, useProjectTarget } from '../lib/project-target'
-import { AppNotRunning, CLOUD_LAUNCH, LOCAL_LAUNCH, launchSteps, phaseLabel, type LaunchPhase, type LaunchWhere } from './AppNotRunning'
+import { useProjectQuery } from '../lib/projectRpc'
+import { AppNotRunning, CLOUD_LAUNCH, LOCAL_LAUNCH, launchSteps, phaseLabel, type LaunchPhase, type LaunchWhere, type StageWayOut } from './AppNotRunning'
 import { useTeamProjects, type ListedProject } from './TeamProjects'
 
 type LiveApp = { slug: string; state: 'starting' | 'ready' | 'failed' }
@@ -24,16 +25,23 @@ export function ProjectRunGate({ children }: { children: I18nNode }) {
   const navigate = useNavigate()
   const project = useTeamProjects().data?.find((p) => isCloudKeyOf(p, key))
   if (target.kind === 'stage') {
-    if (target.live !== false) return <>{children}</>
     const wayOut = {
       name: target.name,
       onPublish: () => navigate({ to: '/publish' as never, search: ((prev: object) => prev) as never }),
       onWorkspace: () => target.openWorkspace?.(),
     }
+    if (target.live !== false) return <StageGate stage={wayOut}>{children}</StageGate>
     return <AppNotRunning state="off" onStart={wayOut.onWorkspace} stage={wayOut} />
   }
   if (!key || !project) return <>{children}</>
   return key.startsWith('cloud:') ? <CloudGate project={{ ...project, key }}>{children}</CloudGate> : <LocalGate project={project}>{children}</LocalGate>
+}
+
+function StageGate({ stage, children }: { stage: StageWayOut; children: I18nNode }) {
+  const meta = useProjectQuery(useProjectKey(), 'console:getAllMeta', {}, { handlesErrors: true })
+  const status = (meta.error as { status?: number } | null)?.status ?? 0
+  if (status === 500) return <AppNotRunning state="off" onStart={stage.onWorkspace} stage={{ ...stage, outdated: true }} />
+  return <>{children}</>
 }
 
 function CloudGate({ project, children }: { project: ListedProject; children: I18nNode }) {
