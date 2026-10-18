@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react'
 import { useLocation } from '@tanstack/react-router'
 import { useProjectSlug } from './project'
 
-export const MOVABLE = ['virtual-users', 'translations', 'artifacts', 'content', 'front-doors', 'audit', 'emails', 'knowledge', 'publish'] as const
+export const MOVABLE = ['virtual-users', 'translations', 'artifacts', 'content', 'front-doors', 'audit', 'emails', 'inbox', 'knowledge', 'publish'] as const
 export type Movable = (typeof MOVABLE)[number]
 
-const DEFAULT_ON: readonly Movable[] = ['emails', 'knowledge', 'publish']
+const DEFAULT_ON: readonly Movable[] = ['emails', 'inbox', 'knowledge', 'publish']
 
 const key = (slug: string) => `studio:pins:${slug}`
 const offKey = (slug: string) => `studio:pins-off:${slug}`

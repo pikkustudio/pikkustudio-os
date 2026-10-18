@@ -45,7 +45,7 @@ import { ChecksCard, MilestoneCard, OpenScreenCard } from '../blocks/BuilderCard
 import { useCanEdit, useProjectTarget } from '../lib/project-target'
 import { useStickToBottom } from '../lib/stick-to-bottom'
 import { useComposerExtras } from '../lib/composer-extras'
-import { GitPullRequest, Archive, type LucideIcon, ArrowDown, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, History, Home, Info, Compass, KeyRound, ListChecks, Search, Laptop, LayoutGrid, Mail, MessageCircle, MessageCircleQuestion, MousePointer2, Palette, ShieldCheck, Smartphone, Upload, PanelLeftClose, PanelLeftOpen, Menu, User, UserRoundCheck, Wrench, X, CheckCheck, ScrollText } from 'lucide-react'
+import { GitPullRequest, Archive, Inbox, type LucideIcon, ArrowDown, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, History, Home, Info, Compass, KeyRound, ListChecks, Search, Laptop, LayoutGrid, Mail, MessageCircle, MessageCircleQuestion, MousePointer2, Palette, ShieldCheck, Smartphone, Upload, PanelLeftClose, PanelLeftOpen, Menu, User, UserRoundCheck, Wrench, X, CheckCheck, ScrollText } from 'lucide-react'
 
 // The app shell: rail, preview drawer (right edge), Pikku button + bubble, side panels.
 // Every screen route is a child of this layout. Page content lives in the route files.
@@ -57,8 +57,8 @@ import { GitPullRequest, Archive, type LucideIcon, ArrowDown, ArrowLeft, ArrowRi
 
 const item =
   'flex w-full items-center gap-3 rounded-lg px-3 group-data-[collapsed]/rail:justify-center group-data-[collapsed]/rail:px-0 text-start font-semibold no-underline transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'
-const PIN_ICON: Record<Movable, LucideIcon> = { 'virtual-users': UserRoundCheck, translations: Globe, artifacts: FileText, content: FolderOpen, 'front-doors': Smartphone, audit: History, emails: Mail, knowledge: BookOpen, publish: Upload }
-const pinLabel = (id: Movable): I18nString => ({ 'virtual-users': m.quick_find__virtual_users, translations: m.quick_find__translations, artifacts: SCREEN_NAME.artifacts, content: m.content__title, 'front-doors': m.front_doors__title, audit: m.quick_find__audit, emails: SCREEN_NAME.emails, knowledge: SCREEN_NAME.knowledge, publish: m.shell_layout__publish })[id]()
+const PIN_ICON: Record<Movable, LucideIcon> = { 'virtual-users': UserRoundCheck, translations: Globe, artifacts: FileText, content: FolderOpen, 'front-doors': Smartphone, audit: History, emails: Mail, inbox: Inbox, knowledge: BookOpen, publish: Upload }
+const pinLabel = (id: Movable): I18nString => ({ 'virtual-users': m.quick_find__virtual_users, translations: m.quick_find__translations, artifacts: SCREEN_NAME.artifacts, content: m.content__title, 'front-doors': m.front_doors__title, audit: m.quick_find__audit, emails: SCREEN_NAME.emails, inbox: m.inbox__title, knowledge: SCREEN_NAME.knowledge, publish: m.shell_layout__publish })[id]()
 const navItem = `${item} h-9.25 text-[14px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`
 const lbl = 'group-data-[collapsed]/rail:hidden'
 const RAIL_KEY = 'studio.rail.collapsed'

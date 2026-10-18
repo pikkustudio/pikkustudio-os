@@ -2,7 +2,7 @@ import { type I18nString, asI18n } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { Activity, BellRing, BookOpen, ClipboardCheck, Bot, Gauge, Compass, FileCode, FileText, FolderOpen, Globe, Palette, KeyRound, LayoutGrid, Mail, ScrollText, Wrench, Search, Smartphone, ShieldCheck, Upload, Users, UserRound, UserRoundCheck, Workflow, History, Link2, ToggleRight, ListChecks, Clock, Layers } from 'lucide-react'
+import { Inbox, Activity, BellRing, BookOpen, ClipboardCheck, Bot, Gauge, Compass, FileCode, FileText, FolderOpen, Globe, Palette, KeyRound, LayoutGrid, Mail, ScrollText, Wrench, Search, Smartphone, ShieldCheck, Upload, Users, UserRound, UserRoundCheck, Workflow, History, Link2, ToggleRight, ListChecks, Clock, Layers } from 'lucide-react'
 import { keep } from '../lib/links'
 
 type Hit = { key: string; label: string; hint: string; id: string; Icon: typeof Search }
@@ -15,6 +15,7 @@ const pages = (): Hit[] => (
     [m.quick_find__overview(), '/overview', LayoutGrid],
     [m.quick_find__design(), '/design', Palette],
     ['Emails', '/emails', Mail],
+    [m.inbox__title(), '/inbox', Inbox],
     [m.quick_find__translations(), '/translations', Globe],
     [m.quick_find__artifacts(), '/artifacts', FileText],
     [m.quick_find__knowledge(), '/knowledge', BookOpen],

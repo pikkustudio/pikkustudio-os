@@ -3,7 +3,7 @@ import { m } from '@/i18n/messages'
 import { useContext } from 'react'
 import { Link } from './Link'
 import { useProjectName } from '../lib/project'
-import { AppWindow, BookOpen, Bot, ClipboardCheck, ChevronRight, Clock, Database, FileCode, FileText, HeartPulse, History, KeyRound, Languages, Layers, Mail, Plug, ScrollText, Search, Upload, Users, Wallet, type LucideIcon } from 'lucide-react'
+import { Inbox, AppWindow, BookOpen, Bot, ClipboardCheck, ChevronRight, Clock, Database, FileCode, FileText, HeartPulse, History, KeyRound, Languages, Layers, Mail, Plug, ScrollText, Search, Upload, Users, Wallet, type LucideIcon } from 'lucide-react'
 import { Button } from '../ui/button'
 import { ShellCtx } from '../lib/shell'
 import { keep } from '../lib/links'
@@ -70,6 +70,7 @@ const movable: Record<Movable, { hue: Hue; Icon: LucideIcon; title: () => I18nSt
   'front-doors': { hue: 'sea', Icon: AppWindow, title: () => m.explore_hub__front_doors_title(), text: () => m.explore_hub__front_doors_text() },
   audit: { hue: 'petrol', Icon: History, title: () => m.explore_hub__audit_title(), text: () => m.explore_hub__audit_text() },
   emails: { hue: 'teal', Icon: Mail, title: () => m.screen_names__emails(), text: () => m.explore_hub__emails_text() },
+  inbox: { hue: 'sea', Icon: Inbox, title: () => m.inbox__title(), text: () => m.explore_hub__inbox_text() },
   knowledge: { hue: 'sea', Icon: BookOpen, title: () => m.screen_names__knowledge(), text: () => m.explore_hub__knowledge_text() },
   publish: { hue: 'petrol', Icon: Upload, title: () => m.shell_layout__publish(), text: () => m.explore_hub__publish_text() },
 }
