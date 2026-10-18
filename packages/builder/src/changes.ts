@@ -66,8 +66,10 @@ export const routeMessage = (route: NextRoute) =>
     route.context ?? '',
   ].join('\n')
 
+export const shimsDir = (home: string, queueHome?: string) => join(home, queueHome ? 'bin-local' : 'bin')
+
 export async function writePikkuShim(home: string, queueHome?: string): Promise<string> {
-  const dir = join(home, queueHome ? 'bin-local' : 'bin')
+  const dir = shimsDir(home, queueHome)
   const [command, ...prefix] = pikkuBin(dir)
   await mkdir(dir, { recursive: true })
   const file = join(dir, 'pikku')

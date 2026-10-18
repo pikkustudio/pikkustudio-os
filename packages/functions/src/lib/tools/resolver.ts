@@ -13,6 +13,7 @@ import {
   type ToolVersion,
 } from './manifest.js'
 import { declaredTools, declareTool } from './project.js'
+import { syncShims } from './shims.js'
 import { accepts, newestFirst } from './versions.js'
 
 export interface Need {
@@ -70,6 +71,7 @@ export interface ToolResolverOptions {
   platform?: Platform | null
   searchPath?: string
   coreBin?: string[]
+  shimsDirs?: string[]
   autoInstall?: string[]
   projectDir?: () => string | undefined
   onDeclared?: (message: string) => void
@@ -231,6 +233,7 @@ export class ToolResolver {
   async install(id: string, version?: string, onProgress?: (received: number, total: number | null) => void) {
     const installed = await this.installChain(id, version, onProgress, [])
     declareTool(this.options.projectDir?.(), version ? { id: installed.tool, version } : { id: installed.tool })
+    await this.syncShims()
     return installed
   }
 
@@ -253,6 +256,26 @@ export class ToolResolver {
         }
       }),
     )
+    await this.syncShims()
+  }
+
+  private pending: Promise<unknown> = Promise.resolve()
+
+  syncShims() {
+    const dirs = this.options.shimsDirs
+    if (!dirs?.length) return Promise.resolve()
+    const run = async () => {
+      const resolved: Resolved[] = []
+      for (const tool of this.entries()) {
+        try {
+          const resolution = await this.resolve({ tool: tool.id, requestedBy: 'shims' })
+          if (resolution.status !== 'needs') resolved.push(resolution)
+        } catch {}
+      }
+      await syncShims({ home: this.options.home, shimsDirs: dirs, coreBin: this.options.coreBin ?? [], resolved })
+    }
+    this.pending = this.pending.then(run, run)
+    return (this.pending as Promise<void>).catch(() => {})
   }
 
   private async installChain(
@@ -298,6 +321,8 @@ export class ToolResolver {
     const installed = await installedVersions(this.options.home, tool.id)
     if (!installed.some((item) => item.version === version)) throw new Error(`${tool.name} ${version} is not installed`)
     await removeVersion(this.options.home, tool.id, version)
+    this.checkAgain()
+    await this.syncShims()
   }
 
   async ensure(needs: Need[]) {
@@ -312,6 +337,7 @@ export class ToolResolver {
           if (attempted.has(key)) return resolution
           attempted.add(key)
           await this.installChain(resolution.tool, resolution.version ?? undefined, undefined, [])
+          await this.syncShims()
         }
       }),
     )

@@ -4,6 +4,6 @@ export { piArgs, piEnv, resolvePi, piPackageRoot, packageRoot, extensionPaths, S
 export type { BuilderAi, BuilderMode, Specialist } from './pi.js'
 export { SPECIALISTS, slotKey, projectKey, DO_MARKER, ASK_MARKER, QUESTION_LIMIT } from './pi.js'
 export { MODE_PROMPTS } from './pi.js'
-export { OFFER_MARKER } from './changes.js'
+export { OFFER_MARKER, shimsDir } from './changes.js'
 export { writeSkills, builderHome } from './skills.js'
 export { pikkuNext, changesReport, routeMessage, runPikku, type NextRoute, type ChangesReport, type CommandRunner } from './changes.js'

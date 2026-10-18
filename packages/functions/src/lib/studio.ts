@@ -17,6 +17,7 @@ import {
 import type { Kysely } from 'kysely'
 import { connectVault, projectVaultEnv } from '@pikkustudio/vault/connect'
 import { mintInboxToken } from '@pikkustudio/addon-inbox/token'
+import { shimsDir } from '@pikkustudio/builder'
 import { frameSecret } from './addon-frame-token.js'
 import { installEmbeddedRuntime } from './runtime.js'
 import { holdWhileStreaming } from './sleep.js'
@@ -51,6 +52,7 @@ export async function createStudio(home = studioHome(), db?: Kysely<any>): Promi
   const runtime = await installEmbeddedRuntime(home)
   const tools = new ToolResolver({
     home,
+    shimsDirs: [shimsDir(home), shimsDir(home, home)],
     coreBin: runtime ? [join(runtime, 'bin')] : [],
     autoInstall: (process.env.PIKKU_STUDIO_TOOLS_AUTO_INSTALL ?? '').split(',').map((id) => id.trim()).filter(Boolean),
     projectDir: () => process.env.PIKKU_STUDIO_PROJECT || undefined,
