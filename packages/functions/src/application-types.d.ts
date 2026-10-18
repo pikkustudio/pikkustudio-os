@@ -12,7 +12,7 @@ import type { TypedVariablesService } from '../.pikku/variables/pikku-variables.
 import type { auth } from './auth.js'
 import type { Studio } from './lib/studio.js'
 import type { VaultAdmin } from '@pikkustudio/vault/admin'
-import type { InboxStore } from '@pikkustudio/addon-email/types'
+import type { InboxStore } from '@pikkustudio/addon-inbox/types'
 import type { CommentStore, VerdictStore } from '@pikkustudio/addon-review/types'
 import type { worktreeMetaSource } from './lib/worktree-meta-source.js'
 

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://raw.githubusercontent.com/pikkujs/pikku/refs/heads/main/packages/cli/cli.schema.json",
+  "tsconfig": "./tsconfig.json",
+  "srcDirectories": [
+    "src",
+    "types"
+  ],
+  "outDir": "./.pikku",
+  "addon": {
+    "displayName": "Inbox",
+    "description": "Captures every message a project app sends into a Studio-owned inbox",
+    "categories": [
+      "Communication",
+      "Utility"
+    ]
+  }
+}

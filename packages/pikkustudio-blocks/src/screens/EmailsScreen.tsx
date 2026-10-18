@@ -1,10 +1,8 @@
-import { useNavigate, useSearch } from '@tanstack/react-router'
+import { useLocation, useNavigate, useSearch } from '@tanstack/react-router'
 
 import { EmailDetail } from "../blocks/EmailDetail";
-import { EmailInbox } from "../blocks/EmailInbox";
 import { EmailsList } from "../blocks/EmailsList";
 import { EmailTabs, type EmailsTab } from "../blocks/EmailTabs";
-import { InboxDetail } from "../blocks/InboxDetail";
 import { useEmails } from "../lib/emails";
 import { useProjectKey } from "../lib/project";
 import { CardsSkeleton, QueryState } from "../blocks/QueryState";
@@ -17,8 +15,6 @@ export function EmailsScreen() {
   const { query, data } = useEmails(key);
   const q = useSearch({ strict: false }) as {
     email?: string;
-    inbox?: string;
-    tab?: EmailsTab;
     lang?: "en" | "de" | "ar";
     device?: "phone" | "text";
   };
@@ -28,23 +24,13 @@ export function EmailsScreen() {
       search: ((prev: object) => ({ ...prev, ...patch })) as never,
       replace: true,
     });
-  const tab: EmailsTab = q.tab === "inbox" ? "inbox" : "templates";
-  const tabs = <EmailTabs tab={tab} onTab={(next) => set({ tab: next === "inbox" ? "inbox" : undefined, email: undefined, inbox: undefined })} />;
-  if (tab === "inbox")
-    return (
-      <Page gap="list">
-        {q.inbox ? (
-          <InboxDetail
-            id={q.inbox}
-            device={q.device ?? "computer"}
-            onBack={() => set({ inbox: undefined })}
-            onDevice={(device) => set({ device: device === "computer" ? undefined : device })}
-          />
-        ) : (
-          <EmailInbox tabs={tabs} onOpen={(inbox) => set({ inbox })} onTemplates={() => set({ tab: undefined })} />
-        )}
-      </Page>
-    );
+  const pathname = useLocation({ select: (l) => l.pathname });
+  const toInbox = () =>
+    navigate({
+      to: pathname.replace(/\/emails$/, "/inbox"),
+      search: ((prev: object) => ({ ...prev, channel: "email", email: undefined, lang: undefined, device: undefined })) as never,
+    });
+  const tabs = <EmailTabs tab="templates" onTab={(next: EmailsTab) => (next === "inbox" ? toInbox() : undefined)} />;
   if (q.email)
     return !data.emails.length ? (
       <QueryState query={query} skeleton={<CardsSkeleton count={2} />}>{() => null}</QueryState>

@@ -10,7 +10,7 @@ const libs = [
   'packages/addons/diffui',
   'packages/addons/spindle',
   'packages/addons/review',
-  'packages/addons/email',
+  'packages/addons/inbox',
   'packages/addon-pikkustudio',
 ]
 

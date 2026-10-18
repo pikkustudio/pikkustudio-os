@@ -7,12 +7,12 @@ export function EmailTabs({ tab, onTab }: { tab: EmailsTab; onTab: (tab: EmailsT
   return (
     <div>
       <Segmented
-        label={m.email_inbox__tabs_label()}
+        label={m.email_tabs__label()}
         value={tab}
         onChange={(v) => onTab(v as EmailsTab)}
         options={[
-          ['templates', m.email_inbox__tab_templates()],
-          ['inbox', m.email_inbox__tab_inbox()],
+          ['templates', m.email_tabs__templates()],
+          ['inbox', m.email_tabs__inbox()],
         ]}
       />
     </div>

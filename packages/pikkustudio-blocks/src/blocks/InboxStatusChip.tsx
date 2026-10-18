@@ -8,20 +8,20 @@ export function InboxStatusChip({ status }: { status: InboxStatus }) {
     return (
       <Badge variant="pillOk">
         <Check />
-        {m.email_inbox__status_sent()}
+        {m.inbox__status_sent()}
       </Badge>
     )
   if (status === 'rejected')
     return (
       <Badge variant="pillBad">
         <Ban />
-        {m.email_inbox__status_rejected()}
+        {m.inbox__status_rejected()}
       </Badge>
     )
   return (
     <Badge variant="pillInfo">
       <Inbox />
-      {m.email_inbox__status_captured()}
+      {m.inbox__status_captured()}
     </Badge>
   )
 }

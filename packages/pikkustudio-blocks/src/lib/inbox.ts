@@ -3,15 +3,18 @@ import type { UseQueryResult } from '@tanstack/react-query'
 import { useProjectKey } from './project'
 import { useProjectTarget } from './project-target'
 
+export type InboxChannel = 'email' | 'sms'
+
 export type InboxStatus = 'captured' | 'sent' | 'rejected'
 
 export type InboxSummary = {
   id: string
   projectKey: string
   stage: string | null
+  channel: InboxChannel
   from: string | null
   to: string[]
-  subject: string
+  subject: string | null
   templateName: string | null
   templateLocale: string | null
   status: InboxStatus
@@ -25,7 +28,7 @@ export type InboxHighlights = {
   codes: string[]
 }
 
-export type InboxEmail = InboxSummary & { cc: string[]; bcc: string[]; html: string; text: string; highlights: InboxHighlights }
+export type InboxMessage = InboxSummary & { cc: string[]; bcc: string[]; html: string | null; body: string; meta: Record<string, unknown> | null; highlights: InboxHighlights }
 
 export type InboxList = { messages: InboxSummary[]; retentionDays: number }
 
@@ -39,12 +42,12 @@ export const useInboxScope = () => {
 
 const POLL_MS = 4000
 
-export const useInboxList = (): UseQueryResult<InboxList> => {
+export const useInboxList = (channel?: InboxChannel): UseQueryResult<InboxList> => {
   const { projectKey, stage } = useInboxScope()
-  return usePikkuQuery('email:listInbox' as never, { projectKey, stage, limit: 100 } as never, { enabled: !!projectKey, refetchInterval: POLL_MS, retry: false } as never) as unknown as UseQueryResult<InboxList>
+  return usePikkuQuery('inbox:listInbox' as never, { projectKey, stage, channel, limit: 100 } as never, { enabled: !!projectKey, refetchInterval: POLL_MS, retry: false } as never) as unknown as UseQueryResult<InboxList>
 }
 
-export const useInboxEmail = (id: string): UseQueryResult<InboxEmail> => {
+export const useInboxMessage = (id: string): UseQueryResult<InboxMessage> => {
   const { projectKey, stage } = useInboxScope()
-  return usePikkuQuery('email:getInboxEmail' as never, { projectKey, stage, id } as never, { enabled: !!projectKey && !!id, retry: false } as never) as unknown as UseQueryResult<InboxEmail>
+  return usePikkuQuery('inbox:getInboxMessage' as never, { projectKey, stage, id } as never, { enabled: !!projectKey && !!id, retry: false } as never) as unknown as UseQueryResult<InboxMessage>
 }

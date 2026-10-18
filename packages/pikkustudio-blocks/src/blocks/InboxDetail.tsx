@@ -12,7 +12,7 @@ import { InboxStatusChip } from './InboxStatusChip'
 import { PageHead } from './PageHead'
 import { Segmented } from './Segmented'
 import { CardsSkeleton } from './QueryState'
-import { useInboxEmail } from '../lib/inbox'
+import { useInboxMessage } from '../lib/inbox'
 import { useProjectName } from '../lib/project'
 
 const when = (at: string | Date) => new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(at))
@@ -23,16 +23,19 @@ const statusOf = (error: unknown) => {
 }
 
 export function InboxDetail({ id, device, onBack, onDevice }: { id: string; device: Device; onBack: () => void; onDevice: (d: Device) => void }) {
-  const query = useInboxEmail(id)
+  const query = useInboxMessage(id)
   const crumb = useProjectName()
+  const isEmail = query.data ? query.data.channel === 'email' : true
   const bar = (
     <Card variant="bar" role="toolbar" aria-label={m.email_bar__email_preview_controls()}>
       <div className="@container/bar flex w-full items-center gap-2">
-        <Button variant="bar" size="picker" type="button" aria-label={m.email_inbox_detail__back()} title={m.email_inbox_detail__back()} onClick={onBack}>
+        <Button variant="bar" size="picker" type="button" aria-label={m.inbox_detail__back()} title={m.inbox_detail__back()} onClick={onBack}>
           <ArrowLeft className="rtl:-scale-x-100 size-4.5" />
-          <span className="hidden @min-[1100px]/bar:inline">{m.email_inbox_detail__back()}</span>
+          <span className="hidden @min-[1100px]/bar:inline">{m.inbox_detail__back()}</span>
         </Button>
-        <Segmented label={m.email_bar__show_as()} value={device} onChange={(v) => onDevice(v as Device)} options={[['computer', <Monitor key="c" className="size-4" />, false, m.email_bar__computer()], ['phone', <Smartphone key="p" className="size-4" />, false, m.email_bar__phone()], ['text', <FileText key="t" className="size-4" />, false, m.email_bar__plain_text()]]} />
+        {isEmail ? (
+          <Segmented label={m.email_bar__show_as()} value={device} onChange={(v) => onDevice(v as Device)} options={[['computer', <Monitor key="c" className="size-4" />, false, m.email_bar__computer()], ['phone', <Smartphone key="p" className="size-4" />, false, m.email_bar__phone()], ['text', <FileText key="t" className="size-4" />, false, m.email_bar__plain_text()]]} />
+        ) : null}
       </div>
     </Card>
   )
@@ -41,9 +44,9 @@ export function InboxDetail({ id, device, onBack, onDevice }: { id: string; devi
     return statusOf(query.error) === 404 ? (
       <>
         {bar}
-        <EmptyState icon={Mail} title={m.email_inbox_detail__gone_title()} text={m.email_inbox_detail__gone_text()}>
+        <EmptyState icon={Mail} title={m.inbox_detail__gone_title()} text={m.inbox_detail__gone_text()}>
           <Button type="button" size="page" variant="bordered" onClick={onBack}>
-            {m.email_inbox_detail__back()}
+            {m.inbox_detail__back()}
           </Button>
         </EmptyState>
       </>
@@ -54,23 +57,32 @@ export function InboxDetail({ id, device, onBack, onDevice }: { id: string; devi
       </>
     )
   }
-  const email = query.data
-  const to = asI18n(email.to.join(', '))
+  const message = query.data
+  const to = asI18n(message.to.join(', '))
+  const time = asI18n(when(message.createdAt))
   return (
     <div className="flex flex-col gap-5">
       {bar}
       <PageHead
         width="fit"
         crumb={crumb}
-        title={email.subject ? asI18n(email.subject) : m.email_inbox__no_subject()}
-        text={email.from ? m.email_inbox_detail__from_to({ from: asI18n(email.from), to, time: asI18n(when(email.createdAt)) }) : m.email_inbox_detail__only_to({ to, time: asI18n(when(email.createdAt)) })}
+        title={message.subject ? asI18n(message.subject) : message.channel === 'sms' ? m.inbox__to({ to }) : m.inbox__no_subject()}
+        text={message.from ? m.inbox_detail__from_to({ from: asI18n(message.from), to, time }) : m.inbox_detail__only_to({ to, time })}
       >
-        <InboxStatusChip status={email.status} />
+        <InboxStatusChip status={message.status} />
       </PageHead>
-      <InboxHighlight highlights={email.highlights} />
-      <div className="flex min-h-130 flex-col">
-        <EmailStage preview={email} device={device} reloadKey={0} />
-      </div>
+      <InboxHighlight highlights={message.highlights} />
+      {message.channel === 'email' ? (
+        <div className="flex min-h-130 flex-col">
+          <EmailStage preview={{ subject: message.subject ?? '', html: message.html ?? '', text: message.body }} device={device} reloadKey={0} />
+        </div>
+      ) : (
+        <div className="flex">
+          <p dir="auto" className="max-w-ch62 whitespace-pre-wrap rounded-card rounded-es-sm border border-border bg-secondary px-5 py-3.5 text-px16 leading-relaxed">
+            {asI18n(message.body)}
+          </p>
+        </div>
+      )}
     </div>
   )
 }

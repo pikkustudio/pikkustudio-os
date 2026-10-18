@@ -29,7 +29,7 @@ import { studioAuthSecret } from './lib/auth-secret.js'
 import { connectVault } from '@pikkustudio/vault/connect'
 import { KyselyCommentStore } from '@pikkustudio/addon-review/comment-store'
 import { frameSecret } from './lib/addon-frame-token.js'
-import { KyselyInboxStore } from '@pikkustudio/addon-email/store'
+import { KyselyInboxStore } from '@pikkustudio/addon-inbox/store'
 import { KyselyVerdictStore } from '@pikkustudio/addon-review/store'
 import { worktreeMetaSource } from './lib/worktree-meta-source.js'
 

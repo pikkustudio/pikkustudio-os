@@ -23,7 +23,7 @@
     "@pikkustudio/builder": "workspace:*",
     "@pikku/core": "^0.12.142",
     "@pikkustudio/addon-diffui": "workspace:*",
-    "@pikkustudio/addon-email": "workspace:*",
+    "@pikkustudio/addon-inbox": "workspace:*",
     "@pikkustudio/addon-review": "workspace:*",
     "@pikkustudio/addon-spindle": "workspace:*",
     "@pikku/kysely": "^0.13.37",
