@@ -22,7 +22,7 @@ export const KEY_PROVIDERS: KeyProvider[] = [
   { id: 'gemini', name: 'Google Gemini', envVar: 'GEMINI_API_KEY', baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai', model: 'gemini-2.5-flash-lite' },
   { id: 'xai', name: 'xAI (Grok)', envVar: 'XAI_API_KEY', baseUrl: 'https://api.x.ai/v1', model: 'grok-3-mini' },
   { id: 'mistral', name: 'Mistral', envVar: 'MISTRAL_API_KEY', baseUrl: 'https://api.mistral.ai/v1', model: 'mistral-small-latest' },
-  { id: 'deepseek', name: 'DeepSeek', envVar: 'DEEPSEEK_API_KEY', baseUrl: 'https://api.deepseek.com/v1', model: 'deepseek-chat' },
+  { id: 'deepseek', name: 'DeepSeek', envVar: 'DEEPSEEK_API_KEY', baseUrl: 'https://api.deepseek.com/v1', model: 'deepseek-flash' },
   { id: 'groq', name: 'Groq', envVar: 'GROQ_API_KEY', baseUrl: 'https://api.groq.com/openai/v1', model: 'llama-3.3-70b-versatile' },
   { id: 'litellm', name: 'LiteLLM (your own proxy)', envVar: 'LITELLM_API_KEY', baseUrl: 'http://localhost:4000', model: '' },
   { id: 'openrouter', name: 'OpenRouter', envVar: 'OPENROUTER_API_KEY', baseUrl: 'https://openrouter.ai/api/v1', model: 'openai/gpt-4.1-mini' },
