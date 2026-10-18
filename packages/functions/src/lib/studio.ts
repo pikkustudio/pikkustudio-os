@@ -53,7 +53,10 @@ export async function createStudio(home = studioHome(), db?: Kysely<any>): Promi
     home,
     coreBin: runtime ? [join(runtime, 'bin')] : [],
     autoInstall: (process.env.PIKKU_STUDIO_TOOLS_AUTO_INSTALL ?? '').split(',').map((id) => id.trim()).filter(Boolean),
+    projectDir: () => process.env.PIKKU_STUDIO_PROJECT || undefined,
+    onDeclared: (message) => console.info(`[studio] ${message}`),
   })
+  void tools.ensureDeclared().catch(() => {})
   const core = await createStudioServices({
     home,
     projectStore: db ? kyselyProjectStore(db, fileProjectStore(home)) : undefined,

@@ -12,6 +12,7 @@ import {
   type ToolEntry,
   type ToolVersion,
 } from './manifest.js'
+import { declaredTools, declareTool } from './project.js'
 import { accepts, newestFirst } from './versions.js'
 
 export interface Need {
@@ -59,6 +60,7 @@ export interface ToolStatus {
   canInstall: boolean
   installed: Array<{ version: string; path: string; size: number }>
   requires: ToolRequirement[]
+  declared: boolean
   get: GetHints
 }
 
@@ -69,6 +71,8 @@ export interface ToolResolverOptions {
   searchPath?: string
   coreBin?: string[]
   autoInstall?: string[]
+  projectDir?: () => string | undefined
+  onDeclared?: (message: string) => void
   env?: Record<string, string | undefined>
 }
 
@@ -225,7 +229,30 @@ export class ToolResolver {
   }
 
   async install(id: string, version?: string, onProgress?: (received: number, total: number | null) => void) {
-    return this.installChain(id, version, onProgress, [])
+    const installed = await this.installChain(id, version, onProgress, [])
+    declareTool(this.options.projectDir?.(), version ? { id: installed.tool, version } : { id: installed.tool })
+    return installed
+  }
+
+  declared() {
+    return declaredTools(this.options.projectDir?.())
+  }
+
+  async ensureDeclared() {
+    const log = this.options.onDeclared ?? (() => {})
+    const allowed = new Set(this.options.autoInstall ?? [])
+    await Promise.all(
+      this.declared().map(async (item) => {
+        try {
+          const [resolution] = await this.ensure([{ tool: item.id, version: item.version, requestedBy: 'project' }])
+          if (resolution.status !== 'needs') log(`tool ${item.id} ready (${resolution.status} ${resolution.version ?? ''})`.trim())
+          else if (!allowed.has(item.id)) log(`tool ${item.id} needed by the project, not in the auto-install list`)
+          else log(`tool ${item.id} still needed${resolution.canInstall ? '' : ', Studio cannot install it here'}`)
+        } catch (error) {
+          log(`tool ${item.id} failed: ${error instanceof Error ? error.message : error}`)
+        }
+      }),
+    )
   }
 
   private async installChain(
@@ -284,7 +311,7 @@ export class ToolResolver {
           const key = `${resolution.tool}@${resolution.version}`
           if (attempted.has(key)) return resolution
           attempted.add(key)
-          await this.install(resolution.tool, resolution.version ?? undefined)
+          await this.installChain(resolution.tool, resolution.version ?? undefined, undefined, [])
         }
       }),
     )
@@ -307,7 +334,8 @@ export class ToolResolver {
         return { tool: id, name, version: version ?? null, met }
       }),
     )
-    const base = { id: tool.id, name: tool.name, installed, requires, get: this.hints(tool) }
+    const declared = this.declared().some((item) => item.id === tool.id)
+    const base = { id: tool.id, name: tool.name, installed, requires, declared, get: this.hints(tool) }
     if (resolution.status === 'needs') {
       return {
         ...base,
