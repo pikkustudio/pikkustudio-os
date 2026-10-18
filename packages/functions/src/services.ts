@@ -28,6 +28,8 @@ import { createStudio } from './lib/studio.js'
 import { studioAuthSecret } from './lib/auth-secret.js'
 import { connectVault } from '@pikkustudio/vault/connect'
 import { KyselyCommentStore } from '@pikkustudio/addon-review/comment-store'
+import { frameSecret } from './lib/addon-frame-token.js'
+import { KyselyInboxStore } from '@pikkustudio/addon-email/store'
 import { KyselyVerdictStore } from '@pikkustudio/addon-review/store'
 import { worktreeMetaSource } from './lib/worktree-meta-source.js'
 
@@ -97,6 +99,8 @@ export const createSingletonServices = pikkuServices(async (config, existingServ
     virtualUserScheduleStore,
     studio,
     verdictStore: existingServices?.verdictStore ?? new KyselyVerdictStore(kysely as any),
+    inboxStore: existingServices?.inboxStore ?? new KyselyInboxStore(kysely as any),
+    inboxSecret: existingServices?.inboxSecret ?? frameSecret(studio.home),
     commentStore: existingServices?.commentStore ?? new KyselyCommentStore(kysely as any),
     metaSource: existingServices?.metaSource ?? worktreeMetaSource((id) => studio.projects.projectDir(id)),
     ...(credentialService ? { credentialService } : {}),

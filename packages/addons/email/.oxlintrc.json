@@ -1,0 +1,157 @@
+{
+  "plugins": [
+    "react",
+    "typescript"
+  ],
+  "jsPlugins": [
+    "@shadcn/lint"
+  ],
+  "ignorePatterns": [
+    "dist"
+  ],
+  "rules": {
+    "react/jsx-no-literals": [
+      "error",
+      {
+        "noStrings": true,
+        "ignoreProps": true,
+        "allowedStrings": [
+          "\u00b7",
+          "\u2014",
+          "\u2026"
+        ]
+      }
+    ],
+    "shadcn/no-restyle": [
+      "error",
+      {
+        "allow": [
+          "layout"
+        ]
+      }
+    ],
+    "shadcn/no-raw-colors": "error",
+    "shadcn/no-arbitrary-values": "error",
+    "shadcn/no-inline-styles": "error",
+    "shadcn/no-unknown-classes": "error",
+    "shadcn/require-static-classes": "error"
+  },
+  "overrides": [
+    {
+      "files": [
+        "src/components/dev/**"
+      ],
+      "rules": {
+        "react/jsx-no-literals": "off"
+      }
+    },
+    {
+      "files": [
+        "src/components/ui/**/*.stories.tsx",
+        "**/*.stories.tsx"
+      ],
+      "rules": {
+        "react/jsx-no-literals": "off",
+        "shadcn/no-restyle": "off"
+      }
+    },
+    {
+      "files": [
+        "src/screens/**"
+      ],
+      "rules": {
+        "react/forbid-elements": [
+          "error",
+          {
+            "forbid": [
+              {
+                "element": "div",
+                "message": "Screens compose layouts and blocks. Put the element in a block."
+              },
+              {
+                "element": "span",
+                "message": "Screens compose layouts and blocks. Put the element in a block."
+              },
+              {
+                "element": "p",
+                "message": "Screens compose layouts and blocks. Put the element in a block."
+              },
+              {
+                "element": "section",
+                "message": "Screens compose layouts and blocks. Put the element in a block."
+              },
+              {
+                "element": "button",
+                "message": "Screens compose layouts and blocks. Put the element in a block."
+              },
+              {
+                "element": "input",
+                "message": "Screens compose layouts and blocks. Put the element in a block."
+              },
+              {
+                "element": "a",
+                "message": "Screens compose layouts and blocks. Put the element in a block."
+              },
+              {
+                "element": "h1",
+                "message": "Screens compose layouts and blocks. Put the element in a block."
+              },
+              {
+                "element": "h2",
+                "message": "Screens compose layouts and blocks. Put the element in a block."
+              },
+              {
+                "element": "h3",
+                "message": "Screens compose layouts and blocks. Put the element in a block."
+              },
+              {
+                "element": "ul",
+                "message": "Screens compose layouts and blocks. Put the element in a block."
+              },
+              {
+                "element": "ol",
+                "message": "Screens compose layouts and blocks. Put the element in a block."
+              },
+              {
+                "element": "li",
+                "message": "Screens compose layouts and blocks. Put the element in a block."
+              },
+              {
+                "element": "img",
+                "message": "Screens compose layouts and blocks. Put the element in a block."
+              },
+              {
+                "element": "svg",
+                "message": "Screens compose layouts and blocks. Put the element in a block."
+              },
+              {
+                "element": "form",
+                "message": "Screens compose layouts and blocks. Put the element in a block."
+              },
+              {
+                "element": "label",
+                "message": "Screens compose layouts and blocks. Put the element in a block."
+              },
+              {
+                "element": "nav",
+                "message": "Screens compose layouts and blocks. Put the element in a block."
+              },
+              {
+                "element": "main",
+                "message": "Screens compose layouts and blocks. Put the element in a block."
+              },
+              {
+                "element": "header",
+                "message": "Screens compose layouts and blocks. Put the element in a block."
+              },
+              {
+                "element": "footer",
+                "message": "Screens compose layouts and blocks. Put the element in a block."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

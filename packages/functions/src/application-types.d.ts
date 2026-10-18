@@ -12,6 +12,7 @@ import type { TypedVariablesService } from '../.pikku/variables/pikku-variables.
 import type { auth } from './auth.js'
 import type { Studio } from './lib/studio.js'
 import type { VaultAdmin } from '@pikkustudio/vault/admin'
+import type { InboxStore } from '@pikkustudio/addon-email/types'
 import type { CommentStore, VerdictStore } from '@pikkustudio/addon-review/types'
 import type { worktreeMetaSource } from './lib/worktree-meta-source.js'
 
@@ -29,6 +30,8 @@ export interface SingletonServices extends CoreSingletonServices<Config> {
   secrets: TypedSecretService
   vaultAdmin: VaultAdmin
   verdictStore: VerdictStore
+  inboxStore: InboxStore
+  inboxSecret?: string
   commentStore: CommentStore
   metaSource: ReturnType<typeof worktreeMetaSource>
   kysely: Kysely<DB>

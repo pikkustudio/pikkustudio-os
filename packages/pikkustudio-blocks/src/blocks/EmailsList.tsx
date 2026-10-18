@@ -1,5 +1,6 @@
 import { m } from '@/i18n/messages'
 import { useState } from 'react'
+import type { I18nNode } from '@pikku/react'
 import { ArrowRight, Mail, Search } from 'lucide-react'
 import { Badge } from '../ui/badge'
 import { Input } from '../ui/input'
@@ -8,7 +9,7 @@ import { PageHead } from './PageHead'
 import { SectionHead } from './SectionHead'
 import type { EmailsData } from '../types/emails'
 
-export function EmailsList({ data, onOpen }: { data: EmailsData; onOpen: (id: string) => void }) {
+export function EmailsList({ data, onOpen, tabs }: { data: EmailsData; onOpen: (id: string) => void; tabs?: I18nNode }) {
   const { emails, short } = data
   const [q, setQ] = useState('')
   const hit = (e: (typeof emails)[number]) => `${e.name} ${e.when} ${e.to}`.toLowerCase().includes(q.toLowerCase())
@@ -31,6 +32,7 @@ export function EmailsList({ data, onOpen }: { data: EmailsData; onOpen: (id: st
           <Input shape="field" type="search" className="rounded-full ps-10.5" placeholder={m.emails_list__search_emails()} aria-label={m.emails_list__search_emails()} value={q} onChange={(e) => setQ(e.target.value)} />
         </div>
       </PageHead>
+      {tabs}
       {groups.map((g) => {
         const rows = emails.filter((e) => e.group === g.group && hit(e))
         return (

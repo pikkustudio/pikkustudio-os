@@ -1,0 +1,87 @@
+{
+  "name": "@pikkustudio/addon-email",
+  "version": "0.0.1",
+  "license": "BUSL-1.1",
+  "files": [
+    ".pikku",
+    "src",
+    "db"
+  ],
+  "type": "module",
+  "imports": {
+    "#pikku/*.js": "./.pikku/addon/*.ts",
+    "#pikku/*": "./.pikku/addon/*/index.ts"
+  },
+  "exports": {
+    "./functions/*.js": {
+      "types": "./src/functions/*.ts",
+      "import": "./src/functions/*.ts"
+    },
+    "./types": {
+      "types": "./src/lib/types.ts",
+      "import": "./src/lib/types.ts"
+    },
+    "./token": {
+      "types": "./src/lib/token.ts",
+      "import": "./src/lib/token.ts"
+    },
+    "./highlights": {
+      "types": "./src/lib/highlights.ts",
+      "import": "./src/lib/highlights.ts"
+    },
+    "./store": {
+      "types": "./src/services/kysely-inbox.store.ts",
+      "import": "./src/services/kysely-inbox.store.ts"
+    },
+    "./inbox-email-service": {
+      "types": "./src/services/studio-inbox-email.service.ts",
+      "import": "./src/services/studio-inbox-email.service.ts"
+    },
+    "./dev-services": {
+      "types": "./src/services/dev-services.ts",
+      "import": "./src/services/dev-services.ts"
+    },
+    "./db": {
+      "types": "./src/db.d.ts",
+      "import": "./src/db.d.ts"
+    },
+    "./screens/*": "./src/screens/*.tsx",
+    "./.pikku/*.js": "./.pikku/addon/*.ts",
+    "./.pikku/*": "./.pikku/addon/*",
+    "./.pikku/pikku-metadata.gen.json": "./.pikku/addon/pikku-metadata.gen.json",
+    "./.pikku/rpc/pikku-rpc-wirings-map.internal.gen.js": {
+      "types": "./.pikku/addon/rpc/pikku-rpc-wirings-map.internal.gen.d.ts"
+    }
+  },
+  "scripts": {
+    "prebuild": "pikku all && pikku db export",
+    "build": "tsc && pikku dist",
+    "pikku": "pikku all && pikku db export",
+    "test": "bun test",
+    "tsc": "tsc --noEmit",
+    "tsc:i18n": "tsc --noEmit -p tsconfig.i18n.json"
+  },
+  "devDependencies": {
+    "@pikku/cli": "*",
+    "@pikku/core": "*",
+    "@pikku/inspector": "*",
+    "@types/node": "*",
+    "@types/react": "*",
+    "kysely": "*",
+    "@standard-schema/spec": "^1.1.0",
+    "@pikku/kysely-bun-sqlite": "*"
+  },
+  "peerDependencies": {
+    "@pikku/core": "*",
+    "kysely": "*",
+    "react": "*",
+    "@pikku/react": "*",
+    "@pikkustudio/blocks": "*",
+    "lucide-react": "*"
+  },
+  "dependencies": {
+    "@pikku/kysely": "^0.13.37",
+    "typescript": "^5.9",
+    "zod": "^4.3.6"
+  }
+}

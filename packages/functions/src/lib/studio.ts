@@ -15,6 +15,8 @@ import {
 } from '@pikkustudio/addon-studio/services'
 import type { Kysely } from 'kysely'
 import { connectVault, projectVaultEnv } from '@pikkustudio/vault/connect'
+import { mintInboxToken } from '@pikkustudio/addon-email/token'
+import { frameSecret } from './addon-frame-token.js'
 import { installEmbeddedRuntime } from './runtime.js'
 import { holdWhileStreaming } from './sleep.js'
 import { ToolResolver } from './tools/resolver.js'
@@ -33,6 +35,16 @@ export interface Studio {
 }
 
 export type { SignInChoice }
+
+const inboxEnv = (home: string, key: string): Record<string, string> => {
+  const dot = key.indexOf('.')
+  const projectKey = dot < 0 ? key : key.slice(0, dot)
+  const { token } = mintInboxToken({ secret: frameSecret(home), projectKey, stage: null })
+  return {
+    STUDIO_EMAIL_INBOX_URL: `http://127.0.0.1:${process.env.API_PORT || '4003'}/rpc/email:recordEmail`,
+    STUDIO_EMAIL_INBOX_TOKEN: token,
+  }
+}
 
 export async function createStudio(home = studioHome(), db?: Kysely<any>): Promise<Studio> {
   const runtime = await installEmbeddedRuntime(home)
@@ -56,7 +68,10 @@ export async function createStudio(home = studioHome(), db?: Kysely<any>): Promi
         },
         projectId
       ),
-    projectEnv: (key, generated) => projectVaultEnv(home, key, generated),
+    projectEnv: async (key, generated) => ({
+      ...(await projectVaultEnv(home, key, generated)),
+      ...inboxEnv(home, key),
+    }),
   })
   const audit = new StudioAudit(home)
   instrumentStudio(audit, core)

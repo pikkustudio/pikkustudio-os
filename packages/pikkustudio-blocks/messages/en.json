@@ -994,6 +994,49 @@
   "emails_list__emails": "Emails",
   "emails_list__goes_to": "Goes to",
   "emails_list__no_email_matches_that": "No email matches that search.",
+  "email_inbox__tabs_label": "What to look at",
+  "email_inbox__tab_templates": "Templates",
+  "email_inbox__tab_inbox": "Inbox",
+  "email_inbox__lead": "Read the emails your app sends while you try it out. Nothing here goes to a real person.",
+  "email_inbox__hero_title_empty": "Emails your app sends land here",
+  "email_inbox__hero_title": "Here is what your app emailed",
+  "email_inbox__hero_why": "While you build, nothing is delivered to anyone. Each email is kept here for a week so you can read it and follow its links.",
+  "email_inbox__kept": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "1 email kept",
+        "countPlural=other": "{count} emails kept"
+      }
+    }
+  ],
+  "email_inbox__empty_title": "No emails yet",
+  "email_inbox__empty_text": "When this app sends an email, like a sign-in link or a welcome, it shows up here instead of reaching anyone's inbox.",
+  "email_inbox__see_templates": "See the email templates",
+  "email_inbox__no_subject": "No subject",
+  "email_inbox__to": "To {to}",
+  "email_inbox__made_from": "Made from {template}",
+  "email_inbox__open": "Open",
+  "email_inbox__status_captured": "Kept here, not delivered",
+  "email_inbox__status_sent": "Delivered",
+  "email_inbox__status_rejected": "Refused",
+  "email_inbox_detail__back": "All emails",
+  "email_inbox_detail__from_to": "From {from} to {to}. {time}",
+  "email_inbox_detail__only_to": "To {to}. {time}",
+  "email_inbox_detail__code_label": "Your code",
+  "email_inbox_detail__link_label": "The link in this email",
+  "email_inbox_detail__open_link": "Open the link",
+  "email_inbox_detail__copy_code": "Copy the code",
+  "email_inbox_detail__other_links": "Other links in this email",
+  "email_inbox_detail__gone_title": "That email is gone",
+  "email_inbox_detail__gone_text": "Emails are kept for a week, so this one has been cleared. Anything your app sends from now on will show up in the inbox.",
+  "email_inbox_detail__copied": "Copied",
   "emails_list__nothing_here_matches": "Nothing here matches.",
   "emails_list__other_emails": "Other emails",
   "emails_list__search_emails": "Search emails",

@@ -2,7 +2,7 @@ import { asI18n } from '@pikku/react'
 import type { Device } from './EmailPreview'
 import type { EmailPreviewData } from '../lib/emails'
 
-export function EmailStage({ preview, device, reloadKey }: { preview: EmailPreviewData | undefined; device: Device; reloadKey: number }) {
+export function EmailStage({ preview, device, reloadKey }: { preview: Pick<EmailPreviewData, 'subject' | 'html' | 'text'> | undefined; device: Device; reloadKey: number }) {
   const subject = preview?.subject ?? ''
   const bodyText = preview?.text ?? subject
   const body = asI18n(bodyText)

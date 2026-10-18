@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    "target": "ES2021",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "jsx": "react-jsx",
+    "rootDir": ".",
+    "outDir": "./dist",
+    "declaration": true,
+    "sourceMap": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "#pikku/*.js": [
+        "./.pikku/addon/*.ts"
+      ],
+      "#pikku/*": [
+        "./.pikku/addon/*/index.ts"
+      ]
+    },
+    "types": [
+      "node"
+    ],
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  },
+  "include": [
+    "src/**/*",
+    "types/**/*",
+    ".pikku/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".pikku/**/*.d.ts",
+    "src/**/*.test.ts",
+    "src/screens/**",
+    "src/screens.ts",
+    ".pikku/addon/screens/**"
+  ]
+}

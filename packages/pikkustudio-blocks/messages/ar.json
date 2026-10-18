@@ -931,6 +931,49 @@
   "emails_list__emails": "رسائل البريد",
   "emails_list__goes_to": "ترسل إلى",
   "emails_list__no_email_matches_that": "لا رسائل بريد تطابق هذا البحث.",
+  "email_inbox__tabs_label": "ما الذي تريد عرضه",
+  "email_inbox__tab_templates": "القوالب",
+  "email_inbox__tab_inbox": "الوارد",
+  "email_inbox__lead": "اقرأ الرسائل التي يرسلها تطبيقك أثناء تجربته. لا شيء منها يصل إلى أشخاص حقيقيين.",
+  "email_inbox__hero_title_empty": "رسائل تطبيقك تصل إلى هنا",
+  "email_inbox__hero_title": "هذا ما أرسله تطبيقك بالبريد",
+  "email_inbox__hero_why": "أثناء البناء لا يُسلَّم أي شيء لأحد. تُحفظ كل رسالة هنا لمدة أسبوع لتقرأها وتتبع روابطها.",
+  "email_inbox__kept": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "رسالة واحدة محفوظة",
+        "countPlural=other": "{count} رسائل محفوظة"
+      }
+    }
+  ],
+  "email_inbox__empty_title": "لا توجد رسائل بعد",
+  "email_inbox__empty_text": "عندما يرسل هذا التطبيق رسالة، مثل رابط تسجيل الدخول أو ترحيب، تظهر هنا بدل أن تصل إلى صندوق أي شخص.",
+  "email_inbox__see_templates": "عرض قوالب الرسائل",
+  "email_inbox__no_subject": "بلا عنوان",
+  "email_inbox__to": "إلى {to}",
+  "email_inbox__made_from": "مكتوبة من {template}",
+  "email_inbox__open": "فتح",
+  "email_inbox__status_captured": "محفوظة هنا، لم تُسلَّم",
+  "email_inbox__status_sent": "سُلِّمت",
+  "email_inbox__status_rejected": "مرفوضة",
+  "email_inbox_detail__back": "كل الرسائل",
+  "email_inbox_detail__from_to": "من {from} إلى {to}. {time}",
+  "email_inbox_detail__only_to": "إلى {to}. {time}",
+  "email_inbox_detail__code_label": "رمزك",
+  "email_inbox_detail__link_label": "الرابط في هذه الرسالة",
+  "email_inbox_detail__open_link": "فتح الرابط",
+  "email_inbox_detail__copy_code": "نسخ الرمز",
+  "email_inbox_detail__other_links": "روابط أخرى في هذه الرسالة",
+  "email_inbox_detail__gone_title": "هذه الرسالة لم تعد موجودة",
+  "email_inbox_detail__gone_text": "تُحفظ الرسائل لمدة أسبوع، لذلك حُذفت هذه. كل ما يرسله تطبيقك من الآن سيظهر في الوارد.",
+  "email_inbox_detail__copied": "تم النسخ",
   "emails_list__nothing_here_matches": "لا شيء هنا يطابق البحث.",
   "emails_list__other_emails": "رسائل أخرى",
   "emails_list__search_emails": "البحث في رسائل البريد",
