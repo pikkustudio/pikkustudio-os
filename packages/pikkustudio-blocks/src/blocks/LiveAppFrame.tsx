@@ -4,8 +4,9 @@ import { m } from '@/i18n/messages'
 import type { Device } from '../types/designTypes'
 
 export const liveAppUrl = (url: string) => {
-  const port = new URL(url).port
-  return `${window.location.protocol}//${window.location.hostname}:${port}/`
+  const parsed = new URL(url)
+  if (!['127.0.0.1', 'localhost'].includes(parsed.hostname)) return url
+  return `${window.location.protocol}//${window.location.hostname}:${parsed.port}/`
 }
 
 export const frameSize = (device: Device) => (device === 'phone' ? { width: 390, height: 844 } : device === 'tablet' ? { width: 820, height: 1180 } : undefined)

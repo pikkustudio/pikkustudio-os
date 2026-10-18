@@ -96,6 +96,19 @@ export interface ProjectDesign {
 
 type RunningApp = ProjectApp & { child: ChildProcess | null; dir: string }
 
+const manifestApps = (manifestPath: string, dir: string): RunningApp[] => {
+  try {
+    const manifest = JSON.parse(readFileSync(manifestPath, 'utf8')) as { sandboxHostname?: string | null; frontends?: Array<{ slug: string; primary?: boolean; system?: boolean }> }
+    if (!manifest.sandboxHostname) return []
+    const origin = `${manifest.sandboxHostname.includes(':') ? 'http' : 'https'}://${manifest.sandboxHostname}`
+    return (manifest.frontends ?? [])
+      .filter((app) => !app.system)
+      .map((app) => ({ slug: app.slug, url: app.primary ? `${origin}/` : `${origin}/_frontend/${app.slug}/`, state: 'ready', child: null, dir }))
+  } catch {
+    return []
+  }
+}
+
 const latestShot = (dir: string, slug: string): { shot: string; shotAt: number } | null => {
   const folder = join(dir, '.pikku', 'builder', 'looks', slug, 'desktop')
   try {
@@ -508,6 +521,7 @@ export interface StudioProjectsOptions {
   teamSource?: (projectId: string, projectPath: string) => ScopedSource | undefined
   waitForPort?: (port: number) => Promise<void>
   startApps?: boolean
+  appsManifest?: string
   createCommand?: (name: string) => { command: string; args: string[] }
   projectsDir?: string
   confine?: false | ((worktree: StudioWorktree) => Confinement)
@@ -1583,7 +1597,8 @@ export class StudioProjectsService {
         spawn: confinement ? (command, commandArgs, options) => confinedSpawn(command, commandArgs, confinement, options) : undefined,
       }, () => this.compileMessages(worktree.projectDir, confinement))
     }
-    if (this.options.startApps !== false) this.startApps(key, worktree.projectDir, port, confinement, spawnOptions.env)
+    if (this.options.appsManifest) this.apps.set(key, manifestApps(this.options.appsManifest, worktree.projectDir))
+    else if (this.options.startApps !== false) this.startApps(key, worktree.projectDir, port, confinement, spawnOptions.env)
     try {
       await Promise.race([(this.options.waitForPort ?? waitForPort)(port), exited])
     } catch (error) {

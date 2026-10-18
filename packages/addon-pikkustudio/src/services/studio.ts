@@ -75,6 +75,7 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
       account: options.account,
       currentRoot: process.env.PIKKU_STUDIO_PROJECT || null,
       pinned: Boolean(process.env.PIKKU_STUDIO_PROJECT),
+      appsManifest: process.env.FRONTENDS_MANIFEST_FILE,
       designEntry: options.designEntry ?? resolveDesignEntry(),
       store: options.projectStore,
       personalSource: options.personalSource,
