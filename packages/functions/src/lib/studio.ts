@@ -1,5 +1,5 @@
 import { join } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { devContributors } from './dev-contributors.js'
 import {
   createStudioServices,
   fileProjectStore,
@@ -74,7 +74,7 @@ export async function createStudio(home = studioHome(), db?: Kysely<any>): Promi
         },
         projectId
       ),
-    devContributors: [fileURLToPath(import.meta.resolve('@pikkustudio/addon-inbox/contributor'))],
+    devContributors: devContributors(),
     projectEnv: async (key, generated) => ({
       ...(await projectVaultEnv(home, key, generated)),
       ...inboxEnv(home, key),
