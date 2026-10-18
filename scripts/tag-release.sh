@@ -6,6 +6,6 @@ if git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null 2>&1; the
   echo "$tag already exists"
   exit 0
 fi
-gh api "repos/$GITHUB_REPOSITORY/git/refs" -f ref="refs/tags/$tag" -f sha="$GITHUB_SHA" >/dev/null
+gh api "repos/$GITHUB_REPOSITORY/git/refs" -f ref="refs/tags/$tag" -f sha="$(git rev-parse HEAD)" >/dev/null
 gh workflow run desktop.yml --ref "$tag"
 echo "tagged $tag"
