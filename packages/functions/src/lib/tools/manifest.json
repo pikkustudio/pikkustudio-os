@@ -251,6 +251,7 @@
           }
         }
       ],
+      "env": {},
       "get": {
         "link": "https://github.com/morluto/rea",
         "note": "npm i -g rea-agents (needs Node >= 22.19)."

@@ -147,6 +147,7 @@ describe('childEnv', () => {
 describe('baked manifest', () => {
   test('every artifact is pinned and named per platform, and the core is not a tool', () => {
     for (const tool of bakedManifest.tools) {
+      expect(typeof tool.env).toBe('object')
       for (const version of tool.versions) {
         for (const artifact of Object.values(version.artifacts)) {
           expect(artifact!.sha256).toMatch(/^[0-9a-f]{64}$/)
