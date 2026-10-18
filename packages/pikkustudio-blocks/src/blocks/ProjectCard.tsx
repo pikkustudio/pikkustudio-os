@@ -28,6 +28,8 @@ export type Project = {
   usage?: I18nString
   image?: string | null
   repoUrl?: string | null
+  favourite?: boolean
+  visitedAt?: string
 }
 
 export const chips = (): Record<ProjectState, { text: I18nString; icon: typeof Check; variant: 'pillOk' | 'pillInfo' | 'pillMute' }> => ({

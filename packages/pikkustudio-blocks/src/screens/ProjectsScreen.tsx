@@ -36,13 +36,15 @@ export const toCard = (p: ListedProject): Project => ({
   state: (p.missing || p.location === 'cloud' ? 'sketch' : p.busy ? 'progress' : p.open ? 'running' : 'paused') satisfies ProjectState,
 })
 
+const byVisit = (a: Project, b: Project) => Number(!!b.favourite) - Number(!!a.favourite) || (b.visitedAt ?? '').localeCompare(a.visitedAt ?? '')
+
 const TeamSlug = ({ children }: { children: (name: string) => ReactNode }) => <>{children(useTeamSlug())}</>
 
 export function ProjectsScreen() {
   const team = useTeamProjects()
-  const { useProjectOverlay, ProjectsLead } = useProjectSlots()
+  const { useProjectOverlay } = useProjectSlots()
   const overlay = useProjectOverlay?.(team.data ?? []) ?? {}
-  const projects = { ...team, data: team.data?.map((p) => ({ ...toCard(p), ...overlay[p.key] })) } as UseQueryResult<Project[]>
+  const projects = { ...team, data: team.data?.map((p) => ({ ...toCard(p), ...overlay[p.key] })).sort(byVisit) } as UseQueryResult<Project[]>
   const signedIn = !!useAccount().data?.signIn
   const local = useTeamSlug() === LOCAL_TEAM
   const TeamName = useSlots().TeamName ?? TeamSlug
@@ -66,7 +68,6 @@ export function ProjectsScreen() {
           </Link>
         </Button>
       </PageHead>
-      {ProjectsLead ? <ProjectsLead /> : null}
       <QueryState
         query={projects}
         skeleton={<CardsSkeleton />}
