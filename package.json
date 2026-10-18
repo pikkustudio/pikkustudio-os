@@ -44,6 +44,7 @@
     "@pikku/fetch": "^0.12.12",
     "@pikku/kysely": "^0.13.37",
     "@pikku/kysely-bun-sqlite": "^0.12.10",
+    "@pikku/modelcontextprotocol": "^0.12.17",
     "@pikku/react": "^0.12.16",
     "@pikku/schedule": "^0.12.9",
     "@pikku/schema-cfworker": "^0.12.8",

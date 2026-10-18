@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { pikkuFunc } from '#pikku/function'
+import { serviceGate } from '../../middleware/service.middleware.js'
 
 export const ToolStatusSchema = z.object({
   id: z.string(),
@@ -26,9 +27,12 @@ export const ListToolsInput = z.object({})
 
 export const listTools = pikkuFunc({
   expose: true,
+  mcp: true,
   readonly: true,
   auth: true,
-  description: 'Every tool Studio knows on this machine: found, installed, missing or not available.',
+  middleware: [serviceGate],
+  description:
+    'List the tools Studio manages on this machine, such as Ghidra, a JDK and REA, with whether each is found, installed, missing or unavailable, its version and path, what it requires, and whether Studio can install it. Call this first when a command or tool says something is missing.',
   input: ListToolsInput,
   output: ToolsOutput,
   func: async ({ studio }) => ({ tools: await studio.tools.list() }),
@@ -38,8 +42,11 @@ export const CheckToolsInput = z.object({})
 
 export const checkTools = pikkuFunc({
   expose: true,
+  mcp: true,
   auth: true,
-  description: 'Look for every tool on the machine again.',
+  middleware: [serviceGate],
+  description:
+    'Look for every managed tool on the machine again and return the fresh list. Use it after installing a tool by hand or changing PATH, when listTools still reports a tool as missing.',
   input: CheckToolsInput,
   output: ToolsOutput,
   func: async ({ studio }) => {
@@ -54,8 +61,11 @@ export const InstallToolInput = z.object({ tool: z.string(), version: z.string()
 
 export const installTool = pikkuFunc({
   expose: true,
+  mcp: true,
   auth: true,
-  description: "Install a tool from Studio's manifest.",
+  middleware: [serviceGate],
+  description:
+    'Install a missing tool such as Ghidra, a JDK or REA after a tool answered that it needs one. Pass the tool id from listTools and optionally a version; returns the installed version and path. Only tools with canInstall true can be installed.',
   input: InstallToolInput,
   output: InstalledToolOutput,
   func: async ({ studio }, { tool, version }) => studio.tools.install(tool, version),
