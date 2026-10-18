@@ -45,7 +45,7 @@ import { ChecksCard, MilestoneCard, OpenScreenCard } from '../blocks/BuilderCard
 import { useCanEdit, useProjectTarget } from '../lib/project-target'
 import { useStickToBottom } from '../lib/stick-to-bottom'
 import { useComposerExtras } from '../lib/composer-extras'
-import { GitPullRequest, Archive, type LucideIcon, ArrowDown, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, History, Home, Info, Compass, KeyRound, ListChecks, Search, Laptop, LayoutGrid, Mail, MessageCircle, MessageCircleQuestion, MousePointer2, Palette, Plus, ShieldCheck, Smartphone, Upload, PanelLeftClose, PanelLeftOpen, Menu, User, UserRoundCheck, Wrench, X, CheckCheck, ScrollText } from 'lucide-react'
+import { GitPullRequest, Archive, type LucideIcon, ArrowDown, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, History, Home, Info, Compass, KeyRound, ListChecks, Search, Laptop, LayoutGrid, Mail, MessageCircle, MessageCircleQuestion, MousePointer2, Palette, ShieldCheck, Smartphone, Upload, PanelLeftClose, PanelLeftOpen, Menu, User, UserRoundCheck, Wrench, X, CheckCheck, ScrollText } from 'lucide-react'
 
 // The app shell: rail, preview drawer (right edge), Pikku button + bubble, side panels.
 // Every screen route is a child of this layout. Page content lives in the route files.
@@ -366,21 +366,16 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
               <PikkuMark label={m.shell_layout__studio()} />
               <span className={lbl}>{m.shell_layout__studio()}</span>
             </Link>
-            <Button asChild variant="default" size="page" className="mx-1 group-data-[collapsed]/rail:mx-auto group-data-[collapsed]/rail:size-11 group-data-[collapsed]/rail:px-0">
-              <Link {...keep} to="/new-project" {...tip(m.shell_layout__new_project())}>
-              <Plus className="size-4.5" />
-              <span className={lbl}>{m.shell_layout__new_project()}</span>
-            </Link>
-            </Button>
             <button
               type="button"
               onClick={() => setFind(true)}
+              aria-keyshortcuts="Meta+K Control+K"
               {...tip(m.shell_layout__find_a_page())}
-              className="mx-1 flex h-11.5 shrink-0 items-center gap-2.5 rounded-full border border-input bg-card px-5.5 text-start text-px15 text-muted-foreground transition-colors duration-140 hover:bg-secondary group-data-[collapsed]/rail:mx-auto group-data-[collapsed]/rail:size-11 group-data-[collapsed]/rail:justify-center group-data-[collapsed]/rail:px-0"
+              className={`${item} h-8 shrink-0 gap-2 text-[13px] text-muted-foreground`}
             >
-              <Search className="size-4.5 shrink-0" />
-              <span className={`flex-1 truncate font-bold ${lbl}`}>{m.shell_layout__find_a_page()}</span>
-              <kbd className={`rounded-md border border-border px-1.5 text-[12px] ${lbl}`}>{m.shell_layout__find_shortcut()}</kbd>
+              <Search className="size-4 shrink-0" />
+              <span className={`flex-1 truncate ${lbl}`}>{m.shell_layout__find_a_page()}</span>
+              <kbd className={`rounded border border-border px-1 text-[11px] leading-4 ${lbl}`}>{m.shell_layout__find_shortcut()}</kbd>
             </button>
             <nav className="flex flex-col gap-0.5" aria-label={m.shell_layout__main()}>
               <Link {...keep} {...tip(m.shell_layout__home())} to="/projects" className={`${item} h-11.5 text-[15px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`}>
