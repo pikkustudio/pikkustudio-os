@@ -400,7 +400,7 @@ function ShellLayoutInner() {
                 </Link>
                 <div className={`mb-1.5 px-3 text-[13px] font-semibold text-muted-foreground ${lbl}`}>{asI18n(addonNav.title)}</div>
                 {addonNav.items.map((n) => (
-                  <Link {...keep} {...tip(asI18n(n.label))} key={n.splat} to={(n.to ?? '/addons/$') as never} params={(n.to ? undefined : { _splat: n.splat }) as never} activeOptions={{ exact: true }} aria-current={n.splat === addonNav.current || (n.splat.includes('/') && addonNav.current.startsWith(`${n.splat}/`)) ? 'page' : 'false'} className={navItem}>
+                  <Link {...keep} {...tip(asI18n(n.label))} key={n.splat} to={(n.to ?? '/addons/$') as never} params={(n.to ? undefined : { _splat: n.splat }) as never} activeOptions={{ exact: true }} aria-current={n.splat === addonNav.current || (!n.to && n.splat.includes('/') && addonNav.current.startsWith(`${n.splat}/`)) ? 'page' : 'false'} className={navItem}>
                     <LayoutGrid className="size-5" />
                     <span className={lbl}>{asI18n(n.label)}</span>
                   </Link>
