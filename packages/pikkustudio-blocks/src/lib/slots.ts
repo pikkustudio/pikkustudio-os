@@ -60,6 +60,7 @@ export type Slots = {
   ProjectTargetProvider?: ComponentType<{ children: ReactNode }>
   ProjectTargetSwitcher?: ComponentType<{ collapsed: boolean }>
   ProjectNav?: ComponentType<{ itemClass: string; labelClass: string; collapsed: boolean }>
+  TeamNav?: ComponentType<{ itemClass: string; labelClass: string; collapsed: boolean }>
   /** History of the deployed copy of a project; absent where nothing deploys. A hook, called every render. */
   useStageAudit?: (projectKey: string, refetchInterval: number) => { data?: StageAuditPage }
   /** Requests and speed of a published copy, by target name; null asks only where the site is. A hook, called every render. */

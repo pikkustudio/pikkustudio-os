@@ -149,16 +149,16 @@ function Note({
   )
 }
 
-export function ShellLayout() {
+export function ShellLayout({ children }: { children?: ReactNode }) {
   const Target = useSlots().ProjectTargetProvider ?? LocalProjectTargetProvider
   return (
     <Target>
-      <ShellLayoutInner />
+      <ShellLayoutInner>{children}</ShellLayoutInner>
     </Target>
   )
 }
 
-function ShellLayoutInner() {
+function ShellLayoutInner({ children }: { children?: ReactNode }) {
   const projectName = useProjectName()
   const projectSlug = useProjectSlug()
   const projectMissing = useProjectMissing()
@@ -173,7 +173,7 @@ function ShellLayoutInner() {
   const path = useLocation({ select: (l) => l.pathname })
   const project = useLocation({ select: (l) => (l.search as { project?: string }).project })
   // Only a team's pages need a project; leaving for a page outside any team (profile, account, sign-in) must not bounce back.
-  const needsProject = !project && isTeamScoped(path) && !/\/(projects|secrets|account|studio-metrics|new-project|sign-in|your-name|choose-ai)$/.test(path) && !/^\/admin(\/|$)/.test(path)
+  const needsProject = !project && isTeamScoped(path) && !/\/(projects|secrets|account|studio-metrics|new-project|sign-in|your-name|choose-ai|settings|team|billing|plans|ai\/usage|ai\/gateway)$/.test(path) && !/^\/admin(\/|$)/.test(path)
   useEffect(() => {
     if (needsProject) navigate({ to: '/projects', search: ((prev: object) => prev) as never, replace: true })
   }, [needsProject])
@@ -406,7 +406,9 @@ function ShellLayoutInner() {
                   </Link>
                 ))}
               </div>
-            ) : /\/studio-metrics$/.test(path) || !projectSlug || projectMissing ? null : (
+            ) : /\/studio-metrics$/.test(path) || !projectSlug || projectMissing ? (
+              slots.TeamNav ? <slots.TeamNav itemClass={navItem} labelClass={lbl} collapsed={collapsed} /> : null
+            ) : (
             <div className="flex flex-col gap-0.5 px-1">
               <div className={`mb-1.5 px-3 text-[13px] font-semibold text-muted-foreground ${lbl}`}>{projectName}</div>
               {slots.ProjectTargetSwitcher ? <slots.ProjectTargetSwitcher collapsed={collapsed} /> : null}
@@ -484,7 +486,7 @@ function ShellLayoutInner() {
                   <Outlet />
                 </ProjectRunGate>
               ) : (
-                <Outlet />
+                children ?? <Outlet />
               )}
             </div>
           </div>
