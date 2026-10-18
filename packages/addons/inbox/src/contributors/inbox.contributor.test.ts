@@ -2,7 +2,9 @@ import { test, expect } from 'bun:test'
 import { mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import contributor, { createInboxContributor } from './inbox.contributor.js'
+import { readFileSync } from 'node:fs'
+import ts from 'typescript'
+import contributor from './inbox.contributor.js'
 
 const generate = (c: typeof contributor) => {
   const dir = mkdtempSync(join(tmpdir(), 'inbox-contributor-'))
@@ -58,8 +60,37 @@ test('either env var missing: emailService is left untouched', async () => {
   expect(await createPlatformServices({ STUDIO_INBOX_TOKEN: 't' })).toEqual({})
 })
 
-test('a package specifier and no template renderer can be chosen for hosted use', () => {
-  const hosted = createInboxContributor({ serviceModule: '@pikkustudio/addon-inbox/inbox-email-service', templateRendererModule: null })
-  expect(hosted.imports).toEqual(['import { StudioInboxEmailService } from "@pikkustudio/addon-inbox/inbox-email-service"'])
-  expect(hosted.emit({ ctx: {} as never, platform: {} as never, isGateway: false }).join('\n')).not.toContain('import(')
+test('the emitted file has no imports, so the project can typecheck it under strict', () => {
+  const file = generate(contributor)
+  const text = readFileSync(file, 'utf8')
+  expect(text).not.toMatch(/^\s*import\s/m)
+  const program = ts.createProgram([file], {
+    strict: true,
+    noEmit: true,
+    skipLibCheck: true,
+    target: ts.ScriptTarget.ES2022,
+    module: ts.ModuleKind.ESNext,
+    moduleResolution: ts.ModuleResolutionKind.Bundler,
+    lib: ['lib.es2022.d.ts', 'lib.dom.d.ts'],
+    types: [],
+  })
+  const messages = ts.getPreEmitDiagnostics(program).map((d) => ts.flattenDiagnosticMessageText(d.messageText, '\n'))
+  expect(messages).toEqual([])
+})
+
+test('a template send with no html still records the template name and its data', async () => {
+  const sent: any[] = []
+  const realFetch = globalThis.fetch
+  globalThis.fetch = (async (_url: string, init: { body: string }) => {
+    sent.push(JSON.parse(init.body))
+    return new Response('{}', { status: 200 })
+  }) as never
+  try {
+    const { createPlatformServices } = await import(generate(contributor))
+    const services = await createPlatformServices({ STUDIO_INBOX_URL: 'http://x', STUDIO_INBOX_TOKEN: 't' })
+    await services.emailService.send({ to: 'a@b.c', template: { name: 'welcome', locale: 'de', data: { n: 1 } } })
+    expect(sent[0].data.message).toMatchObject({ subject: 'welcome', templateName: 'welcome', templateLocale: 'de', html: null })
+  } finally {
+    globalThis.fetch = realFetch
+  }
 })

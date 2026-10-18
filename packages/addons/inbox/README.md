@@ -14,7 +14,7 @@ To use it outside Studio, a project needs this one line in `pikku.config.json`:
 { "dev": { "contributors": [{ "module": "@pikkustudio/addon-inbox/contributor" }] } }
 ```
 
-The generated file imports the email service by file URL, so it runs in a project that does not depend on this package. A host that bundles can call `createInboxContributor({ serviceModule: '@pikkustudio/addon-inbox/inbox-email-service', templateRendererModule: null })` instead.
+The capture service is emitted inline into the generated file, so it has no imports and typechecks under the project's own `tsc` in a project that does not depend on this package. It sends the already-rendered html and text; a template-only send is recorded with its template name and data.
 
 ## Hosted stages
 
