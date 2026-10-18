@@ -1,7 +1,6 @@
 import { m } from '@/i18n/messages'
 import type { UseQueryResult } from '@tanstack/react-query'
-import { useEffect, type ReactNode } from 'react'
-import { useNavigate } from '@tanstack/react-router'
+import { type ReactNode } from 'react'
 import { Link } from '../blocks/Link'
 import { FolderPlus, Plus } from 'lucide-react'
 import { Button } from '../ui/button'
@@ -13,7 +12,6 @@ import type { Project, ProjectState } from '../blocks/ProjectCard'
 import { CardsSkeleton, QueryState } from '../blocks/QueryState'
 import { keep } from '../lib/links'
 import { useTeamProjects, type ListedProject } from '../blocks/TeamProjects'
-import { useAccount } from '../lib/onboarding'
 import { useSlots } from '../lib/slots'
 import { LOCAL_TEAM, useTeamSlug } from '../lib/team'
 import { useProjectSlots } from '../lib/project-slots'
@@ -45,13 +43,8 @@ export function ProjectsScreen() {
   const { useProjectOverlay } = useProjectSlots()
   const overlay = useProjectOverlay?.(team.data ?? []) ?? {}
   const projects = { ...team, data: team.data?.map((p) => ({ ...toCard(p), ...overlay[p.key] })).sort(byVisit) } as UseQueryResult<Project[]>
-  const signedIn = !!useAccount().data?.signIn
   const local = useTeamSlug() === LOCAL_TEAM
   const TeamName = useSlots().TeamName ?? TeamSlug
-  const navigate = useNavigate()
-  useEffect(() => {
-    if (signedIn && projects.isSuccess && projects.data.length === 0) navigate({ to: '/new-project', search: ((prev: object) => prev) as never, replace: true })
-  }, [signedIn, projects.isSuccess, projects.data?.length])
 
   return (
     <Page gap="snug">
