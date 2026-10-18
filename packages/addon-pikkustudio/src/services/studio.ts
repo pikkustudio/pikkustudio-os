@@ -40,6 +40,7 @@ export interface StudioServicesOptions {
   account?: AccountProvider
   builder?: BuilderSession
   projectEnv?: (key: string, generated: Record<string, string>) => Promise<Record<string, string>>
+  devContributors?: string[]
   personalSource?: (projectId: string) => ScopedSource | undefined
   teamSource?: (projectId: string, projectPath: string) => ScopedSource | undefined
   projectStore?: ProjectStore
@@ -79,6 +80,7 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
       personalSource: options.personalSource,
       teamSource: options.teamSource,
       owner: async () => (await new StudioSettingsFile(join(home, 'settings.json')).read()).name ?? '',
+      devContributors: options.devContributors,
       env: async (key, generated) => ({ ...(await studioAi.env()), ...((await options.projectEnv?.(key, generated)) ?? {}) }),
     })
   const studioModels = new Map<string, string>()

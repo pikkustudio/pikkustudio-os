@@ -111,6 +111,7 @@ const GENERATED_SECRETS = ['BETTER_AUTH_SECRET', 'SCENARIO_ACTOR_SECRET']
 
 const VITE_CONFIGS = ['vite.config.ts', 'vite.config.mjs', 'vite.config.js']
 const PREVIEW_CONFIG = '__pikku_studio.vite.config.mjs'
+const DEV_CONFIG = '__pikku_studio.pikku.config.json'
 
 const excludeFromGit = async (cwd: string, name: string) => {
   const { stdout } = await execFileAsync('git', ['rev-parse', '--git-path', 'info/exclude'], { cwd })
@@ -502,6 +503,7 @@ export interface StudioProjectsOptions {
   designEntry?: string
   paraglideCommand?: (appDir: string) => { command: string; args: string[] } | null
   env?: (key: string, generated: Record<string, string>) => Promise<Record<string, string>>
+  devContributors?: string[]
   personalSource?: (projectId: string) => ScopedSource | undefined
   teamSource?: (projectId: string, projectPath: string) => ScopedSource | undefined
   waitForPort?: (port: number) => Promise<void>
@@ -1496,6 +1498,22 @@ export class StudioProjectsService {
     return starting
   }
 
+  private async devConfigOverlay(projectDir: string): Promise<string | null> {
+    const added = this.options.devContributors ?? []
+    const configPath = join(projectDir, 'pikku.config.json')
+    if (added.length === 0 || !existsSync(configPath)) return null
+    let own: Array<{ module: string; export?: string }> = []
+    try {
+      own = JSON.parse(await readFile(configPath, 'utf8')).dev?.contributors ?? []
+    } catch {
+      return null
+    }
+    const contributors = [...own, ...added.filter((module) => !own.some((c) => c.module === module)).map((module) => ({ module }))]
+    await writeFile(join(projectDir, DEV_CONFIG), JSON.stringify({ extends: './pikku.config.json', dev: { contributors } }, null, 2))
+    await excludeFromGit(projectDir, DEV_CONFIG).catch(() => {})
+    return DEV_CONFIG
+  }
+
   private async start(key: string): Promise<RunningProject> {
     const { entry, worktree } = await this.prepare(key)
     const port = await freePort()
@@ -1506,6 +1524,8 @@ export class StudioProjectsService {
         existsSync(pikkuBin)
           ? { command: process.execPath, args: [pikkuBin, 'dev', '--port', String(p)] }
           : { command: 'npx', args: ['pikku', 'dev', '--port', String(p)] }))(port)
+    const overlay = await this.devConfigOverlay(worktree.projectDir)
+    if (overlay) args.push('--config', overlay)
     const design = await this.designCopy(key)
     const confinement = this.confinement(worktree, design)
     const logPath = this.logFile(key, 'server', true)

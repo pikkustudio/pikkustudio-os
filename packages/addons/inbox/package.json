@@ -37,9 +37,9 @@
       "types": "./src/services/studio-inbox-email.service.ts",
       "import": "./src/services/studio-inbox-email.service.ts"
     },
-    "./dev-services": {
-      "types": "./src/services/dev-services.ts",
-      "import": "./src/services/dev-services.ts"
+    "./contributor": {
+      "types": "./src/contributors/inbox.contributor.ts",
+      "import": "./src/contributors/inbox.contributor.ts"
     },
     "./db": {
       "types": "./src/db.d.ts",
@@ -69,7 +69,8 @@
     "@types/react": "*",
     "kysely": "*",
     "@standard-schema/spec": "^1.1.0",
-    "@pikku/kysely-bun-sqlite": "*"
+    "@pikku/kysely-bun-sqlite": "*",
+    "@pikku/deploy": "*"
   },
   "peerDependencies": {
     "@pikku/core": "*",
