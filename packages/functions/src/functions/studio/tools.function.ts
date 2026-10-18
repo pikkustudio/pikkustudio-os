@@ -10,11 +10,13 @@ export const ToolStatusSchema = z.object({
   size: z.number().nullable(),
   canInstall: z.boolean(),
   installed: z.array(z.object({ version: z.string(), path: z.string(), size: z.number() })),
+  requires: z.array(z.object({ tool: z.string(), name: z.string(), version: z.string().nullable(), met: z.boolean() })),
   get: z.object({
     brew: z.string().optional(),
     apt: z.string().optional(),
     command: z.string().optional(),
     link: z.string().optional(),
+    note: z.string().optional(),
   }),
 })
 

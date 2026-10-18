@@ -7,6 +7,7 @@ import {
   currentPlatform,
   type GetHints,
   type Manifest,
+  parseRequirement,
   type Platform,
   type ToolEntry,
   type ToolVersion,
@@ -39,6 +40,13 @@ export interface NeedsAnswer {
   canInstall: boolean
 }
 
+export interface ToolRequirement {
+  tool: string
+  name: string
+  version: string | null
+  met: boolean
+}
+
 export type Resolution = Resolved | NeedsAnswer
 
 export interface ToolStatus {
@@ -50,6 +58,7 @@ export interface ToolStatus {
   size: number | null
   canInstall: boolean
   installed: Array<{ version: string; path: string; size: number }>
+  requires: ToolRequirement[]
   get: GetHints
 }
 
@@ -60,12 +69,13 @@ export interface ToolResolverOptions {
   searchPath?: string
   coreBin?: string[]
   autoInstall?: string[]
+  env?: Record<string, string | undefined>
 }
 
 export class ToolResolver {
   private manifest: Manifest
   private platform: Platform | null
-  private found = new Map<string, Promise<Found | null>>()
+  private found = new Map<string, Promise<Found[]>>()
   private installing = new Map<string, Promise<string>>()
 
   constructor(private options: ToolResolverOptions) {
@@ -92,7 +102,12 @@ export class ToolResolver {
   }
 
   private find(tool: ToolEntry) {
-    if (!this.found.has(tool.id)) this.found.set(tool.id, findOnMachine(tool.find, this.searchPath()))
+    if (!this.found.has(tool.id)) {
+      this.found.set(
+        tool.id,
+        findOnMachine(tool.find, { searchPath: this.searchPath(), platform: this.platform, env: this.options.env ?? process.env }),
+      )
+    }
     return this.found.get(tool.id)!
   }
 
@@ -105,8 +120,18 @@ export class ToolResolver {
     return accepted.find((version) => version.default) ?? newestFirst(accepted, (version) => version.version)[0]
   }
 
-  private env(tool: ToolEntry, values: { bin?: string; dir?: string }) {
-    const vars: Record<string, string> = { home: this.options.home, bin: values.bin ?? '', dir: values.dir ?? '' }
+  private hints(tool: ToolEntry): GetHints {
+    const { platforms, ...common } = tool.get
+    return { ...common, ...(this.platform ? platforms?.[this.platform] : undefined) }
+  }
+
+  private env(tool: ToolEntry, values: { bin?: string; dir?: string; root?: string }) {
+    const vars: Record<string, string> = {
+      home: this.options.home,
+      bin: values.bin ?? '',
+      dir: values.dir ?? '',
+      root: values.root ?? values.dir ?? '',
+    }
     return Object.fromEntries(
       Object.entries(tool.env).map(([key, value]) => [key, value.replace(/\$\{(\w+)\}/g, (_, name) => vars[name] ?? '')]),
     )
@@ -116,23 +141,29 @@ export class ToolResolver {
     const installed = (await installedVersions(this.options.home, tool.id)).filter((item) => accepts(item.version, range))
     for (const item of newestFirst(installed, (item) => item.version)) {
       const artifact = this.artifact(tool.versions.find((version) => version.version === item.version))
-      if (artifact) return { ...item, bins: artifact.bin.map((bin) => join(item.dir, bin)) }
+      if (artifact) {
+        return { ...item, root: join(item.dir, artifact.root ?? ''), bins: artifact.bin.map((bin) => join(item.dir, bin)) }
+      }
     }
     return null
   }
 
-  async resolve(need: Need): Promise<Resolution> {
+  private cycle(id: string, chain: string[]) {
+    if (chain.includes(id)) throw new Error(`Tool dependency cycle: ${[...chain, id].join(' -> ')}`)
+  }
+
+  private async resolveOwn(need: Need): Promise<Resolution> {
     const tool = this.entry(need.tool)
-    const found = await this.find(tool)
-    if (found && accepts(found.version, need.version)) {
-      const bins = tool.find.command && found.path !== tool.find.endpoint ? [found.path] : []
+    const found = (await this.find(tool)).find((item) => accepts(item.version, need.version))
+    if (found) {
+      const bins = found.bins ?? (tool.find.command && found.path !== tool.find.endpoint ? [found.path] : [])
       return {
         status: 'found',
         tool: tool.id,
         version: found.version,
         path: found.path,
         bins,
-        env: this.env(tool, { bin: bins[0] }),
+        env: this.env(tool, { bin: bins[0], root: found.root }),
       }
     }
     const installed = await this.installedMatch(tool, need.version)
@@ -143,7 +174,7 @@ export class ToolResolver {
         version: installed.version,
         path: installed.dir,
         bins: installed.bins,
-        env: this.env(tool, { bin: installed.bins[0], dir: installed.dir }),
+        env: this.env(tool, { bin: installed.bins[0], dir: installed.dir, root: installed.root }),
       }
     }
     const candidate = this.candidate(tool, need.version)
@@ -155,8 +186,27 @@ export class ToolResolver {
       version: candidate?.version ?? need.version ?? null,
       size: artifact?.size ?? null,
       requestedBy: need.requestedBy,
-      get: tool.get,
+      get: this.hints(tool),
       canInstall: artifact !== null,
+    }
+  }
+
+  async resolve(need: Need, chain: string[] = []): Promise<Resolution> {
+    const tool = this.entry(need.tool)
+    this.cycle(tool.id, chain)
+    const dependencies: Resolved[] = []
+    for (const requirement of tool.requires ?? []) {
+      const { tool: id, version } = parseRequirement(requirement)
+      const dependency = await this.resolve({ tool: id, version, requestedBy: tool.id }, [...chain, tool.id])
+      if (dependency.status === 'needs') return dependency
+      dependencies.push(dependency)
+    }
+    const own = await this.resolveOwn(need)
+    if (own.status === 'needs' || dependencies.length === 0) return own
+    return {
+      ...own,
+      bins: [...own.bins, ...dependencies.flatMap((dependency) => dependency.bins)],
+      env: Object.assign({}, ...dependencies.map((dependency) => dependency.env), own.env),
     }
   }
 
@@ -175,7 +225,31 @@ export class ToolResolver {
   }
 
   async install(id: string, version?: string, onProgress?: (received: number, total: number | null) => void) {
+    return this.installChain(id, version, onProgress, [])
+  }
+
+  private async installChain(
+    id: string,
+    version: string | undefined,
+    onProgress: ((received: number, total: number | null) => void) | undefined,
+    chain: string[],
+  ): Promise<{ tool: string; version: string; path: string }> {
     const tool = this.entry(id)
+    this.cycle(tool.id, chain)
+    for (const requirement of tool.requires ?? []) {
+      const { tool: dependency, version: range } = parseRequirement(requirement)
+      const attempted = new Set<string>()
+      for (;;) {
+        const resolution = await this.resolve({ tool: dependency, version: range, requestedBy: tool.id }, [...chain, tool.id])
+        if (resolution.status !== 'needs') break
+        const key = `${resolution.tool}@${resolution.version}`
+        if (!resolution.canInstall || attempted.has(key)) {
+          throw new Error(`${resolution.name} is required by ${tool.name} and Studio cannot install it on this machine`)
+        }
+        attempted.add(key)
+        await this.installChain(resolution.tool, resolution.version ?? undefined, undefined, [...chain, tool.id])
+      }
+    }
     const chosen = version ? tool.versions.find((item) => item.version === version) : this.candidate(tool)
     if (!chosen) throw new Error(`${tool.name} has no version ${version ?? ''} to install`.trim())
     const artifact = this.artifact(chosen)
@@ -203,10 +277,15 @@ export class ToolResolver {
     const allowed = new Set(this.options.autoInstall ?? [])
     return Promise.all(
       needs.map(async (need) => {
-        const resolution = await this.resolve(need)
-        if (resolution.status !== 'needs' || !resolution.canInstall || !allowed.has(need.tool)) return resolution
-        await this.install(need.tool, resolution.version ?? undefined)
-        return this.resolve(need)
+        const attempted = new Set<string>()
+        for (;;) {
+          const resolution = await this.resolve(need)
+          if (resolution.status !== 'needs' || !resolution.canInstall || !allowed.has(resolution.tool)) return resolution
+          const key = `${resolution.tool}@${resolution.version}`
+          if (attempted.has(key)) return resolution
+          attempted.add(key)
+          await this.install(resolution.tool, resolution.version ?? undefined)
+        }
       }),
     )
   }
@@ -219,8 +298,16 @@ export class ToolResolver {
         size: await dirSize(item.dir),
       })),
     )
-    const resolution = await this.resolve({ tool: tool.id, requestedBy: 'tools' })
-    const base = { id: tool.id, name: tool.name, installed, get: tool.get }
+    const resolution = await this.resolveOwn({ tool: tool.id, requestedBy: 'tools' })
+    const requires = await Promise.all(
+      (tool.requires ?? []).map(async (requirement) => {
+        const { tool: id, version } = parseRequirement(requirement)
+        const name = this.entries().find((item) => item.id === id)?.name ?? id
+        const met = (await this.resolve({ tool: id, version, requestedBy: tool.id }, [tool.id])).status !== 'needs'
+        return { tool: id, name, version: version ?? null, met }
+      }),
+    )
+    const base = { id: tool.id, name: tool.name, installed, requires, get: this.hints(tool) }
     if (resolution.status === 'needs') {
       return {
         ...base,
