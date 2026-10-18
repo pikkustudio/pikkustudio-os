@@ -1855,6 +1855,9 @@
   "overview_screen__step3_link": "publish",
   "overview_screen__step3_title": "Put it online",
   "overview_screen__tell_text": "Describe it the way you would to a friend. Pikku will ask before it builds anything big. Nothing goes online until you say so.",
+  "overview_screen__next_title": "What should change next?",
+  "overview_screen__next_text": "Ask Pikku for a fix, a change or something new. It checks with you before anything big, and nothing goes online until you say so.",
+  "overview_screen__ask_for_change": "Ask for a change",
   "overview_screen__tell_title": "Tell Pikku what you want to make",
   "overview_screen__things_can_do": [
     {

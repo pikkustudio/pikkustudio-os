@@ -1733,6 +1733,9 @@
   "overview_screen__step3_link": "veröffentlichen",
   "overview_screen__step3_title": "Online stellen",
   "overview_screen__tell_text": "Beschreibe es so, wie du es einem Freund erzählen würdest. Pikku fragt nach, bevor es etwas Größeres baut. Nichts geht online, bevor du es sagst.",
+  "overview_screen__next_title": "Was soll sich als Nächstes ändern?",
+  "overview_screen__next_text": "Bitte Pikku um eine Korrektur, eine Änderung oder etwas Neues. Es fragt nach, bevor es etwas Größeres baut, und nichts geht online, bevor du es sagst.",
+  "overview_screen__ask_for_change": "Um eine Änderung bitten",
   "overview_screen__tell_title": "Sag Pikku, was du machen möchtest",
   "overview_screen__things_can_do": [
     {

@@ -1865,6 +1865,9 @@
   "overview_screen__step3_link": "نشره",
   "overview_screen__step3_title": "نشره على الإنترنت",
   "overview_screen__tell_text": "صفوه كما تصفونه لصديق. سيسألكم Pikku قبل أن يبني أي شيء كبير. ولن ينشر أي شيء على الإنترنت حتى توافقوا.",
+  "overview_screen__next_title": "ما الذي يجب تغييره بعد ذلك؟",
+  "overview_screen__next_text": "اطلبوا من Pikku إصلاحاً أو تغييراً أو شيئاً جديداً. سيسألكم قبل أي شيء كبير، ولن يُنشر أي شيء على الإنترنت حتى توافقوا.",
+  "overview_screen__ask_for_change": "اطلبوا تغييراً",
   "overview_screen__tell_title": "أخبروا Pikku بما تريدون صنعه",
   "overview_screen__things_can_do": [
     {

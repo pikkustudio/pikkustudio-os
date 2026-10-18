@@ -57,6 +57,7 @@ export function OverviewScreen() {
   const [checked, setChecked] = useState<Status>()
   const [areaMsg, setAreaMsg] = useState<Status>()
   const { LiveAppHealth } = useSlots()
+  const built = (counts.functions ?? 0) > 0 || doorCount > 0
 
   const check = () => {
     setChecking(true)
@@ -120,14 +121,14 @@ export function OverviewScreen() {
             </>
           ) : (
             <>
-              <h2 className="max-w-ch20 text-[36px] leading-[1.1] tracking-[-0.02em] text-hero-ink font-bold text-balance">{m.overview_screen__tell_title()}</h2>
+              <h2 className="max-w-ch20 text-[36px] leading-[1.1] tracking-[-0.02em] text-hero-ink font-bold text-balance">{built ? m.overview_screen__next_title() : m.overview_screen__tell_title()}</h2>
               <p className="max-w-ch54 text-[17.5px] leading-[1.5] text-hero-ink-2 text-pretty">
-                {m.overview_screen__tell_text()}
+                {built ? m.overview_screen__next_text() : m.overview_screen__tell_text()}
               </p>
               <div className="mt-1.5 flex flex-wrap items-center gap-3.5">
                 <Button variant="hero" size="pageLg" type="button" onClick={() => open('chat')}>
                   
-                  {m.overview_screen__describe_what_you_want()}
+                  {built ? m.overview_screen__ask_for_change() : m.overview_screen__describe_what_you_want()}
                 </Button>
                 <Button asChild variant="heroGhost" size="pageLg">
                   <Link {...keep} to="/design">
