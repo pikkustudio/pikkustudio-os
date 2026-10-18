@@ -6,6 +6,7 @@ export const StartProjectRunInput = z.object({ name: z.string(), idea: z.string(
   devices: z.array(z.enum(['browser', 'phones'])).optional(),
   uploadId: z.string().optional(),
   path: z.enum(['interview', 'design']).optional(),
+  adopt: z.boolean().optional(),
 })
 export const StartProjectRunOutput = z.object({ runId: z.string() })
 

@@ -3,7 +3,7 @@ import { pikkuWorkflowFunc } from '#pikku/addon/workflow'
 
 export const Surfaces = z.array(z.enum(['screens', 'automations', 'assistant', 'commands', 'connection']))
 export const Devices = z.array(z.enum(['browser', 'phones']))
-export const StartProjectInput = z.object({ name: z.string(), idea: z.string(), key: z.string().optional(), surfaces: Surfaces.optional(), devices: Devices.optional(), uploadId: z.string().optional(), path: z.enum(['interview', 'design']).optional() })
+export const StartProjectInput = z.object({ name: z.string(), idea: z.string(), key: z.string().optional(), surfaces: Surfaces.optional(), devices: Devices.optional(), uploadId: z.string().optional(), path: z.enum(['interview', 'design']).optional(), adopt: z.boolean().optional() })
 export const StartProjectOutput = z.object({ key: z.string() })
 
 export const startProject = pikkuWorkflowFunc({
@@ -14,9 +14,11 @@ export const startProject = pikkuWorkflowFunc({
     let made: { key: string } | undefined
     if (!data.key) {
       made = await workflow.do('Make the project', 'createProject', { name: data.name, idea: data.idea, surfaces: data.surfaces, devices: data.devices, path: data.path })
+    } else if (data.adopt) {
+      await workflow.do('Keep your idea', 'beginIntake', { key: data.key, idea: data.idea, surfaces: data.surfaces, devices: data.devices, path: data.path }, { retries: 0 })
     }
     const key = data.key ?? made!.key
-    if (data.key && data.path !== 'interview') await workflow.do('Keep your start', 'finishIntake', { key }, { retries: 0 })
+    if (data.key && !data.adopt && data.path !== 'interview') await workflow.do('Keep your start', 'finishIntake', { key }, { retries: 0 })
     const adopted = data.uploadId ? await workflow.do('Keep your files', 'adoptUploads', { key, uploadId: data.uploadId }, { retries: 0 }) : { names: [] as string[] }
     const inspected = adopted.names.length ? await workflow.do('Look through your files', 'inspectFiles', { key, names: adopted.names }, { retries: 0 }) : { summary: '' }
     if (data.path === 'interview') return { key }

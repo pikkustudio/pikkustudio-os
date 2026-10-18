@@ -334,6 +334,18 @@ describe('StudioProjectsService', () => {
     assert.equal(noted?.samples, true)
   })
 
+  test('a project that already exists starts its interview from an idea', async () => {
+    const { base, service } = await setup()
+    await service.add(await repo(base, 'workspace'), 'app')
+    assert.equal(await service.intake('app'), null)
+    await service.beginIntake('app', { idea: 'Log my watering', surfaces: ['screens'], path: 'interview' })
+    const started = await service.intake('app')
+    assert.equal(started?.path, 'interview')
+    assert.equal(started?.idea, 'Log my watering')
+    assert.equal(started?.done, false)
+    assert.deepEqual(started?.skipped, [])
+  })
+
   test('creates a project and records the idea', async () => {
     const { base, service } = await setup()
     const project = await service.create({ name: 'Plant Diary', idea: 'Log my watering' })

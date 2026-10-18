@@ -37,3 +37,14 @@ export const finishIntake = pikkuSessionlessFunc({
     return { key }
   },
 })
+
+export const BeginIntakeInput = z.object({ key: z.string(), idea: z.string().optional(), surfaces: z.array(z.string()).optional(), devices: z.array(z.string()).optional(), path: z.enum(['interview', 'design']).optional() })
+
+export const beginIntake = pikkuSessionlessFunc({
+  description: 'Start the first interview of a project that already exists, from an idea.',
+  input: BeginIntakeInput,
+  func: async ({ studioProjects }, { key, ...start }) => {
+    await studioProjects.beginIntake(key, start)
+    return { key }
+  },
+})

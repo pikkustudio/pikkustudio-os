@@ -888,8 +888,13 @@ export class StudioProjectsService {
       throw error
     }
     await rm(staging, { recursive: true, force: true })
-    await writeFile(join(root, 'intake.json'), JSON.stringify({ path: path ?? 'design', done: false, idea: idea ?? null, surfaces: surfaces ?? [], devices: devices ?? [], answers: [], skipped: path === 'interview' ? [] : ['questions'], run: null, jobs: {}, samples: false }) + '\n')
+    await this.beginIntake(id, { idea, surfaces, devices, path })
     return this.register(root, id, name)
+  }
+
+  async beginIntake(key: string, { idea, surfaces, devices, path }: { idea?: string; surfaces?: string[]; devices?: string[]; path?: StartPath }): Promise<void> {
+    await mkdir(dirname(this.intakeFile(key)), { recursive: true })
+    await writeFile(this.intakeFile(key), JSON.stringify({ path: path ?? 'design', done: false, idea: idea ?? null, surfaces: surfaces ?? [], devices: devices ?? [], answers: [], skipped: path === 'interview' ? [] : ['questions'], run: null, jobs: {}, samples: false }) + '\n')
   }
 
   async clone(cloudProjectId: string): Promise<StudioProject> {
