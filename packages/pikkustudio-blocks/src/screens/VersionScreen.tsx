@@ -32,7 +32,7 @@ const groupLook: Record<ReleaseGroupId, { icon: LucideIcon; label: () => I18nStr
   parts: { icon: Boxes, label: m.version_screen__group_parts },
 }
 
-const backLink = (
+const BackLink = () => (
   <Link {...keep} to={'/versions' as never} className={buttonVariants({ variant: 'ghost', size: 'compact' }) + ' self-start'}>
     <ArrowLeft className="rtl:-scale-x-100 size-4" aria-hidden="true" />
     {m.version_screen__all_versions()}
@@ -53,14 +53,14 @@ export function VersionScreen({ id }: { id: string }) {
       <Page gap="snug">
         <PageHead crumb={m.versions_screen__title()} title={m.versions_screen__title()} size="lead" />
         <ErrorState error={view.error} what={m.versions_screen__title()} onRetry={view.retry} />
-        {backLink}
+        <BackLink />
       </Page>
     )
   if (!v)
     return (
       <Page gap="snug">
         <PageHead crumb={m.versions_screen__title()} title={m.version_screen__not_found_title()} text={m.version_screen__not_found_text()} size="lead" />
-        {backLink}
+        <BackLink />
       </Page>
     )
   return <Detail v={v} view={view} />
@@ -215,7 +215,7 @@ function Detail({ v, view }: { v: Release; view: ReleasesView }) {
         </div>
       </NextCard>
 
-      {backLink}
+      <BackLink />
 
       {fault && !panel ? <FaultLine fault={fault} /> : null}
 
