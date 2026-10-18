@@ -70,7 +70,7 @@ export const projectRewrite: LocationRewrite = {
       return url
     }
     const scope = `/${unquote(team)}`
-    url.pathname = project !== null && !TEAM_PAGES.has(first) ? `${scope}/${bareSlug(project)}${at}${url.pathname}` : `${scope}${url.pathname}`
+    url.pathname = project !== null && !TEAM_PAGES.has(first) ? `${scope}/${bareSlug(project)}${at}${url.pathname}` : url.pathname === '/projects' ? scope : `${scope}${url.pathname}`
     return url
   },
 }

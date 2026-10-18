@@ -1453,9 +1453,8 @@
   "new_project_screen__step_start_it_again": "Ich versuche den Start nochmal",
   "new_project_screen__this_usually_takes_about_two": "Das dauert meist etwa zwei Minuten. Du kannst dich in der Zwischenzeit umsehen, und ich sage dir sofort Bescheid, wenn es fertig ist.",
   "new_project_screen__what_went_wrong": "Was schiefgelaufen ist",
-  "not_found__projects": "Alle Projekte ansehen",
-  "not_found__text": "Vielleicht wurde es umbenannt oder entfernt, oder in der Adresse steckt ein Tippfehler.",
-  "not_found__title": "Wir finden {what} nicht.",
+  "not_found__text": "Vielleicht gibt es sie nicht, oder du hast keinen Zugriff darauf.",
+  "not_found__title": "Wir konnten diese Seite nicht finden.",
   "onb_hero__recommendation": "Unsere Empfehlung",
   "onb_name_screen__about_label": "Was machst du beruflich?",
   "onb_name_screen__about_placeholder": "Zum Beispiel: Ich gebe Backkurse in Leeds und kenne mich mit Technik nicht aus.",
@@ -2604,7 +2603,6 @@
   "shell_layout__tell_me_more": "Erzähl mir mehr",
   "shell_layout__tell_me_when": "Sag mir Bescheid, wenn",
   "shell_layout__tell_me_when_text": "Pikku dich braucht oder etwas schiefgeht",
-  "shell_layout__the_project": "das Projekt „{projectSlug}“",
   "shell_layout__thinking": "Pikku denkt nach…",
   "shell_layout__this_change": "Diese Änderung",
   "shell_layout__updates": "Neuigkeiten",
@@ -4599,5 +4597,10 @@
   "audit_screen__hero_error_text": "Studio hat dein Projekt nach seinem Verlauf gefragt und einen Fehler zurückbekommen. Es wurde nichts geändert. Pikku kann herausfinden, warum.",
   "audit_screen__not_running_ask": "Pikku bitten, es zu starten",
   "audit_screen__not_running_say": "Die Seite Verlauf sagt, mein Projekt läuft nicht. Bitte starte es, damit ich sehe, was passiert ist.",
-  "studio_loading__label": "Pikku Studio wird geöffnet"
+  "studio_loading__label": "Pikku Studio wird geöffnet",
+  "not_found__label": "Seite nicht gefunden",
+  "not_found__teams": "Zu deinen Teams",
+  "not_found__ask": "Pikku fragen",
+  "not_found__ask_prompt": "Ich habe eine Seite geöffnet, die nicht gefunden wurde. Kannst du mir helfen, zu finden, was ich gesucht habe?",
+  "not_found__sign_in": "Anmelden"
 }

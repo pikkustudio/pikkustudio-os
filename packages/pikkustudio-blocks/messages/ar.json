@@ -1561,9 +1561,8 @@
   "new_project_screen__step_start_it_again": "أعيد محاولة التشغيل",
   "new_project_screen__this_usually_takes_about_two": "يستغرق هذا عادة نحو دقيقتين. يمكنكم التجول أثناء الانتظار، وسأخبركم فور أن يصبح جاهزا.",
   "new_project_screen__what_went_wrong": "ما الذي حدث بشكل خاطئ",
-  "not_found__projects": "عرض كل المشاريع",
-  "not_found__text": "ربما تغير اسمه أو أزيل، أو أن في العنوان خطأ مطبعيا.",
-  "not_found__title": "لا يمكننا العثور على {what}.",
+  "not_found__text": "ربما لا تكون موجودة، أو ليس لديكم صلاحية الوصول إليها.",
+  "not_found__title": "لم نتمكن من العثور على هذه الصفحة.",
   "onb_hero__recommendation": "توصيتنا",
   "onb_name_screen__about_label": "ماذا تعملون؟",
   "onb_name_screen__about_placeholder": "مثلا: أقدم دروسا في الخبز في ليدز ولست متخصصا في التقنية.",
@@ -2796,7 +2795,6 @@
   "shell_layout__tell_me_more": "أخبروني المزيد",
   "shell_layout__tell_me_when": "أخبروني عندما",
   "shell_layout__tell_me_when_text": "يحتاج Pikku إليكم أو يحدث خطأ ما",
-  "shell_layout__the_project": "المشروع “{projectSlug}”",
   "shell_layout__thinking": "Pikku يفكر…",
   "shell_layout__this_change": "هذا التغيير",
   "shell_layout__updates": "التحديثات",
@@ -4943,5 +4941,10 @@
   "audit_screen__hero_error_text": "طلب Studio سجل مشروعك فعاد بخطأ. لم يتغير شيء. يستطيع Pikku معرفة السبب.",
   "audit_screen__not_running_ask": "اطلب من Pikku تشغيله",
   "audit_screen__not_running_say": "تقول صفحة السجل إن مشروعي لا يعمل. أرجو تشغيله حتى أرى ما حدث.",
-  "studio_loading__label": "جارٍ فتح Pikku Studio"
+  "studio_loading__label": "جارٍ فتح Pikku Studio",
+  "not_found__label": "الصفحة غير موجودة",
+  "not_found__teams": "الذهاب إلى فرقكم",
+  "not_found__ask": "اسألوا Pikku",
+  "not_found__ask_prompt": "فتحت صفحة تعذر العثور عليها. هل يمكنك مساعدتي في العثور على ما كنت أبحث عنه؟",
+  "not_found__sign_in": "تسجيل الدخول"
 }

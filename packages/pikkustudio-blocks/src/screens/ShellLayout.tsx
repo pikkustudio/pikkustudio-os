@@ -4,7 +4,7 @@ import { PikkuMark } from '../blocks/PikkuMark'
 import { ChangesPanel } from '../changes-panel/ChangesPanel'
 import { CloudPanel } from '../blocks/CloudPanel'
 import { EmptyState } from '../blocks/EmptyState'
-import { NotFoundState } from '../blocks/NotFoundState'
+import { NotFoundPage } from '../blocks/NotFoundPage'
 import { Outlet, useLocation, useNavigate, useSearch } from '@tanstack/react-router'
 import { Link } from '../blocks/Link'
 import { useEffect, useMemo, useRef, useState, type ComponentType, type ReactNode } from 'react'
@@ -478,11 +478,7 @@ function ShellLayoutInner() {
             </div>
             <div className={`min-h-0 flex-1 ${fill ? 'overflow-hidden pt-4 pe-6.5 pb-3.5 ps-6' : 'overflow-auto scroll-smooth [scrollbar-width:thin] px-12 pt-9 pb-7 @max-[640px]/app:px-4 @max-[640px]/app:pt-5 @min-[1700px]/app:px-16 @min-[1700px]/app:pt-11 @min-[1700px]/app:pb-8'}`}>
               {projectMissing ? (
-                <NotFoundState what={m.shell_layout__the_project({ projectSlug })}>
-                  <Button asChild variant="hero" size="pageLg">
-                    <Link {...keep} to="/projects">{m.not_found__projects()}</Link>
-                  </Button>
-                </NotFoundState>
+                <NotFoundPage />
               ) : needsApp ? (
                 <ProjectRunGate>
                   <Outlet />

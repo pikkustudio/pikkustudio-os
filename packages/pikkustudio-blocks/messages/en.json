@@ -1575,9 +1575,8 @@
   "new_project_screen__step_start_it_again": "Trying to start it again",
   "new_project_screen__this_usually_takes_about_two": "This usually takes about two minutes. You can look around while you wait, and I will tell you the moment it is ready.",
   "new_project_screen__what_went_wrong": "What went wrong",
-  "not_found__projects": "See all projects",
-  "not_found__text": "It may have been renamed or removed, or the address has a typo.",
-  "not_found__title": "We cannot find {what}.",
+  "not_found__text": "It may not exist, or you may not have access to it.",
+  "not_found__title": "We couldn't find this page.",
   "onb_hero__recommendation": "Our recommendation",
   "onb_name_screen__about_label": "What do you do?",
   "onb_name_screen__about_placeholder": "For example: I run baking classes in Leeds and I am not technical.",
@@ -2727,7 +2726,6 @@
   "shell_layout__tell_me_more": "Tell me more",
   "shell_layout__tell_me_when": "Tell me when",
   "shell_layout__tell_me_when_text": "Pikku needs you, or something goes wrong",
-  "shell_layout__the_project": "the project “{projectSlug}”",
   "shell_layout__thinking": "Pikku is thinking…",
   "shell_layout__this_change": "This change",
   "shell_layout__updates": "Updates",
@@ -4805,5 +4803,10 @@
   "cloud_offline__title": "Pikku Studio Cloud can't be reached right now",
   "cloud_offline__body": "Everything on this computer keeps working. This part lives in Pikku Studio Cloud and comes back once you are online again.",
   "cloud_offline__retry": "Check again",
-  "studio_loading__label": "Opening Pikku Studio"
+  "studio_loading__label": "Opening Pikku Studio",
+  "not_found__label": "Page not found",
+  "not_found__teams": "Go to your teams",
+  "not_found__ask": "Ask Pikku",
+  "not_found__ask_prompt": "I opened a page that couldn't be found. Can you help me find what I was looking for?",
+  "not_found__sign_in": "Sign in"
 }

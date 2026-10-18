@@ -1,26 +1,34 @@
-import { useEffect } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import { useLocation, useNavigate } from '@tanstack/react-router'
 import { isTeamScoped } from '../lib/project-url'
 import { useSlots } from '../lib/slots'
-import { LOCAL_TEAM, useTeamSlug, type TeamScopeProps } from '../lib/team'
+import { LOCAL_TEAM, teamVerdict, useTeamSlug, type TeamScopeProps, type TeamVerdict } from '../lib/team'
+import { NotFoundPage } from './NotFoundPage'
+import { StudioLoading } from './StudioLoading'
 
-function LocalTeamScope({ team, onTeam }: TeamScopeProps) {
-  useEffect(() => {
-    if (team !== LOCAL_TEAM) onTeam(LOCAL_TEAM)
-  }, [team])
-  return null
+function LocalTeamScope({ team, children }: TeamScopeProps) {
+  return children(teamVerdict({ team, teams: [LOCAL_TEAM], fallback: LOCAL_TEAM, fetching: false }))
 }
 
-// Puts the team into a URL that lacks it, or corrects one the person cannot be in, so every
-// page under a team reads /<team>/... and old /<owner>/<project> links land in the right place.
-export function TeamGuard() {
+function Gate({ verdict, onTeam, children }: { verdict: TeamVerdict; onTeam: (slug: string) => void; children: ReactNode }) {
+  const to = typeof verdict === 'object' ? verdict.to : undefined
+  useEffect(() => {
+    if (to) onTeam(to)
+  }, [to])
+  if (verdict === 'missing') return <NotFoundPage />
+  if (verdict === 'pending' || to) return <StudioLoading />
+  return children
+}
+
+// Puts the team into a URL that lacks it, so every page under a team reads /<team>/...
+export function TeamGuard({ children }: { children: ReactNode }) {
   const team = useTeamSlug() || undefined
   const scoped = useLocation({ select: (l) => isTeamScoped(l.pathname) })
   const navigate = useNavigate()
   const Scope = useSlots().TeamScope ?? LocalTeamScope
-  if (!scoped) return null
+  if (!scoped) return children
   const onTeam = (slug: string) => {
     if (slug !== team) navigate({ to: '.', search: ((prev: object) => ({ ...prev, team: slug })) as never, replace: true })
   }
-  return <Scope team={team} onTeam={onTeam} />
+  return <Scope team={team}>{(verdict) => <Gate verdict={verdict} onTeam={onTeam}>{children}</Gate>}</Scope>
 }

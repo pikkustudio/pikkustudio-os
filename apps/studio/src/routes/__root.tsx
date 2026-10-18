@@ -52,8 +52,7 @@ function SessionGate({ children }: { children: ReactNode }) {
   if (account.isPending) return <StudioLoading />
   return (
     <SlotsCtx.Provider value={{}}>
-      <TeamGuard />
-      {children}
+      <TeamGuard>{children}</TeamGuard>
     </SlotsCtx.Provider>
   )
 }
