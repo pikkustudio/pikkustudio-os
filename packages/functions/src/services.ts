@@ -25,6 +25,7 @@ import { studioHome } from '@pikkustudio/addon-studio/services'
 import { KyselyAgentRunService, KyselyAgentRunStateService, KyselyAgentStorageService } from '@pikku/kysely'
 import { studioAgentRunner } from './lib/chat-runner.js'
 import { createStudio } from './lib/studio.js'
+import { studioInboxAccess } from './lib/studio-inbox-access.js'
 import { studioAuthSecret } from './lib/auth-secret.js'
 import { connectVault } from '@pikkustudio/vault/connect'
 import { KyselyCommentStore } from '@pikkustudio/addon-review/comment-store'
@@ -101,6 +102,7 @@ export const createSingletonServices = pikkuServices(async (config, existingServ
     verdictStore: existingServices?.verdictStore ?? new KyselyVerdictStore(kysely as any),
     inboxStore: existingServices?.inboxStore ?? new KyselyInboxStore(kysely as any),
     inboxSecret: existingServices?.inboxSecret ?? frameSecret(studio.home),
+    inboxAccess: existingServices?.inboxAccess ?? studioInboxAccess(studio.projects),
     commentStore: existingServices?.commentStore ?? new KyselyCommentStore(kysely as any),
     metaSource: existingServices?.metaSource ?? worktreeMetaSource((id) => studio.projects.projectDir(id)),
     ...(credentialService ? { credentialService } : {}),

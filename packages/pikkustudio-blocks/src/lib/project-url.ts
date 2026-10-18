@@ -13,7 +13,7 @@ const TEAM_PAGES = new Set(['projects', 'secrets', 'studio-metrics', 'new-projec
 export const PAGES: Record<string, boolean> = {
   overview: true, project: false, review: false, 'review-ui': false, 'review-fixes': false, resume: false, publish: false, build: false, lab: false,
   billing: false, team: false, settings: false, 'project-settings': false, plans: false, ai: false, domains: false, workspaces: false, 'secret-access': false, 'project-secrets': true,
-  'changes': true, design: true, emails: true, translations: true, artifacts: true, knowledge: true, content: true,
+  'changes': true, design: true, emails: true, inbox: false, translations: true, artifacts: true, knowledge: true, content: true,
   'front-doors': true, code: true, audit: true, apps: true, explore: true, logs: true, performance: true, metrics: true, scorers: true, checks: true, connections: true, 'incoming-alerts': true,
   assistants: true, 'virtual-users': true, accounts: true, routines: true, 'timed-tasks': true, 'background-jobs': true, versions: false, addons: true, 'add-ons': true, mocks: true, surface: true, switches: true, permissions: true, security: true,
 }

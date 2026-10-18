@@ -1340,6 +1340,7 @@ export class StudioProjectsService {
       if (modules) readable.push(modules)
     }
     readable.push(...linkedRepos(worktree.path))
+    for (const contributor of this.options.devContributors ?? []) readable.push(contributor, resolve(dirname(contributor), '..'))
     const runtime = process.env.PIKKU_STUDIO_RUNTIME_DIR
     if (runtime) readable.push(runtime, dirname(process.execPath))
     const writable = design ? [dirname(design)] : []

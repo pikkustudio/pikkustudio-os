@@ -15,3 +15,7 @@ test('a team page and a project page keep their address', () => {
   expect(roundTrip('/acme/new-project').outside).toBe('/acme/new-project')
   expect(roundTrip('/acme/no-such-project/overview').outside).toBe('/acme/no-such-project/overview')
 })
+
+test('a bare inbox address is a project page, so it is not read as a team', () => {
+  expect(roundTrip('/inbox').inside).toBe('/inbox')
+})

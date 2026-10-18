@@ -24,7 +24,7 @@ export const createInboxContributor = (options: InboxContributorOptions = {}): P
         ? [
             `    const rendered = await import(${JSON.stringify(rendererModule)}).catch(() => null)`,
             `    const renderEmailTemplate = rendered?.renderEmailTemplate`,
-            `    const render = renderEmailTemplate ? (template: { name: string; locale?: string; data?: Record<string, unknown> }) => renderEmailTemplate({ name: template.name, locale: template.locale ?? 'en', data: template.data ?? {} }) : undefined`,
+            `    const render = renderEmailTemplate ? (template: { name: string; locale?: string; data?: Record<string, unknown> }) => (renderEmailTemplate as (input: { name: string; locale: string; data: Record<string, unknown> }) => Promise<{ subject: string; html: string; text?: string }>)({ name: template.name, locale: template.locale ?? 'en', data: template.data ?? {} }) : undefined`,
           ]
         : [`    const render = undefined`]),
       `    services.emailService = new StudioInboxEmailService({`,

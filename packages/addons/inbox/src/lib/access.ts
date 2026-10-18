@@ -6,7 +6,7 @@ export async function assertCanView(
   session: { userId?: string } | undefined,
   projectKey: string
 ) {
-  if (access && !(await access.canView(session, projectKey))) {
+  if (!access || !(await access.canView(session, projectKey))) {
     throw new ForbiddenError('Only people on this project can see its messages')
   }
 }

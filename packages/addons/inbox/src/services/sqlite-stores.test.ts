@@ -93,7 +93,7 @@ test('a token fixes the project and stage, and a forged one is refused', async (
 
 test('sending through the service records, lists and reads back end to end', async () => {
   const store = new KyselyInboxStore(await open())
-  const services = { inboxStore: store, inboxSecret: 'secret' } as never
+  const services = { inboxStore: store, inboxSecret: 'secret', inboxAccess: { canView: async () => true } } as never
   const wire = { session: { userId: 'u1' } } as never
   const { token } = mintInboxToken({ secret: 'secret', projectKey: 'p1', stage: null })
   const sent: unknown[] = []
@@ -128,4 +128,15 @@ test('a bad token is refused and nothing is stored', async () => {
 test('a verification code outranks links and years are ignored', () => {
   const h = extractHighlights({ subject: 'Your code', html: '<p>Your verification code is 482 913. Copyright 2026</p><a href="https://x.test/a">Go</a>', text: '' })
   expect(h.primary).toEqual({ kind: 'code', value: '482 913' })
+})
+
+test('without an access service nobody can read, and an access service decides per project', async () => {
+  const store = new KyselyInboxStore(await open())
+  await store.add(message({ projectKey: 'p1' }))
+  const wire = { session: { userId: 'u1' } } as never
+  const query = { projectKey: 'p1', stage: null, limit: 50 }
+  await expect((listInbox as any).func({ inboxStore: store }, query, wire)).rejects.toThrow('Only people on this project')
+  const only = { inboxStore: store, inboxAccess: { canView: async (_s: unknown, key: string) => key === 'p1' } } as never
+  expect((await (listInbox as any).func(only, query, wire)).messages).toHaveLength(1)
+  await expect((listInbox as any).func(only, { ...query, projectKey: 'p2' }, wire)).rejects.toThrow('Only people on this project')
 })
