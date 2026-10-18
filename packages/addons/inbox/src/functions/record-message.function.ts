@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { pikkuFunc } from '#pikku/function'
+import { pikkuSessionlessFunc } from '#pikku/function'
 import { ForbiddenError } from '@pikku/core/errors'
 import { RecordedMessageSchema } from '../lib/schemas.js'
 import { verifyInboxToken } from '../lib/token.js'
@@ -13,7 +13,7 @@ export const RecordMessageOutput = z.object({
   id: z.string(),
 })
 
-export const recordMessage = pikkuFunc({
+export const recordMessage = pikkuSessionlessFunc({
   expose: true,
   auth: false,
   input: RecordMessageInput,
