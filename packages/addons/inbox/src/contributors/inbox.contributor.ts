@@ -32,7 +32,7 @@ export const createInboxContributor = (options: InboxContributorOptions = {}): P
       `      token: env.${INBOX_TOKEN_ENV},`,
       `      render,`,
       `      deployRef: () => env.${INBOX_DEPLOY_REF_ENV} ?? null,`,
-      `      onError: (error) => console.warn('Could not hand a message to the inbox:', error instanceof Error ? error.message : String(error)),`,
+      `      onError: (error: unknown) => console.warn('Could not hand a message to the inbox:', error instanceof Error ? error.message : String(error)),`,
       `    })`,
       `  }`,
     ],
