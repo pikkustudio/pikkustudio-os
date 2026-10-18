@@ -27,9 +27,9 @@ describe('pikku changes with the sandbox credentials', () => {
     try {
       const route = await pikkuNext(dir, undefined, undefined, {
         HOME: dir,
-        FABRIC_API_URL: `http://127.0.0.1:${(server.address() as AddressInfo).port}`,
-        FABRIC_TOKEN: 'sandbox-token',
-        FABRIC_PROJECT_ID: 'project-1',
+        PIKKUSTUDIO_API_URL: `http://127.0.0.1:${(server.address() as AddressInfo).port}`,
+        PIKKUSTUDIO_API_KEY: 'sandbox-token',
+        PIKKUSTUDIO_PROJECT_ID: 'project-1',
       })
       assert.equal(route.agent, null)
       assert.ok(seen.length > 0)
