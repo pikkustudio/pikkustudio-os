@@ -7,6 +7,9 @@ import { m } from '@/i18n/messages'
 import { PreviewBar } from '../blocks/PreviewBar'
 import { DesignInspector } from '../blocks/DesignInspector'
 import { AppNotRunning } from '../blocks/AppNotRunning'
+import { EmptyState } from '../blocks/EmptyState'
+import { PikkuDot } from '../blocks/PikkuDot'
+import { Button } from '../ui/button'
 import { HintRow } from '../blocks/HintRow'
 import { ImpersonatePanel } from '../blocks/ImpersonatePanel'
 import { LiveAppFrame, liveAppUrl, type PickedElement } from '../blocks/LiveAppFrame'
@@ -48,7 +51,7 @@ export function DesignScreen() {
   const navigate = useNavigate()
   const set = (patch: Record<string, unknown>) => navigate({ to: '.', search: ((prev: object) => ({ ...prev, ...patch })) as never, replace: true })
   const key = useProjectKey()
-  const { attached, attach } = useContext(ShellCtx)
+  const { attached, attach, say } = useContext(ShellCtx)
   const [reloadKey, setReloadKey] = useState(0)
   const [picked, setPicked] = useState<PickedElement | null>(null)
   const [styles, setStyles] = useState<Styles>({})
@@ -98,6 +101,15 @@ export function DesignScreen() {
     } else {
       stage = <PartsWaiting text={design?.state === 'restarting' ? m.design_parts__restarting() : m.design_parts__starting()} />
     }
+  } else if (apps.isSuccess && list.length === 0) {
+    stage = (
+      <EmptyState icon={AppWindow} title={m.design_live__no_app()} text={m.design_live__no_app_text()}>
+        <Button type="button" size="page" onClick={() => say(m.design_live__no_app_say())}>
+          <PikkuDot />
+          {m.design_live__no_app_ask()}
+        </Button>
+      </EmptyState>
+    )
   } else if (!key || !current?.url || current.state !== 'ready') {
     stage = <PartsWaiting text={m.design_live__loading()} />
   } else {
