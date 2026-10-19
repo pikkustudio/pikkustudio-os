@@ -29,6 +29,7 @@ export const ChecklistOutput = z.object({
   questionsOpen: z.boolean(),
   chosenId: z.string().nullable(),
   publishUrl: z.string().nullable(),
+  started: z.boolean(),
 })
 
 type Workflows = { getRun(id: string): Promise<{ error?: { message?: string } } | undefined | null>; getRunStatus(id: string): Promise<{ status: string; steps: { name: string; status: string }[] } | undefined | null> }
@@ -43,14 +44,14 @@ const runOf = async (workflows: Workflows | undefined, id: string | undefined): 
 
 type Studio = Parameters<typeof readSignals>[0] & { projects: { list(): Promise<{ key: string; name: string }[]> } }
 
-const view = async (studio: Studio, workflows: Workflows | undefined, key: string): Promise<{ list: Checklist; chosenId: string | null; publishUrl: string | null; idea: string }> => {
+const view = async (studio: Studio, workflows: Workflows | undefined, key: string): Promise<{ list: Checklist; chosenId: string | null; publishUrl: string | null; started: boolean; idea: string }> => {
   const intake = await studio.projects.intake(key)
   const run = await runOf(workflows, intake?.run?.id)
   const signals = await readSignals(studio, key, run)
-  return { list: deriveChecklist(signals), chosenId: signals.directions.chosenId ?? null, publishUrl: signals.publish.url ?? null, idea: signals.intake.idea ?? '' }
+  return { list: deriveChecklist(signals), started: intake !== null, chosenId: signals.directions.chosenId ?? null, publishUrl: signals.publish.url ?? null, idea: signals.intake.idea ?? '' }
 }
 
-const out = (v: Awaited<ReturnType<typeof view>>) => ({ ...v.list, chosenId: v.chosenId, publishUrl: v.publishUrl })
+const out = (v: Awaited<ReturnType<typeof view>>) => ({ ...v.list, chosenId: v.chosenId, publishUrl: v.publishUrl, started: v.started })
 
 export const ProjectChecklistInput = z.object({ key: z.string() })
 

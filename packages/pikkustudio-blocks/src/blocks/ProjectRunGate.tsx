@@ -9,6 +9,7 @@ import { DEFAULT_TARGET, formatTarget, useProjectTarget } from '../lib/project-t
 import { useProjectQuery } from '../lib/projectRpc'
 import { AppNotRunning, CLOUD_LAUNCH, LOCAL_LAUNCH, launchSteps, phaseLabel, type LaunchPhase, type LaunchWhere, type StageWayOut } from './AppNotRunning'
 import { useTeamProjects, type ListedProject } from './TeamProjects'
+import { CardsSkeleton } from './QueryState'
 
 type LiveApp = { slug: string; state: 'starting' | 'ready' | 'failed' }
 type Workspace = { state: 'off' | 'starting' | 'ready' | 'failed'; phase: LaunchPhase | null; error: string | null }
@@ -40,7 +41,8 @@ export function ProjectRunGate({ children }: { children: I18nNode }) {
 function StageGate({ stage, children }: { stage: StageWayOut; children: I18nNode }) {
   const meta = useProjectQuery(useProjectKey(), 'console:getAllMeta', {}, { handlesErrors: true })
   const status = (meta.error as { status?: number } | null)?.status ?? 0
-  if (status === 500) return <AppNotRunning state="off" onStart={stage.onWorkspace} stage={{ ...stage, outdated: true }} />
+  if (meta.isLoading) return <CardsSkeleton />
+  if (meta.isError && (status === 500 || status === 0)) return <AppNotRunning state="off" onStart={stage.onWorkspace} stage={{ ...stage, outdated: true }} />
   return <>{children}</>
 }
 
