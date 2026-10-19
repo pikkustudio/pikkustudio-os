@@ -16,6 +16,7 @@ import type { InboxStore } from '@pikkustudio/addon-inbox/types'
 import type { CommentStore, VerdictStore } from '@pikkustudio/addon-review/types'
 import type { worktreeMetaSource } from './lib/worktree-meta-source.js'
 import type { LogSources, MetricSources, StageAudit, StageDirectory } from '@pikkustudio/addon-studio/sources'
+import type { AccountProvider, ProjectDecoratorFactory, PublishTarget, ScopedSource, StudioPresence } from '@pikkustudio/addon-studio/services'
 
 export interface UserSession extends CoreUserSession {
   userId: string
@@ -59,6 +60,13 @@ export interface SingletonServices extends CoreSingletonServices<Config> {
   metricSources?: MetricSources
   stageDirectory?: StageDirectory
   stageAudit?: StageAudit
+  // Contributed by a wired addon (none in the open build): the account Studio signs in to, where it can publish,
+  // the team's shared dev credentials, extra project fields and background presence reporting.
+  studioAccount?: AccountProvider
+  publishTargets?: Record<string, PublishTarget>
+  teamSource?: (projectId: string, projectPath: string) => ScopedSource | undefined
+  projectDecorators?: Record<string, ProjectDecoratorFactory>
+  studioPresence?: Record<string, StudioPresence>
 }
 
 export interface Services extends CoreServices<SingletonServices> {}

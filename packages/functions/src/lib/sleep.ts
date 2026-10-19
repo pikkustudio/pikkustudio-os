@@ -197,6 +197,7 @@ export const goToSleep = async (studio: Studio, logger: Logger) => {
   const open = studio.projects.openKeys()
   await writeFile(statePath(studio), JSON.stringify({ open, at: new Date().toISOString() }, null, 2) + '\n')
   await Promise.all(open.map((key) => studio.projects.stop(key)))
+  for (const decorator of studio.decorators) decorator.stop()
   logger.info(`Studio is asleep with ${open.length} project(s) stopped`)
 }
 
@@ -208,4 +209,5 @@ export const wakeUp = async (studio: Studio, logger: Logger) => {
   for (const key of open) {
     await studio.projects.open(key).catch((error) => logger.warn(`Could not reopen ${key}: ${error instanceof Error ? error.message : error}`))
   }
+  await Promise.all(studio.decorators.map((decorator) => decorator.reconcile()))
 }

@@ -1,4 +1,4 @@
 {
   "extends": "./pikku.config.json",
-  "srcDirectories": ["packages/functions/src", ".studio-addons/wire"]
+  "srcDirectories": [".studio-addons/wire"]
 }

@@ -6,7 +6,12 @@ import {
   kyselyLogStore,
   kyselyProjectStore,
   studioHome,
+  type AccountProvider,
   type BuilderSession,
+  type ProjectDecorator,
+  type ProjectDecoratorFactory,
+  type PublishTarget,
+  type ScopedSource,
   type SignInChoice,
   type StudioAi,
   type StudioProjectsService,
@@ -31,6 +36,16 @@ export interface Studio {
   settings: StudioSettingsFile
   audit: StudioAudit
   models: Map<string, string>
+  /** Background work the addons' project decorators run; reconciled on wake and stopped on sleep. */
+  decorators: ProjectDecorator[]
+}
+
+/** What the wired addons add to Studio, read from the services their contributors provide. */
+export interface StudioExtensions {
+  account?: AccountProvider
+  publishTargets?: PublishTarget[]
+  teamSource?: (projectId: string, projectPath: string) => ScopedSource | undefined
+  projectDecorators?: ProjectDecoratorFactory[]
 }
 
 export type { SignInChoice }
@@ -45,11 +60,14 @@ const inboxEnv = (home: string, key: string): Record<string, string> => {
   }
 }
 
-export async function createStudio(home = studioHome(), db?: Kysely<any>): Promise<Studio> {
+export async function createStudio(home = studioHome(), db?: Kysely<any>, extensions: StudioExtensions = {}): Promise<Studio> {
   const runtime = await installEmbeddedRuntime(home)
   if (runtime) process.env.PIKKU_STUDIO_CORE_BIN = join(runtime, 'bin')
   const core = await createStudioServices({
     home,
+    account: extensions.account,
+    publishTargets: extensions.publishTargets,
+    teamSource: extensions.teamSource,
     projectStore: db ? kyselyProjectStore(db, fileProjectStore(home)) : undefined,
     logStore: db ? kyselyLogStore(db) : undefined,
     personalSource: (projectId) =>
@@ -71,6 +89,11 @@ export async function createStudio(home = studioHome(), db?: Kysely<any>): Promi
   })
   const audit = new StudioAudit(home)
   instrumentStudio(audit, core)
+  const decorators = (extensions.projectDecorators ?? []).map((factory) => factory(core.studioProjects))
+  for (const decorator of decorators) {
+    core.studioHooks.onChange(() => decorator.reconcile())
+    core.studioHooks.decorateProjects((project) => decorator.decorate(project))
+  }
   core.studioHooks.wrapProxied(holdWhileStreaming)
   return {
     home,
@@ -81,5 +104,6 @@ export async function createStudio(home = studioHome(), db?: Kysely<any>): Promi
     settings: core.studioSettings,
     audit,
     models: core.studioModels,
+    decorators,
   }
 }

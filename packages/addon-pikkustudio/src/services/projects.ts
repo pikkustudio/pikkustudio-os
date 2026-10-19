@@ -158,6 +158,8 @@ export interface AccountProvider {
   pollSignIn(code: string): Promise<SignInStatus>
   signOut(): Promise<void>
   modelAccess(): Promise<{ proxyUrl: string; apiKey: string }>
+  /** The model account AI runs, through `modelAccess`, when PIKKU_STUDIO_MODEL does not name one. */
+  model?: string
   link(projectId: string): Promise<AccountLink | null>
   locate(path: string, cloud: CloudProject[]): Promise<{ projectId: string; project: CloudProject | null } | null>
   adopt(projectId: string, path: string): Promise<void>

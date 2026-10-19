@@ -95,6 +95,7 @@ describe('goToSleep', () => {
   const studioWith = (saveWork: () => Promise<unknown>, calls: string[]) =>
     ({
       home: mkdtempSync(join(tmpdir(), 'studio-sleep-')),
+      decorators: [],
       builder: { state: async () => ({ busy: false }), cancel: () => calls.push('cancel') },
       projects: {
         keys: async () => ['a1'],

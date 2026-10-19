@@ -1,12 +1,12 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { addonRoles } from '#pikku/screens/pikku-addon-roles.gen.js'
-import { addonUiCall } from './addon-ui.middleware.js'
+import { addonMayCall, addonUiCall } from './addon-ui.middleware.js'
 
-const run = async (headers: Record<string, string>, session: { userId: string; scopes?: string[] } | undefined) => {
+const run = async (headers: Record<string, string>, session: { userId: string; scopes?: string[] } | undefined, path = '/rpc/invoices:list') => {
   let current = session
   await addonUiCall({} as never, {
-    http: { request: { header: (name: string) => headers[name.toLowerCase()] } },
+    http: { request: { header: (name: string) => headers[name.toLowerCase()], path: () => path } },
     getSession: () => current,
     setInitialSession: (next: typeof session) => {
       current = next
@@ -46,4 +46,14 @@ test('a call that names no addon is untouched, even locally', async () => {
 
 test('naming an addon that is not installed is refused', async () => {
   await assert.rejects(run({ 'x-pikku-addon': 'ghost', host: 'localhost' }, { userId: 'owner', scopes: [] }))
+})
+
+test("an addon's call reaches only that addon's own functions", async () => {
+  assert.equal(addonMayCall('cloud', '/rpc/cloud:listPlans'), true)
+  assert.equal(addonMayCall('cloud', '/rpc/cloud%3AlistPlans'), true)
+  assert.equal(addonMayCall('cloud', '/rpc/studio:account'), false)
+  assert.equal(addonMayCall('cloud', '/rpc/cloudy:listPlans'), false)
+  assert.equal(addonMayCall('cloud', '/studio/account'), false)
+  addonRoles.invoices = ['invoices:read']
+  await assert.rejects(run({ 'x-pikku-addon': 'invoices' }, { userId: 'u', scopes: [] }, '/rpc/studio:account'), /only call its own functions/)
 })

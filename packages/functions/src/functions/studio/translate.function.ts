@@ -14,11 +14,16 @@ export const translateTexts = pikkuSessionlessFunc({
   description: "Translate an app's texts with the AI Studio builds with. Texts it could not translate are left out.",
   input: TranslateTextsInput,
   output: TranslateTextsOutput,
-  func: async ({ studio }, { texts, locale, sourceLocale }) => {
+  func: async ({ studio, studioAccount }, { texts, locale, sourceLocale }) => {
     const translate = modelTranslate(async () => {
       const env = await studio.ai.env()
       if (env.PIKKU_STUDIO_AI === 'key') {
         return { url: env.PIKKU_STUDIO_AI_BASE_URL!, key: env.PIKKU_STUDIO_AI_KEY!, model: env.PIKKU_STUDIO_MODEL! }
+      }
+      const model = env.PIKKU_STUDIO_MODEL ?? studioAccount?.model
+      if (env.PIKKU_STUDIO_AI === 'cloud' && model) {
+        const { proxyUrl, apiKey } = await studio.projects.modelAccess()
+        return { url: proxyUrl, key: apiKey, model }
       }
       return null
     })
