@@ -9,7 +9,7 @@ import { useProjectQuery } from '../lib/projectRpc'
 import { Button } from '../ui/button'
 import { ChevronRight, Blocks } from 'lucide-react'
 import { ShellCtx } from '../lib/shell'
-import { keep } from '../lib/links'
+import { keep, withoutPageParams } from '../lib/links'
 import { useFrontDoors, API_KINDS } from '../lib/frontDoors'
 import { useSlots } from '../lib/slots'
 
@@ -119,7 +119,7 @@ export function OverviewScreen() {
                   </>
                 )
                 return to ? (
-                  <Link key={title} {...keep} to={to} search={countKey === 'mcpTools' ? ({ reach: 'helper' } as never) : undefined} className={`${row} transition-colors duration-140 hover:bg-secondary active:bg-surface-3`}>
+                  <Link key={title} {...keep} to={to} search={countKey === 'mcpTools' ? ((prev: object) => ({ ...withoutPageParams(prev), reach: 'helper' })) as never : keep.search} className={`${row} transition-colors duration-140 hover:bg-secondary active:bg-surface-3`}>
                     {body}
                   </Link>
                 ) : (
