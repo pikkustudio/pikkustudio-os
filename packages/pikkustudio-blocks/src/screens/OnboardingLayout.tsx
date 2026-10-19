@@ -420,7 +420,7 @@ export function OnboardingLayout() {
                     {copy.diffLocal()}
                   </p>
                 </div>
-                {copy.diffHosted ? (
+                {copy.diffHosted.title() ? (
                   <div className="flex flex-col gap-1.5 rounded-[18px] border border-border p-4.5">
                     <h3 className="text-[19px] font-bold tracking-[-0.012em] text-balance">{copy.diffHosted.title()}</h3>
                     <p className="text-[15px] text-ink-2 text-pretty">{copy.diffHosted.text()}</p>

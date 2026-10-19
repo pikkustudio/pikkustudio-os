@@ -4945,5 +4945,21 @@
   "logs_screen__tenant_org": "Organisation",
   "logs_screen__tenant_user": "Nutzer",
   "metrics_traffic__calls": "{n} Aufrufe",
-  "metrics_traffic__sub": "Wie viele Aufrufe ankamen und wie lange sie dauerten, über den gewählten Zeitraum."
+  "metrics_traffic__sub": "Wie viele Aufrufe ankamen und wie lange sie dauerten, über den gewählten Zeitraum.",
+  "copy__brand_name": "Pikku Studio",
+  "copy__brand_label": "Pikku Studio",
+  "copy__diff_hosted_title": "",
+  "copy__diff_hosted_text": "",
+  "action_notice__fix": "Beheben",
+  "release_flags__place_live": "deine Live-Seite",
+  "release_flags__tests_failed_name": "Fehlgeschlagene Prüfungen: {count}",
+  "release_flags__tests_failed_why": "Einige Prüfungen deiner App sind bei dieser Version nicht bestanden.",
+  "release_flags__fn_removed_why": "Etwas, das deine App konnte, ist weg. Was es noch nutzt, funktioniert nicht mehr.",
+  "release_flags__fn_version_removed_why": "Eine ältere Art, dies aufzurufen, ist weg. Wer sie noch nutzt, bekommt einen Fehler.",
+  "release_flags__unit_removed_why": "Ein ganzer Teil deiner App wird entfernt, mit allem darin.",
+  "release_flags__route_removed_why": "Diese Webadresse antwortet nicht mehr. Links und Lesezeichen darauf funktionieren nicht mehr.",
+  "release_flags__handler_removed_why": "Etwas, das von selbst lief oder auf Nachrichten wartete, wird entfernt.",
+  "release_flags__workflow_removed_why": "Dieser Ablauf wird entfernt. Laufende Durchläufe werden nicht beendet.",
+  "release_flags__webhook_removed_why": "Ein anderer Dienst sendet keine Updates mehr an deine App.",
+  "release_flags__migration_destructive_why": "Diese Datenänderung löscht oder überschreibt gespeicherte Informationen. Das lässt sich nicht rückgängig machen."
 }

@@ -6,7 +6,8 @@
 //   .studio-addons/project.inlang/           the inlang project with each addon's messages added (only when linked)
 //
 // An addon says what it brings in its package.json:
-//   "studio": { "addon": "cloud", "slots": "./src/studio.slots.ts", "ui": "./src", "messages": "./messages/{locale}.json" }
+//   "studio": { "addon": "cloud", "slots": "./src/studio.slots.ts", "ui": "./src", "messages": "./messages/{locale}.json",
+//               "overrides": "./messages/overrides/{locale}.json" }
 // `slots` must be exported by the package as "./studio-slots".
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join, relative, resolve } from 'node:path'
@@ -51,13 +52,39 @@ write(
 
 // The inlang project stays the committed one for the open build. With addons, a copy beside the linked state adds
 // their message files, its paths made relative to where the copy lives.
+// An addon may also reword core messages ("overrides": "./messages/overrides/{locale}.json"): each core message file
+// an override touches is copied beside the linked state with the override applied, and the copy is compiled instead.
+// An override of a key the core does not have fails the build, so a renamed core key cannot silently stop applying.
 const inlang = join(root, '.studio-addons/project.inlang')
 const withMessages = addons.filter((a) => a.messages)
-if (withMessages.length) {
+const withOverrides = addons.filter((a) => a.overrides)
+if (withMessages.length || withOverrides.length) {
   const settings = JSON.parse(readFileSync(join(app, 'project.inlang/settings.json'), 'utf8'))
   const format = settings['plugin.inlang.messageFormat']
-  const rebase = (pattern) => './' + relative(dirname(inlang), resolve(app, pattern))
-  format.pathPattern = [...format.pathPattern.map(rebase), ...withMessages.map((a) => './' + relative(dirname(inlang), join(a.dir, a.messages)))]
+  const readJson = (file) => (existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : {})
+  const overridesFor = (locale) => {
+    const { $schema, ...overrides } = Object.assign({}, ...withOverrides.map((a) => readJson(join(a.dir, a.overrides.replace('{locale}', locale)))))
+    return overrides
+  }
+  const used = new Set()
+  const corePatterns = format.pathPattern.map((pattern, i) => {
+    const touched = settings.locales.some((locale) => {
+      const core = readJson(resolve(app, pattern.replace('{locale}', locale)))
+      return Object.keys(overridesFor(locale)).some((key) => key in core)
+    })
+    if (!touched) return './' + relative(dirname(inlang), resolve(app, pattern))
+    for (const locale of settings.locales) {
+      const core = readJson(resolve(app, pattern.replace('{locale}', locale)))
+      const overrides = overridesFor(locale)
+      for (const key of Object.keys(overrides)) if (key in core) used.add(key)
+      const merged = Object.fromEntries(Object.entries(core).map(([key, text]) => [key, key in overrides ? overrides[key] : text]))
+      write(join(root, '.studio-addons/messages', String(i), `${locale}.json`), JSON.stringify(merged, null, 2) + '\n')
+    }
+    return './' + relative(dirname(inlang), join(root, '.studio-addons/messages', String(i), '{locale}.json'))
+  })
+  const unknown = settings.locales.flatMap((locale) => Object.keys(overridesFor(locale))).filter((key) => !used.has(key))
+  if (unknown.length) throw new Error(`Addon message overrides name keys the core does not have: ${[...new Set(unknown)].join(', ')}`)
+  format.pathPattern = [...corePatterns, ...withMessages.map((a) => './' + relative(dirname(inlang), join(a.dir, a.messages)))]
   write(join(inlang, 'settings.json'), JSON.stringify(settings, null, 2) + '\n')
 }
 

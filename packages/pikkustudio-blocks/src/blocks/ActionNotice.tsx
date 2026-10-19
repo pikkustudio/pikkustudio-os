@@ -11,7 +11,8 @@ import { detailsOf, faultOf, isPikkuFault } from './ErrorState'
 
 const denied = (f: ReturnType<typeof faultOf>) => f.status === 403 || /permission denied|forbidden/i.test(f.message ?? '')
 
-const signedOut = (f: ReturnType<typeof faultOf>, match?: RegExp) => !!match && match.test(f.message ?? '')
+// A host names the error that means this computer is signed out of it `<Something>SignedOutError`.
+const signedOut = (f: ReturnType<typeof faultOf>) => /SignedOutError$/.test(f.name ?? '')
 
 export function ActionNotice({ error, what, onRetry, retrying }: { error: unknown; what: I18nString; onRetry?: () => void; retrying?: boolean }) {
   const [open, setOpen] = useState(false)
@@ -22,7 +23,7 @@ export function ActionNotice({ error, what, onRetry, retrying }: { error: unknow
   const copy = useCopy()
   const fault = faultOf(error)
   const details = detailsOf(fault, what)
-  const ours = isPikkuFault(fault) && !denied(fault) && !signedOut(fault, copy.signedOutMatch)
+  const ours = isPikkuFault(fault) && !denied(fault) && !signedOut(fault)
   const navigate = useNavigate()
   const sentFor = useRef<unknown>(null)
 
@@ -32,8 +33,9 @@ export function ActionNotice({ error, what, onRetry, retrying }: { error: unknow
     void send(anonymise(fault)).then(setPassed)
   }, [ours, choice, canSend, error, send, fault])
 
-  const because = denied(fault) ? copy.deniedBecause?.find((reason) => reason.match.test(fault.message ?? '')) : undefined
-  const body = signedOut(fault, copy.signedOutMatch) ? copy.noticeSignedOut({ what }) : because ? because.text({ what }) : denied(fault) ? copy.noticeDenied({ what }) : ours ? m.action_notice__ours({ what }) : m.action_notice__generic({ what })
+  // A refusal that names where to put it right (`payload.fix` on the server's error) says the server's own reason.
+  const fixable = denied(fault) && !!fault.fix && !!fault.message
+  const body = signedOut(fault) ? copy.noticeSignedOut({ what }) : fixable ? asI18n(fault.message!) : denied(fault) ? copy.noticeDenied({ what }) : ours ? m.action_notice__ours({ what }) : m.action_notice__generic({ what })
 
   return (
     <div role="alert" className="max-w-xl rounded-card bg-destructive-soft p-5 text-foreground" data-testid="action-notice">
@@ -50,12 +52,12 @@ export function ActionNotice({ error, what, onRetry, retrying }: { error: unknow
                 {retrying ? m.action_notice__retrying() : m.query_state__try_again()}
               </Button>
             ) : null}
-            {because?.fix ? (
-              <Button variant="default" size="compact" type="button" onClick={() => void navigate({ to: because.fix!.to as never })}>
-                {because.fix.label()}
+            {fixable ? (
+              <Button variant="default" size="compact" type="button" onClick={() => void navigate({ to: fault.fix as never })}>
+                {m.action_notice__fix()}
               </Button>
             ) : null}
-            {signedOut(fault, copy.signedOutMatch) ? (
+            {signedOut(fault) ? (
               <Button variant="default" size="compact" type="button" onClick={() => void navigate({ to: '/account' as never })}>
                 {m.action_notice__sign_in_again()}
               </Button>

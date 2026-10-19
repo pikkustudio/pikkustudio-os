@@ -1,10 +1,10 @@
 import type { I18nNode, I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
-import { useSlots } from './slots'
 
 // The words a host can change without touching a screen: who hosts the work, what the brand is called,
 // what signing in means. Each entry is a function so the text follows the active language.
-// Open defaults say nothing about any hosting service; a host supplies its own through `Slots.copy`.
+// Open defaults say nothing about any hosting service; an addon rewords them by overriding these message keys
+// (its package.json `studio.overrides`, merged in by scripts/gen-addons.mjs).
 export type Copy = {
   /** Wordmark beside the logo on the setup rail, and its accessible name. */
   brandName: () => I18nString
@@ -15,12 +15,10 @@ export type Copy = {
   railPitch: () => I18nString
   /** "Use it here" card in the difference panel. */
   diffLocal: () => I18nString
-  /** Optional second card in the difference panel; left out when a host has nothing to add. */
-  diffHosted?: { title: () => I18nString; text: () => I18nString }
+  /** Second card in the difference panel; left out while its title is empty, as it is in the open build. */
+  diffHosted: { title: () => I18nString; text: () => I18nString }
   /** Third reason in "Why this one". */
   whyNoBillText: () => I18nString
-  /** Where the "see what it costs" button of the pitch panel goes when the account names no address. */
-  pitchHref?: string
   /** The Pikku bubble and chat line on the choose-AI step. */
   chatChooseAi: () => I18nString
   bubbleAiPick: () => I18nNode
@@ -40,11 +38,7 @@ export type Copy = {
   publishSignInTitle: () => I18nString
   publishSignInText: () => I18nString
   publishSignInButton: () => I18nString
-  /** Matches the server message that means this computer is signed out of the host. */
-  signedOutMatch?: RegExp
   noticeDenied: (p: { what: I18nString }) => I18nString
-  /** Reasons the host can tell apart behind a refusal, matched on the server message; the first match replaces `noticeDenied`. */
-  deniedBecause?: { match: RegExp; text: (p: { what: I18nString }) => I18nString; fix?: { label: () => I18nString; to: string } }[]
   noticeSignedOut: (p: { what: I18nString }) => I18nString
   aiHostedChosen: (p: { who: I18nString }) => I18nString
   signInNote: (p: { who: I18nString }) => I18nString
@@ -52,11 +46,12 @@ export type Copy = {
 }
 
 export const defaultCopy: Copy = {
-  brandName: m.shell_layout__studio,
-  brandLabel: m.shell_layout__studio,
+  brandName: m.copy__brand_name,
+  brandLabel: m.copy__brand_label,
   stepSignInHint: m.copy__step_sign_in_hint,
   railPitch: m.copy__rail_pitch,
   diffLocal: m.copy__diff_local,
+  diffHosted: { title: m.copy__diff_hosted_title, text: m.copy__diff_hosted_text },
   whyNoBillText: m.copy__why_no_bill_text,
   chatChooseAi: m.copy__chat_choose_ai,
   bubbleAiPick: m.copy__bubble_ai_pick,
@@ -79,4 +74,4 @@ export const defaultCopy: Copy = {
   signOutNote: m.updates_feed__sign_out,
 }
 
-export const useCopy = (): Copy => ({ ...defaultCopy, ...useSlots().copy })
+export const useCopy = (): Copy => defaultCopy

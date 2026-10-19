@@ -9,13 +9,14 @@ import { ErrorReportDrawer } from './ErrorReportDrawer'
 import { PikkuDot } from './PikkuDot'
 import { CloudOffline } from './CloudOffline'
 
-type Fault = { name?: string; message?: string; errorId?: string; status?: number }
+type Fault = { name?: string; message?: string; errorId?: string; status?: number; fix?: string }
 
 const OURS = /^(Unprocessable|InternalServer|NotFound|BadGateway|ServiceUnavailable|GatewayTimeout)/
 
 export const faultOf = (error: unknown): Fault => {
-  const e = (error ?? {}) as Fault
-  return { name: e.name, message: e.message, errorId: e.errorId, status: e.status }
+  const e = (error ?? {}) as Fault & { body?: { payload?: { fix?: unknown } } }
+  const fix = e.body?.payload?.fix
+  return { name: e.name, message: e.message, errorId: e.errorId, status: e.status, fix: typeof fix === 'string' ? fix : undefined }
 }
 
 export const isPikkuFault = (f: Fault) => OURS.test(f.name ?? '') || (f.status ?? 0) >= 500 || /PKU\d+/.test(f.message ?? '')

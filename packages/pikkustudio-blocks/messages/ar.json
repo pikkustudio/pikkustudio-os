@@ -5289,5 +5289,21 @@
   "logs_screen__tenant_org": "المؤسسة",
   "logs_screen__tenant_user": "المستخدم",
   "metrics_traffic__calls": "{n} طلبات",
-  "metrics_traffic__sub": "كم طلبًا وصل، وكم استغرق، خلال الفترة التي اخترتها."
+  "metrics_traffic__sub": "كم طلبًا وصل، وكم استغرق، خلال الفترة التي اخترتها.",
+  "copy__brand_name": "Pikku Studio",
+  "copy__brand_label": "Pikku Studio",
+  "copy__diff_hosted_title": "",
+  "copy__diff_hosted_text": "",
+  "action_notice__fix": "أصلحه",
+  "release_flags__place_live": "موقعك المنشور",
+  "release_flags__tests_failed_name": "الفحوصات الفاشلة: {count}",
+  "release_flags__tests_failed_why": "لم تنجح بعض فحوصات تطبيقك في هذا الإصدار.",
+  "release_flags__fn_removed_why": "اختفت قدرة كان تطبيقك يملكها. أي شيء يستخدمها سيتوقف.",
+  "release_flags__fn_version_removed_why": "أُزيلت طريقة قديمة لاستدعاء هذا. من لا يزال يستخدمها سيحصل على خطأ.",
+  "release_flags__unit_removed_why": "يُزال جزء كامل من تطبيقك بكل ما فيه.",
+  "release_flags__route_removed_why": "سيتوقف هذا العنوان عن الاستجابة. ستتعطل الروابط والإشارات المرجعية إليه.",
+  "release_flags__handler_removed_why": "يُزال شيء كان يعمل تلقائياً أو ينتظر الرسائل.",
+  "release_flags__workflow_removed_why": "تُزال هذه المهمة. لن تكتمل أي عمليات جارية.",
+  "release_flags__webhook_removed_why": "ستتوقف خدمة أخرى عن إرسال التحديثات إلى تطبيقك.",
+  "release_flags__migration_destructive_why": "يحذف تغيير البيانات هذا معلومات محفوظة أو يعيد كتابتها. لا يمكن التراجع عنه."
 }
