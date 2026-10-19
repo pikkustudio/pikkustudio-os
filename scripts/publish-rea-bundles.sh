@@ -16,5 +16,5 @@ for f in "$out"/rea-*.tar.gz; do
   if command -v sha256sum >/dev/null 2>&1; then sum=$(sha256sum "$f" | cut -d' ' -f1); else sum=$(shasum -a 256 "$f" | cut -d' ' -f1); fi
   echo "$(basename "$f") $sum $(wc -c < "$f" | tr -d ' ')"
 done
-[ -n "${RELEASES_BUCKET:-}" ] || { echo "RELEASES_BUCKET not set; built only, nothing uploaded" >&2; exit 0; }
-aws s3 cp "$out" "s3://$RELEASES_BUCKET/tools/rea/$version/" --recursive --exclude '*' --include 'rea-*.tar.gz'
+[ -n "${DOWNLOADS_BUCKET:-}" ] || { echo "DOWNLOADS_BUCKET not set; built only, nothing uploaded" >&2; exit 0; }
+aws s3 cp "$out" "s3://$DOWNLOADS_BUCKET/tools/rea/$version/" --recursive --exclude '*' --include 'rea-*.tar.gz'

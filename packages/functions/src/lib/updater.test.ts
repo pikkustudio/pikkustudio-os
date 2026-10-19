@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { checkForUpdate, compareVersions, stagedVersion } from './updater.js'
 
-const base = 'https://releases.test/studio'
+const base = 'https://downloads.test/studio'
 const sha = (bytes: Uint8Array) => createHash('sha256').update(bytes).digest('hex')
 
 const releaseFetch = (version: string, files: Record<string, Uint8Array>, calls: string[] = []) =>
@@ -111,7 +111,7 @@ describe('checkForUpdate', () => {
     expect(calls).toHaveLength(1)
   })
 
-  test('survives an unreachable releases host', async () => {
+  test('survives an unreachable downloads host', async () => {
     const failing = (async () => {
       throw new Error('offline')
     }) as unknown as typeof fetch

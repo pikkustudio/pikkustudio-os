@@ -58,14 +58,14 @@ jobs:
       - name: Upload to R2
         if: github.ref_type == 'tag' && matrix.target == 'macos'
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.R2_RELEASES_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_RELEASES_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_DOWNLOADS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_DOWNLOADS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: auto
-          RELEASES_BUCKET: ${{ vars.R2_RELEASES_BUCKET }}
+          DOWNLOADS_BUCKET: ${{ vars.R2_DOWNLOADS_BUCKET }}
           AWS_ENDPOINT_URL: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
         run: |
           v="${GITHUB_REF_NAME#v}"
           dmg=$(ls apps/studio/src-tauri/target/release/bundle/dmg/*.dmg)
-          aws s3 cp "$dmg" "s3://$RELEASES_BUCKET/studio-os/$v/Pikku-Studio-OS-$v-arm64.dmg"
+          aws s3 cp "$dmg" "s3://$DOWNLOADS_BUCKET/studio-os/$v/Pikku-Studio-OS-$v-arm64.dmg"
           echo "{\"version\":\"$v\"}" > latest.json
-          aws s3 cp latest.json s3://$RELEASES_BUCKET/studio-os/latest.json --content-type application/json
+          aws s3 cp latest.json s3://$DOWNLOADS_BUCKET/studio-os/latest.json --content-type application/json

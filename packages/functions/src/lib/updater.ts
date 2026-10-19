@@ -4,7 +4,7 @@ import { mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { spawn } from 'node:child_process'
 
-export const DEFAULT_RELEASES_URL = 'https://releases.pikkustudio.app/studio'
+export const DEFAULT_DOWNLOADS_URL = 'https://downloads.pikkustudio.app/studio'
 const CHECK_EVERY_MS = 6 * 60 * 60 * 1000
 
 export type UpdateResult =
@@ -104,7 +104,7 @@ export function startUpdater(
   logger: UpdaterLogger,
   env: NodeJS.ProcessEnv = process.env
 ): () => void {
-  const baseUrl = env.PIKKU_STUDIO_RELEASES_URL ?? DEFAULT_RELEASES_URL
+  const baseUrl = env.PIKKU_STUDIO_DOWNLOADS_URL ?? DEFAULT_DOWNLOADS_URL
   let running = false
   const tick = async () => {
     if (running) return
