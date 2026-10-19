@@ -13,6 +13,8 @@ import { SecretsHero } from '../blocks/SecretsHero'
 import { SecretsList } from '../blocks/SecretsList'
 import { SecretActivity } from '../blocks/SecretActivity'
 import { sealSecret } from '../lib/seal'
+import { Link } from '@tanstack/react-router'
+import { keep } from '../lib/links'
 
 const Group = ({ title, children }: { title: I18nString; children: I18nNode }) => (
   <section className="flex flex-col gap-2" aria-label={title}>
@@ -59,6 +61,16 @@ export function SecretsScreen() {
         text={m.secrets_screen__text()}
         size="lead"
       />
+      {secrets.data && !secrets.data.publicKey ? (
+        <EmptyState icon={KeyRound} title={m.secrets_screen__elsewhere()} text={m.secrets_screen__elsewhere_text()}>
+          <Button asChild size="page">
+            <Link {...keep} to="/projects">
+              {m.secrets_screen__elsewhere_action()}
+            </Link>
+          </Button>
+        </EmptyState>
+      ) : (
+      <>
       <SecretsHero count={secrets.data?.secrets.length} onAdd={() => open('', false)} />
       <div>
         <div className="flex min-w-0 flex-col gap-6.5">
@@ -112,6 +124,8 @@ export function SecretsScreen() {
           </>
         ) : null}
       </div>
+      </>
+      )}
     </Page>
   )
 }
