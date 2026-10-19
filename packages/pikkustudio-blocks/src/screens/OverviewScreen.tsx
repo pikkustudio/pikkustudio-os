@@ -11,7 +11,7 @@ import { ChevronRight, Blocks } from 'lucide-react'
 import { ShellCtx } from '../lib/shell'
 import { keep, withoutPageParams } from '../lib/links'
 import { useFrontDoors, API_KINDS } from '../lib/frontDoors'
-import { useSlots } from '../lib/slots'
+import { useSlot } from '../lib/studio-slots'
 
 
 const dot = { ok: 'bg-success ring-success-soft', warn: 'bg-warning ring-card', info: 'bg-info ring-info-soft' }
@@ -37,7 +37,8 @@ export function OverviewScreen() {
   const counts: Record<string, number> = { ...meta?.counts, ...(meta?.workflows ? { workflows: Object.values(meta.workflows).filter((w) => !w.scenario && w.source !== 'scenario').length } : {}) }
   const { pending, open } = useContext(ShellCtx)
   const doorCount = useFrontDoors(useProjectKey()).doors.filter((d) => !API_KINDS.includes(d.kind)).length
-  const { LiveAppHealth, Workspaces } = useSlots()
+  const LiveAppHealth = useSlot('overview.liveHealth')
+  const Workspaces = useSlot('overview.workspaces')
   const built = (counts.functions ?? 0) > 0 || doorCount > 0
 
   const parts = [
@@ -91,9 +92,9 @@ export function OverviewScreen() {
         </section>
       ) : null}
 
-      {LiveAppHealth ? <LiveAppHealth /> : null}
+      <LiveAppHealth />
 
-      {Workspaces ? <Workspaces /> : null}
+      <Workspaces />
 
       <section className="flex flex-col gap-3.5" aria-label={m.overview_screen__made_of()}>
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">

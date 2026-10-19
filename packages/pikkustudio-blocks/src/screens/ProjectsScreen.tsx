@@ -12,7 +12,7 @@ import type { Project, ProjectState } from '../blocks/ProjectCard'
 import { CardsSkeleton, QueryState } from '../blocks/QueryState'
 import { keep } from '../lib/links'
 import { useTeamProjects, type ListedProject } from '../blocks/TeamProjects'
-import { useSlots } from '../lib/slots'
+import { useSlot } from '../lib/studio-slots'
 import { LOCAL_TEAM, useTeamSlug } from '../lib/team'
 import { useProjectSlots } from '../lib/project-slots'
 
@@ -44,7 +44,7 @@ export function ProjectsScreen() {
   const overlay = useProjectOverlay?.(team.data ?? []) ?? {}
   const projects = { ...team, data: team.data?.map((p) => ({ ...toCard(p), ...overlay[p.key] })).sort(byVisit) } as UseQueryResult<Project[]>
   const local = useTeamSlug() === LOCAL_TEAM
-  const TeamName = useSlots().TeamName ?? TeamSlug
+  const TeamName = useSlot('team.name', TeamSlug)
 
   return (
     <Page gap="snug">

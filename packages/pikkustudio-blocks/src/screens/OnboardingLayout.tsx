@@ -10,7 +10,7 @@ import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { ProjectRpcCtx } from '../lib/projectRpc'
 import { Button } from '../ui/button'
 import { AiLitellmPanel, AiProviderPanel, providers } from '../blocks/AiConnectPanels'
-import { useSlots } from '../lib/slots'
+import { useHasSlot, useSlot } from '../lib/studio-slots'
 import { useCopy } from '../lib/copy'
 import { CloudPanel } from '../blocks/CloudPanel'
 import { PanelRow } from '../blocks/ShellAccount'
@@ -95,7 +95,10 @@ export function OnboardingLayout() {
   const router = useRouter()
   const q = useSearch({ strict: false }) as { redirect?: string; look?: 'light' | 'dark'; panel?: PanelId; show?: string; pitch?: 'a' | 'b'; via?: string; run?: string }
   const panel: PanelId | '' = q.panel ?? ''
-  const { ShellAccount, WorkspaceAbout } = useSlots()
+  const ShellAccount = useSlot('shell.account')
+  const hasAccount = useHasSlot('shell.account')
+  const WorkspaceAbout = useSlot('shell.workspaceAbout')
+  const hasAbout = useHasSlot('shell.workspaceAbout')
   const copy = useCopy()
   const path = useLocation({ select: (l) => l.pathname })
   const choose = path === '/choose-ai'
@@ -334,7 +337,7 @@ export function OnboardingLayout() {
             </div>}
             {projects.data?.length ? null : <p className="px-3 text-[14px] leading-[1.45] text-ink-2 text-pretty">{copy.railPitch()}</p>}
             <div className="mt-auto flex flex-col gap-2.5">
-              {ShellAccount ? (
+              {hasAccount ? (
                 <ShellAccount expanded onOpen={() => open('workspace')} onAccount={() => open('workspace')} />
               ) : (
               <button
@@ -609,7 +612,7 @@ export function OnboardingLayout() {
               </div>
             ) : null}
 
-            {panel === 'workspace' && WorkspaceAbout ? (
+            {panel === 'workspace' && hasAbout ? (
               <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-auto px-6 pt-5 pb-7">
                 <WorkspaceAbout
                   pikku={<PanelRow icon={<Avatar mood="calm" size="xs" ring={false} />} title={m.onboarding_layout__pikku()} text={m.onboarding_layout__only_what_you_ask_it()} />}
@@ -617,7 +620,7 @@ export function OnboardingLayout() {
               </div>
             ) : null}
 
-            {panel === 'workspace' && !WorkspaceAbout ? (
+            {panel === 'workspace' && !hasAbout ? (
               <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-auto px-6 pt-5 pb-7">
                 <div className="grid grid-cols-[auto_1fr] items-start gap-3 rounded-[18px] bg-secondary p-4">
                   <Avatar mood="calm" size="md" />

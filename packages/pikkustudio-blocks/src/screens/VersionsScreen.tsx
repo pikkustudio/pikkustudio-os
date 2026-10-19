@@ -19,7 +19,8 @@ import { PikkuDot } from '../blocks/PikkuDot'
 import { ago, canGoBack, dayTime, failWords, shelfPart, shelfTone, shelfWords, titleOf, versionLine, when, who } from '../blocks/ShelfMeta'
 import { stepNames } from '../blocks/ShelfStrip'
 import { useReleasePreview, useReleases, type Release, type ReleasesView } from '../lib/releases'
-import { useSlots } from '../lib/slots'
+import { useKeyedSlot } from '../lib/studio-slots'
+import { useProjectTarget } from '../lib/project-target'
 import { GroupRows } from './VersionScreen'
 import { useProjectName } from '../lib/project'
 import { keep } from '../lib/links'
@@ -144,7 +145,9 @@ type Fault = { text: I18nString; ask: I18nString }
 
 function History({ view, mode }: { view: ReleasesView; mode: string }) {
   const { say } = useContext(ShellCtx)
-  const { ReleaseMode, ReleaseSent } = useSlots()
+  const { kind } = useProjectTarget()
+  const ReleaseMode = useKeyedSlot('versions.releaseMode', kind)
+  const ReleaseSent = useKeyedSlot('versions.sent', kind)
   const preview = useReleasePreview()
   const edit = !view.readOnly && !!view.actions
   const [filter, setFilter] = useState('all')
@@ -247,7 +250,7 @@ function History({ view, mode }: { view: ReleasesView; mode: string }) {
             </Switch>
           </RowCard>
         ) : null}
-        {ReleaseMode ? <ReleaseMode /> : null}
+        <ReleaseMode />
       </Section>
 
       <Pending view={view} />
@@ -295,7 +298,7 @@ function History({ view, mode }: { view: ReleasesView; mode: string }) {
         )}
       </Section>
 
-      {ReleaseSent ? <ReleaseSent /> : null}
+      <ReleaseSent />
 
       {back ? (
         <SidePanel icon={Undo2} label={m.versions_screen__go_back_title()} title={m.versions_screen__go_back_title()} sub={m.versions_screen__go_back_sub()} onClose={() => setBack(null)}>

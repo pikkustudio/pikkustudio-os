@@ -11,12 +11,14 @@ import { InlineAlert } from './InlineAlert'
 import { PikkuDot } from './PikkuDot'
 import { Spinner } from './Spinner'
 import { ShellCtx } from '../lib/shell'
-import { useSlots } from '../lib/slots'
+import { useHasSlot, useSlotList } from '../lib/studio-slots'
 import { useImportProject } from '../lib/onboarding'
 
 /** Bring in a project that already lives somewhere else: from the host's own source when it has one, or from a link. */
 export function BringProjectPanel({ onClose }: { onClose: () => void }) {
-  const { ImportSource, ImportDeveloper } = useSlots()
+  const ImportSources = useSlotList('project.import.sources')
+  const ImportDeveloper = useSlotList('project.import.developer')
+  const developer = useHasSlot('project.import.developer')
   const { say } = useContext(ShellCtx)
   const navigate = useNavigate()
   const client = useQueryClient()
@@ -38,7 +40,7 @@ export function BringProjectPanel({ onClose }: { onClose: () => void }) {
 
   return (
     <SidePanel icon={FolderInput} label={m.bring_project__title()} title={m.bring_project__title()} sub={m.bring_project__sub()} onClose={onClose}>
-      {ImportSource ? <ImportSource onImported={opened} onActive={setHosted} /> : null}
+      <ImportSources onImported={opened} onActive={setHosted} />
 
       <form
         className="flex flex-col gap-3"
@@ -98,7 +100,7 @@ export function BringProjectPanel({ onClose }: { onClose: () => void }) {
         ) : null}
       </form>
 
-      {ImportDeveloper ? (
+      {developer ? (
         <details className="text-ink-2">
           <summary className="cursor-pointer text-[14px] font-bold">{m.bring_project__developer_details()}</summary>
           <div className="mt-3 flex flex-col gap-3">

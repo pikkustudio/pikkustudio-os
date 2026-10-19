@@ -17,7 +17,7 @@ import { useAddonNav } from '../lib/addon-nav'
 import { isTeamScoped, pageNeedsApp } from '../lib/project-url'
 import { usePikkuChat } from '../lib/chat'
 import { LocalAccountName, LocalShellAccount, LocalWorkspaceAbout, SignOutSection } from '../blocks/ShellAccount'
-import { useSlots } from '../lib/slots'
+import { useSlot, useSlotList } from '../lib/studio-slots'
 import { useCopy } from '../lib/copy'
 import { SCREEN_NAME, agentName } from '../lib/screen-names'
 import { modeForPath, useBuilderChat } from '../lib/builder-chat'
@@ -151,7 +151,7 @@ function Note({
 }
 
 export function ShellLayout({ children }: { children?: ReactNode }) {
-  const Target = useSlots().ProjectTargetProvider ?? LocalProjectTargetProvider
+  const Target = useSlot('project.targetProvider', LocalProjectTargetProvider)
   return (
     <Target>
       <ShellLayoutInner>{children}</ShellLayoutInner>
@@ -164,11 +164,14 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
   const projectSlug = useProjectSlug()
   const projectMissing = useProjectMissing()
   const addonNav = useAddonNav()
-  const slots = useSlots()
   const copy = useCopy()
-  const Account = slots.ShellAccount ?? LocalShellAccount
-  const About = slots.WorkspaceAbout ?? LocalWorkspaceAbout
-  const AccountName = slots.AccountName ?? LocalAccountName
+  const Account = useSlot('shell.account', LocalShellAccount)
+  const About = useSlot('shell.workspaceAbout', LocalWorkspaceAbout)
+  const AccountName = useSlot('shell.accountName', LocalAccountName)
+  const TeamNav = useSlotList('shell.teamNav')
+  const ProjectNav = useSlotList('shell.projectNav')
+  const RailFoot = useSlotList('shell.railFoot')
+  const TargetSwitcher = useSlot('project.targetSwitcher')
   const navigate = useNavigate()
   const q = useSearch({ strict: false }) as { view?: View; look?: 'light' | 'dark'; panel?: PanelId; show?: 'done'; project?: string; change?: string }
   const path = useLocation({ select: (l) => l.pathname })
@@ -250,7 +253,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
   const guide = usePikkuChat(projectKey, pageTitle)
   const builder = useBuilderChat(projectKey, workMode)
   const canEdit = useCanEdit()
-  const ChatPublishStatus = slots.ChatPublishStatus
+  const ChatPublishStatus = useSlot('chat.publishStatus')
   const { openWorkspace, missing: targetMissing } = useProjectTarget()
   const chat = workMode ? builder : guide
   const changesQ = useProjectQuery<{ changes: { changeId: string; title: string; body: string | null; status: string; createdAt: string }[] }>(projectKey, 'console:listStudioChanges', { status: ['open', 'claimed', 'needs_answer', 'in_progress'] }, { refetchInterval: 6000, handlesErrors: true })
@@ -396,11 +399,11 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
                 ))}
               </div>
             ) : /\/studio-metrics$/.test(path) || !projectSlug || projectMissing ? (
-              slots.TeamNav ? <slots.TeamNav itemClass={navItem} labelClass={lbl} collapsed={collapsed} /> : null
+              <TeamNav itemClass={navItem} labelClass={lbl} collapsed={collapsed} />
             ) : (
             <div className="flex flex-col gap-0.5 px-1">
               <div className={`mb-1.5 px-3 text-[13px] font-semibold text-muted-foreground ${lbl}`}>{projectName}</div>
-              {slots.ProjectTargetSwitcher ? <slots.ProjectTargetSwitcher collapsed={collapsed} /> : null}
+              <TargetSwitcher collapsed={collapsed} />
               <Link {...keep} {...tip(m.shell_layout__home())} to="/home" className={navItem}>
                 <Home className="size-5" />
                 <span className={lbl}>{m.shell_layout__home()}</span>
@@ -436,11 +439,11 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
                   </Link>
                 )
               })}
-              {slots.ProjectNav ? <slots.ProjectNav itemClass={navItem} labelClass={lbl} collapsed={collapsed} /> : null}
+              <ProjectNav itemClass={navItem} labelClass={lbl} collapsed={collapsed} />
             </div>
             )}
             <div className="mt-auto flex flex-col gap-2.5">
-              {slots.RailFoot ? <slots.RailFoot collapsed={collapsed} /> : null}
+              <RailFoot collapsed={collapsed} />
               <button
                 type="button"
                 onClick={toggleRail}
@@ -724,7 +727,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
                   </button>
                 )}
                 </div>
-                {ChatPublishStatus && projectKey ? <ChatPublishStatus projectKey={projectKey} /> : null}
+                {projectKey ? <ChatPublishStatus projectKey={projectKey} /> : null}
                 {workMode && !canEdit ? (
                   <div className="flex flex-wrap items-center gap-3 border-t border-border bg-card px-5 py-3.5" role="status" data-testid="chat-read-only">
                     <p className="min-w-0 flex-1 text-[14px] text-ink-2">{m.builder_chat__stage_read_only()}</p>

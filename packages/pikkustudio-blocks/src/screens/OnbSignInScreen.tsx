@@ -3,7 +3,7 @@ import { useContext } from 'react'
 import { Button } from '../ui/button'
 import { ArrowRight, Laptop, User } from 'lucide-react'
 import { Hero as HeroShell, heroH1, heroLead } from '../blocks/OnbHero'
-import { useSlots } from '../lib/slots'
+import { useHasSlot, useSlot } from '../lib/studio-slots'
 import { useCopy } from '../lib/copy'
 import { RowCard, RowStack } from '../blocks/RowCard'
 import { OnbCtx } from './OnboardingLayout'
@@ -48,14 +48,83 @@ export function OnbSignInScreen() {
   return <SignInChoices />
 }
 
-function SignInChoices() {
-  const { st, go, retry, open } = useContext(OnbCtx)
-  const { SignInOffer: Offer, SignInHero: Hero } = useSlots()
+// The sign-in step's own hero: use Studio here, on this computer.
+function LocalSignInHero({ st, loading, done }: { st: string; loading: boolean; done: () => void }) {
   const copy = useCopy()
   const account = useAccount().data
   const recent = useRecentProjects().data ?? []
-  const user = account?.name
-  const first = user?.split(' ')[0]
+  const locally = useUseLocally()
+  const next = (e: React.MouseEvent) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return
+    e.preventDefault()
+    if (account?.signIn) done()
+    else locally.mutate({}, { onSuccess: done })
+  }
+  return (
+    <HeroShell hue="teal" page="sign-in">
+      <div>
+        {st === 'empty' ? (
+          <>
+            <h1 className={heroH1}>{m.onb_sign_in_screen__start_here()}</h1>
+            <p className={heroLead}>{copy.startLead()}</p>
+          </>
+        ) : null}
+        {st === 'normal' ? (
+          <>
+            <h1 className={heroH1}>{m.onb_sign_in_screen__pick_up()}</h1>
+            <p className={heroLead}>{m.onb_sign_in_screen__waiting({ count: recent.length })}</p>
+            <div className="mt-5 flex flex-wrap gap-2.5">
+              {recent.map((r) => {
+                const projectName = asI18n(r.name)
+                return (
+                <span key={r.key} className="flex items-center gap-2.5 rounded-full bg-hero-ink/14 py-1.5 pe-4 ps-1.5 text-[15px] font-bold">
+                  <span className="block size-9 overflow-hidden rounded-full">
+                    <svg viewBox="0 0 40 40" className="block size-full" aria-hidden="true">
+                      <rect width="40" height="40" fill={r.colors[0]} />
+                      <circle cx="32" cy="8" r="20" fill={r.colors[1]} opacity=".9" />
+                    </svg>
+                  </span>
+                  {projectName}
+                </span>
+                )
+              })}
+            </div>
+          </>
+        ) : null}
+        {loading ? (
+          <>
+            <h1 className={heroH1}>{m.onb_sign_in_screen__opening_workspace()}</h1>
+            <p className={heroLead}>{m.onb_sign_in_screen__moment()}</p>
+          </>
+        ) : null}
+        {st === 'error' ? (
+          <>
+            <h1 className={heroH1}>{m.onb_sign_in_screen__start_for_now()}</h1>
+            <p className={heroLead}>
+              {m.onb_sign_in_screen__did_not_load()}
+            </p>
+          </>
+        ) : null}
+      </div>
+      <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-3">
+        <Button asChild variant="hero" size="pageLg"><Link {...keep} to={account?.name ? '/choose-ai' : '/your-name'} onClick={next} aria-busy={loading}>
+          {loading ? <span className="size-4.5 animate-[spin_0.8s_linear_infinite] rounded-full border-[2.5px] border-current border-e-transparent" /> : null}
+          {loading ? m.onb_sign_in_screen__opening() : m.onb_sign_in_screen__use_here()}
+          {loading ? null : <ArrowRight className="rtl:-scale-x-100 size-5.5" />}
+        </Link></Button>
+        {st === 'empty' ? <span className="text-[15px] text-hero-ink-2">{m.onb_sign_in_screen__five_seconds()}</span> : null}
+        {st === 'normal' ? <span className="text-[15px] text-hero-ink-2">{m.onb_sign_in_screen__open_straight_away()}</span> : null}
+      </div>
+    </HeroShell>
+  )
+}
+
+function SignInChoices() {
+  const { st, go, open } = useContext(OnbCtx)
+  const Hero = useSlot('onboarding.signIn.hero', LocalSignInHero)
+  const hosted = useHasSlot('onboarding.signIn.hero')
+  const copy = useCopy()
+  const account = useAccount().data
   const locally = useUseLocally()
   const loading = st === 'loading'
   const next = (e: React.MouseEvent) => {
@@ -67,67 +136,9 @@ function SignInChoices() {
 
   return (
     <div className="mx-auto flex max-w-[1160px] flex-col gap-10 @min-[1700px]/app:max-w-[1380px]">
-      {Hero ? (
-        <Hero st={st} loading={loading} open={open} done={go} />
-      ) : (
-        <HeroShell hue="teal" page="sign-in">
-          <div>
-            {st === 'empty' ? (
-              <>
-                <h1 className={heroH1}>{m.onb_sign_in_screen__start_here()}</h1>
-                <p className={heroLead}>{copy.startLead()}</p>
-              </>
-            ) : null}
-            {st === 'normal' ? (
-              <>
-                <h1 className={heroH1}>{m.onb_sign_in_screen__pick_up()}</h1>
-                <p className={heroLead}>{m.onb_sign_in_screen__waiting({ count: recent.length })}</p>
-                <div className="mt-5 flex flex-wrap gap-2.5">
-                  {recent.map((r) => {
-                    const projectName = asI18n(r.name)
-                    return (
-                    <span key={r.key} className="flex items-center gap-2.5 rounded-full bg-hero-ink/14 py-1.5 pe-4 ps-1.5 text-[15px] font-bold">
-                      <span className="block size-9 overflow-hidden rounded-full">
-                        <svg viewBox="0 0 40 40" className="block size-full" aria-hidden="true">
-                          <rect width="40" height="40" fill={r.colors[0]} />
-                          <circle cx="32" cy="8" r="20" fill={r.colors[1]} opacity=".9" />
-                        </svg>
-                      </span>
-                      {projectName}
-                    </span>
-                    )
-                  })}
-                </div>
-              </>
-            ) : null}
-            {loading ? (
-              <>
-                <h1 className={heroH1}>{m.onb_sign_in_screen__opening_workspace()}</h1>
-                <p className={heroLead}>{m.onb_sign_in_screen__moment()}</p>
-              </>
-            ) : null}
-            {st === 'error' ? (
-              <>
-                <h1 className={heroH1}>{m.onb_sign_in_screen__start_for_now()}</h1>
-                <p className={heroLead}>
-                  {m.onb_sign_in_screen__did_not_load()}
-                </p>
-              </>
-            ) : null}
-          </div>
-          <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-3">
-            <Button asChild variant="hero" size="pageLg"><Link {...keep} to={account?.name ? '/choose-ai' : '/your-name'} onClick={next} aria-busy={loading}>
-              {loading ? <span className="size-4.5 animate-[spin_0.8s_linear_infinite] rounded-full border-[2.5px] border-current border-e-transparent" /> : null}
-              {loading ? m.onb_sign_in_screen__opening() : m.onb_sign_in_screen__use_here()}
-              {loading ? null : <ArrowRight className="rtl:-scale-x-100 size-5.5" />}
-            </Link></Button>
-            {st === 'empty' ? <span className="text-[15px] text-hero-ink-2">{m.onb_sign_in_screen__five_seconds()}</span> : null}
-            {st === 'normal' ? <span className="text-[15px] text-hero-ink-2">{m.onb_sign_in_screen__open_straight_away()}</span> : null}
-          </div>
-        </HeroShell>
-      )}
+      <Hero st={st} loading={loading} open={open} done={go} />
 
-      {Hero ? (
+      {hosted ? (
         <section aria-label={m.onb_sign_in_screen__other_way()}>
           <div className="mb-4 flex items-baseline justify-between gap-4">
             <h2 className="text-[26px] leading-[1.2] font-bold tracking-[-0.012em] text-balance">{m.onb_sign_in_screen__pure_oss()}</h2>
@@ -150,7 +161,6 @@ function SignInChoices() {
         </section>
       ) : null}
 
-      {st !== 'error' ? Offer ? <Offer loading={loading} open={open} done={go} /> : null : null}
       <p className="text-[13px] text-muted-foreground text-pretty">{m.onb_sign_in_screen__never_read()}</p>
     </div>
   )

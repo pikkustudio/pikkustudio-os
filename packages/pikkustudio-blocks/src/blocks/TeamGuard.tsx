@@ -1,7 +1,7 @@
 import { useEffect, type ReactNode } from 'react'
 import { useLocation, useNavigate } from '@tanstack/react-router'
 import { isTeamScoped } from '../lib/project-url'
-import { useSlots } from '../lib/slots'
+import { useSlot } from '../lib/studio-slots'
 import { LOCAL_TEAM, teamVerdict, useTeamSlug, type TeamScopeProps, type TeamVerdict } from '../lib/team'
 import { NotFoundPage } from './NotFoundPage'
 import { StudioLoading } from './StudioLoading'
@@ -25,7 +25,7 @@ export function TeamGuard({ children }: { children: ReactNode }) {
   const team = useTeamSlug() || undefined
   const scoped = useLocation({ select: (l) => isTeamScoped(l.pathname) })
   const navigate = useNavigate()
-  const Scope = useSlots().TeamScope ?? LocalTeamScope
+  const Scope = useSlot('team.scope', LocalTeamScope)
   if (!scoped) return children
   const onTeam = (slug: string) => {
     if (slug !== team) navigate({ to: '.', search: ((prev: object) => ({ ...prev, team: slug })) as never, replace: true })

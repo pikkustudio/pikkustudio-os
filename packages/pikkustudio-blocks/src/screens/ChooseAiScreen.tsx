@@ -6,7 +6,7 @@ import { ArrowRight, Cloud, Server } from 'lucide-react'
 import { providers } from '../blocks/AiConnectPanels'
 import { Hero as HeroShell, heroH1 as h1, heroLead as lead } from '../blocks/OnbHero'
 import { OnbCtx } from './OnboardingLayout'
-import { useSlots } from '../lib/slots'
+import { useSlot, useSlotList } from '../lib/studio-slots'
 import { useNavigate } from '@tanstack/react-router'
 
 const card =
@@ -56,18 +56,15 @@ export function LitellmHero({ st, loading, open, retry }: { st: string; loading:
 
 export function ChooseAiScreen() {
   const { st, go, retry, open } = useContext(OnbCtx)
-  const { AiOffer: Offer, AiHero: Hero } = useSlots()
+  const Offers = useSlotList('onboarding.chooseAi.offers')
+  const Hero = useSlot('onboarding.chooseAi.hero', LitellmHero)
   const navigate = useNavigate()
   const loading = st === 'loading'
   const via = (id: string) => navigate({ to: '.', search: ((prev: object) => ({ ...prev, panel: 'provider', via: id })) as never, replace: true })
 
   return (
     <div className="mx-auto flex max-w-[1160px] flex-col gap-10 @min-[1700px]/app:max-w-[1380px]">
-      {Hero ? (
-        <Hero st={st} loading={loading} open={open} retry={retry} done={go} />
-      ) : (
-        <LitellmHero st={st} loading={loading} open={open} retry={retry} />
-      )}
+      <Hero st={st} loading={loading} open={open} retry={retry} done={go} />
 
       <section id="alts" aria-label={m.choose_ai_screen__other_choices()}>
         <div className="mb-4 flex items-baseline justify-between gap-4">
@@ -76,7 +73,7 @@ export function ChooseAiScreen() {
         <div className="grid grid-cols-1 gap-4">
           {st === 'normal' || st === 'error' ? (
             <>
-              {Offer ? <Offer open={open} /> : null}
+              <Offers open={open} />
               <div className="flex flex-col gap-4 rounded-[22px] border border-border bg-card px-7 py-6.5 shadow-card">
                 <div className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-5">
                   <span className="grid size-14 place-items-center rounded-2xl bg-accent text-accent-foreground">

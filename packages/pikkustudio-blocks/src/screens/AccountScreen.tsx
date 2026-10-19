@@ -7,7 +7,7 @@ import { PageHead } from '../blocks/PageHead'
 import { Dot, RowCard, RowStack } from '../blocks/RowCard'
 import { LocalAccountName } from '../blocks/ShellAccount'
 import { Button } from '../ui/button'
-import { useSlots } from '../lib/slots'
+import { useSlot } from '../lib/studio-slots'
 import { useAccount, useSignOut } from '../lib/onboarding'
 import { languageName } from '../lib/i18n'
 import { supportedLocales, useLocale, type Locale } from '@/i18n/config'
@@ -22,7 +22,7 @@ const Group = ({ title, children }: { title: I18nString; children: I18nNode }) =
 
 export function AccountScreen() {
   const { locale, setLocale } = useLocale()
-  const AccountName = useSlots().AccountName ?? LocalAccountName
+  const AccountName = useSlot('shell.accountName', LocalAccountName)
   const name = useAccount().data?.name
   const hasName = !!name
   const signOut = useSignOut()

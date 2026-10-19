@@ -16,3 +16,4 @@ gen
 apps/studio/injected
 **/gen.mjs
 .studio-addons
+*.gen.css

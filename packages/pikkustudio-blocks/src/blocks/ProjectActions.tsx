@@ -4,12 +4,13 @@ import { ArrowRight, Pencil, Play } from 'lucide-react'
 import { Button } from '../ui/button'
 import { keep } from '../lib/links'
 import type { Project } from './ProjectCard'
-import { useProjectSlots } from '../lib/project-slots'
+import { useHasSlot, useSlotList } from '../lib/studio-slots'
 
 const goesTo = { running: 'Open', progress: 'Open', live: 'Open', sketch: 'Continue' }
 
 export function ProjectActions({ item, className }: { item: Project; className?: string }) {
-  const { ProjectCardExtra } = useProjectSlots()
+  const ProjectCardExtra = useSlotList('projects.card.extra')
+  const extra = useHasSlot('projects.card.extra')
   return (
     <div className={className}>
           {item.state === 'running' || item.state === 'progress' || item.state === 'live' ? (
@@ -35,14 +36,14 @@ export function ProjectActions({ item, className }: { item: Project; className?:
               </Link>
             </Button>
           )}
-          {item.state !== 'paused' && !ProjectCardExtra ? (
+          {item.state !== 'paused' && !extra ? (
             <Button variant="ghost" size="compactTight" type="button">
               <Pencil className="size-4" />
               
               {m.project_actions__rename()}
             </Button>
           ) : null}
-          {ProjectCardExtra ? <ProjectCardExtra item={item} /> : null}
+          <ProjectCardExtra item={item} />
         </div>
   )
 }

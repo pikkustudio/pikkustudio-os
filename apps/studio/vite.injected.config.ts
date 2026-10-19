@@ -3,9 +3,10 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { paraglideVitePlugin } from '@inlang/paraglide-js'
 import { fileURLToPath, URL } from 'node:url'
+import { inlangProject } from '../../scripts/inlang-project.mjs'
 
 export default defineConfig({
-  plugins: [paraglideVitePlugin({ project: './project.inlang', outdir: './src/paraglide' }), tailwindcss(), react()],
+  plugins: [paraglideVitePlugin({ project: inlangProject(fileURLToPath(new URL('.', import.meta.url))), outdir: './src/paraglide' }), tailwindcss(), react()],
   resolve: {
     dedupe: ['react', 'react-dom', '@pikku/react', 'lucide-react'],
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },

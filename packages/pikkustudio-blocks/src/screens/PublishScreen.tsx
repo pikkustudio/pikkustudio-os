@@ -1,19 +1,27 @@
 import { m } from '@/i18n/messages'
 import { useContext } from 'react'
 import { Button } from '../ui/button'
-import { useProjectName } from '../lib/project'
+import { useProjectKey, useProjectName } from '../lib/project'
+import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { EmptyState } from '../blocks/EmptyState'
 import { Rocket } from 'lucide-react'
 import { PageHead } from '../blocks/PageHead'
 import { PublishHosts } from '../blocks/PublishHosts'
-import { useSlots } from '../lib/slots'
+import { useKeyedSlot } from '../lib/studio-slots'
 import { ShellCtx } from '../lib/shell'
 
 
+// The panel an addon gives a publish target it brings; a target nobody draws a panel for shows nothing here.
+function PublishTarget({ id }: { id: string }) {
+  const Target = useKeyedSlot('publish.target', id)
+  return <Target />
+}
+
 export function PublishScreen() {
   const projectName = useProjectName()
+  const key = useProjectKey()
   const { view, open } = useContext(ShellCtx)
-  const { PublishTarget: Target } = useSlots()
+  const targets = Object.keys(usePikkuQuery('studio:publishOptions', { key }, { enabled: !!key }).data?.targets ?? {})
   return (
     <div className="mx-auto flex max-w-[1160px] flex-col gap-7.5 @min-[1700px]/app:max-w-[1380px]">
       <PageHead
@@ -33,9 +41,9 @@ export function PublishScreen() {
             {m.publish_screen__describe_app()}
           </Button>
         </EmptyState>
-      ) : Target ? (
-        <Target />
-      ) : null}
+      ) : (
+        targets.map((id) => <PublishTarget key={id} id={id} />)
+      )}
       <PublishHosts />
     </div>
   )

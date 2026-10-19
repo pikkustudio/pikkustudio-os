@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test": "bun test src",
     "tsc:i18n": "tsc --noEmit -p tsconfig.i18n.json"
   },
   "license": "BUSL-1.1",

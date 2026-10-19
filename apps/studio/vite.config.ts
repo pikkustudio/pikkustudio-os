@@ -5,6 +5,7 @@ import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import { paraglideVitePlugin } from '@inlang/paraglide-js'
 import { fileURLToPath, URL } from 'node:url'
 import { testIds } from './build/testids.plugin.ts'
+import { inlangProject } from '../../scripts/inlang-project.mjs'
 
 const base = process.env.PIKKUSTUDIO_FRONTEND_BASE || '/'
 
@@ -48,7 +49,7 @@ export default defineConfig(() => {
   plugins: [
     // Compile messages/*.json → src/paraglide so `m` resolves, with HMR
     // on message edits. Must run first.
-    paraglideVitePlugin({ project: './project.inlang', outdir: './src/paraglide' }),
+    paraglideVitePlugin({ project: inlangProject(fileURLToPath(new URL('.', import.meta.url))), outdir: './src/paraglide' }),
     tailwindcss(),
     tanstackStart({ spa: { enabled: true, prerender: { outputPath: '/index.html' } }, router: {} }),
     // Stamps the `data-testid`s browser scenarios address controls by, derived from each

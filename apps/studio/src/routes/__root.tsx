@@ -15,7 +15,8 @@ import { localeFetch } from '@/lib/locale-fetch'
 import { PreferencesContext } from '@/contexts/preferences'
 import { DefaultErrorPage } from '@/components/DefaultErrorPage'
 import { DefaultNotFoundPage } from '@/components/DefaultNotFoundPage'
-import { SlotsCtx } from '@pikkustudio/blocks/lib/slots'
+import { StudioSlotsProvider } from '@pikkustudio/blocks/lib/studio-slots'
+import { slotContributions } from '@/addons.gen'
 import { TeamGuard } from '@pikkustudio/blocks/blocks/TeamGuard'
 import { useAccount } from '@pikkustudio/blocks/lib/onboarding'
 import { StudioLoading } from '@pikkustudio/blocks/blocks/StudioLoading'
@@ -50,9 +51,9 @@ function SessionGate({ children }: { children: ReactNode }) {
   const account = useAccount()
   if (account.isPending) return <StudioLoading />
   return (
-    <SlotsCtx.Provider value={{}}>
+    <StudioSlotsProvider value={slotContributions}>
       <TeamGuard>{children}</TeamGuard>
-    </SlotsCtx.Provider>
+    </StudioSlotsProvider>
   )
 }
 

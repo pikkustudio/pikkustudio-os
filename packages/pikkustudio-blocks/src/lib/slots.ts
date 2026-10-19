@@ -1,11 +1,8 @@
 import type { PanelId } from '../screens/OnboardingLayout'
-import type { WorkspaceAboutProps } from '../blocks/ShellAccount'
-import type { TeamScopeProps } from './team'
 import type { Copy } from './copy'
 import type { ReleaseDetail, ReleaseGroup, ReleasesView } from './releases'
 import type { StageSettings } from './projectSecrets'
-import type { I18nNode } from '@pikku/react'
-import { createContext, useContext, type ComponentType, type ReactNode } from 'react'
+import { createContext, useContext } from 'react'
 
 export type Open = (panel: PanelId | '') => void
 
@@ -37,23 +34,11 @@ export type AnalyticsEventCounts = {
   retry: () => void
 }
 
+// What is left of the old host slots: hooks the screens call, which move to backend sources keyed by target kind.
+// Component slots are declared in ../studio.slots.ts.
 export type Slots = {
-  SignInHero?: ComponentType<{ st: string; loading: boolean; open: Open; done: () => void }>
-  SignInOffer?: ComponentType<{ loading: boolean; open: Open; done: () => void }>
-  AiHero?: ComponentType<{ st: string; loading: boolean; open: Open; retry: () => void; done: () => void }>
-  AiOffer?: ComponentType<{ open: Open }>
   /** Wording a host replaces; anything left out reads neutral. */
   copy?: Partial<Copy>
-  PublishTarget?: ComponentType
-  ShellAccount?: ComponentType<{ expanded: boolean; onOpen: () => void; onAccount: () => void; collapsed?: boolean }>
-  WorkspaceAbout?: ComponentType<WorkspaceAboutProps>
-  AccountName?: ComponentType
-  TeamName?: ComponentType<{ children: (name: string) => ReactNode }>
-  TeamScope?: ComponentType<TeamScopeProps>
-  ProjectTargetProvider?: ComponentType<{ children: ReactNode }>
-  ProjectTargetSwitcher?: ComponentType<{ collapsed: boolean }>
-  ProjectNav?: ComponentType<{ itemClass: string; labelClass: string; collapsed: boolean }>
-  TeamNav?: ComponentType<{ itemClass: string; labelClass: string; collapsed: boolean }>
   /** Requests and speed of a published copy for the Performance screen, by target name; null asks only where the site is. Logs and Metrics read contributed sources instead. A hook, called every render. */
   useLiveMetrics?: (name: string | null, hours: number) => LiveMetrics
   /** How often each analytics event fired on a published copy over the last days; null when that copy is not published. A hook, called every render. */
@@ -64,24 +49,7 @@ export type Slots = {
   useStageSettings?: (projectKey: string, settingIds: string[]) => StageSettings | null
   /** What the next publish would change against what is live; null when unknown or nothing deploys. A hook, called every render. */
   useReleasePreview?: (projectKey: string) => ReleaseGroup[] | null
-  /** One row saying how published versions go live, with its own form; absent where nothing deploys. */
-  ReleaseMode?: ComponentType
-  /** Recent messages the live copy sent to other services; absent where nothing deploys. */
-  ReleaseSent?: ComponentType
   useLiveUpdates?: (queryKeys: readonly string[]) => void
-  RailFoot?: ComponentType<{ collapsed: boolean }>
-  LiveAppHealth?: ComponentType
-  Workspaces?: ComponentType
-  /** Where the project is published, shown in the chat panel above the message box. */
-  ChatPublishStatus?: ComponentType<{ projectKey: string }>
-  /**
-   * The host's own place to bring a project in from, shown first in the New project "bring it in" panel.
-   * It renders nothing when it cannot be reached and reports through onActive whether it is showing, so the
-   * link import below stays the main way in when the host is offline.
-   */
-  ImportSource?: ComponentType<{ onImported: (project: string, team?: string) => void; onActive: (active: boolean) => void }>
-  /** Starting from a terminal instead, folded under developer details in the same panel. */
-  ImportDeveloper?: ComponentType
 }
 
 export const SlotsCtx = createContext<Slots>({})
