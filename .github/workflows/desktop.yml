@@ -1,4 +1,8 @@
 name: Desktop
+# Two editions from one checkout. `desktop` is the open build: no submodule, and its artifacts may be public.
+# `cloud` is the same build with the private cloud addon (packages/addon-pikkucloud, a submodule with update = none)
+# checked out using the CLOUD_ADDON_DEPLOY_KEY secret. It never runs for a pull request, never goes through
+# upload-artifact (a public repo's artifacts are downloadable), and is skipped when the secret is not set.
 
 on:
   push:
@@ -69,3 +73,83 @@ jobs:
           aws s3 cp "$dmg" "s3://$DOWNLOADS_BUCKET/studio-os/$v/Pikku-Studio-OS-$v-arm64.dmg"
           echo "{\"version\":\"$v\"}" > latest.json
           aws s3 cp latest.json s3://$DOWNLOADS_BUCKET/studio-os/latest.json --content-type application/json
+
+  gate:
+    if: github.event_name != 'pull_request' && (github.ref_type == 'tag' || github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-22.04
+    outputs:
+      cloud: ${{ steps.secret.outputs.cloud }}
+    steps:
+      - id: secret
+        env:
+          KEY: ${{ secrets.CLOUD_ADDON_DEPLOY_KEY }}
+        run: |
+          if [ -n "$KEY" ]; then echo cloud=true >> "$GITHUB_OUTPUT"; else echo "No CLOUD_ADDON_DEPLOY_KEY: only the open build is made"; echo cloud=false >> "$GITHUB_OUTPUT"; fi
+
+  cloud:
+    name: cloud-${{ matrix.target }}
+    needs: gate
+    if: needs.gate.outputs.cloud == 'true'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            target: macos
+          - os: ubuntu-22.04
+            target: linux
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+          submodules: false
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.CLOUD_ADDON_DEPLOY_KEY }}
+      - name: Cloud addon
+        run: git -c submodule.packages/addon-pikkucloud.update=checkout submodule update --init packages/addon-pikkucloud
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.1
+      - uses: dtolnay/rust-toolchain@stable
+        if: matrix.target == 'macos'
+      - run: bun install --frozen-lockfile
+      - run: bun run check:cloud-boundary
+      - run: bun run check:independence
+      - run: node scripts/link-addon.mjs
+      - id: version
+        run: |
+          if [ "${GITHUB_REF_TYPE}" = tag ]; then v="${GITHUB_REF_NAME#v}"; else v="0.0.0-${GITHUB_SHA::7}"; fi
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+      - name: Desktop app
+        if: matrix.target == 'macos'
+        env:
+          TAURI_BUNDLES: app,dmg
+        run: bun run build:desktop
+      - name: Server build (boots before it is packed)
+        if: matrix.target == 'linux'
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+          RELEASE_NAME: studio
+          RELEASE_OUT: dist-release
+        run: sh scripts/release-build.sh linux/x64 linux/arm64
+      - name: Upload to R2
+        if: github.ref_type == 'tag'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_DOWNLOADS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_DOWNLOADS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          DOWNLOADS_BUCKET: ${{ vars.R2_DOWNLOADS_BUCKET }}
+          AWS_ENDPOINT_URL: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+        run: |
+          v="${{ steps.version.outputs.version }}"
+          if [ "${{ matrix.target }}" = macos ]; then
+            dmg=$(ls apps/studio/src-tauri/target/release/bundle/dmg/*.dmg)
+            aws s3 cp "$dmg" "s3://$DOWNLOADS_BUCKET/studio/$v/Pikku-Studio-$v-arm64.dmg"
+          else
+            (cd dist-release && sha256sum studio-*.tar.gz > SHA256SUMS-linux)
+            aws s3 cp dist-release "s3://$DOWNLOADS_BUCKET/studio/$v/" --recursive
+            echo "{\"version\":\"$v\"}" > latest.json
+            aws s3 cp latest.json s3://$DOWNLOADS_BUCKET/studio/latest.json --content-type application/json
+          fi
