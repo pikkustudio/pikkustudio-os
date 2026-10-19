@@ -7,7 +7,7 @@
     "url": "git+https://github.com/pikkujs/pikku.git",
     "directory": "packages/builder"
   },
-  "description": "The pikku builder \u2014 pi set up to build pikku apps, with the pikku skills and edit tools. Run it in a terminal, or drive it over rpc from Studio",
+  "description": "The pikku builder — pi set up to build pikku apps, with the pikku skills and edit tools. Run it in a terminal, or drive it over rpc from Studio",
   "author": "yasser.fadl@gmail.com",
   "license": "BUSL-1.1",
   "type": "module",
@@ -32,8 +32,8 @@
   },
   "dependencies": {
     "@earendil-works/pi-coding-agent": "1.3.0",
-    "@pikku/cli": "^0.12.189",
-    "@pikku/skills": "^0.12.56"
+    "@pikku/cli": "^0.12.195",
+    "@pikku/skills": "^0.12.60"
   },
   "devDependencies": {
     "@types/node": "^22",

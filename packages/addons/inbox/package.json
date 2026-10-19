@@ -83,7 +83,7 @@
     "lucide-react": "*"
   },
   "dependencies": {
-    "@pikku/kysely": "^0.13.37",
+    "@pikku/kysely": "^0.13.39",
     "typescript": "^5.9",
     "zod": "^4.3.6"
   }

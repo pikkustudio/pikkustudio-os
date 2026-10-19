@@ -47,6 +47,6 @@
     "zod": "^4"
   },
   "dependencies": {
-    "@pikku/kysely": "^0.13.37"
+    "@pikku/kysely": "^0.13.39"
   }
 }
