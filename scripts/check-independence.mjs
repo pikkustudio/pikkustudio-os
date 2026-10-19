@@ -1,3 +1,5 @@
+// The open repo builds alone: nothing under apps/ or packages/ (the private addon folders are not tracked here) may
+// name a private package. Run: bun run check:independence
 import { execFileSync } from 'node:child_process'
 
 const FORBIDDEN = [
@@ -6,6 +8,9 @@ const FORBIDDEN = [
   '@project/app',
   '@pikku/shadcdn',
   'pikkustudio-cloud',
+  // The private addons are wired only by scripts/link-addon.mjs and the generated files it feeds; source never names them.
+  '@pikkustudio/addon-cloud',
+  '@pikkustudio/addon-controlpanel',
 ]
 
 const hits = []

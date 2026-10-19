@@ -1,7 +1,7 @@
 // Open/OSS boundary: packages/pikkustudio-blocks may not name Pikku Studio Cloud, except in the pitch ("what Pikku Studio Cloud adds").
 // Allowed: CloudPitch*.tsx, the name `CloudPitch`, catalog keys prefixed `cloud_pitch__`, the field name `cloudProjectId`, and the
-// listed wire constants. Everything else that speaks of Pikku Studio Cloud reaches the open package through slots (lib/slots.ts,
-// lib/copy.ts) supplied by packages/blocks-cloud. Run: bun run check:cloud-boundary
+// listed wire constants. Everything else that speaks of Pikku Studio Cloud comes from the private cloud addon: its slot
+// contributions (studio.slots.ts), its backend sources and its message overrides. Run: bun run check:cloud-boundary
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
