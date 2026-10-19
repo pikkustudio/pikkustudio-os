@@ -14,7 +14,7 @@ import { Dot, RowCard, RowStack } from '../blocks/RowCard'
 import { ProjectValueDrawer } from '../blocks/ProjectValueDrawer'
 import { useProjectKey, useProjectName } from '../lib/project'
 import { useProjectAction } from '../lib/projectRpc'
-import { useSlots } from '../lib/slots'
+import { useStageSettings } from '../lib/stage-settings'
 import { useLocalSettings, useSecretsSet, useProjectSecretsMeta, valueState, type ProjectSecret, type ProjectValue, type ValueState } from '../lib/projectSecrets'
 import { useDeveloperDetails } from '../lib/developer-details'
 
@@ -56,12 +56,11 @@ export function ProjectSecretsScreen() {
   const key = useProjectKey()
   const app = useProjectName()
   const navigate = useNavigate()
-  const { useStageSettings } = useSlots()
   const meta = useProjectSecretsMeta(key)
   const secrets = meta.data?.secrets ?? []
   const settings = meta.data?.settings ?? []
   const settingIds = useMemo(() => settings.map((s) => s.id), [settings])
-  const stage = useStageSettings?.(key, settingIds) ?? null
+  const stage = useStageSettings(key, settingIds)
   const local = useSecretsSet(key, secrets.filter((s) => !s.connected).map((s) => s.id), !stage && !!meta.data)
   const localSettings = useLocalSettings(key, settingIds, !stage && !!meta.data)
   const settingsHere = stage ? stage.settings : localSettings.supported ? localSettings.settings : undefined

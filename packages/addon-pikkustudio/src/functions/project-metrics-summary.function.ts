@@ -17,6 +17,8 @@ export const ProjectMetricsSummaryOutput = z.object({
   functions: z.array(z.object({ name: z.string(), wire: z.string().nullable(), requests: z.number(), errors: z.number(), avgMs: z.number().nullable(), lastRun: z.number().nullable() })),
   failures: z.array(z.object({ functionName: z.string(), wire: z.string().nullable(), message: z.string(), count: z.number(), last: z.number().nullable() })),
   kinds: z.array(SourceKindSchema),
+  state: z.enum(['live', 'publishing', 'not-published', 'missing']).optional(),
+  slow: z.object({ hits: z.number(), limitMs: z.number() }).optional(),
 })
 
 type Output = z.infer<typeof ProjectMetricsSummaryOutput>

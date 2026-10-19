@@ -8,6 +8,12 @@ export const SourceKindSchema = z.enum(['workspace', 'sandbox', 'stage'])
 
 const cloudIdOf = (key: string) => (key.startsWith('cloud:') ? key.slice('cloud:'.length).split('@')[0] || null : null)
 
+/** The project a host's stage sources are asked about; null where the project has no copy in that host. */
+export const stageContext = async (projects: Pick<StudioProjectsService, 'list'>, key: string, session: unknown) => {
+  const cloudProjectId = cloudIdOf(key) ?? (await projects.list().catch(() => [])).find((p) => p.key === key)?.cloudProjectId ?? null
+  return cloudProjectId ? { key, session, project: { cloudProjectId } } : null
+}
+
 /** Who and what a source is asked about. The cloud project id is only looked up for kinds that live in the cloud. */
 export const sourceContext = async (projects: Pick<StudioProjectsService, 'list'>, key: string, target: TargetRef, session: unknown): Promise<SourceContext> => {
   if (sourceKindOf(target) === 'workspace') return { key, target, session }

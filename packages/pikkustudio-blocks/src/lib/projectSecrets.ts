@@ -91,7 +91,7 @@ export function useLocalSettings(key: string, ids: string[], enabled: boolean) {
   return { ...read, save }
 }
 
-/** A published copy of the project. Its secrets are sealed in this browser to that copy's own key before they are sent. */
+/** A published copy of the project. Its secrets are sealed to that copy's own key by the host's stage source before they leave Studio. */
 export type StageSettings = {
   /** Ids of the secrets that copy has a value for; undefined while loading. */
   secretIds: string[] | undefined

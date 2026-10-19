@@ -1,7 +1,6 @@
 import { asI18n, type I18nNode, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useContext, useMemo, useState } from 'react'
-import { useNavigate } from '@tanstack/react-router'
 import { NotebookPen } from 'lucide-react'
 import { PageHead } from '../blocks/PageHead'
 import { Segmented } from '../blocks/Segmented'
@@ -13,18 +12,29 @@ import { StatusLine } from '../blocks/StatusLine'
 import { AskPikku } from '../blocks/AskPikku'
 import { PikkuDot } from '../blocks/PikkuDot'
 import { RowCard, RowStack } from '../blocks/RowCard'
-import { Link } from '../blocks/Link'
-import { Button, buttonVariants } from '../ui/button'
+import { Button } from '../ui/button'
 import { ShellCtx } from '../lib/shell'
-import { keep } from '../lib/links'
 import { useProjectKey } from '../lib/project'
 import { useProjectQuery } from '../lib/projectRpc'
-import { LOCAL_WORKSPACE, formatTarget, useProjectTarget } from '../lib/project-target'
-import { useSlots, type AnalyticsEventCount, type AnalyticsEventCounts, type LiveMetrics } from '../lib/slots'
+import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
+import { StageStateCard, type StageState } from '../blocks/StageStateCard'
+import { TargetSwitch } from '../blocks/TargetSwitch'
 import { getLocale } from '@/paraglide/runtime.js'
 import { Bars, Figure, seconds, words } from './metrics-shared'
 
-type UseLive = (name: string | null, hours: number) => LiveMetrics
+type Live = {
+  state: StageState
+  isPending: boolean
+  error: unknown
+  isFetching: boolean
+  retry: () => void
+  traffic: Array<{ at: number; requests: number; errors: number; avgMs: number; maxMs: number }>
+  functions: Array<{ name: string; requests: number; errors: number; avgMs: number | null }>
+  slowHits: number
+  slowLimitMs: number
+}
+
+type Summary = Pick<Live, 'traffic' | 'functions'> & { state?: StageState; slow?: { hits: number; limitMs: number } }
 
 const HOUR = 3_600_000
 const liveRanges = (): Array<[string, I18nString]> => [
@@ -32,87 +42,52 @@ const liveRanges = (): Array<[string, I18nString]> => [
   ['168', m.metrics_live__last_week()],
 ]
 
-/** Which copy the numbers come from. Shown only where the host has a published copy to read. */
-export function LiveSwitch() {
-  const { useLiveMetrics } = useSlots()
-  return useLiveMetrics ? <Switch use={useLiveMetrics} /> : null
-}
-
-function Switch({ use }: { use: UseLive }) {
-  const target = useProjectTarget()
-  const navigate = useNavigate()
-  const { site } = use(null, 24)
-  if (!site && target.kind !== 'stage') return null
-  const here = target.kind === 'workspace' && target.name !== LOCAL_WORKSPACE ? m.metrics_live__your_copy() : m.metrics_live__your_computer()
-  const there = target.kind === 'stage' && target.name !== site ? asI18n(target.name) : m.metrics_live__live_site()
-  const pick = (v: string) => {
-    if (v === target.kind) return
-    if (v === 'workspace') target.openWorkspace?.()
-    else if (site) void navigate({ to: '.', search: ((prev: object) => ({ ...prev, target: formatTarget({ kind: 'stage', name: site }) })) as never })
-  }
-  return <Segmented label={m.metrics_live__which()} value={target.kind} options={[['workspace', here], ['stage', there]]} onChange={pick} />
-}
-
-function useLive(name: string, hours: number, use: UseLive) {
-  const live = use(name, hours)
+/** A published copy's numbers, from the host's stage source through studio:projectMetricsSummary. */
+function useLive(name: string, hours: number, until: number) {
+  const key = useProjectKey()
+  const query = usePikkuQuery('studio:projectMetricsSummary', { key, target: { kind: 'stage', name }, since: until - hours * HOUR, until }, { enabled: !!key } as never)
+  const data = query.data as Summary | undefined
   return useMemo(() => {
+    const live: Live = {
+      state: data?.state ?? 'live',
+      isPending: query.isPending,
+      error: query.error,
+      isFetching: query.isFetching,
+      retry: () => void query.refetch(),
+      traffic: data?.traffic ?? [],
+      functions: data?.functions ?? [],
+      slowHits: data?.slow?.hits ?? 0,
+      slowLimitMs: data?.slow?.limitMs ?? 0,
+    }
     const requests = live.traffic.reduce((n, b) => n + b.requests, 0)
-    const errors = live.traffic.reduce((n, b) => n + b.errors, 0)
     const weighted = live.traffic.reduce((n, b) => n + b.avgMs * b.requests, 0)
     const average = requests ? weighted / requests : null
-    const slowest = live.traffic.reduce((n, b) => Math.max(n, b.maxMs), 0)
-    const failing = live.functions.filter((f) => f.errors > 0).sort((a, b) => b.errors - a.errors)
     const slow = live.functions.filter((f) => f.avgMs !== null && f.requests > 0).sort((a, b) => b.avgMs! - a.avgMs!)
-    return { live, requests, errors, average, slowest, failing, slow }
-  }, [live])
+    return { live, requests, average, slow }
+  }, [data, query.isPending, query.error, query.isFetching])
 }
 
-function Gate({ live, head, label, children }: { live: LiveMetrics; head: I18nNode; label: I18nString; children: () => I18nNode }) {
-  const target = useProjectTarget()
+function Gate({ live, head, label, children }: { live: Live; head: I18nNode; label: I18nString; children: () => I18nNode }) {
   const { say } = useContext(ShellCtx)
-  const hero = (title: I18nString, why: I18nString, actions?: I18nNode, calm = true) => (
-    <NextCard label={label} hue={calm ? 'teal' : 'petrol'} page="metrics" title={title} why={why}>
-      {actions ? <div className="flex flex-wrap gap-3">{actions}</div> : null}
-    </NextCard>
-  )
-  const back = target.openWorkspace ? (
-    <Button variant="heroGhost" size="page" onClick={target.openWorkspace}>
-      {m.metrics_live__back()}
-    </Button>
-  ) : null
   const body = live.isPending ? (
     <div role="status" aria-busy="true" className="flex flex-col gap-3.5">
-      {hero(m.metrics_live__loading(), m.metrics_live__text())}
+      <NextCard label={label} hue="teal" page="metrics" title={m.metrics_live__loading()} why={m.metrics_live__text()} />
       <p className="h-24 animate-pulse rounded-card bg-secondary" aria-label={m.metrics_live__loading()} />
     </div>
   ) : live.error ? (
     <>
-      {hero(
-        m.metrics_live__error_title(),
-        m.metrics_live__error_text(),
-        <Button variant="hero" size="pageLg" type="button" onClick={() => say(m.error_state__fix_ask_what({ what: m.metrics_live__what(), details: detailsOf(faultOf(live.error), m.metrics_live__what()) }))}>
-          <PikkuDot />
-          {m.metrics_screen__fix_it()}
-        </Button>,
-        false,
-      )}
+      <NextCard label={label} hue="petrol" page="metrics" title={m.metrics_live__error_title()} why={m.metrics_live__error_text()}>
+        <div className="flex flex-wrap gap-3">
+          <Button variant="hero" size="pageLg" type="button" onClick={() => say(m.error_state__fix_ask_what({ what: m.metrics_live__what(), details: detailsOf(faultOf(live.error), m.metrics_live__what()) }))}>
+            <PikkuDot />
+            {m.metrics_screen__fix_it()}
+          </Button>
+        </div>
+      </NextCard>
       <ErrorState error={live.error} what={m.metrics_live__what()} onRetry={live.retry} retrying={live.isFetching} />
     </>
-  ) : !live.found ? (
-    hero(m.metrics_live__missing_title(), m.metrics_live__missing_text(), back)
-  ) : live.publishing && !live.published ? (
-    hero(m.metrics_live__publishing_title(), m.metrics_live__publishing_text(), <StatusLine tone="wait" text={m.metrics_live__publishing_title()} />)
-  ) : !live.published ? (
-    hero(
-      m.metrics_live__never_title(),
-      m.metrics_live__never_text(),
-      <>
-        <Link {...keep} to={'/publish' as never} className={buttonVariants({ variant: 'hero', size: 'page' })}>
-          {m.metrics_live__go_publish()}
-        </Link>
-        {back}
-      </>,
-    )
+  ) : live.state !== 'live' ? (
+    <StageStateCard state={live.state} label={label} />
   ) : (
     children()
   )
@@ -128,20 +103,20 @@ function Quiet({ hours, label }: { hours: string; label: I18nString }) {
   return <NextCard label={label} hue="teal" page="metrics" title={m.metrics_live__quiet_title()} why={hours === '24' ? m.metrics_live__quiet_text_day() : m.metrics_live__quiet_text_week()} />
 }
 
-const points = (live: LiveMetrics, pick: (b: LiveMetrics['traffic'][number]) => number | null) =>
+const points = (live: Live, pick: (b: Live['traffic'][number]) => number | null) =>
   live.traffic.flatMap((b) => {
     const v = pick(b)
     return v === null ? [] : [[b.at, v] as [number, number]]
   })
 
-export function LivePerformanceScreen({ name, use }: { name: string; use: UseLive }) {
+export function LivePerformanceScreen({ name }: { name: string }) {
   const [hours, setHours] = useState('24')
   const [to] = useState(() => Math.ceil(Date.now() / HOUR) * HOUR)
   const from = to - Number(hours) * HOUR
-  const s = useLive(name, Number(hours), use)
+  const s = useLive(name, Number(hours), to)
   const head = (
     <PageHead crumb={m.performance_screen__crumb()} title={m.performance_screen__title()} text={m.metrics_live__perf_text()} size="lead" developerDetails>
-      <LiveSwitch />
+      <TargetSwitch />
       <Segmented label={m.performance_screen__time_range()} value={hours} options={liveRanges()} onChange={setHours} />
     </PageHead>
   )
@@ -202,7 +177,22 @@ const kindOf = (schema: string): I18nString => {
 const list = (items: string[]) => new Intl.ListFormat(undefined, { style: 'long', type: 'conjunction' }).format(items)
 
 const COUNT_DAYS = 30
-const noCounts = (): AnalyticsEventCounts | null => null
+
+type AnalyticsEventCount = { total: number; signedIn: number; series: { day: string; count: number }[] }
+
+/** How often each event fired on a published copy, by name; null where the copy is not published or nothing counts. */
+function useEventCounts(key: string, stage: string | undefined) {
+  const query = usePikkuQuery('studio:projectAnalyticsCounts', { key, stage: stage ?? '', days: COUNT_DAYS }, { enabled: !!key && !!stage, staleTime: 60_000, meta: { handlesErrors: true } } as never)
+  const data = query.data as { counts: Array<AnalyticsEventCount & { name: string }> | null } | undefined
+  if (!stage || (data && !data.counts)) return null
+  return {
+    counts: Object.fromEntries((data?.counts ?? []).map(({ name, ...count }) => [name, count])) as Record<string, AnalyticsEventCount>,
+    isPending: query.isPending,
+    error: query.error,
+    isFetching: query.isFetching,
+    retry: () => void query.refetch(),
+  }
+}
 
 const share = (c: AnalyticsEventCount): I18nString | null => {
   const part = c.signedIn / c.total
@@ -223,7 +213,7 @@ const countLine = (c: AnalyticsEventCount | undefined): I18nString => {
 /** The moments the app declares it writes down about people, read off the app's own declaration; on a published copy, how often each fired. */
 export function AnalyticsEvents({ stage }: { stage?: string }) {
   const key = useProjectKey()
-  const counts = (useSlots().useAnalyticsEventCounts ?? noCounts)(stage ?? null, COUNT_DAYS)
+  const counts = useEventCounts(key, stage)
   const meta = useProjectQuery<{ analyticsEvents?: Record<string, EventMeta> }>(key, 'console:getAllMeta', {})
   const events = Object.values(meta.data?.analyticsEvents ?? {}).sort((a, b) => a.name.localeCompare(b.name))
   return (

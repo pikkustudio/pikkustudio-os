@@ -83,10 +83,17 @@ export interface MetricsFunction {
   lastRun: number | null
 }
 
+/** Where a published copy stands: answering, on its way out, never published, or not there at all. */
+export type StageState = 'live' | 'publishing' | 'not-published' | 'missing'
+
 export interface MetricsSummary {
   totals: { requests: number; errors: number; avgMs: number | null; maxMs: number | null }
   traffic: MetricsTraffic[]
   functions: MetricsFunction[]
+  /** Only for a published copy; a summary that leaves it out is answering. */
+  state?: StageState
+  /** Calls the host cut off for running too long, and after how long it cuts them; left out where nothing cuts calls off. */
+  slow?: { hits: number; limitMs: number }
 }
 
 export interface LogSource {

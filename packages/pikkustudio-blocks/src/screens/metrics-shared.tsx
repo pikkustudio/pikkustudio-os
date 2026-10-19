@@ -146,6 +146,10 @@ export type MetricsSummary = {
   traffic: Array<{ at: number; requests: number; errors: number; avgMs: number; maxMs: number }>
   functions: SummaryFunction[]
   failures: SummaryFailure[]
+  /** Only for a published copy: whether it answers yet. */
+  state?: 'live' | 'publishing' | 'not-published' | 'missing'
+  /** Calls the host cut off for running too long. */
+  slow?: { hits: number; limitMs: number }
 }
 
 /** One failure, named and explained the way the Metrics screen talks about it. */

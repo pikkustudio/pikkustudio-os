@@ -3,12 +3,14 @@
 // scripts/gen-addons.mjs gathers them into the app's registry. A slot left empty shows the core default.
 import type { ReactNode } from 'react'
 import type { Project } from './blocks/ProjectCard'
+import type { ListedProject } from './blocks/TeamProjects'
+import type { ProjectOverlay } from './lib/project-overlay'
 import type { WorkspaceAboutProps } from './blocks/ShellAccount'
 import type { PanelId } from './screens/OnboardingLayout'
 import type { TeamScopeProps } from './lib/team'
 import { defineStudioSlots, slot, type SlotContributionOf } from './lib/studio-slots'
 
-type Open = (panel: PanelId | '') => void
+export type Open = (panel: PanelId | '') => void
 type NavProps = { itemClass: string; labelClass: string; collapsed: boolean }
 
 export const studioSlots = defineStudioSlots({
@@ -42,6 +44,8 @@ export const studioSlots = defineStudioSlots({
   'project.import.sources': slot.list<{ onImported: (project: string, team?: string) => void; onActive: (active: boolean) => void }>(),
   /** Starting from a terminal instead, under developer details in the same panel. */
   'project.import.developer': slot.list(),
+  /** What a host knows about the listed projects, by key, handed to `children`; the core default knows nothing more. */
+  'projects.overlay': slot.single<{ projects: ListedProject[]; children: (overlay: Record<string, ProjectOverlay>) => ReactNode }>(),
   /** More on a project's card. Its presence also hides the card's own run button. */
   'projects.card.extra': slot.list<{ item: Project }>(),
   /** A publish target's panel on the Publish screen, keyed by the target's id from studio:publishOptions. */

@@ -14,7 +14,7 @@ import { keep } from '../lib/links'
 import { useTeamProjects, type ListedProject } from '../blocks/TeamProjects'
 import { useSlot } from '../lib/studio-slots'
 import { LOCAL_TEAM, useTeamSlug } from '../lib/team'
-import { useProjectSlots } from '../lib/project-slots'
+import type { ProjectOverlay } from '../lib/project-overlay'
 
 const looks = ['bakery', 'kiln', 'garden', 'dog'] as const
 
@@ -38,11 +38,13 @@ const byVisit = (a: Project, b: Project) => Number(!!b.favourite) - Number(!!a.f
 
 const TeamSlug = ({ children }: { children: (name: string) => ReactNode }) => <>{children(useTeamSlug())}</>
 
+const NO_OVERLAY: Record<string, ProjectOverlay> = {}
+const NoOverlay = ({ children }: { children: (overlay: Record<string, ProjectOverlay>) => ReactNode }) => <>{children(NO_OVERLAY)}</>
+
 export function ProjectsScreen() {
   const team = useTeamProjects()
-  const { useProjectOverlay } = useProjectSlots()
-  const overlay = useProjectOverlay?.(team.data ?? []) ?? {}
-  const projects = { ...team, data: team.data?.map((p) => ({ ...toCard(p), ...overlay[p.key] })).sort(byVisit) } as UseQueryResult<Project[]>
+  const Overlay = useSlot('projects.overlay', NoOverlay)
+  const withOverlay = (overlay: Record<string, ProjectOverlay>) => ({ ...team, data: team.data?.map((p) => ({ ...toCard(p), ...overlay[p.key] })).sort(byVisit) }) as UseQueryResult<Project[]>
   const local = useTeamSlug() === LOCAL_TEAM
   const TeamName = useSlot('team.name', TeamSlug)
 
@@ -61,21 +63,25 @@ export function ProjectsScreen() {
           </Link>
         </Button>
       </PageHead>
-      <QueryState
-        query={projects}
-        skeleton={<CardsSkeleton />}
-        empty={(items) =>
-          items.length ? null : (
-            <EmptyState layout="row" icon={FolderPlus} title={m.projects_screen__none_title()} text={m.projects_screen__none_text()}>
-              <Button asChild size="page">
-                <Link {...keep} to="/new-project">{m.projects_screen__new_project()}</Link>
-              </Button>
-            </EmptyState>
-          )
-        }
-      >
-        {(items) => <ProjectsGrid items={items} />}
-      </QueryState>
+      <Overlay projects={team.data ?? []}>
+        {(overlay) => (
+          <QueryState
+            query={withOverlay(overlay)}
+            skeleton={<CardsSkeleton />}
+            empty={(items) =>
+              items.length ? null : (
+                <EmptyState layout="row" icon={FolderPlus} title={m.projects_screen__none_title()} text={m.projects_screen__none_text()}>
+                  <Button asChild size="page">
+                    <Link {...keep} to="/new-project">{m.projects_screen__new_project()}</Link>
+                  </Button>
+                </EmptyState>
+              )
+            }
+          >
+            {(items) => <ProjectsGrid items={items} />}
+          </QueryState>
+        )}
+      </Overlay>
     </Page>
   )
 }

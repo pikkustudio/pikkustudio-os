@@ -12,6 +12,8 @@ import { MetricsError } from '../blocks/MetricsError'
 import { MetricsLoading } from '../blocks/MetricsLoading'
 import { MetricsEmpty } from '../blocks/MetricsEmpty'
 import { MetricsColumns } from '../blocks/MetricsColumns'
+import { MetricsSlowCalls } from '../blocks/MetricsSlowCalls'
+import { StageStateCard } from '../blocks/StageStateCard'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { useProjectKey } from '../lib/project'
 import { LOCAL_WORKSPACE, useProjectTarget } from '../lib/project-target'
@@ -44,10 +46,13 @@ export function MetricsScreen({ scope = 'app' }: { scope?: 'app' | 'studio' }) {
         <MetricsError error={summary.error} retry={() => void summary.refetch()} retrying={summary.isFetching} />
       ) : summary.isPending || !data ? (
         <MetricsLoading why={scope === 'studio' ? m.metrics_screen__text_studio() : m.metrics_screen__text_app()} />
+      ) : data.state && data.state !== 'live' ? (
+        <StageStateCard state={data.state} label={m.metrics_screen__how_answering()} />
       ) : !data.totals.requests ? (
         <MetricsEmpty />
       ) : (
         <>
+          {data.slow?.hits ? <MetricsSlowCalls hits={data.slow.hits} limitMs={data.slow.limitMs} names={slow.map((f) => f.name)} /> : null}
           <MetricsVerdict scope={scope} totals={data.totals} problems={problems} />
           <MetricsTraffic traffic={data.traffic} from={from} to={to} />
           <MetricsColumns>
