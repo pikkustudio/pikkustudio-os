@@ -6,7 +6,8 @@
   "workspaces": [
     "apps/*",
     "packages/*",
-    "packages/addons/*"
+    "packages/addons/*",
+    "!packages/addon-pikkucloud"
   ],
   "scripts": {
     "prebuild": "node scripts/build-libs.mjs && cd packages/functions && bunx --bun pikku all && cd ../../apps/studio && node ../../scripts/gen-routes.mjs && bunx --bun paraglide-js compile --project ./project.inlang --outdir ./src/paraglide",
