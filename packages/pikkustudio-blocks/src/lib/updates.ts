@@ -1,6 +1,5 @@
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { useProjectQuery } from './projectRpc'
-import { useSlots } from './slots'
 import { auditProblem, type AuditProblem } from './audit'
 import { changeEvent, mergeFeed, projectEvent, studioEvent, vaultEvent, type FeedItem, type RawAudit, type RawChange, type RawPerson, type RawStudio, type RawVault } from './updates-feed'
 
@@ -13,8 +12,6 @@ export type UpdatesNote = AuditProblem | 'unreadable' | null
 
 const EVERY = 15_000
 
-const noStageAudit = () => ({ data: undefined })
-
 export function useUpdatesFeed(projectKey: string) {
   const audit = useProjectQuery<AuditPage>(projectKey, 'admin:getAudits', { limit: 30 }, { refetchInterval: EVERY })
   const changes = useProjectQuery<Changes>(projectKey, 'console:listStudioChanges', {}, { refetchInterval: EVERY })
@@ -24,8 +21,7 @@ export function useUpdatesFeed(projectKey: string) {
     dataUpdatedAt: number
   }
 
-  const useStage = useSlots().useStageAudit ?? noStageAudit
-  const stage = useStage(projectKey, EVERY)
+  const stage = usePikkuQuery('studio:projectStageAudit', { key: projectKey, limit: 30 }, { enabled: !!projectKey, refetchInterval: EVERY } as never) as unknown as { data?: AuditPage }
   const studio = usePikkuQuery('studioActivity', { limit: 30, ...(projectKey ? { key: projectKey } : {}) }, { refetchInterval: EVERY } as never) as unknown as {
     data?: StudioPage
     isPending: boolean

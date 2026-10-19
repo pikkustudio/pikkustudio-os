@@ -15,7 +15,7 @@ import type { VaultAdmin } from '@pikkustudio/vault/admin'
 import type { InboxStore } from '@pikkustudio/addon-inbox/types'
 import type { CommentStore, VerdictStore } from '@pikkustudio/addon-review/types'
 import type { worktreeMetaSource } from './lib/worktree-meta-source.js'
-import type { LogSources, MetricSources, StageDirectory } from '@pikkustudio/addon-studio/sources'
+import type { LogSources, MetricSources, StageAudit, StageDirectory } from '@pikkustudio/addon-studio/sources'
 
 export interface UserSession extends CoreUserSession {
   userId: string
@@ -58,6 +58,7 @@ export interface SingletonServices extends CoreSingletonServices<Config> {
   logSources?: LogSources
   metricSources?: MetricSources
   stageDirectory?: StageDirectory
+  stageAudit?: StageAudit
 }
 
 export interface Services extends CoreServices<SingletonServices> {}

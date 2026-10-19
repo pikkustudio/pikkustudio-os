@@ -115,6 +115,26 @@ export interface StageDirectory {
   sandboxes?(ctx: Omit<SourceContext, 'target'>): Promise<StageEntry[]>
 }
 
+export interface StageAuditEvent {
+  eventId?: string
+  type: string
+  outcome?: 'success' | 'failed' | 'denied'
+  occurredAt: string
+  userIdentity?: { userId?: string; pikkuUserId?: string }
+  metadata?: Record<string, unknown>
+}
+
+export interface StageAuditPage {
+  readable: boolean
+  events: StageAuditEvent[]
+  users: Record<string, { name?: string; email?: string }>
+}
+
+/** What happened in a project's published app. Null when nothing is published or it cannot be read from here. */
+export interface StageAudit {
+  page(ctx: Omit<SourceContext, 'target'>, options: { limit: number }): Promise<StageAuditPage | null>
+}
+
 export const LOCAL_WORKSPACE = 'local'
 
 export const sourceKindOf = (target: TargetRef): SourceKind =>
