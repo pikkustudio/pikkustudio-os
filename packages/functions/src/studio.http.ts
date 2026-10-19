@@ -46,6 +46,8 @@ const studioRoutes = defineHTTPRoutes({
     projectLogs: { method: 'post', route: '/studio/projectLogs', func: ref('studio:projectLogs') },
     projectLogEntries: { method: 'post', route: '/studio/projectLogEntries', func: ref('studio:projectLogEntries') },
     projectMetrics: { method: 'post', route: '/studio/projectMetrics', func: ref('studio:projectMetrics') },
+    projectMetricsSummary: { method: 'post', route: '/studio/projectMetricsSummary', func: ref('studio:projectMetricsSummary') },
+    projectTargets: { method: 'post', route: '/studio/projectTargets', func: ref('studio:projectTargets') },
     projectDisk: { method: 'post', route: '/studio/projectDisk', func: ref('studio:projectDisk') },
     keepStatus: { method: 'post', route: '/studio/keepStatus', func: ref('studio:keepStatus') },
     keepChanges: { method: 'post', route: '/studio/keepChanges', func: ref('studio:keepChanges') },

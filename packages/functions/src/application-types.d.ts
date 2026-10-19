@@ -15,6 +15,7 @@ import type { VaultAdmin } from '@pikkustudio/vault/admin'
 import type { InboxStore } from '@pikkustudio/addon-inbox/types'
 import type { CommentStore, VerdictStore } from '@pikkustudio/addon-review/types'
 import type { worktreeMetaSource } from './lib/worktree-meta-source.js'
+import type { LogSources, MetricSources, StageDirectory } from '@pikkustudio/addon-studio/sources'
 
 export interface UserSession extends CoreUserSession {
   userId: string
@@ -52,6 +53,11 @@ export interface SingletonServices extends CoreSingletonServices<Config> {
   // `audit: true` ADDITIONALLY gets a kysely wrapped to capture every table write.
   auditLog: AuditLog
   studio: Studio
+  // Contributed at build time: addon-studio's studioSources gives the workspace kind,
+  // hosts that see the cloud add stage and sandbox. Absent under plain `pikku serve`.
+  logSources?: LogSources
+  metricSources?: MetricSources
+  stageDirectory?: StageDirectory
 }
 
 export interface Services extends CoreServices<SingletonServices> {}

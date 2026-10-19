@@ -18,7 +18,25 @@
       "types": "./dist/src/services/studio.d.ts",
       "import": "./dist/src/services/studio.js",
       "default": "./dist/src/services/studio.js"
+    },
+    "./sources": {
+      "types": "./dist/src/sources.d.ts",
+      "import": "./dist/src/sources.js",
+      "default": "./dist/src/sources.js"
+    },
+    "./contributors": {
+      "types": "./dist/src/contributors.d.ts",
+      "import": "./dist/src/contributors.js",
+      "default": "./dist/src/contributors.js"
     }
+  },
+  "pikku": {
+    "contributors": [
+      {
+        "module": "@pikkustudio/addon-studio/contributors",
+        "export": "studioSources"
+      }
+    ]
   },
   "files": [
     "dist"
@@ -49,7 +67,8 @@
     "tsx": "^4.21.0",
     "zod": "^4.3.6",
     "@pikku/better-auth": "^0.12.59",
-    "kysely": "^0.29.0"
+    "kysely": "^0.29.0",
+    "@pikku/deploy": "*"
   },
   "license": "BUSL-1.1",
   "peerDependenciesMeta": {

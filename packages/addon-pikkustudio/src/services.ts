@@ -6,7 +6,7 @@ import { shimsDir } from '@pikkustudio/builder'
 import { delimiter } from 'node:path'
 import { ToolResolver } from './lib/tools/resolver.js'
 
-export const createSingletonServices = pikkuAddonServices(async (_config, { auth, kysely }) => {
+export const createSingletonServices = pikkuAddonServices(async (_config, { auth, kysely, logSources, metricSources, stageDirectory }) => {
   const {
     studioAi,
     studioProjects,
@@ -41,5 +41,8 @@ export const createSingletonServices = pikkuAddonServices(async (_config, { auth
     studioHooks,
     studioLogs,
     studioModels,
+    logSources,
+    metricSources,
+    stageDirectory,
   }
 })

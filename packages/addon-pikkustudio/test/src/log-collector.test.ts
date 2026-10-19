@@ -88,3 +88,12 @@ test('pruning leaves loose files in the logs directory alone', async () => {
   assert.ok(existsSync(design))
   assert.ok(!existsSync(join(home, 'logs', 'gone')))
 })
+
+test('json lines keep the tenant they ran for, plain lines have none', async () => {
+  const store = memoryLogStore()
+  writeFileSync(join(home, 'logs', 'k1', 'aaa.server.log'), `${JSON.stringify({ level: 30, msg: 'hi', tenantOrgId: 'o1', pikkuUserId: 'u1' })}\nplain\n`)
+  await new LogCollector(home, store).sweep()
+  const [plain, json] = await store.list('k1')
+  assert.deepStrictEqual([json.tenantOrgId, json.tenantUserId], ['o1', 'u1'])
+  assert.deepStrictEqual([plain.tenantOrgId, plain.tenantUserId], [null, null])
+})

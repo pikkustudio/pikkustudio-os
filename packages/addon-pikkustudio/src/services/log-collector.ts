@@ -27,6 +27,8 @@ export const parseLine = (text: string, source: string, at: number): NewLogEntry
     fn: request ? `${request[1]} ${request[2]}` : null,
     ms: ms ? Math.round(Number(ms[1])) : null,
     trace: trace ? (trace[1] ?? trace[2]) : null,
+    tenantOrgId: null,
+    tenantUserId: null,
     text,
   }
 }
@@ -64,6 +66,8 @@ export const parseJsonLine = (line: string, source: string, at: number): NewLogE
   const ms = pick(o, 'ms', 'durationMs', 'duration', 'responseTime')
   const fn = pick(o, 'fn', 'func', 'function', 'rpc', 'route')
   const trace = pick(o, 'trace', 'traceId', 'errorId', 'reqId')
+  const tenantOrgId = pick(o, 'tenantOrgId', 'tenantorgid', 'orgid')
+  const tenantUserId = pick(o, 'tenantUserId', 'tenantuserid', 'pikkuUserId', 'pikkuuserid')
   return {
     at: timeFrom(pick(o, 'time', 'timestamp', 'ts', '_timestamp'), at),
     level: levelFrom(pick(o, 'level', 'severity')) ?? levelOf(message),
@@ -72,6 +76,8 @@ export const parseJsonLine = (line: string, source: string, at: number): NewLogE
     fn: fn === undefined ? null : text(fn),
     ms: typeof ms === 'number' ? Math.round(ms) : null,
     trace: trace === undefined ? null : text(trace),
+    tenantOrgId: tenantOrgId === undefined ? null : text(tenantOrgId),
+    tenantUserId: tenantUserId === undefined ? null : text(tenantUserId),
     text: stack ? `${message}\n${stack}` : message,
   }
 }
@@ -234,7 +240,7 @@ export class LogCollector {
     await fetch(this.forward.url, {
       method: 'POST',
       headers: { 'content-type': 'application/json', ...(this.forward.auth ? { authorization: this.forward.auth } : {}) },
-      body: JSON.stringify(entries.map((e) => ({ _timestamp: e.at * 1000, project: key, source: e.source, level: e.level, wire: e.wire, fn: e.fn, ms: e.ms, trace: e.trace, message: e.text }))),
+      body: JSON.stringify(entries.map((e) => ({ _timestamp: e.at * 1000, project: key, source: e.source, level: e.level, wire: e.wire, fn: e.fn, ms: e.ms, trace: e.trace, tenantorgid: e.tenantOrgId ?? null, tenantuserid: e.tenantUserId ?? null, message: e.text }))),
     })
   }
 }

@@ -6,7 +6,7 @@ export const logsAssistant = pikkuAgent({
   description: 'Reads what a running project printed and explains what went wrong, in plain words.',
   goal: 'You read a project’s logs and say what happened and what to do about it. You never change anything. Answer in plain language for someone who does not write code. Speak to the owner in the language named in the message; anything you pass to a tool or a specialist, and any change request you file, is written in English.',
   model: 'studio/chat',
-  tools: [ref('studio:projectLogs'), ref('studio:projectLogEntries')],
+  tools: [ref('studio:projectLogs'), ref('studio:projectLogEntries'), ref('studio:projectMetricsSummary')],
   maxSteps: 4,
 })
 

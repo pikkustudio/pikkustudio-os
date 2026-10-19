@@ -8,6 +8,7 @@ import type { StudioAi } from '../src/services/ai.js'
 import type { StudioHooks } from '../src/services/hooks.js'
 import type { StudioProjectsService } from '../src/services/projects.js'
 import type { LogStore } from '../src/services/log-store.js'
+import type { LogSources, MetricSources, StageDirectory } from '../src/services/log-source.js'
 import type { StudioPublisher } from '../src/services/publish.js'
 import type { StudioSettingsFile } from '../src/services/settings.js'
 import type { ToolResolver } from '../src/lib/tools/resolver.js'
@@ -31,6 +32,9 @@ export interface SingletonServices extends CoreSingletonServices<Config> {
   studioTools: ToolResolver
   auth?: () => Promise<BetterAuthInstance>
   kysely?: Kysely<any>
+  logSources?: LogSources
+  metricSources?: MetricSources
+  stageDirectory?: StageDirectory
 }
 
 export interface Services extends CoreServices<SingletonServices> {}

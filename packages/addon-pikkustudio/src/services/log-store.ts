@@ -12,34 +12,25 @@ export interface LogEntry {
   fn: string | null
   ms: number | null
   trace: string | null
+  tenantOrgId: string | null
+  tenantUserId: string | null
   text: string
 }
 
-export type NewLogEntry = Omit<LogEntry, 'id'>
+export type NewLogEntry = Omit<LogEntry, 'id' | 'tenantOrgId' | 'tenantUserId'> & { tenantOrgId?: string | null; tenantUserId?: string | null }
 
+/** The collector's side of the log tables: it writes lines and remembers how far it read. Reading for screens goes through a LogSource. */
 export interface LogStore {
   append(key: string, entries: NewLogEntry[], cursor?: { file: string; position: number }, metrics?: NewMetricEntry[]): Promise<void>
   position(file: string): Promise<number>
   forget(files: string[]): Promise<void>
   trim(keep: { known: string[]; olderThan: number; perProject: number }): Promise<void>
-  list(key: string, options?: { since?: number; limit?: number }): Promise<LogEntry[]>
   metrics(key: string, query?: MetricQuery): Promise<MetricEntry[]>
 }
 
-type Row = {
-  log_id?: number
-  logId?: number
-  source: string
-  level: string
-  wire: string | null
-  fn: string | null
-  ms: number | null
-  trace: string | null
-  text: string
-  at: number
-}
+export type MemoryLogStore = LogStore & { list(key: string, options?: { since?: number; limit?: number }): Promise<LogEntry[]> }
 
-export const memoryLogStore = (): LogStore => {
+export const memoryLogStore = (): MemoryLogStore => {
   const rows = new Map<string, LogEntry[]>()
   const samples = new Map<string, MetricEntry[]>()
   const cursors = new Map<string, number>()
@@ -47,7 +38,7 @@ export const memoryLogStore = (): LogStore => {
   return {
     async append(key, entries, cursor, metrics = []) {
       const list = rows.get(key) ?? []
-      list.push(...entries.map((e) => ({ ...e, id: next++ })))
+      list.push(...entries.map((e) => ({ ...e, tenantOrgId: e.tenantOrgId ?? null, tenantUserId: e.tenantUserId ?? null, id: next++ })))
       rows.set(key, list.slice(-5000))
       const kept = samples.get(key) ?? []
       kept.push(...metrics.map((m) => ({ ...m, id: next++ })))
@@ -89,7 +80,7 @@ export const kyselyLogStore = (db: Kysely<any>): LogStore => ({
       for (let i = 0; i < entries.length; i += INSERT_CHUNK)
         await trx
           .insertInto('log_entry')
-          .values(entries.slice(i, i + INSERT_CHUNK).map((e) => ({ project_id: key, source: e.source, level: e.level, wire: e.wire, fn: e.fn, ms: e.ms, trace: e.trace, text: e.text, at: e.at })))
+          .values(entries.slice(i, i + INSERT_CHUNK).map((e) => ({ project_id: key, source: e.source, level: e.level, wire: e.wire, fn: e.fn, ms: e.ms, trace: e.trace, tenant_org_id: e.tenantOrgId ?? null, tenant_user_id: e.tenantUserId ?? null, text: e.text, at: e.at })))
           .execute()
       if (cursor)
         await trx
@@ -119,18 +110,7 @@ export const kyselyLogStore = (db: Kysely<any>): LogStore => ({
       if (cut) await db.deleteFrom('log_entry').where('project_id', '=', key).where('log_id', '<=', cut).execute()
     }
   },
-  async list(key, { since = 0, limit = 500 } = {}) {
-    const rows = (await db
-      .selectFrom('log_entry')
-      .selectAll()
-      .where('project_id', '=', key)
-      .where('at', '>=', since)
-      .orderBy('at', 'desc')
-      .orderBy('log_id', 'desc')
-      .limit(limit)
-      .execute()) as Row[]
-    return rows.map((r) => ({ id: (r.logId ?? r.log_id) as number, at: Number(r.at), level: r.level as LogLevel, source: r.source, wire: r.wire, fn: r.fn, ms: r.ms === null ? null : Number(r.ms), trace: r.trace, text: r.text }))
-  },  async metrics(key, query = {}) {
+  async metrics(key, query = {}) {
     let q = db.selectFrom('metric_entry').selectAll().where('project_id', '=', key)
     if (query.since !== undefined) q = q.where('at', '>=', query.since)
     if (query.until !== undefined) q = q.where('at', '<=', query.until)
