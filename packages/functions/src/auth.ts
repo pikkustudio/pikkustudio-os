@@ -4,6 +4,7 @@ import { VIRTUAL_USER_SIGN_IN_OPT_IN_ENV, pikkuVirtualUser, pikkuBan } from '@pi
 import { pikkuBetterAuth } from '#pikku/auth'
 import { sessionCookieCacheMaxAge } from './lib/session-cookie.js'
 import { studioLocalSignIn } from './lib/local-sign-in.js'
+import { studioOAuth } from './lib/oauth-provider.js'
 import { virtualUserList } from '#pikku/scenarios/pikku-virtual-users.gen.js'
 
 /**
@@ -41,6 +42,12 @@ export const auth = pikkuBetterAuth(
     // default and the reasoning) in lib/session-cookie.ts, because the number is a
     // policy decision an operator may want to change per stage.
     const SESSION_COOKIE_CACHE_MAX_AGE = await sessionCookieCacheMaxAge(variables, logger)
+
+    const oauth = studioOAuth({
+      appUrl: await variables.get('APP_URL'),
+      publicUrl: process.env.BETTER_AUTH_URL,
+      port: process.env.API_PORT,
+    })
 
     return betterAuth({
       secret: BETTER_AUTH_SECRET,
@@ -81,6 +88,8 @@ export const auth = pikkuBetterAuth(
       // out, and each refresh is the moment a ban lands.
       session: { cookieCache: { enabled: true, maxAge: SESSION_COOKIE_CACHE_MAX_AGE } },
       advanced: { database: { generateId: 'uuid' } },
+      baseURL: oauth.baseURL,
+      disabledPaths: oauth.disabledPaths,
       // Scenario virtual users: synthetic users (user.virtualUser = true, see
       // db/sqlite/0001-better-auth.sql) signed in by a statement checked
       // against VIRTUAL_USER_VERIFY_KEY, or in-process by runs. Never signs in real users.
@@ -140,6 +149,7 @@ export const auth = pikkuBetterAuth(
         }),
         pikkuBan(),
         studioLocalSignIn(),
+        ...oauth.plugins,
       ],
     })
   },

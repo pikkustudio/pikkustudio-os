@@ -16,6 +16,7 @@
   "dependencies": {
     "@ai-sdk/openai": "^4.0.81",
     "@ai-sdk/openai-compatible": "^3.0.59",
+    "@better-auth/oauth-provider": "^1.7.11",
     "@pikku/addon-console": "^0.12.62",
     "@pikkustudio/addon-studio": "workspace:*",
     "@pikku/ai-vercel": "^0.12.15",
@@ -32,7 +33,7 @@
     "@resvg/resvg-wasm": "^2.6.2",
     "@standard-schema/spec": "^1.1.0",
     "ai": "^7.0.122",
-    "better-auth": "^1.7.6",
+    "better-auth": "^1.7.11",
     "kysely": "^0.29.0",
     "tsx": "^4.21.0",
     "zod": "^4.3.6"
