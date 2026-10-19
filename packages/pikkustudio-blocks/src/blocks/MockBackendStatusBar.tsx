@@ -4,9 +4,9 @@ import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { m } from '@/i18n/messages'
 import { useProjectKey } from '../lib/project'
 import { Button } from '../ui/button'
-import { MockPlanPanel } from './MockPlanPanel'
+import { MockBackendPanel } from './MockBackendPanel'
 
-export function MockStatusBar() {
+export function MockBackendStatusBar() {
   const key = useProjectKey()
   const [open, setOpen] = useState(false)
   const status = usePikkuQuery('studio:mockStatus', { key }, { enabled: !!key, refetchInterval: 15000 } as never)
@@ -31,7 +31,7 @@ export function MockStatusBar() {
         <Sparkles className="size-4.5" />
         {m.mock_status__make_it_real()}
       </Button>
-      {open ? <MockPlanPanel onClose={() => setOpen(false)} /> : null}
+      {open ? <MockBackendPanel onClose={() => setOpen(false)} /> : null}
     </div>
   )
 }

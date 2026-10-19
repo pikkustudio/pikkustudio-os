@@ -2,7 +2,7 @@ import { type I18nString, asI18n } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { Inbox, Activity, BellRing, BookOpen, ClipboardCheck, Bot, Gauge, Compass, FileCode, FileText, FolderOpen, Globe, Palette, KeyRound, LayoutGrid, Mail, ScrollText, Wrench, Search, Smartphone, ShieldCheck, Upload, Users, UserRound, UserRoundCheck, Workflow, History, Link2, ToggleRight, ListChecks, Clock, Layers, Zap } from 'lucide-react'
+import { Inbox, Activity, BellRing, BookOpen, ClipboardCheck, Bot, Gauge, Compass, FileCode, FileText, FolderOpen, Globe, Palette, KeyRound, LayoutGrid, Mail, ScrollText, Wrench, Search, Smartphone, ShieldCheck, Upload, Users, UserRound, UserRoundCheck, Workflow, History, Link2, ToggleRight, ListChecks, Clock, Layers, Zap, Radio, Database, LogIn, Send, LayoutTemplate } from 'lucide-react'
 import { keep } from '../lib/links'
 
 type Hit = { key: string; label: string; hint: string; id: string; Icon: typeof Search }
@@ -45,6 +45,12 @@ const pages = (): Hit[] => (
     [m.quick_find__scheduled_tasks(), '/scheduled-tasks', Clock],
     [m.quick_find__queues(), '/queues', Layers],
     [m.quick_find__functions(), '/functions', Zap],
+    [m.live_screen__title(), '/live-connections', Radio],
+    [m.tools_screen__title(), '/helper-tools', Wrench],
+    [m.database__title(), '/database', Database],
+    [m.signin_options__title(), '/sign-in-options', LogIn],
+    [m.outgoing__title(), '/outgoing-messages', Send],
+    [m.screens_page__title(), '/screens', LayoutTemplate],
     [m.quick_find__permissions(), '/permissions', ShieldCheck],
     [m.quick_find__ask_pikku(), '', Bot],
   ] as const

@@ -15,7 +15,7 @@ type Wire = { name: string; pikkuFuncId: string; packageName?: string; title?: s
 export type TimedWire = Wire & { schedule: string }
 export type JobWire = Wire & { config?: { batchSize?: number } }
 type Fn = { pikkuFuncId: string; title?: string; summary?: string; description?: string }
-type WorkMeta = { functions?: Fn[]; schedulerMeta?: Record<string, TimedWire>; queueMeta?: Record<string, JobWire> }
+type WorkMeta = { functions?: Fn[]; schedulerMeta?: Record<string, TimedWire>; queueMeta?: Record<string, JobWire>; outgoingWebhooksMeta?: Record<string, Wire> }
 
 /** Same query, and so the same cache entry, as the other screens that read the project's meta. */
 export const useWorkMeta = (key: string) => useProjectQuery<WorkMeta>(key, 'console:getAllMeta', {})

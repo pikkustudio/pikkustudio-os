@@ -19,7 +19,7 @@ import { ChatSelectPanel } from '../blocks/ChatSelectPanel'
 import { ShellCtx, type AttachRef } from '../lib/shell'
 import { DesignPartsFrame, type PartsCatalog, type PartsLens } from '../blocks/DesignPartsFrame'
 import { StatusLine } from '../blocks/StatusLine'
-import { MockStatusBar } from '../blocks/MockStatusBar'
+import { MockBackendStatusBar } from '../blocks/MockBackendStatusBar'
 import { useProjectKey } from '../lib/project'
 import { keepSearch } from '../lib/project-url'
 import type { Device, Mode, Styles } from '../types/designTypes'
@@ -149,7 +149,7 @@ export function DesignScreen() {
 
   return (
     <div className="flex h-full flex-col gap-3">
-      <MockStatusBar />
+      <MockBackendStatusBar />
       <div className="flex min-h-0 flex-1 flex-col gap-3">
         <PreviewBar
           app="live"

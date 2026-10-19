@@ -3,7 +3,7 @@ import { m } from '@/i18n/messages'
 import { useContext } from 'react'
 import { Link } from './Link'
 import { useProjectName } from '../lib/project'
-import { Inbox, AppWindow, BookOpen, Bot, ClipboardCheck, ChevronRight, Clock, Database, FileCode, FileText, HeartPulse, History, KeyRound, Languages, Layers, Mail, Plug, ScrollText, Search, Upload, Users, Wallet, Zap, type LucideIcon } from 'lucide-react'
+import { Inbox, AppWindow, BookOpen, Bot, ClipboardCheck, ChevronRight, Clock, Database, FileCode, FileText, HeartPulse, History, KeyRound, Languages, Layers, Mail, Plug, Radio, Wrench, ScrollText, LayoutTemplate, Search, Send, LogIn, Upload, Users, Wallet, Zap, type LucideIcon } from 'lucide-react'
 import { Button } from '../ui/button'
 import { ShellCtx } from '../lib/shell'
 import { keep } from '../lib/links'
@@ -101,12 +101,18 @@ export function ExploreHub() {
             <HubRow key={id} hue={movable[id].hue} Icon={movable[id].Icon} title={movable[id].title()} text={movable[id].text()} aside={pins.includes(id) ? m.explore_hub__on_your_sidebar() : undefined} to={`/${id}`} />
           ))}
           <HubRow hue="petrol" Icon={Zap} title={m.functions_screen__title()} text={m.explore_hub__functions_text()} to="/functions" />
+          <HubRow hue="teal" Icon={Radio} title={m.live_screen__title()} text={m.explore_hub__live_text()} to="/live-connections" />
+          <HubRow hue="sea" Icon={Wrench} title={m.tools_screen__title()} text={m.explore_hub__tools_text()} to="/helper-tools" />
+          <HubRow hue="teal" Icon={Send} title={m.outgoing__title()} text={m.explore_hub__outgoing_text()} to="/outgoing-messages" />
+          <HubRow hue="sea" Icon={LayoutTemplate} title={m.screens_page__title()} text={m.explore_hub__screens_text()} to="/screens" />
         </div>
       </Section>
 
       <Section title={m.explore_hub__for_developers()}>
         <div className="divide-y divide-border overflow-hidden rounded-[22px] border border-border bg-card">
           <HubRow hue="petrol" Icon={FileCode} title={m.code_screen__title()} text={m.explore_hub__code_text()} to="/code" />
+          <HubRow hue="sea" Icon={Database} title={m.database__title()} text={m.explore_hub__database_text()} to="/database" />
+          <HubRow hue="petrol" Icon={LogIn} title={m.signin_options__title()} text={m.explore_hub__signin_options_text()} to="/sign-in-options" />
           <HubRow hue="teal" Icon={Layers} title={m.surface__title()} text={m.explore_hub__surface_text()} to="/surface" />
           <HubRow hue="teal" Icon={ClipboardCheck} title={m.scorers_screen__title()} text={m.explore_hub__scorers_text()} to="/scorers" />
         </div>

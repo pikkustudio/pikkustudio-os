@@ -16,7 +16,7 @@ import { useSlots } from '../lib/slots'
 
 const dot = { ok: 'bg-success ring-success-soft', warn: 'bg-warning ring-card', info: 'bg-info ring-info-soft' }
 
-const PAGE_OF: Record<string, '/workflows' | '/scheduled-tasks' | '/queues' | '/emails' | '/functions' | undefined> = { functions: '/functions', workflows: '/workflows', schedulers: '/scheduled-tasks', queues: '/queues', emails: '/emails' }
+const PAGE_OF: Record<string, '/workflows' | '/scheduled-tasks' | '/queues' | '/emails' | '/functions' | '/live-connections' | '/helper-tools' | undefined> = { functions: '/functions', channels: '/live-connections', mcpTools: '/helper-tools', workflows: '/workflows', schedulers: '/scheduled-tasks', queues: '/queues', emails: '/emails' }
 
 /** The parts an app is made of; a function so the words follow the language. */
 const areas = (): Array<[I18nString, string, I18nString, I18nString]> => [

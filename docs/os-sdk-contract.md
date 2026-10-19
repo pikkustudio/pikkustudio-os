@@ -28,8 +28,8 @@ Optional slot `useStageAudit(projectKey, refetchInterval)`: the host supplies th
 
 - `packages/pikkustudio-blocks/src/blocks/AppNotRunning.tsx`
 - `packages/pikkustudio-blocks/src/blocks/ContentTree.tsx`
-- `packages/pikkustudio-blocks/src/blocks/MockPlanPanel.tsx`
-- `packages/pikkustudio-blocks/src/blocks/MockStatusBar.tsx`
+- `packages/pikkustudio-blocks/src/blocks/MockBackendPanel.tsx`
+- `packages/pikkustudio-blocks/src/blocks/MockBackendStatusBar.tsx`
 - `packages/pikkustudio-blocks/src/blocks/ProjectRunGate.tsx`
 - `packages/pikkustudio-blocks/src/blocks/TeamProjects.tsx`
 - `packages/pikkustudio-blocks/src/changes-panel/ChangesPanel.tsx`

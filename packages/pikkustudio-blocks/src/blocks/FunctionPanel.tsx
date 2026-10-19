@@ -33,7 +33,7 @@ function PanelRow({ icon: Icon, children }: { icon: typeof Zap; children: ReactN
   )
 }
 
-function Fields({ projectKey, name, empty, technical }: { projectKey: string; name: string | null | undefined; empty: I18nString; technical: boolean }) {
+export function Fields({ projectKey, name, empty, technical }: { projectKey: string; name: string | null | undefined; empty: I18nString; technical: boolean }) {
   const schema = useSchema(projectKey, name)
   if (!name) return <p className="text-px15 text-ink-2">{empty}</p>
   if (schema.isPending) return <p className="text-px15 text-ink-2">{m.functions_panel__loading()}</p>

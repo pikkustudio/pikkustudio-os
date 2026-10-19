@@ -31,7 +31,7 @@ function Group({ title, kind, children }: { title: I18nString; kind: string; chi
   )
 }
 
-export function MockPlanPanel({ onClose }: { onClose: () => void }) {
+export function MockBackendPanel({ onClose }: { onClose: () => void }) {
   const key = useProjectKey()
   const plan = usePikkuQuery('studio:mockPlan', { key }, { enabled: !!key } as never)
   const data = plan.data as Plan | undefined
