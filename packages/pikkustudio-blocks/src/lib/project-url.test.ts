@@ -19,3 +19,12 @@ test('a team page and a project page keep their address', () => {
 test('a bare inbox address is a project page, so it is not read as a team', () => {
   expect(roundTrip('/inbox').inside).toBe('/inbox')
 })
+
+test('the MCP sign-in pages are not read as a team, and keep their query', () => {
+  const query = '?client_id=c&exp=1&sig=abc%3D'
+  for (const page of ['/connect', '/connect/sign-in']) {
+    const inside = projectRewrite.input!({ url: new URL(`http://x${page}${query}`) } as never) as URL
+    expect(inside.pathname).toBe(page)
+    expect(inside.search).toBe(query)
+  }
+})
