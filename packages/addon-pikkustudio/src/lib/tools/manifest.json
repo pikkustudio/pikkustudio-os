@@ -209,7 +209,7 @@
           "default": true,
           "artifacts": {
             "darwin-arm64": {
-              "url": "https://releases.pikkustudio.app/tools/rea/6.7.0/rea-6.7.0-darwin-arm64.tar.gz",
+              "url": "https://downloads.pikkustudio.app/tools/rea/6.7.0/rea-6.7.0-darwin-arm64.tar.gz",
               "sha256": "5a8732916cc41cdc7f2f6c706e788865d0ff605867443b554df7010d7153186d",
               "size": 27895805,
               "format": "tar.gz",
@@ -219,7 +219,7 @@
               "root": "rea-6.7.0-darwin-arm64"
             },
             "darwin-x64": {
-              "url": "https://releases.pikkustudio.app/tools/rea/6.7.0/rea-6.7.0-darwin-x64.tar.gz",
+              "url": "https://downloads.pikkustudio.app/tools/rea/6.7.0/rea-6.7.0-darwin-x64.tar.gz",
               "sha256": "92b3cc610e656a71fda95c78ddd7fd53a3d1aae37e7abca89ef3a2087dc6e5f9",
               "size": 27897164,
               "format": "tar.gz",
@@ -229,7 +229,7 @@
               "root": "rea-6.7.0-darwin-x64"
             },
             "linux-arm64": {
-              "url": "https://releases.pikkustudio.app/tools/rea/6.7.0/rea-6.7.0-linux-arm64.tar.gz",
+              "url": "https://downloads.pikkustudio.app/tools/rea/6.7.0/rea-6.7.0-linux-arm64.tar.gz",
               "sha256": "788d1767ba27b590a7fde9c3635b5cd3be1a0450b4cfc8f4845576b4e47f8f7e",
               "size": 27894611,
               "format": "tar.gz",
@@ -239,7 +239,7 @@
               "root": "rea-6.7.0-linux-arm64"
             },
             "linux-x64": {
-              "url": "https://releases.pikkustudio.app/tools/rea/6.7.0/rea-6.7.0-linux-x64.tar.gz",
+              "url": "https://downloads.pikkustudio.app/tools/rea/6.7.0/rea-6.7.0-linux-x64.tar.gz",
               "sha256": "d62a390299a0f8710eaa6cdc26800cb6c2686ec385f435fc80ea8584f774f97d",
               "size": 27895324,
               "format": "tar.gz",
