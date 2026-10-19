@@ -14,3 +14,4 @@ gen
 .env
 .deploy
 apps/studio/injected
+**/gen.mjs
