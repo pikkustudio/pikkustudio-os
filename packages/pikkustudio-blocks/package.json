@@ -21,7 +21,8 @@
     "./ui/*": "./src/ui/*.tsx",
     "./lib/*": "./src/lib/*.ts",
     "./styles/*": "./src/styles/*",
-    "./types/*": "./src/types/*.ts"
+    "./types/*": "./src/types/*.ts",
+    "./studio-slots": "./src/studio.slots.ts"
   },
   "files": [
     "src",
