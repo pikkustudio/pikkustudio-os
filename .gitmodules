@@ -1,0 +1,4 @@
+[submodule "packages/addon-pikkucloud"]
+	path = packages/addon-pikkucloud
+	url = git@github.com:pikkustudio/addon-pikkucloud.git
+	update = none

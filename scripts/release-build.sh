@@ -16,7 +16,7 @@ for platform in "$@"; do
   scripts/fetch-git.sh "$platform"
   PIKKU_COMPILE_TARGET="bun-$target" bun scripts/build-runtime.ts
   rm -rf .deploy/standalone
-  PIKKU_COMPILE_TARGET="bun-$target" bunx --bun pikku deploy apply -p standalone --runtime bun
+  PIKKU_COMPILE_TARGET="bun-$target" bunx --bun pikku deploy apply -p standalone --runtime bun $(node scripts/pikku-config.mjs)
   dist=$(ls -d .deploy/standalone/*-dist | head -1)
   unit=$(basename "$dist" -dist)
   stage=$(mktemp -d)

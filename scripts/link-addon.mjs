@@ -1,0 +1,80 @@
+// Wires the private Studio addons that are checked out under packages/addon-pikku* into this checkout, the way
+// link-pikku.mjs wires a pikku checkout: a symlink in node_modules, so bun.lock never changes. The addons are not
+// workspaces (package.json negates them) and list only optional peers, so everything they import resolves from
+// this repo's node_modules. An addon that is not checked out (an empty submodule folder) is skipped, which is
+// what keeps the open build working without it.
+//
+//   node scripts/link-addon.mjs             wire every addon present, with pikku.cloud.json
+//   node scripts/link-addon.mjs --operator  also wire the operator addons, with pikku.operator.json
+//   node scripts/link-addon.mjs --unlink    back to the open build
+//
+// Each addon's wire/*.ts is copied to .studio-addons/wire/, which pikku.cloud.json lists as a source directory: the
+// pikku inspector skips any file under a directory holding its own pikku.config.json, so the addon's own copy is
+// never read. The choice is written to .studio-addons/addons.json, which scripts/pikku-config.mjs reads.
+import { execSync } from 'node:child_process'
+import { copyFileSync, existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
+import { dirname, join, relative, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+const linked = join(root, '.studio-addons')
+const stateFile = join(linked, 'addons.json')
+const args = new Set(process.argv.slice(2))
+
+// The operator addons only make sense on top of the cloud one; the open build has neither.
+const OPERATOR_ONLY = new Set(['addon-pikkucontrolpanel'])
+
+const unlinkAll = () => {
+  if (!existsSync(stateFile)) {
+    rmSync(linked, { recursive: true, force: true })
+    return 0
+  }
+  const { addons = [] } = JSON.parse(readFileSync(stateFile, 'utf8'))
+  for (const { name } of addons) {
+    const target = join(root, 'node_modules', name)
+    if (existsSync(target) || lstatSync(target, { throwIfNoEntry: false })?.isSymbolicLink()) rmSync(target, { recursive: true, force: true })
+  }
+  rmSync(linked, { recursive: true, force: true })
+  return addons.length
+}
+
+if (args.has('--unlink')) {
+  console.log(`Unlinked ${unlinkAll()} addon(s); the next build is the open one`)
+  process.exit(0)
+}
+
+const present = readdirSync(join(root, 'packages'), { withFileTypes: true })
+  .filter((e) => e.isDirectory() && e.name.startsWith('addon-pikku') && e.name !== 'addon-pikkustudio')
+  .filter((e) => existsSync(join(root, 'packages', e.name, 'package.json')))
+  .filter((e) => args.has('--operator') || !OPERATOR_ONLY.has(e.name))
+  .map((e) => join(root, 'packages', e.name))
+
+if (!present.length) {
+  unlinkAll()
+  console.log('No private addon is checked out; the build stays the open one')
+  process.exit(0)
+}
+
+unlinkAll()
+const addons = []
+for (const dir of present) {
+  const manifest = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8'))
+  // Its own dependencies, if it ever has any, come from its own lockfile, never this repo's.
+  if (Object.keys(manifest.dependencies ?? {}).length) execSync('bun install --frozen-lockfile', { cwd: dir, stdio: 'inherit' })
+  const target = join(root, 'node_modules', manifest.name)
+  mkdirSync(dirname(target), { recursive: true })
+  rmSync(target, { recursive: true, force: true })
+  symlinkSync(relative(dirname(target), dir), target)
+  const wire = join(dir, 'wire')
+  if (existsSync(wire)) {
+    mkdirSync(join(linked, 'wire'), { recursive: true })
+    for (const file of readdirSync(wire).filter((f) => f.endsWith('.ts'))) copyFileSync(join(wire, file), join(linked, 'wire', file))
+  }
+  addons.push({ name: manifest.name, dir: relative(root, dir) })
+}
+
+const operator = args.has('--operator') && existsSync(join(root, 'pikku.operator.json'))
+const config = operator ? 'pikku.operator.json' : 'pikku.cloud.json'
+mkdirSync(linked, { recursive: true })
+writeFileSync(stateFile, JSON.stringify({ config, addons }, null, 2) + '\n')
+console.log(`Linked ${addons.map((a) => a.name).join(', ')}; builds now use ${config}`)

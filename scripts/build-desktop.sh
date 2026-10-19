@@ -16,6 +16,6 @@ bundles=${TAURI_BUNDLES:-}
 bun run prebuild
 (cd apps/studio && bun run build)
 bun scripts/build-runtime.ts
-bunx --bun pikku deploy apply --provider standalone --runtime bun
+bunx --bun pikku deploy apply --provider standalone --runtime bun $(node scripts/pikku-config.mjs)
 cd apps/studio
 bun run tauri build --bundles "$bundles"
