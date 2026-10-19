@@ -19,6 +19,7 @@
     "./screens/*": "./src/screens/*.tsx",
     "./messages/*": "./messages/*",
     "./ui/*": "./src/ui/*.tsx",
+    "./layouts/*": "./src/layouts/*.tsx",
     "./lib/*": "./src/lib/*.ts",
     "./styles/*": "./src/styles/*",
     "./types/*": "./src/types/*.ts",

@@ -1,7 +1,7 @@
-import type { I18nProps } from '@pikkustudio/blocks/lib/i18n-props'
+import type { I18nProps } from '../lib/i18n-props'
 import * as React from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { cn } from '@/lib/utils'
+import { cn } from '../lib/utils'
 
 function Table({ className, ...props }: I18nProps<React.ComponentProps<'table'>>) {
   return (

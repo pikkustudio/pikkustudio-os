@@ -1,5 +1,5 @@
 import type { Story, StoryMeta } from './csf.types'
-import { Label } from './label'
+import { Label } from '@pikkustudio/blocks/ui/label'
 
 export default {
   title: 'Label',

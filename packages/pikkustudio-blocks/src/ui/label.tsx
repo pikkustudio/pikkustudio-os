@@ -1,7 +1,7 @@
-import type { I18nProps } from '@pikkustudio/blocks/lib/i18n-props'
+import type { I18nProps } from '../lib/i18n-props'
 import * as React from 'react'
 import * as LabelPrimitive from '@radix-ui/react-label'
-import { cn } from '@/lib/utils'
+import { cn } from '../lib/utils'
 
 function Label({ className, ...props }: I18nProps<React.ComponentProps<typeof LabelPrimitive.Root>>) {
   return (
