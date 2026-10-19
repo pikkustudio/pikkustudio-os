@@ -2,3 +2,7 @@
 	path = packages/addon-pikkucloud
 	url = git@github.com:pikkustudio/pikkustudio-cloud.git
 	update = none
+[submodule "packages/addon-pikkucontrolpanel"]
+	path = packages/addon-pikkucontrolpanel
+	url = git@github.com:pikkustudio/pikkustudio-controlpanel.git
+	update = none
