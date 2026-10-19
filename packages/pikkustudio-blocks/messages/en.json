@@ -1767,8 +1767,6 @@
   "onboarding_layout__why_this_one": "Why this one",
   "onboarding_layout__you": "You",
   "onboarding_layout__you_text": "Everything, and you can change any of it.",
-  "overview_screen__show_less": "Show less",
-  "overview_screen__show_more": "Show {count} more",
   "overview_screen__welcome_text": "This is your project's home. Tell Pikku what you want to change and it takes care of the rest.",
   "overview_screen__welcome_text_new": "This is your project's home. Start by telling Pikku what you want to make.",
   "overview_screen__welcome_title": "Welcome to {name}",
@@ -2570,7 +2568,6 @@
   "workflows__yes": "Yes",
   "workflows__your_app": "Your app",
   "workflows_screen__add_say": "Add a new workflow to my app",
-  "workflows_screen__is_on": "{name} is on",
   "workflows_screen__look_at_it": "Look at it",
   "workflows_screen__n_well": [
     {
@@ -2589,7 +2586,6 @@
   ],
   "workflows_screen__not_run": "Has not run yet",
   "workflows_screen__ran_fine": "Ran fine · {when}",
-  "workflows_screen__switched_off": "Switched off",
   "workflows_screen__text": "Jobs your app does on its own, on a timer or when something happens. Open one to see every step, and every time it ran.",
   "workflows_screen__title": "Workflows",
   "workflows_screen__empty": "No workflows yet",
@@ -5000,8 +4996,6 @@
   "functions_panel__optional": "Optional",
   "functions_panel__ask": "Ask Pikku to change this",
   "functions_panel__ask_say": "I want to change what “{title}” does in my app. Can you help?",
-  "functions_panel__show_technical": "Show technical details",
-  "functions_panel__hide_technical": "Hide technical details",
   "functions_panel__tech_id": "Name in the code",
   "functions_panel__tech_file": "File",
   "functions_panel__tech_input": "Input shape",

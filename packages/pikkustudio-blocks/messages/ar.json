@@ -1756,8 +1756,6 @@
   "onboarding_layout__why_this_one": "لماذا هذا الخيار",
   "onboarding_layout__you": "أنتم",
   "onboarding_layout__you_text": "كل شيء، ويمكنكم تغيير أي جزء منه.",
-  "overview_screen__show_less": "عرض أقل",
-  "overview_screen__show_more": "عرض {count} أخرى",
   "overview_screen__welcome_text": "هذا هو بيت مشروعك. أخبر بيكو بما تريد تغييره وسيتكفل بالباقي.",
   "overview_screen__welcome_text_new": "هذا هو بيت مشروعك. ابدأ بإخبار بيكو بما تريد صنعه.",
   "overview_screen__welcome_title": "مرحبًا بك في {name}",
@@ -1794,7 +1792,7 @@
   "overview_screen__area_schedulers_title": "مهام مجدولة",
   "overview_screen__area_workflows_detail": "مهام أطول تنتظر وتتحقق وتواصل، مثل حجز من الطلب حتى التذكير.",
   "overview_screen__area_workflows_name": "سير العمل",
-  "overview_screen__area_workflows_title": "مهام خطوة بخطوة",
+  "overview_screen__area_workflows_title": "سير عمل",
   "overview_screen__ask_about_it": "اسألوا Pikku عنه",
   "overview_screen__check_again": "إعادة الفحص",
   "overview_screen__checked_none": "تم الفحص الآن. لا شيء يحتاج إليكم.",
@@ -1879,12 +1877,12 @@
         "countPlural"
       ],
       "match": {
-        "countPlural=zero": "{count} مهمة خطوة بخطوة",
-        "countPlural=one": "مهمة واحدة خطوة بخطوة",
-        "countPlural=two": "مهمتان خطوة بخطوة",
-        "countPlural=few": "{count} مهام خطوة بخطوة",
-        "countPlural=many": "{count} مهمة خطوة بخطوة",
-        "countPlural=other": "{count} مهمة خطوة بخطوة"
+        "countPlural=zero": "{count} سير عمل",
+        "countPlural=one": "سير عمل واحد",
+        "countPlural=two": "سير عملين",
+        "countPlural=few": "{count} سير عمل",
+        "countPlural=many": "{count} سير عمل",
+        "countPlural=other": "{count} سير عمل"
       }
     }
   ],
@@ -2626,7 +2624,6 @@
   "workflows__yes": "نعم",
   "workflows__your_app": "تطبيقكم",
   "workflows_screen__add_say": "أضف مسار عمل جديدا إلى تطبيقي",
-  "workflows_screen__is_on": "{name} مفعل",
   "workflows_screen__look_at_it": "إلقاء نظرة",
   "workflows_screen__n_well": [
     {
@@ -2649,7 +2646,6 @@
   ],
   "workflows_screen__not_run": "لم يعمل بعد",
   "workflows_screen__ran_fine": "عمل جيدا · {when}",
-  "workflows_screen__switched_off": "متوقف",
   "workflows_screen__text": "مهام يؤديها تطبيقكم من تلقاء نفسه، وفق جدول زمني أو عند حدوث أمر ما. افتحوا واحدة لتروا كل خطوة وكل مرة عملت فيها.",
   "workflows_screen__title": "سير العمل",
   "workflows_screen__empty": "لا توجد مسارات عمل بعد",
@@ -5138,8 +5134,6 @@
   "functions_panel__optional": "اختياري",
   "functions_panel__ask": "اطلب من Pikku تغيير هذا",
   "functions_panel__ask_say": "أريد تغيير ما تفعله «{title}» في تطبيقي. هل يمكنك المساعدة؟",
-  "functions_panel__show_technical": "عرض التفاصيل التقنية",
-  "functions_panel__hide_technical": "إخفاء التفاصيل التقنية",
   "functions_panel__tech_id": "الاسم في الكود",
   "functions_panel__tech_file": "الملف",
   "functions_panel__tech_input": "شكل المدخلات",

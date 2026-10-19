@@ -1644,8 +1644,6 @@
   "onboarding_layout__why_this_one": "Warum dieses",
   "onboarding_layout__you": "Du",
   "onboarding_layout__you_text": "Alles, und du kannst jedes Detail ändern.",
-  "overview_screen__show_less": "Weniger zeigen",
-  "overview_screen__show_more": "{count} weitere zeigen",
   "overview_screen__welcome_text": "Das ist das Zuhause deines Projekts. Sag Pikku, was du ändern möchtest, den Rest übernimmt es.",
   "overview_screen__welcome_text_new": "Das ist das Zuhause deines Projekts. Sag Pikku zuerst, was du machen möchtest.",
   "overview_screen__welcome_title": "Willkommen bei {name}",
@@ -2446,7 +2444,6 @@
   "workflows__yes": "Ja",
   "workflows__your_app": "Deine App",
   "workflows_screen__add_say": "Füge meiner App eine neue Workflow hinzu",
-  "workflows_screen__is_on": "{name} ist an",
   "workflows_screen__look_at_it": "Ansehen",
   "workflows_screen__n_well": [
     {
@@ -2465,7 +2462,6 @@
   ],
   "workflows_screen__not_run": "Noch nicht gelaufen",
   "workflows_screen__ran_fine": "Lief gut · {when}",
-  "workflows_screen__switched_off": "Ausgeschaltet",
   "workflows_screen__text": "Aufgaben, die deine App von selbst erledigt, nach Zeitplan oder wenn etwas passiert. Öffne eine, um jeden Schritt und jeden Durchlauf zu sehen.",
   "workflows_screen__title": "Workflows",
   "workflows_screen__empty": "Noch keine Workflows",
@@ -4794,8 +4790,6 @@
   "functions_panel__optional": "Optional",
   "functions_panel__ask": "Pikku bitten, das zu ändern",
   "functions_panel__ask_say": "Ich möchte ändern, was „{title}“ in meiner App tut. Kannst du helfen?",
-  "functions_panel__show_technical": "Technische Details zeigen",
-  "functions_panel__hide_technical": "Technische Details ausblenden",
   "functions_panel__tech_id": "Name im Code",
   "functions_panel__tech_file": "Datei",
   "functions_panel__tech_input": "Eingabeform",
