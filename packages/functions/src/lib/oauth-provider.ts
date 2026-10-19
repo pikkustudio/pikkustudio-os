@@ -25,13 +25,17 @@ export const oauthIssuer = (requestOrigin: string) => ({
   audience: mcpAudiences(requestOrigin),
 })
 
-export const authBaseURL = (publicUrl: string | null | undefined) => {
+const isLocalOrigin = (value: string | null | undefined) => /^https?:\/\/(127\.0\.0\.1|localhost)(:|\/|$)/.test(origin(value))
+
+export const authBaseURL = (publicUrl: string | null | undefined, appUrl?: string | null, port?: string | null) => {
   const explicit = origin(publicUrl)
-  return explicit || { allowedHosts: ['*'], protocol: 'auto' as const }
+  if (explicit) return explicit
+  if (port && isLocalOrigin(appUrl)) return `http://127.0.0.1:${port}`
+  return { allowedHosts: ['*'], protocol: 'auto' as const }
 }
 
 export const studioOAuth = (options: { appUrl?: string | null; publicUrl?: string | null; port?: string | null }) => ({
-  baseURL: authBaseURL(options.publicUrl),
+  baseURL: authBaseURL(options.publicUrl, options.appUrl, options.port),
   disabledPaths: ['/token'],
   plugins: [
     jwt(),
