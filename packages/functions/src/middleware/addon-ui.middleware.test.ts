@@ -8,7 +8,7 @@ const run = async (headers: Record<string, string>, session: { userId: string; s
   await addonUiCall({} as never, {
     http: { request: { header: (name: string) => headers[name.toLowerCase()] } },
     getSession: () => current,
-    setSession: (next: typeof session) => {
+    setInitialSession: (next: typeof session) => {
       current = next
     },
   } as never, async () => {})

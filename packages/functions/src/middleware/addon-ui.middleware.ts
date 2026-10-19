@@ -7,13 +7,13 @@ const cap = addonScopeCap({ resolve: (name) => addonRoles[name] })
 
 export const addonUiCall = pikkuMiddleware({
   priority: 'lowest',
-  func: async ({ ...services }, { http, setSession, getSession, ...wire }, next) => {
+  func: async ({ ...services }, { http, setInitialSession, getSession, ...wire }, next) => {
     const current = await getSession?.()
     const headers = { get: (name: string) => http?.request?.header(name) ?? null }
-    if (http?.request?.header(ADDON_HEADER) && current && setSession && isLocalRequest(headers)) {
-      setSession({ ...current, scopes: ['*'] })
+    if (http?.request?.header(ADDON_HEADER) && current && setInitialSession && isLocalRequest(headers)) {
+      await setInitialSession({ ...current, scopes: ['*'] })
     }
-    await cap(services, { http, setSession, getSession, ...wire }, next)
+    await cap(services, { http, setInitialSession, getSession, ...wire }, next)
   },
 })
 
