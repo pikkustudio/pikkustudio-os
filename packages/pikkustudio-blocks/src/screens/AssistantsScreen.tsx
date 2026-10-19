@@ -3,7 +3,6 @@ import { useContext, useState } from 'react'
 import { Search } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
-import { Art } from '../blocks/ExploreHub'
 import { AssistantCard } from '../blocks/AssistantCard'
 import { AssistantDrawer } from '../blocks/AssistantDrawer'
 import { detailsOf, faultOf } from '../blocks/ErrorState'
@@ -41,7 +40,7 @@ export function AssistantsScreen() {
         <NextCard
           label={m.assistants_screen__your_assistants()}
           hue="petrol"
-          art={<Art />}
+          page="assistants"
           title={m.assistants_screen__n_work({ count: list.length })}
           why={m.assistants_screen__each_one_talks_to_people({ total })}
         >
@@ -55,9 +54,9 @@ export function AssistantsScreen() {
           </div>
         </NextCard>
       ) : query.isPending ? (
-        <NextCard label={m.assistants_screen__your_assistants()} hue="teal" art={<Art />} title={m.assistants_screen__hero_loading()} why={m.assistants_screen__text()} />
+        <NextCard label={m.assistants_screen__your_assistants()} hue="teal" page="assistants" title={m.assistants_screen__hero_loading()} why={m.assistants_screen__text()} />
       ) : query.isError ? (
-        <NextCard label={m.assistants_screen__your_assistants()} hue="petrol" art={<Art />} title={m.assistants_screen__hero_error()} why={m.assistants_screen__hero_error_text()}>
+        <NextCard label={m.assistants_screen__your_assistants()} hue="petrol" page="assistants" title={m.assistants_screen__hero_error()} why={m.assistants_screen__hero_error_text()}>
           <div className="flex flex-wrap gap-3">
             <Button variant="hero" size="page" onClick={() => say(m.error_state__fix_ask_what({ what: m.assistants_screen__title(), details: detailsOf(faultOf(query.error), m.assistants_screen__title()) }))}>
               <PikkuDot />
@@ -66,7 +65,7 @@ export function AssistantsScreen() {
           </div>
         </NextCard>
       ) : (
-        <NextCard label={m.assistants_screen__your_assistants()} hue="teal" art={<Art />} title={m.assistants_screen__empty()} why={m.assistants_screen__empty_text()}>
+        <NextCard label={m.assistants_screen__your_assistants()} hue="teal" page="assistants" title={m.assistants_screen__empty()} why={m.assistants_screen__empty_text()}>
           <div className="flex flex-wrap gap-3">
             <Button variant="hero" size="page" onClick={askNew}>
               <PikkuDot />

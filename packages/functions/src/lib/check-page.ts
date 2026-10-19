@@ -1,18 +1,10 @@
 import puppeteer from 'puppeteer-core'
-import type { ToolResolver } from './tools/resolver.js'
-import { missingLibs } from './tools/libs.js'
 
-const CHROMIUM_LIBS_APT =
-  'sudo apt-get install -y libglib2.0-0t64 libnss3 libnspr4 libatk1.0-0t64 libatspi2.0-0t64 libdbus-1-3 libx11-6 libxcomposite1 libxdamage1 libxext6 libxfixes3 libxrandr2 libxcb1 libxkbcommon0 libgbm1 libexpat1 libasound2t64'
+type ChromiumAnswer = { status: 'ready'; bin: string } | { status: 'needs'; tool: string; name: string; canInstall: boolean; missingLibs: string[]; get: Record<string, string | undefined> }
 
-export async function checkPage(tools: ToolResolver, running: { port: number; token: string }, path: string) {
-  const chromium = await tools.resolve({ tool: 'chromium', requestedBy: 'checkPage' })
-  if (chromium.status === 'needs')
-    return { status: 'needs' as const, tool: chromium.tool, name: chromium.name, canInstall: chromium.canInstall, missingLibs: [], get: chromium.get }
-  const bin = chromium.bins[0] ?? chromium.path
-  const missing = await missingLibs(bin)
-  if (missing.length)
-    return { status: 'needs' as const, tool: chromium.tool, name: 'Chromium system libraries', canInstall: false, missingLibs: missing, get: { apt: CHROMIUM_LIBS_APT } }
+export async function checkPage(chromium: ChromiumAnswer, running: { port: number; token: string }, path: string) {
+  if (chromium.status === 'needs') return chromium
+  const bin = chromium.bin
 
   const url = `http://127.0.0.1:${running.port}${path.startsWith('/') ? path : `/${path}`}`
   const browser = await puppeteer.launch({ executablePath: bin, headless: 'shell', args: ['--no-sandbox'] })

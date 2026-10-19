@@ -3,7 +3,7 @@ import { m } from '@/i18n/messages'
 import { useContext } from 'react'
 import { Link } from './Link'
 import { useProjectName } from '../lib/project'
-import { Inbox, AppWindow, BookOpen, Bot, ClipboardCheck, ChevronRight, Clock, Database, FileCode, FileText, HeartPulse, History, KeyRound, Languages, Layers, Mail, Plug, ScrollText, Search, Upload, Users, Wallet, type LucideIcon } from 'lucide-react'
+import { Inbox, AppWindow, BookOpen, Bot, ClipboardCheck, ChevronRight, Clock, Database, FileCode, FileText, HeartPulse, History, KeyRound, Languages, Layers, Mail, Plug, ScrollText, Search, Upload, Users, Wallet, Zap, type LucideIcon } from 'lucide-react'
 import { Button } from '../ui/button'
 import { ShellCtx } from '../lib/shell'
 import { keep } from '../lib/links'
@@ -15,17 +15,6 @@ import { questions, type Question } from './exploreSample'
 import { MOVABLE, usePins, type Movable } from '../lib/pins'
 
 const icons: Record<string, LucideIcon> = { away: ScrollText, secrets: KeyRound, cost: Wallet, who: KeyRound, own: Clock, mem: Database, well: HeartPulse, ai: Bot, plug: Plug }
-
-export function Art() {
-  return (
-    <>
-      <circle cx="220" cy="30" r="120" className="fill-w1" />
-      <circle cx="60" cy="200" r="100" className="fill-w2" />
-      <circle cx="180" cy="130" r="58" className="fill-w3" />
-      <circle cx="268" cy="160" r="9" className="fill-coral" />
-    </>
-  )
-}
 
 const cls = 'flex w-full items-center gap-4 px-5 py-4 text-start no-underline transition-colors duration-140 hover:bg-secondary'
 const pages: Record<string, string> = { away: '/logs', secrets: '/secrets', well: '/performance' }
@@ -73,6 +62,8 @@ const movable: Record<Movable, { hue: Hue; Icon: LucideIcon; title: () => I18nSt
   inbox: { hue: 'sea', Icon: Inbox, title: () => m.inbox__title(), text: () => m.explore_hub__inbox_text() },
   knowledge: { hue: 'sea', Icon: BookOpen, title: () => m.screen_names__knowledge(), text: () => m.explore_hub__knowledge_text() },
   publish: { hue: 'petrol', Icon: Upload, title: () => m.shell_layout__publish(), text: () => m.explore_hub__publish_text() },
+  workflows: { hue: 'teal', Icon: Clock, title: () => m.shell_layout__workflows(), text: () => m.explore_hub__workflows_text() },
+  assistants: { hue: 'sea', Icon: Bot, title: () => m.assistants_screen__title(), text: () => m.explore_hub__assistants_text() },
 }
 
 export function ExploreHub() {
@@ -95,7 +86,7 @@ export function ExploreHub() {
       </button>
       <p className="-mt-3 text-[14px] text-muted-foreground">{m.explore_hub__press_k_from_any()}</p>
 
-      <NextCard label={m.explore_hub__ask_pikku()} hue="sea" art={<Art />} title={m.explore_hub__not_sure_where_to()} why={m.explore_hub__ask_pikku_in_your()}>
+      <NextCard label={m.explore_hub__ask_pikku()} hue="sea" page="explore" title={m.explore_hub__not_sure_where_to()} why={m.explore_hub__ask_pikku_in_your()}>
         <div>
           <Button variant="hero" size="pageLg" onClick={() => say(m.explore_hub__what_should_i_look_at_today())}>
             
@@ -109,6 +100,7 @@ export function ExploreHub() {
           {MOVABLE.map((id) => (
             <HubRow key={id} hue={movable[id].hue} Icon={movable[id].Icon} title={movable[id].title()} text={movable[id].text()} aside={pins.includes(id) ? m.explore_hub__on_your_sidebar() : undefined} to={`/${id}`} />
           ))}
+          <HubRow hue="petrol" Icon={Zap} title={m.functions_screen__title()} text={m.explore_hub__functions_text()} to="/functions" />
         </div>
       </Section>
 

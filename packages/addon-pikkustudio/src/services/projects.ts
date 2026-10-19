@@ -6,7 +6,7 @@ import { connect, createServer } from 'node:net'
 import { homedir, userInfo } from 'node:os'
 import { builderHome, packageRoot, piPackageRoot, type BuilderMode, type Launcher } from '@pikkustudio/builder'
 import { modeScope } from './builder-scope.js'
-import { basename, dirname, join, resolve, sep } from 'node:path'
+import { basename, dirname, join, relative, resolve, sep } from 'node:path'
 import { randomBytes, randomUUID } from 'node:crypto'
 import { ConflictError } from '@pikku/core/errors'
 import { generatedSource, projectSource, resolveEffective, setMany, toEnv, type ScopedSource } from '../lib/sources/index.js'
@@ -123,16 +123,15 @@ const latestShot = (dir: string, slug: string): { shot: string; shotAt: number }
 const GENERATED_SECRETS = ['BETTER_AUTH_SECRET', 'SCENARIO_ACTOR_SECRET']
 
 const VITE_CONFIGS = ['vite.config.ts', 'vite.config.mjs', 'vite.config.js']
-const PREVIEW_CONFIG = '__pikku_studio.vite.config.mjs'
-const DEV_CONFIG = '__pikku_studio.pikku.config.json'
+const OLD_PREVIEW_CONFIG = '__pikku_studio.vite.config.mjs'
+const OLD_DEV_CONFIG = '__pikku_studio.pikku.config.json'
 
-const excludeFromGit = async (cwd: string, name: string) => {
-  const { stdout } = await execFileAsync('git', ['rev-parse', '--git-path', 'info/exclude'], { cwd })
-  const path = resolve(cwd, stdout.trim())
-  const current = existsSync(path) ? await readFile(path, 'utf8') : ''
-  if (current.split('\n').includes(name)) return
-  await mkdir(dirname(path), { recursive: true })
-  await writeFile(path, `${current}${current && !current.endsWith('\n') ? '\n' : ''}${name}\n`)
+export const studioRuntimeDir = (projectDir: string): string => {
+  let config: { rootDir?: string; runtimeDir?: string } = {}
+  try {
+    config = JSON.parse(readFileSync(join(projectDir, 'pikku.config.json'), 'utf8'))
+  } catch {}
+  return resolve(projectDir, config.rootDir ?? '.', config.runtimeDir ?? '.pikku-runtime', 'studio')
 }
 
 export interface CloudProject {
@@ -1524,9 +1523,11 @@ export class StudioProjectsService {
       return null
     }
     const contributors = [...own, ...added.filter((module) => !own.some((c) => c.module === module)).map((module) => ({ module }))]
-    await writeFile(join(projectDir, DEV_CONFIG), JSON.stringify({ extends: './pikku.config.json', dev: { contributors } }, null, 2))
-    await excludeFromGit(projectDir, DEV_CONFIG).catch(() => {})
-    return DEV_CONFIG
+    const dir = studioRuntimeDir(projectDir)
+    const overlay = join(dir, 'pikku.config.json')
+    await mkdir(dir, { recursive: true })
+    await writeFile(overlay, JSON.stringify({ extends: relative(dir, configPath), dev: { contributors } }, null, 2))
+    return overlay
   }
 
   private async start(key: string): Promise<RunningProject> {
@@ -1539,6 +1540,7 @@ export class StudioProjectsService {
         existsSync(pikkuBin)
           ? { command: process.execPath, args: [pikkuBin, 'dev', '--port', String(p)] }
           : { command: 'npx', args: ['pikku', 'dev', '--port', String(p)] }))(port)
+    await rm(join(worktree.projectDir, OLD_DEV_CONFIG), { force: true })
     const overlay = await this.devConfigOverlay(worktree.projectDir)
     if (overlay) args.push('--config', overlay)
     const design = await this.designCopy(key)
@@ -1675,10 +1677,12 @@ export class StudioProjectsService {
         const logPath = this.logFile(key, app.slug)
         const log = openSync(logPath, 'a')
         const args = ['vite', 'dev', '--port', String(port), '--strictPort', '--host', '127.0.0.1']
+        await rm(join(cwd, OLD_PREVIEW_CONFIG), { force: true })
         if (VITE_CONFIGS.some((name) => existsSync(join(cwd, name)))) {
-          await writeFile(join(cwd, PREVIEW_CONFIG), previewViteConfig(cwd))
-          await excludeFromGit(cwd, PREVIEW_CONFIG)
-          args.push('--config', PREVIEW_CONFIG)
+          const config = join(studioRuntimeDir(projectDir), `${app.slug}.vite.config.mjs`)
+          await mkdir(dirname(config), { recursive: true })
+          await writeFile(config, previewViteConfig(cwd))
+          args.push('--config', config)
         }
         const options = {
           cwd,

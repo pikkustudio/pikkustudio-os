@@ -1,5 +1,7 @@
 import { asI18n } from '@pikku/react'
 import { m } from '@/i18n/messages'
+import { Link } from '@tanstack/react-router'
+import { keepSearch } from '../lib/project-url'
 import { ArrowLeft, FileText, Mail, Monitor, Smartphone } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
@@ -22,16 +24,18 @@ const statusOf = (error: unknown) => {
   return typeof s === 'number' ? s : null
 }
 
-export function InboxDetail({ id, device, onBack, onDevice }: { id: string; device: Device; onBack: () => void; onDevice: (d: Device) => void }) {
+export function InboxDetail({ id, device, backTo, onDevice }: { id: string; device: Device; backTo: string; onDevice: (d: Device) => void }) {
   const query = useInboxMessage(id)
   const crumb = useProjectName()
   const isEmail = query.data ? query.data.channel === 'email' : true
   const bar = (
     <Card variant="bar" role="toolbar" aria-label={m.email_bar__email_preview_controls()}>
       <div className="@container/bar flex w-full items-center gap-2">
-        <Button variant="bar" size="picker" type="button" aria-label={m.inbox_detail__back()} title={m.inbox_detail__back()} onClick={onBack}>
-          <ArrowLeft className="rtl:-scale-x-100 size-4.5" />
-          <span className="hidden @min-[1100px]/bar:inline">{m.inbox_detail__back()}</span>
+        <Button variant="bar" size="picker" asChild>
+          <Link to={backTo as never} search={keepSearch as never} aria-label={m.inbox_detail__back()} title={m.inbox_detail__back()}>
+            <ArrowLeft className="rtl:-scale-x-100 size-4.5" />
+            <span className="hidden @min-[1100px]/bar:inline">{m.inbox_detail__back()}</span>
+          </Link>
         </Button>
         {isEmail ? (
           <Segmented label={m.email_bar__show_as()} value={device} onChange={(v) => onDevice(v as Device)} options={[['computer', <Monitor key="c" className="size-4" />, false, m.email_bar__computer()], ['phone', <Smartphone key="p" className="size-4" />, false, m.email_bar__phone()], ['text', <FileText key="t" className="size-4" />, false, m.email_bar__plain_text()]]} />
@@ -45,8 +49,8 @@ export function InboxDetail({ id, device, onBack, onDevice }: { id: string; devi
       <>
         {bar}
         <EmptyState icon={Mail} title={m.inbox_detail__gone_title()} text={m.inbox_detail__gone_text()}>
-          <Button type="button" size="page" variant="bordered" onClick={onBack}>
-            {m.inbox_detail__back()}
+          <Button size="page" variant="bordered" asChild>
+            <Link to={backTo as never} search={keepSearch as never}>{m.inbox_detail__back()}</Link>
           </Button>
         </EmptyState>
       </>

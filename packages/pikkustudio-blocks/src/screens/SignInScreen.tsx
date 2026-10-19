@@ -45,7 +45,7 @@ export function SignInScreen({ options, status, returning, recent, onChoose }: S
     <>
       <Hero
         hue="teal"
-        art="arch"
+        page="sign-in"
         title={title}
         why={why}
         hint={hint}

@@ -14,7 +14,7 @@ export function ProjectActions({ item, className }: { item: Project; className?:
     <div className={className}>
           {item.state === 'running' || item.state === 'progress' || item.state === 'live' ? (
             <Button asChild variant="default" size="compact">
-              <Link {...keep} to="/overview" search={((s: object) => ({ ...s, project: item.slug ?? item.id })) as any}>
+              <Link {...keep} to="/home" search={((s: object) => ({ ...s, project: item.slug ?? item.id })) as any}>
                 
                 {m.project_actions__open()}
                 <ArrowRight className="rtl:-scale-x-100 size-4.5" />
@@ -22,7 +22,7 @@ export function ProjectActions({ item, className }: { item: Project; className?:
             </Button>
           ) : item.state === 'sketch' ? (
             <Button asChild variant="default" size="compact">
-              <Link {...keep} to="/overview" search={((s: object) => ({ ...s, project: item.slug ?? item.id })) as any}>
+              <Link {...keep} to="/home" search={((s: object) => ({ ...s, project: item.slug ?? item.id })) as any}>
                 {goesTo.sketch}
                 <ArrowRight className="rtl:-scale-x-100 size-4.5" />
               </Link>

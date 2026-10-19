@@ -2,7 +2,7 @@ import { type I18nString, asI18n } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { Inbox, Activity, BellRing, BookOpen, ClipboardCheck, Bot, Gauge, Compass, FileCode, FileText, FolderOpen, Globe, Palette, KeyRound, LayoutGrid, Mail, ScrollText, Wrench, Search, Smartphone, ShieldCheck, Upload, Users, UserRound, UserRoundCheck, Workflow, History, Link2, ToggleRight, ListChecks, Clock, Layers } from 'lucide-react'
+import { Inbox, Activity, BellRing, BookOpen, ClipboardCheck, Bot, Gauge, Compass, FileCode, FileText, FolderOpen, Globe, Palette, KeyRound, LayoutGrid, Mail, ScrollText, Wrench, Search, Smartphone, ShieldCheck, Upload, Users, UserRound, UserRoundCheck, Workflow, History, Link2, ToggleRight, ListChecks, Clock, Layers, Zap } from 'lucide-react'
 import { keep } from '../lib/links'
 
 type Hit = { key: string; label: string; hint: string; id: string; Icon: typeof Search }
@@ -12,7 +12,7 @@ const pages = (): Hit[] => (
     [m.quick_find__projects(), '/projects', FolderOpen],
     [m.quick_find__secrets(), '/secrets', KeyRound],
     [m.quick_find__explore(), '/explore', Compass],
-    [m.quick_find__overview(), '/overview', LayoutGrid],
+    [m.quick_find__home(), '/home', LayoutGrid],
     [m.quick_find__design(), '/design', Palette],
     ['Emails', '/emails', Mail],
     [m.inbox__title(), '/inbox', Inbox],
@@ -26,7 +26,7 @@ const pages = (): Hit[] => (
     [m.quick_find__assistants(), '/assistants', Users],
     [m.quick_find__virtual_users(), '/virtual-users', UserRoundCheck],
     [m.accounts_screen__title(), '/accounts', UserRound],
-    [m.quick_find__routines(), '/routines', Workflow],
+    [m.quick_find__workflows(), '/workflows', Workflow],
     [m.quick_find__versions(), '/versions', History],
     [m.quick_find__building_logs(), '/logs', ScrollText],
     [m.review_screen__title(), '/review', ClipboardCheck],
@@ -34,16 +34,18 @@ const pages = (): Hit[] => (
     [m.review_fixes__title(), '/review-fixes', Wrench],
     [m.quick_find__how_its_running(), '/performance', Activity],
     [m.quick_find__metrics(), '/metrics', Gauge],
+    [m.shell_layout__studio_metrics(), '/studio-metrics', Gauge],
     [m.quick_find__scorers(), '/scorers', ClipboardCheck],
-    [m.quick_find__timed_tasks(), '/timed-tasks', Clock],
-    [m.quick_find__background_jobs(), '/background-jobs', Layers],
     [m.checks_screen__title(), '/checks', ListChecks],
     [m.quick_find__switches(), '/switches', ToggleRight],
+    [m.security_screen__title(), '/security', ShieldCheck],
     [m.quick_find__connections(), '/connections', Link2],
     [m.project_secrets__title(), '/project-secrets', KeyRound],
-    [m.quick_find__permissions(), '/permissions', ShieldCheck],
     [m.quick_find__incoming_alerts(), '/incoming-alerts', BellRing],
-    [m.security_screen__title(), '/security', ShieldCheck],
+    [m.quick_find__scheduled_tasks(), '/scheduled-tasks', Clock],
+    [m.quick_find__queues(), '/queues', Layers],
+    [m.quick_find__functions(), '/functions', Zap],
+    [m.quick_find__permissions(), '/permissions', ShieldCheck],
     [m.quick_find__ask_pikku(), '', Bot],
   ] as const
 ).map(([label, to, Icon]) => ({ key: `page-${to || 'ask'}`, label, hint: to ? '' : m.quick_find__ask_in_your_own_words(), id: to, Icon }))

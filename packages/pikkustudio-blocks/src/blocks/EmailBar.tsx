@@ -1,5 +1,7 @@
 import { asI18n, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
+import { Link } from '@tanstack/react-router'
+import { keepSearch } from '../lib/project-url'
 import { ArrowLeft, FileText, Mail, Monitor, RotateCw, Send, Smartphone } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
@@ -16,7 +18,7 @@ export function EmailBar({
   langs,
   missing,
   onPick,
-  onBack,
+  backTo,
   onDevice,
   onLang,
   onReload,
@@ -28,7 +30,7 @@ export function EmailBar({
   langs: Record<Lang, I18nString>
   missing: Lang[]
   onPick: (id: string) => void
-  onBack: () => void
+  backTo: string
   onDevice: (d: Device) => void
   onLang: (l: Lang) => void
   onReload: () => void
@@ -38,9 +40,11 @@ export function EmailBar({
       <div className="@container/bar w-full">
         <div className="grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3.5 @min-[1100px]/bar:grid-cols-[1fr_auto_1fr]">
           <div className="flex items-center gap-2">
-            <Button variant="bar" size="picker" type="button" aria-label={m.email_bar__back_to_all_emails()} title={m.email_bar__back_to_all_emails()} onClick={onBack}>
-              <ArrowLeft className="rtl:-scale-x-100 size-4.5" />
-              <span className="hidden @min-[1100px]/bar:inline">{m.email_bar__all_emails()}</span>
+            <Button variant="bar" size="picker" asChild>
+              <Link to={backTo as never} search={keepSearch as never} aria-label={m.email_bar__back_to_all_emails()} title={m.email_bar__back_to_all_emails()}>
+                <ArrowLeft className="rtl:-scale-x-100 size-4.5" />
+                <span className="hidden @min-[1100px]/bar:inline">{m.email_bar__all_emails()}</span>
+              </Link>
             </Button>
             <Segmented label={m.email_bar__show_as()} value={device} onChange={(v) => onDevice(v as Device)} options={[['computer', <Monitor key="c" className="size-4" />, false, m.email_bar__computer()], ['phone', <Smartphone key="p" className="size-4" />, false, m.email_bar__phone()], ['text', <FileText key="t" className="size-4" />, false, m.email_bar__plain_text()]]} />
             <Button variant="bar" size="bar" type="button" aria-label={m.email_bar__reload_preview()} title={m.email_bar__reload_preview()} onClick={onReload}>

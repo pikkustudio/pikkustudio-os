@@ -6,7 +6,7 @@ import { EmailStage } from './EmailStage'
 import { useEmailPreview } from '../lib/emails'
 import type { Copy, EmailsData, Field, Lang } from '../types/emails'
 
-export function EmailDetail({ projectKey, data, id, lang, device, onBack, onLang, onDevice, onPick }: { projectKey: string; data: EmailsData; id: string; lang: Lang; device: Device; onBack: () => void; onLang: (l: Lang) => void; onDevice: (d: Device) => void; onPick: (id: string) => void }) {
+export function EmailDetail({ projectKey, data, id, lang, device, backTo, onLang, onDevice, onPick }: { projectKey: string; data: EmailsData; id: string; lang: Lang; device: Device; backTo: string; onLang: (l: Lang) => void; onDevice: (d: Device) => void; onPick: (id: string) => void }) {
   const { emails, langs, fields } = data
   const e = emails.find((x) => x.id === id) ?? emails[0]
   const start = Object.fromEntries(e.ph.map((k) => [k, fields[k]?.start ?? ''])) as Record<Field, string>
@@ -25,7 +25,7 @@ export function EmailDetail({ projectKey, data, id, lang, device, onBack, onLang
         langs={langs}
         missing={Object.keys(langs).filter((l) => !e.locales.includes(l))}
         onPick={onPick}
-        onBack={onBack}
+        backTo={backTo}
         onDevice={onDevice}
         onLang={onLang}
         onReload={() => {

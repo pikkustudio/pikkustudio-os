@@ -3,9 +3,9 @@ export const K = 0.42
 export const TAU = Math.PI * 2
 
 export type Pt = [number, number]
-export type BlobEye = { x: number; y: number; w: number; h: number }
+export type BlobEye = { x: number; y: number; w: number; h: number; ring?: boolean }
 export type BlobMarkText = '' | 'zzz' | '?' | '!' | '…'
-export type BlobPoseId = 'dot' | 'seed' | 'bean' | 'blob' | 'tall' | 'think' | 'ask' | 'sleep' | 'alert'
+export type BlobPoseId = 'dot' | 'seed' | 'bean' | 'blob' | 'tall' | 'think' | 'ask' | 'sleep' | 'alert' | 'lost'
 export type BlobPoseAlias = 'listening' | 'thinking' | 'question' | 'sleeping'
 export type BlobPoseName = BlobPoseId | BlobPoseAlias
 export type BlobStateName = 'idle' | 'listening' | 'thinking' | 'speaking' | 'question' | 'sleeping'
@@ -41,6 +41,8 @@ const polar = (f: (a: number) => number, sx = 1, sy = 1, dx = 0, dy = 0): Pt[] =
     return [Math.cos(a) * r * sx + dx, Math.sin(a) * r * sy + dy]
   })
 
+const tilt = (p: Pt[], r: number): Pt[] => p.map(([x, y]) => [x * Math.cos(r) - y * Math.sin(r), x * Math.sin(r) + y * Math.cos(r)])
+
 const E = (x1: number, y1: number, x2: number, y2: number, w: number, h: number): [BlobEye, BlobEye] => [
   { x: x1, y: y1, w, h },
   { x: x2, y: y2, w, h },
@@ -74,6 +76,16 @@ export const defaultPoses = (): BlobPose[] => [
     pts: polar((a) => 0.58 + 0.03 * Math.sin(2 * a), 1.2, 0.5, 0, 0.28),
     eyes: E(-0.2, 0.26, 0.16, 0.26, 0.065, 0.006),
     extra: 'zzz',
+  },
+  {
+    id: 'lost',
+    name: 'Lost',
+    pts: tilt(polar((a) => 0.54 + 0.06 * Math.sin(3 * a + 2) + 0.03 * Math.cos(2 * a), 1.04, 0.94, 0.02, 0.04), -0.16),
+    eyes: [
+      { x: -0.14, y: -0.02, w: 0.052, h: 0.082 },
+      { x: 0.17, y: -0.06, w: 0.036, h: 0.052 },
+    ],
+    extra: '?',
   },
   { id: 'alert', name: 'Alert', pts: polar((a) => 0.5 + 0.07 * Math.sin(9 * a)), eyes: E(-0.14, -0.05, 0.14, -0.05, 0.045, 0.075), extra: '!' },
 ]
@@ -174,7 +186,7 @@ export function align(b: Pt[], a: Pt[]): Pt[] {
 export const lerpP = (a: Pt[], b: Pt[], t: number): Pt[] => a.map((p, i) => [p[0] + (b[i][0] - p[0]) * t, p[1] + (b[i][1] - p[1]) * t])
 
 export const lerpE = (a: BlobEye[], b: BlobEye[], t: number): BlobEye[] =>
-  a.map((e, i) => ({ x: e.x + (b[i].x - e.x) * t, y: e.y + (b[i].y - e.y) * t, w: e.w + (b[i].w - e.w) * t, h: e.h + (b[i].h - e.h) * t }))
+  a.map((e, i) => ({ x: e.x + (b[i].x - e.x) * t, y: e.y + (b[i].y - e.y) * t, w: e.w + (b[i].w - e.w) * t, h: e.h + (b[i].h - e.h) * t, ring: t < 0.5 ? e.ring : b[i].ring }))
 
 export function crosses(p: Pt[]): boolean {
   const o = (a: Pt, b: Pt, c: Pt) => (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])

@@ -18,20 +18,6 @@ import { useSlots } from '../lib/slots'
 import { useLocalSettings, useSecretsSet, useProjectSecretsMeta, valueState, type ProjectSecret, type ProjectValue, type ValueState } from '../lib/projectSecrets'
 import { useDeveloperDetails } from '../lib/developer-details'
 
-function Art() {
-  return (
-    <>
-      <circle cx="230" cy="40" r="120" className="fill-w1" />
-      <circle cx="50" cy="190" r="100" className="fill-w2" />
-      <circle cx="170" cy="130" r="58" className="fill-w3" />
-      <circle cx="270" cy="165" r="9" className="fill-coral" />
-      <rect x="138" y="112" width="64" height="48" rx="12" className="fill-w6" opacity="0.92" />
-      <path d="M152 112V98a18 18 0 0 1 36 0v14" className="stroke-w6" strokeWidth="7" fill="none" strokeLinecap="round" />
-      <circle cx="170" cy="136" r="6" className="fill-w2" />
-    </>
-  )
-}
-
 const Group = ({ title, children }: { title: I18nString; children: I18nNode }) => (
   <section className="flex flex-col gap-2" aria-label={title}>
     <h2 className="px-1 pt-2 text-px14 font-bold text-muted-foreground">{title}</h2>
@@ -128,7 +114,7 @@ export function ProjectSecretsScreen() {
   }
 
   const hero = !known ? null : missing.length ? (
-    <NextCard label={m.project_secrets__hero_label()} hue="teal" art={<Art />} title={m.project_secrets__hero_missing({ count: missing.length })} why={m.project_secrets__hero_missing_why()}>
+    <NextCard label={m.project_secrets__hero_label()} hue="teal" page="project-secrets" title={m.project_secrets__hero_missing({ count: missing.length })} why={m.project_secrets__hero_missing_why()}>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
         <Button variant="hero" size="pageLg" type="button" onClick={() => open(missing[0]!)}>
           {m.project_secrets__hero_fill({ name: missing[0]!.item.label })}
@@ -136,7 +122,7 @@ export function ProjectSecretsScreen() {
       </div>
     </NextCard>
   ) : (
-    <NextCard label={m.project_secrets__hero_label()} hue="sea" art={<Art />} title={m.project_secrets__hero_ready()} why={stage ? m.project_secrets__hero_ready_why_published() : m.project_secrets__hero_ready_why()}>
+    <NextCard label={m.project_secrets__hero_label()} hue="sea" page="project-secrets" title={m.project_secrets__hero_ready()} why={stage ? m.project_secrets__hero_ready_why_published() : m.project_secrets__hero_ready_why()}>
       <span className="inline-flex items-center gap-2.5 text-px16 font-bold">
         <span className="size-3 shrink-0 rounded-full bg-success ring-4 ring-hero-ink/20" />
         {m.project_secrets__hero_count({ count: secrets.length + settings.length })}

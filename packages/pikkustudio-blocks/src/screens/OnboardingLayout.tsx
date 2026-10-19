@@ -162,7 +162,7 @@ export function OnboardingLayout() {
     made.refetch().then((r) => {
       const made = (r.data as { projects: { key: string; slug: string; owner?: string }[] } | undefined)?.projects.find((p) => p.key === run.data?.key)
       const slug = made?.slug
-      const land = (to: '/overview' | '/projects' | '/artifacts' | '/artifacts/$id', params?: { id: string }) =>
+      const land = (to: '/home' | '/projects' | '/artifacts' | '/artifacts/$id', params?: { id: string }) =>
         navigate({ to, ...(params ? { params } : {}), search: ((prev: object) => ({ ...prev, run: undefined, project: slug })) as never })
       if (!slug) return land('/projects')
       const first = async () => {
@@ -181,7 +181,7 @@ export function OnboardingLayout() {
     setSt('loading')
     window.clearTimeout(timer.current)
     timer.current = window.setTimeout(
-      () => back && (choose || (path === '/sign-in' && account.data?.name)) ? router.history.push(back) : navigate({ to: proj ? '/overview' : choose ? '/new-project' : yourName || account.data?.name ? '/choose-ai' : '/your-name', search: ((prev: object) => prev) as never }),
+      () => back && (choose || (path === '/sign-in' && account.data?.name)) ? router.history.push(back) : navigate({ to: proj ? '/home' : choose ? '/new-project' : yourName || account.data?.name ? '/choose-ai' : '/your-name', search: ((prev: object) => prev) as never }),
       proj ? 2600 : 1500,
     )
   }

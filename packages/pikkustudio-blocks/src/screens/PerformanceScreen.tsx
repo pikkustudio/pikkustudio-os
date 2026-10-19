@@ -12,7 +12,7 @@ import { useProjectKey } from '../lib/project'
 import { useProjectTarget } from '../lib/project-target'
 import { useSlots } from '../lib/slots'
 import { LivePerformanceScreen, LiveSwitch } from './metrics-live'
-import { Art, Bars, Figure, busyWord, kept, memory, ranges, readMetrics, useRange } from './metrics-shared'
+import { Bars, Figure, busyWord, kept, memory, ranges, readMetrics, useRange } from './metrics-shared'
 
 
 const slice = (from: number, to: number) => {
@@ -108,7 +108,7 @@ function LocalPerformance() {
         </div>
       ) : (
         <>
-          <NextCard label={m.performance_screen__how_doing()} hue={hot || heavy ? 'petrol' : 'teal'} art={<Art calm={!hot && !heavy} />} title={verdict} why={detail}>
+          <NextCard label={m.performance_screen__how_doing()} hue={hot || heavy ? 'petrol' : 'teal'} page="performance" title={verdict} why={detail}>
             <div className="mt-2 grid grid-cols-3 gap-6 border-t border-hero-ink/20 pt-5" data-testid="performance-cards">
               <Figure label={m.performance_screen__how_busy()} value={latest?.cpuPct != null ? busyWord(latest.cpuPct) : m.performance_screen__no_reading()} note={latest?.cpuPct != null ? m.performance_screen__note_cpu({ percent: Math.round(latest.cpuPct), peak: Math.round(peakBusy) }) : m.performance_screen__note_waiting()} />
               <Figure label={m.performance_screen__memory_in_use()} value={latest?.memMb != null ? memory(latest.memMb) : m.performance_screen__no_reading()} note={latest?.memMb != null ? m.performance_screen__note_peak({ memory: memory(peakMem) }) : m.performance_screen__note_waiting()} />

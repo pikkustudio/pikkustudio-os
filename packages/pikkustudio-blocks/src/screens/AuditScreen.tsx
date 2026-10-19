@@ -17,7 +17,6 @@ import { Segmented } from '../blocks/Segmented'
 import { PikkuDot } from '../blocks/PikkuDot'
 import { AuditEntryRow } from '../blocks/AuditEntryRow'
 import { AuditDetail } from '../blocks/AuditDetail'
-import { Art } from '../blocks/ExploreHub'
 import { ShellCtx } from '../lib/shell'
 import { auditProblem, dayGroup, type AuditEntry, type AuditUser } from '../lib/audit'
 
@@ -117,7 +116,7 @@ export function AuditScreen() {
     <Page gap="snug">
       <PageHead crumb={projectName} title={m.audit_screen__title()} text={m.audit_screen__text()} size="lead" developerDetails />
 
-      <NextCard label={m.audit_screen__title()} hue={problem || unreadable ? 'teal' : 'sea'} art={<Art />} title={heroTitle} why={heroText}>
+      <NextCard label={m.audit_screen__title()} hue={problem || unreadable ? 'teal' : 'sea'} page="audit" title={heroTitle} why={heroText}>
         <div>
           <Button variant="hero" size="pageLg" type="button" onClick={() => say(heroAsk)}>
             <PikkuDot />

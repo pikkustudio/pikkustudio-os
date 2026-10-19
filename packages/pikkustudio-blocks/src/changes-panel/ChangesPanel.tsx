@@ -75,7 +75,7 @@ export function ChangesPanel() {
   const key = useProjectKey()
   const q = usePikkuQuery('studio:changes', { key }, { enabled: !!key, refetchInterval: 5000 } as never)
   const rows = forPanel(((q.data as { changes: PanelChange[] } | undefined)?.changes ?? []))
-  const pick = (id: string) => nav({ to: '/changes' as never, search: ((p: Record<string, unknown>) => ({ ...p, change: id, panel: 'changes' })) as never })
+  const pick = (id: string) => nav({ to: `/changes/${id}` as never, search: ((p: Record<string, unknown>) => ({ ...p, panel: 'changes' })) as never })
   const note = !key || q.isPending ? m.changes_timeline__loading() : q.isError ? m.changes_timeline__error() : !rows.length ? m.changes_timeline__empty() : null
   if (note) return (
     <div className="flex min-h-0 flex-1 flex-col overflow-auto">

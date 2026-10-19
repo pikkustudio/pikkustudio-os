@@ -11,6 +11,7 @@ import { useEffect, useMemo, useRef, useState, type ComponentType, type ReactNod
 import { m } from '@/i18n/messages'
 import { getLocale } from '@/paraglide/runtime.js'
 import { languageName } from '../lib/i18n'
+import { useProjectChecklist } from '../lib/project-flow'
 import { useProjectKey, useProjectMissing, useProjectName, useProjectSlug } from '../lib/project'
 import { useAddonNav } from '../lib/addon-nav'
 import { isTeamScoped, pageNeedsApp } from '../lib/project-url'
@@ -45,7 +46,7 @@ import { ChecksCard, MilestoneCard, OpenScreenCard } from '../blocks/BuilderCard
 import { useCanEdit, useProjectTarget } from '../lib/project-target'
 import { useStickToBottom } from '../lib/stick-to-bottom'
 import { useComposerExtras } from '../lib/composer-extras'
-import { GitPullRequest, Archive, Inbox, type LucideIcon, ArrowDown, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Gauge, Globe, History, Home, Info, Compass, KeyRound, ListChecks, Search, Laptop, LayoutGrid, Mail, MessageCircle, MessageCircleQuestion, MousePointer2, Palette, ShieldCheck, Smartphone, Upload, PanelLeftClose, PanelLeftOpen, Menu, User, UserRoundCheck, Wrench, X, CheckCheck, ScrollText } from 'lucide-react'
+import { BarChart3, GitPullRequest, Archive, Inbox, type LucideIcon, ArrowDown, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Globe, History, Home, Info, Compass, KeyRound, ListChecks, Search, Laptop, LayoutGrid, Mail, MessageCircle, MessageCircleQuestion, MousePointer2, Palette, ShieldCheck, Smartphone, Upload, PanelLeftClose, PanelLeftOpen, Menu, User, UserRoundCheck, Wrench, X, CheckCheck, ScrollText, Clock, Bot } from 'lucide-react'
 
 // The app shell: rail, preview drawer (right edge), Pikku button + bubble, side panels.
 // Every screen route is a child of this layout. Page content lives in the route files.
@@ -57,8 +58,8 @@ import { GitPullRequest, Archive, Inbox, type LucideIcon, ArrowDown, ArrowLeft, 
 
 const item =
   'flex w-full items-center gap-3 rounded-lg px-3 group-data-[collapsed]/rail:justify-center group-data-[collapsed]/rail:px-0 text-start font-semibold no-underline transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'
-const PIN_ICON: Record<Movable, LucideIcon> = { 'virtual-users': UserRoundCheck, translations: Globe, artifacts: FileText, content: FolderOpen, 'front-doors': Smartphone, audit: History, emails: Mail, inbox: Inbox, knowledge: BookOpen, publish: Upload }
-const pinLabel = (id: Movable): I18nString => ({ 'virtual-users': m.quick_find__virtual_users, translations: m.quick_find__translations, artifacts: SCREEN_NAME.artifacts, content: m.content__title, 'front-doors': m.front_doors__title, audit: m.quick_find__audit, emails: SCREEN_NAME.emails, inbox: m.inbox__title, knowledge: SCREEN_NAME.knowledge, publish: m.shell_layout__publish })[id]()
+const PIN_ICON: Record<Movable, LucideIcon> = { 'virtual-users': UserRoundCheck, translations: Globe, artifacts: FileText, content: FolderOpen, 'front-doors': Smartphone, audit: History, emails: Mail, inbox: Inbox, knowledge: BookOpen, publish: Upload, workflows: Clock, assistants: Bot }
+const pinLabel = (id: Movable): I18nString => ({ 'virtual-users': m.quick_find__virtual_users, translations: m.quick_find__translations, artifacts: SCREEN_NAME.artifacts, content: m.content__title, 'front-doors': m.front_doors__title, audit: m.quick_find__audit, emails: SCREEN_NAME.emails, inbox: m.inbox__title, knowledge: SCREEN_NAME.knowledge, publish: m.shell_layout__publish, workflows: m.shell_layout__workflows, assistants: m.assistants_screen__title })[id]()
 const navItem = `${item} h-9.25 text-[14px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`
 const lbl = 'group-data-[collapsed]/rail:hidden'
 const RAIL_KEY = 'studio.rail.collapsed'
@@ -174,9 +175,6 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
   const project = useLocation({ select: (l) => (l.search as { project?: string }).project })
   // Only a team's pages need a project; leaving for a page outside any team (profile, account, sign-in) must not bounce back.
   const needsProject = !project && isTeamScoped(path) && !/\/(projects|secrets|account|studio-metrics|new-project|sign-in|your-name|choose-ai|settings|team|billing|plans|ai\/usage|ai\/gateway)$/.test(path) && !/^\/admin(\/|$)/.test(path)
-  useEffect(() => {
-    if (needsProject) navigate({ to: '/projects', search: ((prev: object) => prev) as never, replace: true })
-  }, [needsProject])
   const panel: PanelId | '' = q.panel ?? ''
   const set = (patch: Record<string, unknown>) =>
     navigate({ to: '.', search: ((prev: object) => ({ ...prev, ...patch })) as never, replace: true })
@@ -216,6 +214,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
   const slashIdx = Math.min(slashAt, Math.max(slash.length - 1, 0))
   const [bubbleDraft, setBubbleDraft] = useState('')
   const projectKey = useProjectKey()
+  const journey = useProjectChecklist(projectKey).data?.started !== false
   const composerRef = useRef<HTMLTextAreaElement>(null)
   const extras = useComposerExtras(projectKey)
   const dictate = (text: string) => {
@@ -252,7 +251,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
   const builder = useBuilderChat(projectKey, workMode)
   const canEdit = useCanEdit()
   const ChatPublishStatus = slots.ChatPublishStatus
-  const { openWorkspace } = useProjectTarget()
+  const { openWorkspace, missing: targetMissing } = useProjectTarget()
   const chat = workMode ? builder : guide
   const changesQ = useProjectQuery<{ changes: { changeId: string; title: string; body: string | null; status: string; createdAt: string }[] }>(projectKey, 'console:listStudioChanges', { status: ['open', 'claimed', 'needs_answer', 'in_progress'] }, { refetchInterval: 6000, handlesErrors: true })
   const pending = (changesQ.data?.changes ?? []).map((c) => {
@@ -276,14 +275,14 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
     setPanel('chat')
   }
   const detach = (label: I18nString) => setAttached((a) => a.filter((x) => x.label !== label))
-  const fill = useLocation({ select: (l) => /\/(design|artifacts\/[^/]+|routines\/[^/]+)$/.test(l.pathname) || (l.pathname.endsWith('/emails') && !!(l.search as { email?: string }).email) })
+  const fill = useLocation({ select: (l) => /\/(design(\/.*)?|artifacts\/[^/]+|workflows\/[^/]+|emails\/[^/]+)$/.test(l.pathname) })
   const needsApp = useLocation({ select: (l) => pageNeedsApp(l.pathname) })
   const onArtifacts = useLocation({ select: (l) => l.pathname.endsWith('/artifacts') })
-  const onKnowledge = useLocation({ select: (l) => l.pathname.endsWith('/knowledge') })
+  const onKnowledge = useLocation({ select: (l) => /\/knowledge(\/.*)?$/.test(l.pathname) })
   const onPublish = useLocation({ select: (l) => l.pathname.endsWith('/publish') })
   const onProject = useLocation({ select: (l) => l.pathname.endsWith('/project') })
   const { pins } = usePins()
-  const onEmails = useLocation({ select: (l) => l.pathname.endsWith('/emails') })
+  const onEmails = useLocation({ select: (l) => /\/emails(\/[^/]+)?$/.test(l.pathname) })
   const [pub, setPublish] = useState<PublishNote | null>(null)
   const [dismissed, setDismissed] = useState<string | null>(null)
   const [bubbleOpen, setBubbleOpen] = useState<boolean | null>(null)
@@ -341,7 +340,6 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
   const tab =
     '-mb-px inline-flex h-11.5 items-center gap-2 rounded-t-[10px] border-b-3 px-3.5 text-[15px] font-bold transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'
 
-  if (needsProject) return null
 
   return (
     <ShellCtx.Provider value={{ view, pending, paid: paidNow, approve, say, open: setPanel, pikkuSays, attached, attach, detach, setPublish, openFind: () => setFind(true) }}>
@@ -362,7 +360,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
             <button type="button" onClick={() => setNavOpen(false)} aria-label={m.shell_layout__close_nav()} className={`${iconBtn} hidden self-end @max-[640px]/app:grid`}>
               <X className="size-5" />
             </button>
-            <Link {...keep} to="/overview" className="flex items-center gap-2.5 px-2 py-1 font-heading text-[24px] font-extrabold tracking-[-0.02em] no-underline group-data-[collapsed]/rail:justify-center group-data-[collapsed]/rail:px-0">
+            <Link {...keep} to="/home" className="flex items-center gap-2.5 px-2 py-1 font-heading text-[24px] font-extrabold tracking-[-0.02em] no-underline group-data-[collapsed]/rail:justify-center group-data-[collapsed]/rail:px-0">
               <PikkuMark label={m.shell_layout__studio()} />
               <span className={lbl}>{m.shell_layout__studio()}</span>
             </Link>
@@ -378,18 +376,14 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
               <kbd className={`rounded border border-border px-1 text-[11px] leading-4 ${lbl}`}>{m.shell_layout__find_shortcut()}</kbd>
             </button>
             <nav className="flex flex-col gap-0.5" aria-label={m.shell_layout__main()}>
-              <Link {...keep} {...tip(m.shell_layout__home())} to="/projects" className={`${item} h-11.5 text-[15px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`}>
-                <Home className="size-5.5" />
-                <span className={lbl}>{m.shell_layout__home()}</span>
-              </Link>
-              <Link {...keep} {...tip(m.shell_layout__studio_metrics())} to={'/studio-metrics' as never} className={`${item} h-11.5 text-[15px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`}>
-                <Gauge className="size-5.5" />
-                <span className={lbl}>{m.shell_layout__studio_metrics()}</span>
+              <Link {...keep} {...tip(m.quick_find__projects())} to="/projects" className={`${item} h-11.5 text-[15px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`}>
+                <FolderOpen className="size-5.5" />
+                <span className={lbl}>{m.quick_find__projects()}</span>
               </Link>
             </nav>
             {addonNav ? (
               <div className="flex flex-col gap-0.5 px-1">
-                <Link {...keep} {...tip(addonNav.back ? asI18n(addonNav.back.label) : m.shell_layout__back_to({ project: projectName }))} to={(addonNav.back?.to ?? '/overview') as never} className={`${navItem} mb-1`}>
+                <Link {...keep} {...tip(addonNav.back ? asI18n(addonNav.back.label) : m.shell_layout__back_to({ project: projectName }))} to={(addonNav.back?.to ?? '/home') as never} className={`${navItem} mb-1`}>
                   <ArrowLeft className="rtl:-scale-x-100 size-5" />
                   <span className={lbl}>{addonNav.back ? asI18n(addonNav.back.label) : m.shell_layout__back_to({ project: projectName })}</span>
                 </Link>
@@ -407,17 +401,19 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
             <div className="flex flex-col gap-0.5 px-1">
               <div className={`mb-1.5 px-3 text-[13px] font-semibold text-muted-foreground ${lbl}`}>{projectName}</div>
               {slots.ProjectTargetSwitcher ? <slots.ProjectTargetSwitcher collapsed={collapsed} /> : null}
+              <Link {...keep} {...tip(m.shell_layout__home())} to="/home" className={navItem}>
+                <Home className="size-5" />
+                <span className={lbl}>{m.shell_layout__home()}</span>
+              </Link>
+              {journey ? (
+                <Link {...keep} {...tip(SCREEN_NAME.project())} to={'/project' as never} className={navItem} data-testid="nav-project">
+                  <ListChecks className="size-5" />
+                  <span className={lbl}>{SCREEN_NAME.project()}</span>
+                </Link>
+            ) : null}
               <Link {...keep} {...tip(m.shell_layout__explore())} to={'/explore' as never} className={navItem}>
                 <Compass className="size-5" />
                 <span className={lbl}>{m.shell_layout__explore()}</span>
-              </Link>
-              <Link {...keep} {...tip(SCREEN_NAME.project())} to={'/project' as never} className={navItem} data-testid="nav-project">
-                <ListChecks className="size-5" />
-                <span className={lbl}>{SCREEN_NAME.project()}</span>
-              </Link>
-              <Link {...keep} {...tip(m.shell_layout__overview())} to="/overview" className={navItem}>
-                <LayoutGrid className="size-5" />
-                <span className={lbl}>{m.shell_layout__overview()}</span>
               </Link>
               <Link {...keep} {...tip(m.shell_layout__changes())} to={'/changes' as never} className={navItem}>
                 <GitPullRequest className="size-5" />
@@ -426,6 +422,10 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
               <Link {...keep} {...tip(SCREEN_NAME.frontend())} to="/design" className={navItem}>
                 <Palette className="size-5" />
                 <span className={lbl}>{SCREEN_NAME.frontend()}</span>
+              </Link>
+              <Link {...keep} {...tip(m.shell_layout__analytics())} to={'/metrics' as never} className={navItem}>
+                <BarChart3 className="size-5" />
+                <span className={lbl}>{m.shell_layout__analytics()}</span>
               </Link>
               {MOVABLE.filter((id) => pins.includes(id)).map((id) => {
                 const Icon = PIN_ICON[id]
@@ -452,13 +452,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
                 {collapsed ? <PanelLeftOpen className="size-5 rtl:-scale-x-100" /> : <PanelLeftClose className="size-5 rtl:-scale-x-100" />}
                 <span className={lbl}>{m.shell_layout__collapse_nav()}</span>
               </button>
-              {collapsed ? (
-                <button type="button" onClick={() => setPanel('workspace')} {...tip(m.shell_layout__your_workspace())} className={`${iconBtn} mx-auto`}>
-                  <Laptop className="size-5.5" />
-                </button>
-              ) : (
-                <Account expanded={panel === 'workspace'} onOpen={() => setPanel('workspace')} onAccount={() => navigate({ to: '/account', search: ((prev: object) => ({ ...prev, panel: undefined })) as never })} />
-              )}
+              <Account collapsed={collapsed} expanded={panel === 'workspace'} onOpen={() => setPanel('workspace')} onAccount={() => navigate({ to: '/account', search: ((prev: object) => ({ ...prev, panel: undefined })) as never })} />
             </div>
           </aside>
 
@@ -468,13 +462,13 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
               <button type="button" onClick={() => setNavOpen(true)} aria-label={m.shell_layout__open_nav()} aria-expanded={navOpen} aria-controls="studio-rail" className={iconBtn}>
                 <Menu className="size-5.5" />
               </button>
-              <Link {...keep} to="/overview" className="flex items-center gap-2 font-heading text-[20px] font-extrabold tracking-[-0.02em] no-underline">
+              <Link {...keep} to="/home" className="flex items-center gap-2 font-heading text-[20px] font-extrabold tracking-[-0.02em] no-underline">
                 <PikkuMark label={m.shell_layout__studio()} />
                 <span>{m.shell_layout__studio()}</span>
               </Link>
             </div>
             <div className={`min-h-0 flex-1 ${fill ? 'overflow-hidden pt-4 pe-6.5 pb-3.5 ps-6' : 'overflow-auto scroll-smooth [scrollbar-width:thin] px-12 pt-9 pb-7 @max-[640px]/app:px-4 @max-[640px]/app:pt-5 @min-[1700px]/app:px-16 @min-[1700px]/app:pt-11 @min-[1700px]/app:pb-8'}`}>
-              {projectMissing ? (
+              {projectMissing || needsProject || targetMissing ? (
                 <NotFoundPage />
               ) : needsApp ? (
                 <ProjectRunGate>
@@ -867,7 +861,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
           </aside>
 
           {/* Pikku button and speech bubble */}
-          <div className="absolute end-6 bottom-6 z-4 flex flex-col items-end gap-4 group-data-open/shell:hidden [:root:has([data-side-panel])_&]:hidden transition-all duration-420 ease-[cubic-bezier(.16,1,.3,1)] group-data-open/shell:end-114 @min-[1700px]/app:group-data-open/shell:end-126">
+          <div className="absolute end-6 bottom-6 z-40 flex flex-col items-end gap-4 group-data-open/shell:hidden [:root:has([data-side-panel])_&]:hidden transition-all duration-420 ease-[cubic-bezier(.16,1,.3,1)] group-data-open/shell:end-114 @min-[1700px]/app:group-data-open/shell:end-126">
             {bubbleIsOpen ? (
               <section className="relative flex w-85 flex-col gap-3 rounded-card border border-border bg-card p-4 shadow-[0_6px_20px_-4px_rgba(8,40,52,0.16),0_2px_4px_rgba(8,40,52,0.06)]" aria-label={m.parts__pikku()} aria-live="polite">
                 <span className="absolute -bottom-1.5 end-7 size-3 rotate-45 border-e border-b border-border bg-card" />
@@ -961,9 +955,9 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
                 onPointerLeave={() => setHelperHot(false)}
                 onFocus={() => setHelperHot(true)}
                 onBlur={() => setHelperHot(false)}
-                className="group relative grid size-17 place-items-center rounded-full cursor-pointer text-foreground transition-[transform,color] duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 hover:scale-125 hover:text-primary focus-visible:text-primary focus-visible:ring-2 focus-visible:ring-primary active:scale-95"
+                className="group relative grid size-17 place-items-center rounded-full border border-border bg-card shadow-md cursor-pointer text-foreground transition-[transform,color] duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 hover:scale-125 hover:text-primary focus-visible:text-primary focus-visible:ring-2 focus-visible:ring-primary active:scale-95"
               >
-                <Blob pose={helperHot ? 'ask' : POSE[mood]} className="size-20" />
+                <Blob pose={helperHot ? 'ask' : POSE[mood]} className="size-14" />
                 {needsCount > 0 && !bubbleIsOpen ? <span className="absolute -top-1 -end-1 grid h-6 min-w-6 place-items-center rounded-full bg-warning px-1.5 text-[13px] font-bold text-on-warning ring-2 ring-card">{needsCount}</span> : null}
               </button>
             </div>

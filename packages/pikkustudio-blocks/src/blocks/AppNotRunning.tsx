@@ -59,44 +59,6 @@ function useFailureLog(enabled: boolean, error: unknown) {
   return (fromLogs || fromError).split('\n').slice(-30).join('\n').trim()
 }
 
-function Art({ state }: { state: AppNotRunningState }) {
-  const soft = 'motion-safe:animate-pulse'
-  return (
-    <>
-      <circle cx="240" cy="30" r="110" className="fill-w1" />
-      <circle cx="40" cy="185" r="95" className="fill-w2" />
-      <circle cx="274" cy="172" r="8" className="fill-coral" />
-      <rect x="62" y="48" width="176" height="108" rx="12" className="fill-w6" opacity="0.92" />
-      <circle cx="78" cy="63" r="4" className="fill-w2" />
-      <circle cx="92" cy="63" r="4" className="fill-w2" />
-      <circle cx="106" cy="63" r="4" className="fill-w2" />
-      <rect x="72" y="76" width="156" height="70" rx="8" className="fill-w2" />
-      {state === 'off' && (
-        <>
-          <circle cx="150" cy="112" r="16" fill="none" className="stroke-w6" strokeWidth="3" strokeDasharray="70 32" strokeDashoffset="-17" strokeLinecap="round" />
-          <path d="M150 94v14" className="stroke-w6" strokeWidth="3" strokeLinecap="round" />
-        </>
-      )}
-      {state === 'starting' && (
-        <>
-          <rect x="84" y="88" width="70" height="9" rx="4.5" className={`fill-w3 ${soft}`} />
-          <rect x="84" y="104" width="130" height="7" rx="3.5" className={`fill-w3 ${soft}`} style={{ animationDelay: '0.25s' }} />
-          <rect x="84" y="118" width="104" height="7" rx="3.5" className={`fill-w3 ${soft}`} style={{ animationDelay: '0.5s' }} />
-          <rect x="84" y="134" width="132" height="6" rx="3" className="fill-w1" />
-          <rect x="84" y="134" width="52" height="6" rx="3" className={`fill-w5 ${soft}`} />
-        </>
-      )}
-      {state === 'failed' && (
-        <>
-          <rect x="84" y="88" width="70" height="9" rx="4.5" className="fill-w3" />
-          <rect x="84" y="104" width="52" height="7" rx="3.5" className="fill-w3" />
-          <rect x="84" y="118" width="130" height="22" rx="7" fill="none" className="stroke-w6" strokeWidth="2" strokeDasharray="2 7" strokeLinecap="round" />
-        </>
-      )}
-    </>
-  )
-}
-
 function AppStage({ label, children }: { label: I18nString; children: I18nNode }) {
   return (
     <div className="mx-auto flex max-w-[1160px] flex-col gap-10 @min-[1700px]/app:max-w-[1380px]">
@@ -207,7 +169,7 @@ export function AppNotRunning({
     const title = stage.outdated ? m.project_launch__stage_outdated_title({ name }) : m.project_launch__stage_title({ name })
     const why = stage.outdated ? m.project_launch__stage_outdated_why({ name }) : m.project_launch__stage_why({ name })
     return (
-      <StateScreen label={title} hue="teal" art={<Art state="off" />} title={title} why={why}>
+      <StateScreen label={title} hue="teal" page="resume" title={title} why={why}>
         <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-3" data-testid="stage-not-live">
           <Button variant="hero" size="page" type="button" onClick={stage.onPublish}>
             {stage.outdated ? m.project_launch__stage_publish_again() : m.project_launch__stage_publish()}
@@ -224,7 +186,7 @@ export function AppNotRunning({
     const order: LaunchWhere[] = choices.primary === 'cloud' ? ['cloud', 'local'] : ['local', 'cloud']
     const title = m.project_launch__title()
     return (
-      <StateScreen label={title} hue="teal" art={<Art state="off" />} title={title} why={choices.cloudOff ? m.project_launch__cloud_off() : m.project_launch__why()}>
+      <StateScreen label={title} hue="teal" page="resume" title={title} why={choices.cloudOff ? m.project_launch__cloud_off() : m.project_launch__why()}>
         <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-3" data-testid="project-launch-choices">
           {order.map((where, i) => {
             const Icon = where === 'cloud' ? Cloud : Laptop
@@ -248,7 +210,7 @@ export function AppNotRunning({
   }
 
   return (
-    <StateScreen label={title} hue="teal" art={<Art state={state} />} title={title} why={text}>
+    <StateScreen label={title} hue="teal" page="resume" title={title} why={text}>
       <div role="status" aria-live="polite" className="sr-only">{title}</div>
       <div className="mt-1 flex flex-wrap items-center gap-x-6 gap-y-3">
         <Button variant="hero" size="page" type="button" disabled={busy} aria-busy={busy} onClick={onStart}>

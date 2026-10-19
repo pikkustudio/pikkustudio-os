@@ -3,9 +3,13 @@ import { afterAll, beforeAll, test } from 'bun:test'
 import { pikkuState, resetPikkuState } from '@pikku/core/state'
 import { addFunction } from '@pikku/core/function'
 import { PikkuMCPFetchServer } from '@pikku/modelcontextprotocol/fetch'
-import mcpJson from '../../../.pikku/mcp/mcp.gen.json' with { type: 'json' }
-import { checkTools, installTool, listTools } from './tools.function.js'
+import { checkTools, installTool, listTools } from '../../../src/functions/tools.function.js'
 
+const mcpJson = {
+  tools: ['listTools', 'checkTools', 'installTool'].map((name) => ({ name, description: name, parameters: { type: 'object' } })),
+  resources: [],
+  prompts: [],
+}
 const TOKEN = 'studio-service-test-token'
 const silent = { info() {}, warn() {}, error() {}, debug() {}, setLevel() {} }
 const listed = [{ id: 'ghidra', name: 'Ghidra', status: 'missing' }]
@@ -36,7 +40,7 @@ beforeAll(async () => {
   resetPikkuState()
   pikkuState(null, 'package', 'singletonServices', {
     logger: silent,
-    studio: { tools: { list: async () => listed, checkAgain() {} } },
+    studioTools: { list: async () => listed, checkAgain() {} },
   } as never)
   const funcs = { listTools, checkTools, installTool }
   for (const [name, func] of Object.entries(funcs)) {

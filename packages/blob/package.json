@@ -7,6 +7,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./core": "./src/core.ts",
+    "./characters": "./src/characters.ts",
     "./render": "./src/render.ts",
     "./motion": "./src/motion.ts"
   },

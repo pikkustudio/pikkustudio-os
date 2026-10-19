@@ -42,7 +42,6 @@ export type Plan = {
   action: I18nString
   hint?: I18nString
   disabled?: boolean
-  art: 'laptop' | 'cloud' | 'window'
   hue: 'teal' | 'petrol' | 'sea'
   others: Way[]
   mineLocal?: Workspace
@@ -72,23 +71,23 @@ export function planFor(p: ProjectHome): Plan {
   const rest = (way: Way): Way[] => (['cloud', 'local', 'look'] as Way[]).filter((w) => w !== way)
 
   if (mineLocal && mineLocal.state === 'working') {
-    return { ...base, way: 'local', art: 'laptop', hue: 'teal', others: rest('local'), title: m.project_home__local_working_title(), why: mineLocal.change ? m.project_home__local_working_why_change({ change: mineLocal.change }) : m.project_home__local_working_why(), action: m.project_home__local_working_action(), hint: m.project_home__local_working_hint() }
+    return { ...base, way: 'local', hue: 'teal', others: rest('local'), title: m.project_home__local_working_title(), why: mineLocal.change ? m.project_home__local_working_why_change({ change: mineLocal.change }) : m.project_home__local_working_why(), action: m.project_home__local_working_action(), hint: m.project_home__local_working_hint() }
   }
   if (mineLocal) {
-    return { ...base, way: 'local', art: 'laptop', hue: 'teal', others: rest('local'), title: m.project_home__local_paused_title(), why: m.project_home__local_paused_why({ when: mineLocal.when }), action: m.project_home__local_paused_action(), hint: m.project_home__local_paused_hint() }
+    return { ...base, way: 'local', hue: 'teal', others: rest('local'), title: m.project_home__local_paused_title(), why: m.project_home__local_paused_why({ when: mineLocal.when }), action: m.project_home__local_paused_action(), hint: m.project_home__local_paused_hint() }
   }
   if (mineCloud && mineCloud.state === 'asleep') {
-    return { ...base, way: 'cloud', art: 'cloud', hue: 'petrol', others: rest('cloud'), title: m.project_home__cloud_asleep_title(), why: m.project_home__cloud_asleep_why(), action: m.project_home__cloud_asleep_action(), hint: p.online ? undefined : m.project_home__cloud_asleep_hint(), disabled: !p.online }
+    return { ...base, way: 'cloud', hue: 'petrol', others: rest('cloud'), title: m.project_home__cloud_asleep_title(), why: m.project_home__cloud_asleep_why(), action: m.project_home__cloud_asleep_action(), hint: p.online ? undefined : m.project_home__cloud_asleep_hint(), disabled: !p.online }
   }
   if (mineCloud) {
-    return { ...base, way: 'cloud', art: 'cloud', hue: 'petrol', others: rest('cloud'), title: m.project_home__cloud_awake_title(), why: m.project_home__cloud_awake_why(), action: m.project_home__cloud_awake_action(), disabled: !p.online }
+    return { ...base, way: 'cloud', hue: 'petrol', others: rest('cloud'), title: m.project_home__cloud_awake_title(), why: m.project_home__cloud_awake_why(), action: m.project_home__cloud_awake_action(), disabled: !p.online }
   }
   if (theirCloud && p.online) {
     const name = first(theirCloud.who)
-    return { ...base, way: 'cloud', art: 'cloud', hue: 'petrol', others: rest('cloud'), title: m.project_home__cloud_theirs_title({ name }), why: theirCloud.change ? m.project_home__cloud_theirs_why_change({ name, change: theirCloud.change }) : m.project_home__cloud_theirs_why({ name }), action: m.project_home__cloud_theirs_action({ name }), hint: m.project_home__cloud_theirs_hint() }
+    return { ...base, way: 'cloud', hue: 'petrol', others: rest('cloud'), title: m.project_home__cloud_theirs_title({ name }), why: theirCloud.change ? m.project_home__cloud_theirs_why_change({ name, change: theirCloud.change }) : m.project_home__cloud_theirs_why({ name }), action: m.project_home__cloud_theirs_action({ name }), hint: m.project_home__cloud_theirs_hint() }
   }
   if (!p.online) {
-    return { ...base, way: 'local', art: 'laptop', hue: 'teal', others: [], title: m.project_home__offline_title(), why: m.project_home__offline_why(), action: m.project_home__offline_action(), hint: m.project_home__offline_hint() }
+    return { ...base, way: 'local', hue: 'teal', others: [], title: m.project_home__offline_title(), why: m.project_home__offline_why(), action: m.project_home__offline_action(), hint: m.project_home__offline_hint() }
   }
-  return { ...base, way: 'cloud', art: 'cloud', hue: 'petrol', others: rest('cloud'), title: m.project_home__start_title(), why: m.project_home__start_why(), action: m.project_home__start_action(), hint: m.project_home__start_hint() }
+  return { ...base, way: 'cloud', hue: 'petrol', others: rest('cloud'), title: m.project_home__start_title(), why: m.project_home__start_why(), action: m.project_home__start_action(), hint: m.project_home__start_hint() }
 }

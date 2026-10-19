@@ -1,6 +1,7 @@
 import type { I18nNode, I18nString } from '@pikku/react'
+import { PageArt } from './PageArt'
 
-export function NextCard({ label, hue, title, why, art, children }: { label: I18nString; hue: 'teal' | 'petrol' | 'sea'; title: I18nString; why: I18nString; art: I18nNode; children?: I18nNode }) {
+export function NextCard({ label, hue, title, why, page, children }: { label: I18nString; hue: 'teal' | 'petrol' | 'sea'; title: I18nString; why: I18nString; page: string; children?: I18nNode }) {
   return (
     <section data-testid="next-card" data-hue={hue} className="relative grid grid-cols-1 overflow-hidden md:grid-cols-[minmax(0,1.35fr)_minmax(0,0.65fr)] rounded-next bg-hero text-hero-ink" aria-label={label}>
       <div className="relative z-1 flex flex-col justify-center gap-3.5 px-6 pt-8.5 pb-9 md:px-10">
@@ -9,9 +10,7 @@ export function NextCard({ label, hue, title, why, art, children }: { label: I18
         {children}
       </div>
       <div className="relative hidden min-h-42.5 md:block">
-        <svg viewBox="0 0 300 200" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 size-full" aria-hidden="true">
-          {art}
-        </svg>
+        <PageArt page={page} size={220} />
       </div>
     </section>
   )

@@ -5,7 +5,6 @@ import { Pencil, RefreshCw, Search, Undo2 } from 'lucide-react'
 import { Button, buttonVariants } from '../ui/button'
 import { Input } from '../ui/input'
 import { Switch } from '../ui/switch'
-import { Art } from '../blocks/ExploreHub'
 import { NextCard } from '../blocks/NextCard'
 import { Page } from '../blocks/Page'
 import { PageHead } from '../blocks/PageHead'
@@ -83,14 +82,14 @@ function Body({ view, mode }: { view: ReleasesView; mode: string }) {
   if (view.state === 'loading')
     return (
       <div role="status" aria-busy="true" className="flex flex-col gap-3.5">
-        <NextCard label={m.versions_screen__what_matters()} hue="teal" art={<Art />} title={m.versions_screen__hero_loading()} why={m.versions_screen__intro()} />
+        <NextCard label={m.versions_screen__what_matters()} hue="teal" page="versions" title={m.versions_screen__hero_loading()} why={m.versions_screen__intro()} />
         <div className="h-40 animate-pulse rounded-card border border-border bg-secondary" />
       </div>
     )
   if (view.state === 'error')
     return (
       <>
-        <NextCard label={m.versions_screen__what_matters()} hue="petrol" art={<Art />} title={m.versions_screen__hero_error()} why={m.versions_screen__hero_error_text()}>
+        <NextCard label={m.versions_screen__what_matters()} hue="petrol" page="versions" title={m.versions_screen__hero_error()} why={m.versions_screen__hero_error_text()}>
           <div className="flex flex-wrap gap-3">
             <Button variant="hero" size="page" type="button" onClick={() => say(m.error_state__fix_ask_what({ what: m.versions_screen__title(), details: detailsOf(faultOf(view.error), m.versions_screen__title()) }))}>
               <PikkuDot />
@@ -108,7 +107,7 @@ function Body({ view, mode }: { view: ReleasesView; mode: string }) {
 function NothingYet({ view }: { view: ReleasesView }) {
   return (
     <>
-      <NextCard label={m.versions_screen__what_matters()} hue="teal" art={<Art />} title={m.versions_screen__none_title()} why={view.state === 'off' ? m.versions_screen__none_why_off() : m.versions_screen__none_why()}>
+      <NextCard label={m.versions_screen__what_matters()} hue="teal" page="versions" title={m.versions_screen__none_title()} why={view.state === 'off' ? m.versions_screen__none_why_off() : m.versions_screen__none_why()}>
         {view.readOnly && view.state !== 'off' ? null : <div className="flex flex-wrap gap-3">{publishLink('hero', m.versions_screen__go_publish())}</div>}
       </NextCard>
       <Pending view={view} />
@@ -207,7 +206,7 @@ function History({ view, mode }: { view: ReleasesView; mode: string }) {
 
   return (
     <>
-      <NextCard label={m.versions_screen__what_matters()} hue="teal" art={<Art />} title={hero.title} why={hero.why}>
+      <NextCard label={m.versions_screen__what_matters()} hue="teal" page="versions" title={hero.title} why={hero.why}>
         <div className="flex flex-wrap gap-3">
           {hero.action}
           {view.url ? (

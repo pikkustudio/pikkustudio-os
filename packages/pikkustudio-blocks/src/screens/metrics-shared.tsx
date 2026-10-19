@@ -74,20 +74,6 @@ export const clock = (at: number): I18nString => {
   return asI18n(time)
 }
 
-export function Art({ calm }: { calm: boolean }) {
-  return (
-    <>
-      <circle cx="230" cy="50" r="120" className="fill-w1" />
-      <circle cx="50" cy="190" r="100" className="fill-w2" />
-      <rect x="92" y="120" width="26" height="46" rx="13" className="fill-w6" opacity="0.92" />
-      <rect x="130" y="92" width="26" height="74" rx="13" className="fill-w6" opacity="0.92" />
-      <rect x="168" y="106" width="26" height="60" rx="13" className="fill-w6" opacity="0.92" />
-      <rect x="206" y="70" width="26" height="96" rx="13" className="fill-w6" opacity="0.92" />
-      <circle cx="268" cy="168" r="9" className={calm ? 'fill-w3' : 'fill-coral'} />
-    </>
-  )
-}
-
 export function Figure({ label, value, note }: { label: I18nString; value: I18nString | number; note: I18nString }) {
   return (
     <div className="min-w-0">

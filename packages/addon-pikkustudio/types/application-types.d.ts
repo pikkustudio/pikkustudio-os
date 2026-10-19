@@ -10,6 +10,7 @@ import type { StudioProjectsService } from '../src/services/projects.js'
 import type { LogStore } from '../src/services/log-store.js'
 import type { StudioPublisher } from '../src/services/publish.js'
 import type { StudioSettingsFile } from '../src/services/settings.js'
+import type { ToolResolver } from '../src/lib/tools/resolver.js'
 import type { BuilderSession } from '@pikkustudio/builder'
 import type { BetterAuthInstance } from '@pikku/better-auth'
 import type { Kysely } from 'kysely'
@@ -27,6 +28,7 @@ export interface SingletonServices extends CoreSingletonServices<Config> {
   studioHooks: StudioHooks
   studioLogs: LogStore
   studioModels: Map<string, string>
+  studioTools: ToolResolver
   auth?: () => Promise<BetterAuthInstance>
   kysely?: Kysely<any>
 }

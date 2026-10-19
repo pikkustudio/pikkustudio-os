@@ -67,7 +67,8 @@ export function render(ctx: CanvasRenderingContext2D, S: number, shape: BlobShap
     const j = J[i] ?? { ax: 0, ay: 0 }
     ctx.beginPath()
     ctx.ellipse(c + e.x * k + j.ax * wob * 0.6, c + e.y * k + j.ay * wob * 0.6, Math.max(e.w * k, lw * 0.6), Math.max(e.h * k, lw * 0.45), 0, 0, TAU)
-    ctx.fill()
+    if (e.ring) ctx.stroke()
+    else ctx.fill()
   })
   if (shape.extra && shape.extraA > 0.01) {
     let mx = -9

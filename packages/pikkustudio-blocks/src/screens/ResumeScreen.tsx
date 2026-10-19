@@ -30,7 +30,7 @@ export function ResumeScreen() {
   const ready = opened && apps.isSuccess && list.every((a) => a.state === 'ready')
 
   useEffect(() => {
-    if (ready) navigate({ to: '/overview', search: ((prev: object) => prev) as never, replace: true })
+    if (ready) navigate({ to: '/home', search: ((prev: object) => prev) as never, replace: true })
   }, [ready])
 
   const retry = () => {

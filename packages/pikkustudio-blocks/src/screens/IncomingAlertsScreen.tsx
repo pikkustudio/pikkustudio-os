@@ -29,19 +29,6 @@ const Group = ({ title, children }: { title: I18nString; children: I18nNode }) =
   </section>
 )
 
-function Art() {
-  return (
-    <>
-      <circle cx="230" cy="40" r="120" className="fill-w1" />
-      <circle cx="50" cy="190" r="100" className="fill-w2" />
-      <circle cx="170" cy="120" r="58" className="fill-w3" />
-      <circle cx="268" cy="168" r="9" className="fill-coral" />
-      <path d="M144 140v-26a26 26 0 0 1 52 0v26l8 10h-68z" className="fill-w6" opacity="0.92" />
-      <circle cx="170" cy="160" r="7" className="fill-w6" opacity="0.92" />
-    </>
-  )
-}
-
 const events = (s: AlertSource): I18nString | undefined => {
   const list = s.meta?.events ?? []
   if (list.length === 0) return undefined
@@ -162,7 +149,7 @@ export function IncomingAlertsScreen() {
   return (
     <Page gap="snug">
       {head}
-      <NextCard label={m.incoming_alerts__title()} hue="teal" art={<Art />} title={heroTitle} why={heroWhy}>
+      <NextCard label={m.incoming_alerts__title()} hue="teal" page="incoming-alerts" title={heroTitle} why={heroWhy}>
         <div>
           {firstOff ? (
             <Button variant="hero" size="pageLg" type="button" disabled={busy} aria-busy={switching(firstOff.name)} onClick={() => enable.mutate({ name: firstOff.name })}>

@@ -14,20 +14,6 @@ import { NextCard } from './NextCard'
 import { PageHead } from './PageHead'
 import { PikkuDot } from './PikkuDot'
 
-function Art() {
-  return (
-    <>
-      <circle cx="230" cy="40" r="120" className="fill-w1" />
-      <circle cx="50" cy="190" r="100" className="fill-w2" />
-      <circle cx="170" cy="130" r="58" className="fill-w3" />
-      <circle cx="270" cy="165" r="9" className="fill-coral" />
-      <path d="M130 170V96a40 40 0 0 1 80 0v74z" className="fill-w6" opacity="0.92" />
-      <path d="M148 170V98a22 22 0 0 1 44 0v72z" className="fill-w2" />
-      <circle cx="180" cy="124" r="4.5" className="fill-w6" />
-    </>
-  )
-}
-
 const groups = (): Array<{ title: string; text: string; kinds: Door['kind'][] }> => [
   { title: m.front_doors__group_web(), text: m.front_doors__group_web_text(), kinds: ['web'] },
   { title: m.front_doors__group_cli(), text: m.front_doors__group_cli_text(), kinds: ['cli'] },
@@ -64,7 +50,7 @@ export function FrontDoorsView() {
     <NextCard
       label={m.front_doors__title()}
       hue="petrol"
-      art={<Art />}
+      page="front-doors"
       title={isPending ? m.front_doors__hero_loading() : shown.length ? m.front_doors__hero_ways({ count: shown.length }) : m.front_doors__hero_none()}
       why={shown.length ? m.front_doors__hero_why({ name: projectName }) : m.front_doors__hero_why_none()}
     >

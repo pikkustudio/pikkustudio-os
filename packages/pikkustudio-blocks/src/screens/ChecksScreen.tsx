@@ -21,20 +21,6 @@ import { ago } from '../lib/virtualUsers'
 import { isProblem, titleOf, useChecks, type Coverage, type Finding, type RunSummary } from '../lib/checks'
 import { useDeveloperDetails } from '../lib/developer-details'
 
-function Art() {
-  return (
-    <>
-      <circle cx="230" cy="40" r="120" className="fill-w1" />
-      <circle cx="50" cy="190" r="100" className="fill-w2" />
-      <circle cx="170" cy="130" r="58" className="fill-w3" />
-      <circle cx="270" cy="165" r="9" className="fill-coral" />
-      <path d="M118 150c22-40 46-40 58-14s40 26 60-18" fill="none" className="stroke-w6" strokeWidth="8" strokeLinecap="round" strokeDasharray="2 16" />
-      <circle cx="118" cy="150" r="11" className="fill-w6" />
-      <circle cx="236" cy="118" r="11" className="fill-w6" />
-    </>
-  )
-}
-
 const Group = ({ title, sub, children }: { title: I18nString; sub?: I18nNode; children: I18nNode }) => (
   <section className="flex flex-col gap-2" aria-label={title}>
     <h2 className="px-1 pt-2 text-px14 font-bold text-muted-foreground">{title}</h2>
@@ -137,7 +123,7 @@ export function ChecksScreen() {
       <Page gap="snug">
         <PageHead crumb={projectName} title={m.checks_screen__title()} text={m.checks_screen__text()} size="lead" developerDetails />
 
-        <NextCard label={m.checks_screen__title()} hue={problems > 0 ? 'teal' : 'sea'} art={<Art />} title={title} why={why}>
+        <NextCard label={m.checks_screen__title()} hue={problems > 0 ? 'teal' : 'sea'} page="checks" title={title} why={why}>
           <div className="flex flex-wrap gap-3">
             {problems > 0 && !checking ? (
               <Button variant="hero" size="pageLg" type="button" onClick={askAll}>

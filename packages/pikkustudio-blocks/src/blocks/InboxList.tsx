@@ -12,19 +12,6 @@ import { InboxStatusChip } from './InboxStatusChip'
 import { useProjectName } from '../lib/project'
 import { useInboxList, type InboxChannel, type InboxSummary } from '../lib/inbox'
 
-function Art() {
-  return (
-    <>
-      <circle cx="230" cy="40" r="120" className="fill-w1" />
-      <circle cx="50" cy="190" r="100" className="fill-w2" />
-      <circle cx="170" cy="130" r="58" className="fill-w3" />
-      <circle cx="270" cy="165" r="9" className="fill-coral" />
-      <rect x="130" y="100" width="80" height="58" rx="12" className="fill-w6" opacity="0.92" />
-      <path d="M136 110l34 26 34-26" className="stroke-w2" strokeWidth="6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-    </>
-  )
-}
-
 const when = (at: string | Date) => new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(at))
 
 const recipients = (row: InboxSummary) => asI18n(row.to.join(', '))
@@ -60,7 +47,7 @@ export function InboxList({ channel, onChannel, onOpen }: { channel: ChannelFilt
       <NextCard
         label={m.inbox__title()}
         hue="sea"
-        art={<Art />}
+        page="inbox"
         title={count === 0 ? m.inbox__hero_title_empty() : m.inbox__hero_title()}
         why={m.inbox__hero_why()}
       >

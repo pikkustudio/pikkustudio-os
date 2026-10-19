@@ -2,8 +2,8 @@ import { afterEach, describe, expect, test } from 'bun:test'
 import { readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { makeZip, serveFiles, sha256, tempDir, testManifest } from './fixtures.js'
-import { declaredTools, declareTool } from './project.js'
-import { ToolResolver } from './resolver.js'
+import { declaredTools, declareTool } from '../../../src/lib/tools/project.js'
+import { ToolResolver } from '../../../src/lib/tools/resolver.js'
 
 const archive = makeZip([{ name: 'shell/chrome-headless-shell', data: '#!/bin/sh\necho "Chromium 154.0.8037.92"\n', mode: 0o644 }])
 let server: ReturnType<typeof serveFiles>

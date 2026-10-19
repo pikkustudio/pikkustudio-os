@@ -6,7 +6,7 @@ import { useProjectKey } from './project'
 export type ProjectTargetKind = 'workspace' | 'stage'
 export type TargetRef = { kind: ProjectTargetKind; name: string }
 export type TargetRpc = { invoke: <T = any>(name: string, data?: unknown) => Promise<T> }
-export type ProjectTarget = TargetRef & { readOnly: boolean; rpc: TargetRpc; live?: boolean; openWorkspace?: () => void }
+export type ProjectTarget = TargetRef & { readOnly: boolean; changesOnly?: boolean; missing?: boolean; rpc: TargetRpc; live?: boolean; openWorkspace?: () => void }
 
 export const LOCAL_WORKSPACE = 'local'
 

@@ -24,7 +24,7 @@ function SignedInNotice() {
   const signOut = useSignOut()
   return (
     <div className="mx-auto flex max-w-[1160px] flex-col gap-6 @min-[1700px]/app:max-w-[1380px]">
-      <HeroShell hue="teal" art="door">
+      <HeroShell hue="teal" page="sign-in">
         <div>
           <h1 className={heroH1}>{m.onb_sign_in_screen__already_signed_in()}</h1>
           <p className={heroLead}>{copy.signedInLead()}</p>
@@ -70,7 +70,7 @@ function SignInChoices() {
       {Hero ? (
         <Hero st={st} loading={loading} open={open} done={go} />
       ) : (
-        <HeroShell hue="teal" art="door">
+        <HeroShell hue="teal" page="sign-in">
           <div>
             {st === 'empty' ? (
               <>

@@ -40,7 +40,7 @@ export function ReviewFixesScreen() {
       <ErrorState error={q.error} what={m.review_fixes__what()} onRetry={() => q.refetch()} retrying={q.isFetching} />
     )
   ) : fixes.length === 0 ? (
-    <Hero hue="sea" art="bubbles" title={m.review_fixes__empty_title()} why={m.review_fixes__empty_text()} />
+    <Hero hue="sea" page="review-fixes" title={m.review_fixes__empty_title()} why={m.review_fixes__empty_text()} />
   ) : (
     <RowStack>
       {fixes.map((f) => (

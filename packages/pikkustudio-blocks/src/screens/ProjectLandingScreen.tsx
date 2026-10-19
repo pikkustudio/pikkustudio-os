@@ -36,7 +36,7 @@ export function ProjectLandingScreen({ home, onAct, busy, notice }: { home: Proj
       </div>
       <Hero
         hue={plan.hue}
-        art={plan.art}
+        page="project"
         side={<BlobStage step={step} />}
         title={isLive ? m.project_live__title() : golive ? m.golive__title() : plan.title}
         why={isLive ? m.project_live__why() : golive ? m.golive__why() : plan.why}

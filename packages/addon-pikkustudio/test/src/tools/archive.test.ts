@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { existsSync, readdirSync, readFileSync, readlinkSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { extractArchive } from './archive.js'
+import { extractArchive } from '../../../src/lib/tools/archive.js'
 import { makeTarGz, makeZip, tempDir } from './fixtures.js'
 
 const formats = [

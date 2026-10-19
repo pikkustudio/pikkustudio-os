@@ -13,29 +13,29 @@ export type StepNote = { in?: string; out?: string; error?: string; code?: strin
 export type Run = { id: string; when: I18nString; took: I18nString; ok: boolean; note: I18nString; wrongAt?: I18nString; steps: Record<string, StepState>; why?: string; notes?: Record<string, StepNote>; older?: Step[] }
 /** One thing that happened in a run, in order. `at` is milliseconds since it began. */
 export type Ev = { seq: number; step: string; type: 'started' | 'retried' | 'done' | 'failed'; at: number }
-/** `cron` is set for a routine that runs on a schedule; `runs` says when it runs, in words. */
-export type Routine = { id: string; name: string; what: string; runs: I18nString; cron?: string; on: boolean; steps: Step[]; history: Run[] }
+/** `cron` is set for a workflow that runs on a schedule; `runs` says when it runs, in words. */
+export type Workflow = { id: string; name: string; what: string; runs: I18nString; cron?: string; on: boolean; steps: Step[]; history: Run[] }
 
 const runWord: Record<StepState, string> = { done: 'completed', failed: 'failed', skipped: 'cancelled', waiting: 'pending', running: 'running' }
 
-export function toMeta(r: Routine, steps: Step[] = r.steps) {
+export function toMeta(r: Workflow, steps: Step[] = r.steps) {
   const nodes: Record<string, any> = {}
   const [when, ...rest] = steps
   rest.forEach((s, i) => {
     const next = rest[i + 1]?.id
     if (s.kind === 'end') nodes[s.id] = { flow: 'return', stepName: s.title, description: s.says }
-    else if (s.kind === 'wait') nodes[s.id] = { flow: 'sleep', stepName: s.title, description: s.says, duration: m.routines__quiet_moment(), next }
+    else if (s.kind === 'wait') nodes[s.id] = { flow: 'sleep', stepName: s.title, description: s.says, duration: m.workflows__quiet_moment(), next }
     else if (s.kind === 'ask') {
-      nodes[s.id] = { flow: 'branch', stepName: s.title, condition: { expression: m.routines__yes() }, thenEntry: next, elseEntry: `${s.id}-no` }
-      nodes[`${s.id}-no`] = { flow: 'return', stepName: s.ifNot ?? m.routines__stops_here() }
-    } else nodes[s.id] = { rpcName: s.by ?? m.routines__your_app(), stepName: s.title, description: s.says, next }
+      nodes[s.id] = { flow: 'branch', stepName: s.title, condition: { expression: m.workflows__yes() }, thenEntry: next, elseEntry: `${s.id}-no` }
+      nodes[`${s.id}-no`] = { flow: 'return', stepName: s.ifNot ?? m.workflows__stops_here() }
+    } else nodes[s.id] = { rpcName: s.by ?? m.workflows__your_app(), stepName: s.title, description: s.says, next }
   })
   const start = rest[0].id
   return { name: r.name, steps: [], nodes, entryNodeIds: [start], wires: r.cron ? { schedule: [{ cron: r.cron, startNode: start }] } : { trigger: [{ name: when.title, startNode: start }] } }
 }
 
 /** A run as the graph reads it: the state of every step, and what started it. */
-export function toRun(r: Routine, run: Run, states: Record<string, StepState>, running = false) {
+export function toRun(r: Workflow, run: Run, states: Record<string, StepState>, running = false) {
   return {
     runId: run.id,
     status: running ? 'running' : run.ok ? 'completed' : 'failed',
@@ -68,7 +68,7 @@ export function stateAt(steps: Step[], events: Ev[], upTo: number): Record<strin
 }
 
 type Node = { flow?: string; rpcName?: string; stepName?: string; description?: string; next?: string; thenEntry?: string; elseEntry?: string }
-type WorkflowMeta = { nodes?: Record<string, Node>; entryNodeIds?: string[]; wires?: { schedule?: { cron: string }[]; trigger?: { name: string }[] } }
+type WorkflowMeta = { scenario?: boolean; source?: string; nodes?: Record<string, Node>; entryNodeIds?: string[]; wires?: { schedule?: { cron: string }[]; trigger?: { name: string }[] } }
 type RealStep = { stepId: string; status: string; result?: unknown; error?: { message?: string }; attemptCount?: number }
 type RealRun = { id: string; status: string; error?: { message?: string }; createdAt: string; updatedAt: string }
 
@@ -81,7 +81,7 @@ const show = (v: unknown) => (v === undefined ? undefined : typeof v === 'string
 const stepsOf = (id: string, meta: WorkflowMeta): Step[] => {
   const nodes = meta.nodes ?? {}
   const cron = meta.wires?.schedule?.[0]?.cron
-  const out: Step[] = [{ id: 'when', kind: 'when', title: cron ? m.routines__on_a_schedule({ cron }) : meta.wires?.trigger?.[0]?.name ? say(meta.wires.trigger[0].name) : m.routines__when_asked(), says: m.routines__what_starts_it() }]
+  const out: Step[] = [{ id: 'when', kind: 'when', title: cron ? m.workflows__on_a_schedule({ cron }) : meta.wires?.trigger?.[0]?.name ? say(meta.wires.trigger[0].name) : m.workflows__when_asked(), says: m.workflows__what_starts_it() }]
   const seen = new Set<string>()
   let cur: string | undefined = meta.entryNodeIds?.[0]
   while (cur && !seen.has(cur) && nodes[cur]) {
@@ -116,32 +116,32 @@ const runOf = (r: RealRun, steps: Step[], real: RealStep[]): Run => {
   return {
     id: r.id,
     when: dayOf(r.createdAt),
-    took: m.routines__took_seconds({ count: secs }),
+    took: m.workflows__took_seconds({ count: secs }),
     ok: r.status === 'completed',
     wrongAt: failed?.title,
-    note: failed ? m.routines__went_wrong_at({ step: failed.title }) : r.status === 'completed' ? m.routines__ran_fine() : say(nice(r.status)),
+    note: failed ? m.workflows__went_wrong_at({ step: failed.title }) : r.status === 'completed' ? m.workflows__ran_fine() : say(nice(r.status)),
     steps: states,
     why: r.error?.message ?? (failed ? notes[failed.id]?.error : undefined),
     notes,
   }
 }
 
-export const useRoutines = (key: string) => {
+export const useWorkflows = (key: string) => {
   const invoke = useContext(ProjectRpcCtx)
-  return useQuery<Routine[]>({
+  return useQuery<Workflow[]>({
     enabled: !!key,
-    queryKey: ['project', key, 'routines'],
+    queryKey: ['project', key, 'workflows'],
     refetchInterval: 8000,
     retry: false,
     queryFn: async () => {
       const meta = (await invoke(key, 'console:getAllMeta', {})) as { workflows?: Record<string, WorkflowMeta> }
       return Promise.all(
-        Object.entries(meta.workflows ?? {}).map(async ([id, workflow]) => {
+        Object.entries(meta.workflows ?? {}).filter(([, w]) => !w.scenario && w.source !== 'scenario').map(async ([id, workflow]) => {
           const steps = stepsOf(id, workflow)
           const runs = ((await invoke(key, 'console:getWorkflowRuns', { workflowName: id, limit: 8 })) as RealRun[] | null) ?? []
           const history = await Promise.all(runs.map(async (r) => runOf(r, steps, ((await invoke(key, 'console:getWorkflowRunSteps', { runId: r.id })) as RealStep[] | null) ?? [])))
           const cron = workflow.wires?.schedule?.[0]?.cron
-          return { id, name: nice(id), what: steps.find((s) => s.kind === 'do')?.says ?? '', runs: cron ? m.routines__every({ cron }) : m.routines__when_asked_to_run(), cron, on: true, steps, history }
+          return { id, name: nice(id), what: steps.find((s) => s.kind === 'do')?.says ?? '', runs: cron ? m.workflows__every({ cron }) : m.workflows__when_asked_to_run(), cron, on: true, steps, history }
         }),
       )
     },

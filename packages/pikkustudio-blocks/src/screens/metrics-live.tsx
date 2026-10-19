@@ -22,7 +22,7 @@ import { useProjectQuery } from '../lib/projectRpc'
 import { LOCAL_WORKSPACE, formatTarget, useProjectTarget } from '../lib/project-target'
 import { useSlots, type AnalyticsEventCount, type AnalyticsEventCounts, type LiveMetrics } from '../lib/slots'
 import { getLocale } from '@/paraglide/runtime.js'
-import { Art, Bars, Figure, clock, seconds, speed, words } from './metrics-shared'
+import { Bars, Figure, clock, seconds, speed, words } from './metrics-shared'
 
 type UseLive = (name: string | null, hours: number) => LiveMetrics
 
@@ -71,7 +71,7 @@ function Gate({ live, head, label, children }: { live: LiveMetrics; head: I18nNo
   const target = useProjectTarget()
   const { say } = useContext(ShellCtx)
   const hero = (title: I18nString, why: I18nString, actions?: I18nNode, calm = true) => (
-    <NextCard label={label} hue={calm ? 'teal' : 'petrol'} art={<Art calm={calm} />} title={title} why={why}>
+    <NextCard label={label} hue={calm ? 'teal' : 'petrol'} page="metrics" title={title} why={why}>
       {actions ? <div className="flex flex-wrap gap-3">{actions}</div> : null}
     </NextCard>
   )
@@ -125,7 +125,7 @@ function Gate({ live, head, label, children }: { live: LiveMetrics; head: I18nNo
 }
 
 function Quiet({ hours, label }: { hours: string; label: I18nString }) {
-  return <NextCard label={label} hue="teal" art={<Art calm />} title={m.metrics_live__quiet_title()} why={hours === '24' ? m.metrics_live__quiet_text_day() : m.metrics_live__quiet_text_week()} />
+  return <NextCard label={label} hue="teal" page="metrics" title={m.metrics_live__quiet_title()} why={hours === '24' ? m.metrics_live__quiet_text_day() : m.metrics_live__quiet_text_week()} />
 }
 
 const perHour = (v: number) => m.metrics_live__per_hour({ n: Math.round(v) })
@@ -166,7 +166,7 @@ export function LiveMetricsScreen({ name, use }: { name: string; use: UseLive })
         const shown = showAll ? s.slow : s.slow.slice(0, 5)
         return (
           <>
-            <NextCard label={m.metrics_live__how_answering()} hue={s.errors > 0 ? 'petrol' : 'teal'} art={<Art calm={s.errors === 0} />} title={verdict} why={detail}>
+            <NextCard label={m.metrics_live__how_answering()} hue={s.errors > 0 ? 'petrol' : 'teal'} page="metrics" title={verdict} why={detail}>
               {s.errors > 0 ? (
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                   <Button variant="hero" size="pageLg" type="button" onClick={() => say(fixPrompt)}>
@@ -283,7 +283,7 @@ export function LivePerformanceScreen({ name, use }: { name: string; use: UseLiv
         const detail = hits > 0 ? m.metrics_live__perf_detail_cut({ count: hits, limit: seconds(s.live.slowLimitMs) }) : slowNow ? m.metrics_screen__detail_slow() : m.metrics_live__perf_detail_ok()
         return (
           <>
-            <NextCard label={m.performance_screen__how_doing()} hue={hits > 0 || slowNow ? 'petrol' : 'teal'} art={<Art calm={hits === 0 && !slowNow} />} title={verdict} why={detail}>
+            <NextCard label={m.performance_screen__how_doing()} hue={hits > 0 || slowNow ? 'petrol' : 'teal'} page="metrics" title={verdict} why={detail}>
               {hits > 0 ? (
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                   <AskPikku label={m.metrics_live__perf_fix()} prompt={m.metrics_live__perf_fix_prompt({ count: hits, limit: seconds(s.live.slowLimitMs), names: s.slow.slice(0, 3).map((f) => f.name).join(', ') })} size="page" />

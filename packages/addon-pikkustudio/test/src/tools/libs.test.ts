@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { missingLibs, parseMissing } from './libs.js'
+import { missingLibs, parseMissing } from '../../../src/lib/tools/libs.js'
 
 describe('parseMissing', () => {
   test('lists each missing library once', () => {

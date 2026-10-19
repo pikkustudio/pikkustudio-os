@@ -2,8 +2,8 @@ import { afterEach, describe, expect, test } from 'bun:test'
 import { chmodSync, mkdirSync, writeFileSync } from 'node:fs'
 import { delimiter, dirname, join } from 'node:path'
 import { makeTarGz, makeZip, serveFiles, sha256, tempDir } from './fixtures.js'
-import { bakedManifest, type Manifest, type ToolEntry } from './manifest.js'
-import { ToolResolver } from './resolver.js'
+import { bakedManifest, type Manifest, type ToolEntry } from '../../../src/lib/tools/manifest.js'
+import { ToolResolver } from '../../../src/lib/tools/resolver.js'
 
 let server: ReturnType<typeof serveFiles>
 

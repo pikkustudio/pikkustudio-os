@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState, type CanvasHTMLAttributes } from 'react'
-import { defaultSettings, findPose, POSES, resolvePose, resolvePoseId, type BlobPoseName } from './core'
+import { defaultSettings, findPose, POSES, resolvePose, resolvePoseId, type BlobPose, type BlobPoseName } from './core'
 import { createMorph, frameShape, go, morphing, snap, stepMorph, type BlobFx, type Morph } from './motion'
 import { createJitter, FALLBACK_FONT, render, type Jitter } from './render'
 
 export type { BlobPoseName } from './core'
 
 export type BlobProps = Omit<CanvasHTMLAttributes<HTMLCanvasElement>, 'color' | 'title' | 'aria-label' | 'width' | 'height'> & {
-  pose?: BlobPoseName
+  pose?: BlobPoseName | BlobPose
   size?: number | string
   title?: string
   fill?: string
@@ -114,7 +114,7 @@ function draw(i: Inst, now: number) {
     const r = cv.getBoundingClientRect()
     look = [(pointer[0] - (r.left + r.width / 2)) / LOOK_REACH, (pointer[1] - (r.top + r.height / 2)) / LOOK_REACH]
   }
-  const fx: BlobFx = i.speaking ? 'speaking' : i.id === 'think' ? 'thinking' : i.id === 'sleep' ? 'sleeping' : 'idle'
+  const fx: BlobFx = i.speaking ? 'speaking' : i.id === 'think' ? 'thinking' : i.id === 'sleep' ? 'sleeping' : i.id === 'lost' ? 'lost' : 'idle'
   const t = now / 1000 + i.phase
   const shape = frameShape(i.morph, { t, fx, look, settings: SETTINGS, still })
   render(ctx, cv.width, shape, {
@@ -183,7 +183,7 @@ const dimension = (size?: number | string) => (size === undefined ? undefined : 
 export function Blob({ pose = 'blob', size, title, fill, lookX, lookY, motion = true, stroke, speaking = false, className, style, ...rest }: BlobProps) {
   const ref = useRef<HTMLCanvasElement>(null)
   const [inst] = useState<Inst>(() => {
-    const p = resolvePose(pose)
+    const p = typeof pose === 'string' ? resolvePose(pose) : pose
     return {
       canvas: null,
       id: p.id,
@@ -248,10 +248,10 @@ export function Blob({ pose = 'blob', size, title, fill, lookX, lookY, motion = 
   }, [inst, motion, speaking, fill, stroke, lookX, lookY])
 
   useEffect(() => {
-    const id = resolvePoseId(pose)
+    const id = typeof pose === 'string' ? resolvePoseId(pose) : pose.id
     if (id === inst.id) return
     inst.id = id
-    const p = findPose(POSES, id)
+    const p = typeof pose === 'string' ? findPose(POSES, id) : pose
     if (reduced()) snap(inst.morph, p)
     else go(inst.morph, p, performance.now())
     inst.dirty = true

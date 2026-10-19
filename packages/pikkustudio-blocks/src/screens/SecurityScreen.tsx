@@ -73,19 +73,6 @@ const brief = (issues: Issue[], report: Report) =>
     'Update every package.json that declares each package, regenerate the lockfile, then run the typecheck and the test suite. Where no fixed version exists, work around the weakness. Fix only what the upgrade breaks; do not change behaviour beyond what the new versions require.',
   ].join('\n')
 
-function Art() {
-  return (
-    <>
-      <circle cx="230" cy="40" r="120" className="fill-w1" />
-      <circle cx="50" cy="190" r="100" className="fill-w2" />
-      <circle cx="170" cy="130" r="58" className="fill-w3" />
-      <circle cx="270" cy="165" r="9" className="fill-coral" />
-      <path d="M170 82l38 14v30c0 26-17 44-38 52-21-8-38-26-38-52V96z" className="fill-w6" opacity="0.92" />
-      <path d="M154 130l11 11 21-23" fill="none" className="stroke-w2" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
-    </>
-  )
-}
-
 function Problem({ issue, report, dev, projectKey }: { issue: Issue; report: Report; dev: boolean; projectKey: string }) {
   const { open } = useContext(ShellCtx)
   const update = useProjectAction<{ package: string; version: string }>(projectKey, 'console:updateDependency', [AUDIT])
@@ -223,7 +210,7 @@ export function SecurityScreen() {
   return (
     <Page gap="snug">
       {head}
-      <NextCard label={m.security_screen__title()} hue={tone} art={<Art />} title={title} why={why}>
+      <NextCard label={m.security_screen__title()} hue={tone} page="security" title={title} why={why}>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
           {run.isPending ? (
             <StatusLine onHero text={m.security_screen__checking()} />

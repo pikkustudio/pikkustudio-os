@@ -1,6 +1,7 @@
 import { m } from '@/i18n/messages'
 import { asI18n, type I18nString } from '@pikku/react'
 import { ArrowRight, Check, CircleAlert, CircleDashed, Code2, Compass, Database, FlaskConical, HelpCircle, LoaderCircle, Rocket, Undo2 } from 'lucide-react'
+import { Navigate } from '@tanstack/react-router'
 import { useContext, useEffect, useState } from 'react'
 import { Hero } from '../blocks/Hero'
 import { Page } from '../blocks/Page'
@@ -181,7 +182,7 @@ function Steps({ list, projectKey, refetch }: { list: Checklist; projectKey: str
     <Page gap="tight">
       <Hero
         hue="teal"
-        art="window"
+        page="project"
         title={m.project_flow__hero_title()}
         why={heroWhy(list)}
         actions={
@@ -224,7 +225,7 @@ export function ProjectScreen() {
   const query = useProjectChecklist(key)
   return (
     <QueryState query={query} skeleton={<CardsSkeleton count={3} />}>
-      {(list) => <Steps list={list} projectKey={key} refetch={query.refetch} />}
+      {(list) => !list.started ? <Navigate {...keep} to="/home" replace /> : <Steps list={list} projectKey={key} refetch={query.refetch} />}
     </QueryState>
   )
 }

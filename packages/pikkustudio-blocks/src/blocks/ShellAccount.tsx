@@ -28,6 +28,8 @@ export function ShellAccountView({
   expanded,
   onOpen,
   onAccount,
+  collapsed,
+  tile,
 }: {
   icon: LucideIcon
   scope: I18nString
@@ -37,9 +39,22 @@ export function ShellAccountView({
   expanded: boolean
   onOpen: () => void
   onAccount: () => void
+  collapsed?: boolean
+  tile?: string
 }) {
   const letters = name ? initials(name) : undefined
   const initial = letters ? asI18n(letters) : undefined
+  if (collapsed)
+    return (
+      <>
+        <button type="button" aria-expanded={expanded} onClick={onOpen} title={scope} aria-label={scope} className={`mx-auto grid size-10 place-items-center rounded-lg transition-colors duration-140 hover:bg-secondary ${expanded ? 'bg-secondary' : ''}`}>
+          {tile ? <span className="grid size-8 place-items-center rounded-lg bg-primary text-[14px] font-bold text-primary-foreground">{asI18n(initials(tile))}</span> : <Icon className="size-5.5" />}
+        </button>
+        {name ? (
+          <button type="button" onClick={onAccount} title={name} aria-label={name} className="mx-auto grid size-9 place-items-center rounded-full bg-indigo text-[13px] font-bold text-white">{initial}</button>
+        ) : null}
+      </>
+    )
   return (
     <>
       <button
@@ -67,7 +82,7 @@ export function ShellAccountView({
   )
 }
 
-export function LocalShellAccount({ expanded, onOpen, onAccount }: { expanded: boolean; onOpen: () => void; onAccount: () => void }) {
+export function LocalShellAccount({ expanded, onOpen, onAccount, collapsed }: { expanded: boolean; onOpen: () => void; onAccount: () => void; collapsed?: boolean }) {
   const accountName = useAccount().data?.name
   const name = accountName ? asI18n(accountName) : undefined
   return (
@@ -80,6 +95,7 @@ export function LocalShellAccount({ expanded, onOpen, onAccount }: { expanded: b
       expanded={expanded}
       onOpen={onOpen}
       onAccount={onAccount}
+      collapsed={collapsed}
     />
   )
 }
@@ -141,7 +157,7 @@ export function WorkspaceProjects() {
               <li key={p.key}>
                 <Link
                   {...keep}
-                  to="/overview"
+                  to="/home"
                   search={((s: object) => ({ ...s, project: slug, panel: undefined })) as never}
                   aria-current={slug === current ? 'page' : undefined}
                   className="flex items-center gap-3 rounded-lg px-2 py-2 text-[15px] font-semibold no-underline transition-colors duration-140 hover:bg-secondary aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground"

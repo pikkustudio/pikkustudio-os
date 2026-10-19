@@ -1,25 +1,23 @@
 import type { I18nNode, I18nString } from '@pikku/react'
-import { HeroArt, type Art } from './HeroArt'
+import { PageArt } from './PageArt'
 
 export function Hero({
   hue,
-  art,
+  page,
   title,
   why,
   actions,
   hint,
-  thumb,
   side,
   notice,
   children,
 }: {
   hue: 'teal' | 'petrol' | 'sea'
-  art: Art
+  page: string
   title: I18nString
   why: I18nString
   actions?: I18nNode
   hint?: I18nString
-  thumb?: I18nNode
   side?: I18nNode
   notice?: I18nNode
   children?: I18nNode
@@ -44,7 +42,7 @@ export function Hero({
         {notice}
       </div>
       <div className="relative hidden min-h-55 md:block" aria-hidden="true">
-        {side ?? <HeroArt art={art} thumb={thumb} />}
+        {side ?? <PageArt page={page} />}
       </div>
     </section>
   )

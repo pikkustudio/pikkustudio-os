@@ -70,7 +70,7 @@ export interface ToolResolverOptions {
   manifest?: Manifest
   platform?: Platform | null
   searchPath?: string
-  coreBin?: string[]
+  coreBin?: string[] | (() => string[])
   shimsDirs?: string[]
   autoInstall?: string[]
   projectDir?: () => string | undefined
@@ -87,6 +87,11 @@ export class ToolResolver {
   constructor(private options: ToolResolverOptions) {
     this.manifest = options.manifest ?? bakedManifest
     this.platform = options.platform === undefined ? currentPlatform() : options.platform
+  }
+
+  private coreBin() {
+    const bins = this.options.coreBin
+    return typeof bins === 'function' ? bins() : (bins ?? [])
   }
 
   private searchPath() {
@@ -225,7 +230,7 @@ export class ToolResolver {
       Object.assign(env, resolution.env)
       dirs.push(...resolution.bins.map((bin) => dirname(bin)))
     }
-    dirs.push(...(this.options.coreBin ?? []), ...(process.env.PATH ?? '').split(delimiter))
+    dirs.push(...this.coreBin(), ...(process.env.PATH ?? '').split(delimiter))
     env.PATH = [...new Set(dirs.filter(Boolean))].join(delimiter)
     return { env, needs: resolutions.filter((resolution) => resolution.status === 'needs') }
   }
@@ -272,7 +277,7 @@ export class ToolResolver {
           if (resolution.status !== 'needs') resolved.push(resolution)
         } catch {}
       }
-      await syncShims({ home: this.options.home, shimsDirs: dirs, coreBin: this.options.coreBin ?? [], resolved })
+      await syncShims({ home: this.options.home, shimsDirs: dirs, coreBin: this.coreBin(), resolved })
     }
     this.pending = this.pending.then(run, run)
     return (this.pending as Promise<void>).catch(() => {})

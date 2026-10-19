@@ -1,9 +1,9 @@
 import { describe, expect, test } from 'bun:test'
 import { chmodSync, mkdirSync, writeFileSync } from 'node:fs'
 import { delimiter, join } from 'node:path'
-import { bakedManifest, type Manifest } from './manifest.js'
+import { bakedManifest, type Manifest } from '../../../src/lib/tools/manifest.js'
 import { tempDir, testManifest } from './fixtures.js'
-import { ToolResolver } from './resolver.js'
+import { ToolResolver } from '../../../src/lib/tools/resolver.js'
 
 const artifact = { url: 'http://127.0.0.1:1/shell.zip', sha256: 'a'.repeat(64), size: 1234 }
 

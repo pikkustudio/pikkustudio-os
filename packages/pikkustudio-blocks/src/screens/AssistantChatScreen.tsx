@@ -2,7 +2,6 @@ import { m } from '@/i18n/messages'
 import { useContext, useState } from 'react'
 import { Bot } from 'lucide-react'
 import { Button } from '../ui/button'
-import { Art } from '../blocks/ExploreHub'
 import { AssistantCard } from '../blocks/AssistantCard'
 import { AssistantDrawer } from '../blocks/AssistantDrawer'
 import { EmptyState } from '../blocks/EmptyState'
@@ -45,7 +44,7 @@ export function AssistantChatScreen() {
               <NextCard
                 label={m.assistants_screen__your_assistants()}
                 hue="petrol"
-                art={<Art />}
+                page="assistants"
                 title={m.assistants_screen__n_work({ count: list.length })}
                 why={m.assistants_screen__each_one_talks_to_people({ total: list.reduce((n, x) => n + x.does.length, 0) })}
               >

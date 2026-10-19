@@ -18,18 +18,6 @@ import { useProjectKey, useProjectName } from '../lib/project'
 import { accountsProblem } from '../lib/accounts'
 import { useConnect, useConnections, type Connection } from '../lib/connections'
 
-function Art() {
-  return (
-    <>
-      <circle cx="232" cy="44" r="118" className="fill-w1" />
-      <circle cx="46" cy="186" r="96" className="fill-w2" />
-      <circle cx="128" cy="112" r="40" fill="none" className="stroke-w6" strokeWidth="12" />
-      <circle cx="196" cy="112" r="40" fill="none" className="stroke-w3" strokeWidth="12" />
-      <circle cx="272" cy="168" r="9" className="fill-coral" />
-    </>
-  )
-}
-
 const Group = ({ title, sub, children }: { title: I18nString; sub: I18nString; children: I18nNode }) => (
   <section className="flex flex-col gap-2" aria-label={title}>
     <h2 className="px-1 pt-2 text-px14 font-bold text-muted-foreground">{title}</h2>
@@ -123,7 +111,7 @@ export function ConnectionsScreen() {
               <NextCard
                 label={m.connections_screen__hero_label()}
                 hue={first || problem ? 'teal' : 'sea'}
-                art={<Art />}
+                page="connections"
                 title={first ? m.connections_screen__hero_missing({ count: missing.length }) : problem ? m.connections_screen__hero_problem() : status.isPending ? m.connections_screen__hero_checking() : m.connections_screen__hero_ok()}
                 why={first ? m.connections_screen__hero_missing_why({ name: asI18n(first.label) }) : problem ? problemWhy : status.isPending ? m.connections_screen__text() : m.connections_screen__hero_ok_why()}
               >

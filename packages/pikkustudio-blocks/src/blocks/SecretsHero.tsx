@@ -3,27 +3,13 @@ import { Plus } from 'lucide-react'
 import { Button } from '../ui/button'
 import { NextCard } from './NextCard'
 
-function Art() {
-  return (
-    <>
-      <circle cx="230" cy="40" r="120" className="fill-w1" />
-      <circle cx="50" cy="190" r="100" className="fill-w2" />
-      <circle cx="170" cy="130" r="58" className="fill-w3" />
-      <circle cx="270" cy="165" r="9" className="fill-coral" />
-      <rect x="138" y="112" width="64" height="48" rx="12" className="fill-w6" opacity="0.92" />
-      <path d="M152 112V98a18 18 0 0 1 36 0v14" className="stroke-w6" strokeWidth="7" fill="none" strokeLinecap="round" />
-      <circle cx="170" cy="136" r="6" className="fill-w2" />
-    </>
-  )
-}
-
 export function SecretsHero({ count, onAdd }: { count: number | undefined; onAdd: () => void }) {
   const none = count === 0
   return (
     <NextCard
       label={m.secrets_hero__secrets()}
       hue="petrol"
-      art={<Art />}
+      page="secrets"
       title={none ? m.secrets_hero__keep_your_passwords_in() : m.secrets_hero__your_secrets_are_locked()}
       why={
         none

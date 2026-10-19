@@ -1,4 +1,4 @@
-import { useSearch } from '@tanstack/react-router'
+import { useParams } from '@tanstack/react-router'
 import { useMemo } from 'react'
 import { KnowledgeBrowser } from '../blocks/KnowledgeBrowser'
 import { KnowledgeHead } from '../blocks/KnowledgeHead'
@@ -11,7 +11,7 @@ import { Page } from '../blocks/Page'
 function Knowledge({ bundle }: { bundle: KnowledgeBundle | null }) {
   const { notes, missing, order } = useMemo(() => notesFromBundle(bundle ?? { notes: [], sections: [] }), [bundle])
   const { linkCount } = knowledgeGraph(notes, missing)
-  const { note } = useSearch({ strict: false }) as { note?: string }
+  const note = (useParams({ strict: false }) as { _splat?: string })._splat || undefined
   return (
     <>
       <KnowledgeHead notes={notes} linkCount={linkCount} />

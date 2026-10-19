@@ -17,7 +17,7 @@ import { useProjectKey } from '../lib/project'
 import { useProjectTarget } from '../lib/project-target'
 import { useSlots } from '../lib/slots'
 import { AnalyticsEvents, LiveMetricsScreen, LiveSwitch } from './metrics-live'
-import { Art, FAILED_LIMIT, Figure, clock, explain, kept, nameOf, ranges, readMetrics, reason, seconds, speed, useRange } from './metrics-shared'
+import { FAILED_LIMIT, Figure, clock, explain, kept, nameOf, ranges, readMetrics, reason, seconds, speed, useRange } from './metrics-shared'
 
 function CopyDetails({ text, hero }: { text: I18nString; hero?: boolean }) {
   const [done, setDone] = useState(false)
@@ -122,7 +122,7 @@ function LocalMetrics({ scope }: { scope: 'app' | 'studio' }) {
 
       {calls.isError ? (
         <>
-          <NextCard label={m.metrics_screen__how_answering()} hue="petrol" art={<Art calm={false} />} title={m.metrics_screen__error_title()} why={m.metrics_screen__error_text()}>
+          <NextCard label={m.metrics_screen__how_answering()} hue="petrol" page="metrics" title={m.metrics_screen__error_title()} why={m.metrics_screen__error_text()}>
             <div className="flex flex-wrap items-center gap-3">
               <Button variant="hero" size="pageLg" type="button" onClick={() => say(m.error_state__fix_ask_what({ what: m.metrics_screen__how_answering(), details: detailsOf(faultOf(calls.error), m.metrics_screen__how_answering()) }))}>
                 <PikkuDot />
@@ -134,16 +134,16 @@ function LocalMetrics({ scope }: { scope: 'app' | 'studio' }) {
         </>
       ) : calls.isPending ? (
         <div role="status" aria-busy="true" className="flex flex-col gap-3.5">
-          <NextCard label={m.metrics_screen__how_answering()} hue="teal" art={<Art calm />} title={m.metrics_screen__loading_title()} why={scope === 'studio' ? m.metrics_screen__text_studio() : m.metrics_screen__text_app()} />
+          <NextCard label={m.metrics_screen__how_answering()} hue="teal" page="metrics" title={m.metrics_screen__loading_title()} why={scope === 'studio' ? m.metrics_screen__text_studio() : m.metrics_screen__text_app()} />
           <div className="h-40 animate-pulse rounded-card border border-border bg-secondary" />
         </div>
       ) : !all.length ? (
-        <NextCard label={m.metrics_screen__how_answering()} hue="teal" art={<Art calm />} title={m.metrics_screen__empty_title()} why={m.metrics_screen__empty_text()}>
+        <NextCard label={m.metrics_screen__how_answering()} hue="teal" page="metrics" title={m.metrics_screen__empty_title()} why={m.metrics_screen__empty_text()}>
           <span className="hidden" data-testid="metrics-empty" />
         </NextCard>
       ) : (
         <>
-          <NextCard label={m.metrics_screen__how_answering()} hue={failures > 0 ? 'petrol' : 'teal'} art={<Art calm={failures === 0} />} title={verdict} why={detail}>
+          <NextCard label={m.metrics_screen__how_answering()} hue={failures > 0 ? 'petrol' : 'teal'} page="metrics" title={verdict} why={detail}>
             {failures > 0 ? (
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                 {scope === 'studio' ? (

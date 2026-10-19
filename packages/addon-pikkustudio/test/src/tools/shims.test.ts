@@ -2,8 +2,8 @@ import { describe, expect, test } from 'bun:test'
 import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { tempDir } from './fixtures.js'
-import type { Manifest, ToolEntry } from './manifest.js'
-import { ToolResolver } from './resolver.js'
+import type { Manifest, ToolEntry } from '../../../src/lib/tools/manifest.js'
+import { ToolResolver } from '../../../src/lib/tools/resolver.js'
 
 const script = (path: string, body: string) => {
   mkdirSync(join(path, '..'), { recursive: true })

@@ -52,7 +52,7 @@ export type Slots = {
   /** Wording a host replaces; anything left out reads neutral. */
   copy?: Partial<Copy>
   PublishTarget?: ComponentType
-  ShellAccount?: ComponentType<{ expanded: boolean; onOpen: () => void; onAccount: () => void }>
+  ShellAccount?: ComponentType<{ expanded: boolean; onOpen: () => void; onAccount: () => void; collapsed?: boolean }>
   WorkspaceAbout?: ComponentType<WorkspaceAboutProps>
   AccountName?: ComponentType
   TeamName?: ComponentType<{ children: (name: string) => ReactNode }>
@@ -69,17 +69,18 @@ export type Slots = {
   useAnalyticsEventCounts?: (stageName: string | null, days: number) => AnalyticsEventCounts | null
   useReleases?: (projectKey: string) => ReleasesView
   useReleaseDetail?: (projectKey: string, id: string, wanted: boolean) => ReleaseDetail
+  /** The published copy's secrets and settings; null when the open copy is not a published one. A hook, called every render. */
+  useStageSettings?: (projectKey: string, settingIds: string[]) => StageSettings | null
   /** What the next publish would change against what is live; null when unknown or nothing deploys. A hook, called every render. */
   useReleasePreview?: (projectKey: string) => ReleaseGroup[] | null
   /** One row saying how published versions go live, with its own form; absent where nothing deploys. */
   ReleaseMode?: ComponentType
   /** Recent messages the live copy sent to other services; absent where nothing deploys. */
   ReleaseSent?: ComponentType
-  /** The published copy's secrets and settings; null when the open copy is not a published one. A hook, called every render. */
-  useStageSettings?: (projectKey: string, settingIds: string[]) => StageSettings | null
   useLiveUpdates?: (queryKeys: readonly string[]) => void
   RailFoot?: ComponentType<{ collapsed: boolean }>
   LiveAppHealth?: ComponentType
+  Workspaces?: ComponentType
   StageLogs?: ComponentType<{ name: string }>
   /** Where the project is published, shown in the chat panel above the message box. */
   ChatPublishStatus?: ComponentType<{ projectKey: string }>

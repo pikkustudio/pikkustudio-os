@@ -453,6 +453,40 @@ describe('StudioProjectsService', () => {
     assert.equal((await service.list())[0].open, false)
   })
 
+  test('writes the dev overlay under the runtime dir and removes the old root one', async () => {
+    const base = await mkdtemp(join(tmpdir(), 'pikku-studio-projects-'))
+    const service = new StudioProjectsService({
+      account: fakeAccount([]),
+      home: join(base, 'studio'),
+      projectsDir: join(base, 'studio', 'local'),
+      devCommand: () => ({ command: 'sh', args: ['-c', 'echo "$@" > dev-args.txt; sleep 30', 'sh'] }),
+      stopTimeoutMs: 300,
+      installCommand: () => null,
+      waitForPort: async () => {},
+      startApps: false,
+      devContributors: ['/x/inbox.contributor.ts'],
+    })
+    const path = await repo(base, 'notes')
+    await writeFile(join(path, 'pikku.config.json'), JSON.stringify({ runtimeDir: 'var/run', dev: { contributors: [{ module: './own.ts' }] } }))
+    git(path, 'add', '-A')
+    git(path, 'commit', '-qm', 'config')
+    const added = await service.add(path)
+    const opened = await service.open(added.key)
+    const projectDir = opened.worktree
+    await writeFile(join(projectDir, '__pikku_studio.pikku.config.json'), '{}')
+    service.close(added.key)
+    await service.open(added.key)
+    const overlay = join(projectDir, 'var', 'run', 'studio', 'pikku.config.json')
+    for (let i = 0; i < 50 && !existsSync(join(projectDir, 'dev-args.txt')); i++) await new Promise((r) => setTimeout(r, 50))
+    assert.equal(readFileSync(join(projectDir, 'dev-args.txt'), 'utf8').trim(), `--config ${overlay}`)
+    assert.deepEqual(JSON.parse(readFileSync(overlay, 'utf8')), {
+      extends: '../../../pikku.config.json',
+      dev: { contributors: [{ module: './own.ts' }, { module: '/x/inbox.contributor.ts' }] },
+    })
+    assert.equal(existsSync(join(projectDir, '__pikku_studio.pikku.config.json')), false)
+    service.close(added.key)
+  })
+
   test('stops an open project gracefully and says which were open', async () => {
     const { base, service } = await setup()
     const added = await service.add(await repo(base, 'notes'))

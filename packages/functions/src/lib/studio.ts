@@ -17,11 +17,9 @@ import {
 import type { Kysely } from 'kysely'
 import { connectVault, projectVaultEnv } from '@pikkustudio/vault/connect'
 import { mintInboxToken } from '@pikkustudio/addon-inbox/token'
-import { shimsDir } from '@pikkustudio/builder'
 import { frameSecret } from './addon-frame-token.js'
 import { installEmbeddedRuntime } from './runtime.js'
 import { holdWhileStreaming } from './sleep.js'
-import { ToolResolver } from './tools/resolver.js'
 import { StudioAudit, instrumentStudio } from './studio-audit.js'
 
 export interface Studio {
@@ -31,7 +29,6 @@ export interface Studio {
   publisher: StudioPublisher
   builder: BuilderSession
   settings: StudioSettingsFile
-  tools: ToolResolver
   audit: StudioAudit
   models: Map<string, string>
 }
@@ -50,15 +47,7 @@ const inboxEnv = (home: string, key: string): Record<string, string> => {
 
 export async function createStudio(home = studioHome(), db?: Kysely<any>): Promise<Studio> {
   const runtime = await installEmbeddedRuntime(home)
-  const tools = new ToolResolver({
-    home,
-    shimsDirs: [shimsDir(home), shimsDir(home, home)],
-    coreBin: runtime ? [join(runtime, 'bin')] : [],
-    autoInstall: (process.env.PIKKU_STUDIO_TOOLS_AUTO_INSTALL ?? '').split(',').map((id) => id.trim()).filter(Boolean),
-    projectDir: () => process.env.PIKKU_STUDIO_PROJECT || undefined,
-    onDeclared: (message) => console.info(`[studio] ${message}`),
-  })
-  void tools.ensureDeclared().catch(() => {})
+  if (runtime) process.env.PIKKU_STUDIO_CORE_BIN = join(runtime, 'bin')
   const core = await createStudioServices({
     home,
     projectStore: db ? kyselyProjectStore(db, fileProjectStore(home)) : undefined,
@@ -90,7 +79,6 @@ export async function createStudio(home = studioHome(), db?: Kysely<any>): Promi
     publisher: core.studioPublisher,
     builder: core.studioBuilder,
     settings: core.studioSettings,
-    tools,
     audit,
     models: core.studioModels,
   }

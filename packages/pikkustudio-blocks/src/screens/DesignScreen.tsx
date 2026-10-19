@@ -1,6 +1,6 @@
 import { asI18n, type I18nString } from '@pikku/react'
 import { useCallback, useContext, useState } from 'react'
-import { useNavigate, useSearch } from '@tanstack/react-router'
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { AppWindow, LayoutTemplate, Shapes, UserRound } from 'lucide-react'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { m } from '@/i18n/messages'
@@ -21,6 +21,7 @@ import { DesignPartsFrame, type PartsCatalog, type PartsLens } from '../blocks/D
 import { StatusLine } from '../blocks/StatusLine'
 import { MockStatusBar } from '../blocks/MockStatusBar'
 import { useProjectKey } from '../lib/project'
+import { keepSearch } from '../lib/project-url'
 import type { Device, Mode, Styles } from '../types/designTypes'
 
 type LiveApp = { slug: string; url: string | null; state: 'starting' | 'ready' | 'failed' }
@@ -47,7 +48,8 @@ const pickedLabel = ({ omId, component, text: shown }: PickedElement): I18nStrin
 }
 
 export function DesignScreen() {
-  const q = useSearch({ strict: false }) as { mode?: Mode; screen?: 'tablet' | 'phone'; app?: string; parts?: PartsLens; part?: string }
+  const q = useSearch({ strict: false }) as { mode?: Mode; screen?: 'tablet' | 'phone'; app?: string }
+  const route = useParams({ strict: false }) as { lens?: string; part?: string }
   const navigate = useNavigate()
   const set = (patch: Record<string, unknown>) => navigate({ to: '.', search: ((prev: object) => ({ ...prev, ...patch })) as never, replace: true })
   const key = useProjectKey()
@@ -68,7 +70,7 @@ export function DesignScreen() {
 
   const list = ((apps.data as LiveApp[] | undefined) ?? [])
   const current = list.find((a) => a.slug === q.app) ?? list[0]
-  const parts = q.parts === 'library' || q.parts === 'app' ? q.parts : null
+  const parts: PartsLens | null = route.lens === 'library' || route.lens === 'app' ? route.lens : null
   const [catalog, setCatalog] = useState<PartsCatalog>({ library: [], app: [] })
   const onCatalog = useCallback((next: PartsCatalog) => setCatalog(next), [])
   const preview = usePikkuQuery('studio:getDesignPreview', { key }, {
@@ -78,14 +80,14 @@ export function DesignScreen() {
   const restartPreview = usePikkuMutation('studio:restartDesignPreview', { onSuccess: () => preview.refetch() })
   const startPreview = usePikkuMutation('studio:openProject', { onSuccess: () => preview.refetch() })
   const entries = parts ? catalog[parts] : []
-  const section = parts ? (q.part && entries.some((e) => e.key === q.part) ? q.part : (entries[0]?.key ?? null)) : null
+  const section = parts ? (route.part && entries.some((e) => e.key === route.part) ? route.part : (entries[0]?.key ?? null)) : null
   const partGroups = parts
     ? [...new Set(entries.map((e) => e.group))].map((group) => ({ app: group, label: asI18n(group), pages: entries.filter((e) => e.group === group).map((e) => ({ id: e.key, name: asI18n(e.title), text: asI18n(group) })) }))
     : []
   const design = preview.data as DesignPreview | undefined
 
   const device: Device = q.screen ?? 'computer'
-  const tool = q.mode === 'translations' || q.mode === 'chat' || q.mode === 'impersonate' || q.mode === 'none' ? q.mode : 'design'
+  const tool = q.mode === 'translations' || q.mode === 'chat' || q.mode === 'impersonate' || q.mode === 'none' ? q.mode : q.mode ? 'design' : 'none'
 
   let stage
   if (parts) {
@@ -160,12 +162,13 @@ export function DesignScreen() {
           kind={parts ? 'part' : 'app'}
           onPick={(_a, p) => {
             forget()
-            set(parts ? { part: p } : { app: p })
+            if (parts) navigate({ to: `/design/parts/${parts}/${encodeURIComponent(p)}` as never, search: keepSearch as never, replace: true })
+            else set({ app: p })
           }}
           onDevice={(d) => set({ screen: d === 'computer' ? undefined : d })}
           onTool={(t) => {
             forget()
-            set({ mode: t === 'design' ? undefined : t })
+            set({ mode: t === 'design' ? 'theme' : t })
           }}
           onReload={() => setReloadKey((k) => k + 1)}
           onOpenTab={parts ? (design?.url ? () => window.open(liveAppUrl(design.url), '_blank', 'noopener') : undefined) : current?.url ? () => window.open(liveAppUrl(current.url!), '_blank', 'noopener') : undefined}

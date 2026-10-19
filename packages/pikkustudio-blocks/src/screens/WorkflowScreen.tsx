@@ -1,15 +1,15 @@
 import { m } from '@/i18n/messages'
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { Link } from '../blocks/Link'
-import { ArrowLeft, Check, ChevronDown, ChevronUp, History, Play, Radio, SkipBack, SkipForward, TriangleAlert, Workflow, X } from 'lucide-react'
+import { ArrowLeft, Check, ChevronDown, ChevronUp, History, Play, Radio, SkipBack, SkipForward, TriangleAlert, Workflow as WorkflowIcon, X } from 'lucide-react'
 import { asI18n, completeMessages, type I18nString } from '@pikku/react'
 import { WorkflowGraphView, type CompleteWorkflowGraphMessages } from '@pikkustudio/workflow-graph'
 import { Button } from '../ui/button'
 import { PikkuDot } from '../blocks/PikkuDot'
 import { Dot, RowCard, RowStack } from '../blocks/RowCard'
-import { useRoutines } from '../lib/routines'
+import { useWorkflows } from '../lib/workflows'
 import { useProjectKey } from '../lib/project'
-import { eventsOf, stateAt, toMeta, toRun, type Ev, type Routine, type Run, type StepState } from '../lib/routines'
+import { eventsOf, stateAt, toMeta, toRun, type Ev, type Workflow, type Run, type StepState } from '../lib/workflows'
 import { SidePanel } from '../blocks/SidePanel'
 import { keep } from '../lib/links'
 import { ShellCtx } from '../lib/shell'
@@ -85,21 +85,21 @@ const graphMessages = completeMessages<CompleteWorkflowGraphMessages>({
 
 
 const sample = {
-  stateWord: { failed: m.routine_screen__state_failed, waiting: m.routine_screen__state_waiting, done: m.routine_screen__state_done, skipped: m.routine_screen__state_skipped, running: m.routine_screen__state_running } as Record<StepState, () => I18nString>,
-  evWord: { started: m.routine_screen__started, retried: m.routine_screen__tried_again, done: m.routine_screen__finished, failed: m.routine_screen__went_wrong } as Record<Ev['type'], () => I18nString>,
+  stateWord: { failed: m.workflow_screen__state_failed, waiting: m.workflow_screen__state_waiting, done: m.workflow_screen__state_done, skipped: m.workflow_screen__state_skipped, running: m.workflow_screen__state_running } as Record<StepState, () => I18nString>,
+  evWord: { started: m.workflow_screen__started, retried: m.workflow_screen__tried_again, done: m.workflow_screen__finished, failed: m.workflow_screen__went_wrong } as Record<Ev['type'], () => I18nString>,
   dot: { done: 'bg-success', failed: 'bg-destructive', running: 'bg-info', waiting: 'bg-muted-foreground/40', skipped: 'bg-muted-foreground/40' } as Record<StepState, string>,
 }
 
-const secs = (ms: number): I18nString => m.routine_screen__seconds({ n: (ms / 1000).toFixed(1) })
+const secs = (ms: number): I18nString => m.workflow_screen__seconds({ n: (ms / 1000).toFixed(1) })
 
-export function RoutineScreen({ id }: { id: string }) {
-  const { data: routines = [] } = useRoutines(useProjectKey())
-  const r = routines.find((x) => x.id === id)
-  if (!r) return <p className="text-[17px] text-ink-2">{m.routine_screen__missing()}</p>
+export function WorkflowScreen({ id }: { id: string }) {
+  const { data: workflows = [] } = useWorkflows(useProjectKey())
+  const r = workflows.find((x) => x.id === id)
+  if (!r) return <p className="text-[17px] text-ink-2">{m.workflow_screen__missing()}</p>
   return <Detail key={r.id} r={r} />
 }
 
-function Detail({ r }: { r: Routine }) {
+function Detail({ r }: { r: Workflow }) {
   const { say } = useContext(ShellCtx)
   const [runId, setRunId] = useState<string | null>(r.history[0]?.id ?? null)
   const [live, setLive] = useState<Run | null>(null)
@@ -139,7 +139,7 @@ function Detail({ r }: { r: Routine }) {
   const runNow = () => {
     const base = r.history.find((h) => h.ok) ?? r.history[0]
     if (!base) return
-    setLive({ ...base, id: 'live', when: m.routine_screen__just_now(), note: m.routine_screen__running_now(), took: m.routine_screen__a_few_seconds(), older: undefined })
+    setLive({ ...base, id: 'live', when: m.workflow_screen__just_now(), note: m.workflow_screen__running_now(), took: m.workflow_screen__a_few_seconds(), older: undefined })
     setShown(0)
     choose('live')
   }
@@ -155,20 +155,20 @@ function Detail({ r }: { r: Routine }) {
     <div className="flex h-full min-h-0 flex-col gap-3">
       <header className="flex flex-wrap items-center gap-x-4 gap-y-2">
         <span className="min-w-0 flex-1 basis-80">
-          <small className="block text-[14px] font-semibold text-muted-foreground">{m.quick_find__routines()}</small>
+          <small className="block text-[14px] font-semibold text-muted-foreground">{m.quick_find__workflows()}</small>
           <h1 className="text-[28px] leading-[1.15] font-bold tracking-[-0.012em]">{asI18n(r.name)}</h1>
           <p className="text-[15px] text-ink-2">
-            {m.routine_screen__what_runs({ what: r.what, runs: r.runs })}
+            {m.workflow_screen__what_runs({ what: r.what, runs: r.runs })}
           </p>
         </span>
         <Button variant="default" size="compact" disabled={running} onClick={runNow}>
           <Play className="size-4" aria-hidden="true" />
-          {m.routine_screen__run_now()}
+          {m.workflow_screen__run_now()}
         </Button>
         <Button variant="bordered" size="compact" asChild>
-          <Link {...keep} to={'/routines' as never}>
+          <Link {...keep} to={'/workflows' as never}>
             <ArrowLeft className="rtl:-scale-x-100 size-4" aria-hidden="true" />
-            {m.routine_screen__all_routines()}
+            {m.workflow_screen__all_workflows()}
           </Link>
         </Button>
       </header>
@@ -176,15 +176,15 @@ function Detail({ r }: { r: Routine }) {
       <div className="flex flex-wrap items-center gap-3">
         <Button variant="bordered" size="compact" onClick={() => (setPick(null), setHist(true))}>
           <History className="size-4" aria-hidden="true" />
-          {m.routine_screen__show_history()}
+          {m.workflow_screen__show_history()}
         </Button>
         <span className="text-[14px] text-ink-2">
           {run ? (
             <>
-              <b className="text-foreground">{run.when}</b>{m.routine_screen__run_summary({ note: run.note, took: run.took })}
+              <b className="text-foreground">{run.when}</b>{m.workflow_screen__run_summary({ note: run.note, took: run.took })}
             </>
           ) : (
-            m.routine_screen__no_run_picked()
+            m.workflow_screen__no_run_picked()
           )}
         </span>
       </div>
@@ -192,9 +192,9 @@ function Detail({ r }: { r: Routine }) {
       {run?.older && (
         <div role="status" className="flex items-center gap-3 rounded-card border border-warning bg-card px-4 py-2.5 text-[15px]">
           <History className="size-5 shrink-0 text-ink-2" aria-hidden="true" />
-          {m.routine_screen__older_notice()}
+          {m.workflow_screen__older_notice()}
           <Button variant="bordered" size="compact" className="ms-auto" onClick={() => choose(r.history[0].id)}>
-            {m.routine_screen__show_it_now()}
+            {m.workflow_screen__show_it_now()}
           </Button>
         </div>
       )}
@@ -204,8 +204,8 @@ function Detail({ r }: { r: Routine }) {
           <PikkuDot />
           <p className="min-w-0 flex-1 basis-80 text-[15px] leading-[1.4]">{asI18n(run.why)}</p>
           {r.history[0].id === run.id && (
-            <Button variant="default" size="compact" onClick={() => say(m.routine_screen__fix_say({ name: r.name, note: run.note }))}>
-              {m.routine_screen__fix_it()}
+            <Button variant="default" size="compact" onClick={() => say(m.workflow_screen__fix_say({ name: r.name, note: run.note }))}>
+              {m.workflow_screen__fix_it()}
             </Button>
           )}
         </div>
@@ -214,18 +214,18 @@ function Detail({ r }: { r: Routine }) {
       <div className="min-h-0 flex-1 overflow-hidden rounded-card border border-border bg-card shadow-card">{client && <WorkflowGraphView workflow={meta} direction="RIGHT" host={host} messages={graphMessages} onPaneClick={() => setPick(null)} />}</div>
 
       {run && events.length > 0 && (
-        <section data-testid="run-timeline" aria-label={m.routine_screen__timeline_aria()} className="shrink-0 rounded-card border border-border bg-card px-4 py-2.5 shadow-card">
+        <section data-testid="run-timeline" aria-label={m.workflow_screen__timeline_aria()} className="shrink-0 rounded-card border border-border bg-card px-4 py-2.5 shadow-card">
           <div className="flex flex-wrap items-center gap-3">
-            <b className="text-[15px]">{m.routine_screen__timeline()}</b>
-            <small className="text-[14px] text-ink-2">{atEnd ? (running ? m.routine_screen__happening_now() : m.routine_screen__whole_run()) : m.routine_screen__step_of({ step: cursor! + 1, total: events.length })}</small>
+            <b className="text-[15px]">{m.workflow_screen__timeline()}</b>
+            <small className="text-[14px] text-ink-2">{atEnd ? (running ? m.workflow_screen__happening_now() : m.workflow_screen__whole_run()) : m.workflow_screen__step_of({ step: cursor! + 1, total: events.length })}</small>
             <span className="ms-auto flex items-center gap-1">
               {!atEnd && (
                 <Button variant="ghost" size="compact" onClick={() => setCursor(null)}>
                   <Radio className="size-4" aria-hidden="true" />
-                  {running ? m.routine_screen__follow_live() : m.routine_screen__show_whole_run()}
+                  {running ? m.workflow_screen__follow_live() : m.workflow_screen__show_whole_run()}
                 </Button>
               )}
-              <button type="button" aria-label={open ? m.routine_screen__hide_timeline() : m.routine_screen__show_timeline()} onClick={() => setOpen(!open)} className="grid size-9 place-items-center rounded-full text-ink-2 hover:bg-secondary">
+              <button type="button" aria-label={open ? m.workflow_screen__hide_timeline() : m.workflow_screen__show_timeline()} onClick={() => setOpen(!open)} className="grid size-9 place-items-center rounded-full text-ink-2 hover:bg-secondary">
                 {open ? <ChevronDown className="size-5" /> : <ChevronUp className="size-5" />}
               </button>
             </span>
@@ -246,11 +246,11 @@ function Detail({ r }: { r: Routine }) {
                 ))}
               </div>
               <div className="flex items-center gap-3">
-                <button type="button" aria-label={m.routine_screen__back_step()} disabled={cur <= 0} onClick={() => setCursor(Math.max(0, cur - 1))} className="grid size-9 place-items-center rounded-full border border-border text-ink-2 hover:bg-secondary disabled:opacity-40">
+                <button type="button" aria-label={m.workflow_screen__back_step()} disabled={cur <= 0} onClick={() => setCursor(Math.max(0, cur - 1))} className="grid size-9 place-items-center rounded-full border border-border text-ink-2 hover:bg-secondary disabled:opacity-40">
                   <SkipBack className="size-4" />
                 </button>
-                <input type="range" aria-label={m.routine_screen__move_run()} min={0} max={events.length - 1} value={cur} onChange={(e) => setCursor(Number(e.target.value))} className="h-2 min-w-0 flex-1 accent-[var(--color-ring)]" />
-                <button type="button" aria-label={m.routine_screen__forward_step()} disabled={cur >= events.length - 1} onClick={() => setCursor(cur + 1 >= events.length - 1 && !running ? null : cur + 1)} className="grid size-9 place-items-center rounded-full border border-border text-ink-2 hover:bg-secondary disabled:opacity-40">
+                <input type="range" aria-label={m.workflow_screen__move_run()} min={0} max={events.length - 1} value={cur} onChange={(e) => setCursor(Number(e.target.value))} className="h-2 min-w-0 flex-1 accent-[var(--color-ring)]" />
+                <button type="button" aria-label={m.workflow_screen__forward_step()} disabled={cur >= events.length - 1} onClick={() => setCursor(cur + 1 >= events.length - 1 && !running ? null : cur + 1)} className="grid size-9 place-items-center rounded-full border border-border text-ink-2 hover:bg-secondary disabled:opacity-40">
                   <SkipForward className="size-4" />
                 </button>
               </div>
@@ -258,7 +258,7 @@ function Detail({ r }: { r: Routine }) {
                 <p className="flex flex-wrap items-center gap-x-2 text-[14px] text-ink-2">
                   <i className={`size-2 rounded-full ${sample.dot[states[last.step]]}`} aria-hidden="true" />
                   <b className="text-foreground">{lastStep.title}</b>
-                  {m.routine_screen__event_after({ event: sample.evWord[last.type](), time: secs(last.at) })}
+                  {m.workflow_screen__event_after({ event: sample.evWord[last.type](), time: secs(last.at) })}
                 </p>
               )}
             </div>
@@ -267,26 +267,26 @@ function Detail({ r }: { r: Routine }) {
       )}
 
       {hist && (
-        <SidePanel icon={History} label={m.routine_screen__past_runs()} title={m.routine_screen__past_runs()} sub={m.routine_screen__past_runs_sub()} onClose={() => setHist(false)}>
+        <SidePanel icon={History} label={m.workflow_screen__past_runs()} title={m.workflow_screen__past_runs()} sub={m.workflow_screen__past_runs_sub()} onClose={() => setHist(false)}>
           <RowStack>
-            <RowCard tile={<Workflow className="size-5" />} on={runId === null} title={m.routine_screen__just_routine()} caption={m.routine_screen__no_run()}>
+            <RowCard tile={<WorkflowIcon className="size-5" />} on={runId === null} title={m.workflow_screen__just_workflow()} caption={m.workflow_screen__no_run()}>
               <Button variant={runId === null ? 'default' : 'bordered'} size="compact" aria-pressed={runId === null} onClick={() => choose(null)}>
-                {runId === null ? m.routine_screen__showing() : m.routine_screen__show_it()}
+                {runId === null ? m.workflow_screen__showing() : m.workflow_screen__show_it()}
               </Button>
             </RowCard>
             {live && (
-              <RowCard tile={<Play className="size-5" />} on={runId === 'live'} title={m.routine_screen__just_now()} caption={running ? m.routine_screen__running_now() : m.routine_screen__finished()}>
-                <Dot tone={running ? 'warn' : 'ok'}>{running ? m.projects_grid__running() : m.routine_screen__worked()}</Dot>
+              <RowCard tile={<Play className="size-5" />} on={runId === 'live'} title={m.workflow_screen__just_now()} caption={running ? m.workflow_screen__running_now() : m.workflow_screen__finished()}>
+                <Dot tone={running ? 'warn' : 'ok'}>{running ? m.projects_grid__running() : m.workflow_screen__worked()}</Dot>
                 <Button variant={runId === 'live' ? 'default' : 'bordered'} size="compact" aria-pressed={runId === 'live'} onClick={() => choose('live')}>
-                  {runId === 'live' ? m.routine_screen__showing() : m.routine_screen__show_it()}
+                  {runId === 'live' ? m.workflow_screen__showing() : m.workflow_screen__show_it()}
                 </Button>
               </RowCard>
             )}
             {r.history.map((h) => (
-              <RowCard key={h.id} flag={!h.ok} on={h.id === runId} tile={h.ok ? <Check className="size-5" /> : <TriangleAlert className="size-5" />} title={h.when} caption={h.note} note={m.routine_screen__took_line({ took: h.took })}>
-                <Dot tone={h.ok ? 'ok' : 'bad'}>{h.ok ? m.routine_screen__worked() : m.routine_screen__went_wrong()}</Dot>
+              <RowCard key={h.id} flag={!h.ok} on={h.id === runId} tile={h.ok ? <Check className="size-5" /> : <TriangleAlert className="size-5" />} title={h.when} caption={h.note} note={m.workflow_screen__took_line({ took: h.took })}>
+                <Dot tone={h.ok ? 'ok' : 'bad'}>{h.ok ? m.workflow_screen__worked() : m.workflow_screen__went_wrong()}</Dot>
                 <Button variant={h.id === runId ? 'default' : 'bordered'} size="compact" aria-pressed={h.id === runId} onClick={() => choose(h.id)}>
-                  {h.id === runId ? m.routine_screen__showing() : m.routine_screen__show_it()}
+                  {h.id === runId ? m.workflow_screen__showing() : m.workflow_screen__show_it()}
                 </Button>
               </RowCard>
             ))}
@@ -295,27 +295,27 @@ function Detail({ r }: { r: Routine }) {
       )}
 
       {step && (
-        <SidePanel icon={Workflow} label={step.title} title={step.title} sub={step.by ? m.routine_screen__done_by({ by: step.by }) : undefined} onClose={() => setPick(null)}>
+        <SidePanel icon={WorkflowIcon} label={step.title} title={step.title} sub={step.by ? m.workflow_screen__done_by({ by: step.by }) : undefined} onClose={() => setPick(null)}>
           <p className="text-[16px] text-ink-2">{step.says}</p>
-          {step.ifNot && <p className="text-[15px] text-ink-2">{m.routine_screen__if_not({ ifNot: step.ifNot })}</p>}
+          {step.ifNot && <p className="text-[15px] text-ink-2">{m.workflow_screen__if_not({ ifNot: step.ifNot })}</p>}
           {run ? (
             <>
               <div className="flex flex-col gap-2">
-                <h3 className="text-[17px] font-bold">{m.routine_screen__what_happened()}</h3>
+                <h3 className="text-[17px] font-bold">{m.workflow_screen__what_happened()}</h3>
                 <Dot tone={states[step.id] === 'done' ? 'ok' : states[step.id] === 'failed' ? 'bad' : states[step.id] === 'running' ? 'warn' : 'quiet'}>{sample.stateWord[states[step.id] ?? 'waiting']()}</Dot>
                 {mine.length > 0 && (
                   <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-[15px]">
-                    <dt className="text-ink-2">{m.routine_screen__started()}</dt>
-                    <dd>{m.routine_screen__time_in({ time: secs(mine[0].at) })}</dd>
+                    <dt className="text-ink-2">{m.workflow_screen__started()}</dt>
+                    <dd>{m.workflow_screen__time_in({ time: secs(mine[0].at) })}</dd>
                     {mine.length > 1 && !running && (
                       <>
-                        <dt className="text-ink-2">{m.routine_screen__ended()}</dt>
-                        <dd>{m.routine_screen__time_in({ time: secs(mine[mine.length - 1].at) })}</dd>
-                        <dt className="text-ink-2">{m.routine_screen__took()}</dt>
+                        <dt className="text-ink-2">{m.workflow_screen__ended()}</dt>
+                        <dd>{m.workflow_screen__time_in({ time: secs(mine[mine.length - 1].at) })}</dd>
+                        <dt className="text-ink-2">{m.workflow_screen__took()}</dt>
                         <dd>{secs(mine[mine.length - 1].at - mine[0].at)}</dd>
                       </>
                     )}
-                    <dt className="text-ink-2">{m.routine_screen__tries()}</dt>
+                    <dt className="text-ink-2">{m.workflow_screen__tries()}</dt>
                     <dd>{mine.filter((e) => e.type !== 'done' && e.type !== 'failed').length}</dd>
                   </dl>
                 )}
@@ -323,12 +323,12 @@ function Detail({ r }: { r: Routine }) {
 
               {mine.filter((e) => e.type === 'retried' || e.type === 'failed').length > 0 && mine.length > 2 && (
                 <div className="flex flex-col gap-2">
-                  <h3 className="text-[17px] font-bold">{m.routine_screen__each_try()}</h3>
+                  <h3 className="text-[17px] font-bold">{m.workflow_screen__each_try()}</h3>
                   <ol className="flex flex-col gap-1.5 text-[15px]">
                     {mine.map((e) => (
                       <li key={e.seq} className="flex items-center gap-2 text-ink-2">
                         <i className={`size-2 rounded-full ${e.type === 'failed' || e.type === 'retried' ? 'bg-destructive' : e.type === 'done' ? 'bg-success' : 'bg-info'}`} aria-hidden="true" />
-                        {m.routine_screen__event_at({ event: sample.evWord[e.type](), time: secs(e.at) })}
+                        {m.workflow_screen__event_at({ event: sample.evWord[e.type](), time: secs(e.at) })}
                       </li>
                     ))}
                   </ol>
@@ -337,30 +337,30 @@ function Detail({ r }: { r: Routine }) {
 
               {!!note?.in && (
                 <div className="flex flex-col gap-1">
-                  <h3 className="text-[17px] font-bold">{m.routine_screen__given()}</h3>
+                  <h3 className="text-[17px] font-bold">{m.workflow_screen__given()}</h3>
                   <p className="rounded-card bg-secondary px-3 py-2 text-[15px]">{asI18n(note.in)}</p>
                 </div>
               )}
               {!!note?.out && states[step.id] === 'done' && (
                 <div className="flex flex-col gap-1">
-                  <h3 className="text-[17px] font-bold">{m.routine_screen__gave_back()}</h3>
+                  <h3 className="text-[17px] font-bold">{m.workflow_screen__gave_back()}</h3>
                   <p className="rounded-card bg-secondary px-3 py-2 text-[15px]">{asI18n(note.out)}</p>
                 </div>
               )}
               {!!note?.error && states[step.id] === 'failed' && (
                 <div className="flex flex-col gap-1">
-                  <h3 className="text-[17px] font-bold">{m.routine_screen__what_went_wrong()}</h3>
+                  <h3 className="text-[17px] font-bold">{m.workflow_screen__what_went_wrong()}</h3>
                   <p className="rounded-card bg-destructive-soft px-3 py-2 text-[15px] text-destructive">{asI18n(note.error)}</p>
                 </div>
               )}
             </>
           ) : (
-            <p className="text-[15px] text-ink-2">{m.routine_screen__pick_a_run()}</p>
+            <p className="text-[15px] text-ink-2">{m.workflow_screen__pick_a_run()}</p>
           )}
           <div className="flex flex-wrap gap-3">
-            <Button variant="bordered" size="compact" onClick={() => say(m.routine_screen__change_step_say({ step: step.title, name: r.name }))}>
+            <Button variant="bordered" size="compact" onClick={() => say(m.workflow_screen__change_step_say({ step: step.title, name: r.name }))}>
               <PikkuDot />
-              {m.routine_screen__ask_pikku_change()}
+              {m.workflow_screen__ask_pikku_change()}
             </Button>
             <Button variant="ghost" size="compact" onClick={() => setPick(null)}>
               <X className="size-4" aria-hidden="true" />

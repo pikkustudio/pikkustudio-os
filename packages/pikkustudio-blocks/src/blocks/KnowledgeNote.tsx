@@ -1,5 +1,7 @@
 import { asI18n, type I18nNode, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
+import { Link } from '@tanstack/react-router'
+import { encodePath, keepSearch } from '../lib/project-url'
 import { AlertCircle, ArrowLeft, ChevronRight, FileText } from 'lucide-react'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
@@ -7,6 +9,8 @@ import { Card } from '../ui/card'
 import { AskPikku } from './AskPikku'
 import { ChatMarkdown } from './ChatMarkdown'
 import type { Note } from '../types/knowledge'
+
+export const noteTo = (id: string) => `/knowledge/${encodePath(id)}`
 
 function NoteLinks({ title, empty, children }: { title: I18nString; empty: I18nString; children: I18nNode[] }) {
   return (
@@ -17,26 +21,29 @@ function NoteLinks({ title, empty, children }: { title: I18nString; empty: I18nS
   )
 }
 
-function NoteLink({ note, onOpen }: { note: Note; onOpen: (id: string) => void }) {
+function NoteLink({ note }: { note: Note }) {
   return (
     <li>
-      <Button variant="bordered" size="chip" className="gap-2 bg-card px-3.5 text-px145" type="button" onClick={() => onOpen(note.id)}>
-        <FileText strokeWidth={1.75} className="size-4" />
-        {note.t}
+      <Button variant="bordered" size="chip" className="gap-2 bg-card px-3.5 text-px145" asChild>
+        <Link to={noteTo(note.id) as never} search={keepSearch as never}>
+          <FileText strokeWidth={1.75} className="size-4" />
+          {note.t}
+        </Link>
       </Button>
     </li>
   )
 }
 
-export function KnowledgeNote({ missing, note, byId, linkedFrom, onOpen, onAll }: { missing: Record<string, string>; note: Note; byId: (id: string) => Note | undefined; linkedFrom: Note[]; onOpen: (id: string) => void; onAll: () => void }) {
+export function KnowledgeNote({ missing, note, byId, linkedFrom }: { missing: Record<string, string>; note: Note; byId: (id: string) => Note | undefined; linkedFrom: Note[] }) {
   const pct = note.plan ? Math.round((note.plan.done / note.plan.total) * 100) : 0
   return (
     <Card variant="list" className="gap-4 px-8.5 py-7.5" role="article" aria-label={note.t}>
       <div>
-        <Button variant="ghost" size="compact" className="-ms-3.5 px-3.5" type="button" onClick={onAll}>
-          <ArrowLeft strokeWidth={1.75} className="rtl:-scale-x-100 size-4.5" />
-          
-          {m.knowledge_note__all_notes()}
+        <Button variant="ghost" size="compact" className="-ms-3.5 px-3.5" asChild>
+          <Link to={'/knowledge' as never} search={keepSearch as never}>
+            <ArrowLeft strokeWidth={1.75} className="rtl:-scale-x-100 size-4.5" />
+            {m.knowledge_note__all_notes()}
+          </Link>
         </Button>
       </div>
       <div className="text-[14px] font-semibold text-muted-foreground">{asI18n(note.sec)}</div>
@@ -65,7 +72,7 @@ export function KnowledgeNote({ missing, note, byId, linkedFrom, onOpen, onAll }
           const t = byId(l)
           const missingName: string = missing[l]
           return t ? (
-            <NoteLink key={l} note={t} onOpen={onOpen} />
+            <NoteLink key={l} note={t} />
           ) : (
             <li key={l}>
               <Button variant="bordered" size="chip" asChild className="cursor-default gap-2 border-dashed bg-card px-3.5 text-px145 text-warning-foreground hover:border-input hover:bg-card">
@@ -81,7 +88,7 @@ export function KnowledgeNote({ missing, note, byId, linkedFrom, onOpen, onAll }
       </NoteLinks>
       <NoteLinks title={m.knowledge_note__these_notes_point_here()} empty={m.knowledge_note__no_other_note_points()}>
         {linkedFrom.map((b) => (
-          <NoteLink key={b.id} note={b} onOpen={onOpen} />
+          <NoteLink key={b.id} note={b} />
         ))}
       </NoteLinks>
       <div className="flex flex-wrap items-center gap-3.5 border-t border-border pt-3.5">

@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto'
 import { mkdtempSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import type { Manifest, Platform } from './manifest.js'
+import type { Manifest, Platform } from '../../../src/lib/tools/manifest.js'
 
 export interface FixtureEntry {
   name: string

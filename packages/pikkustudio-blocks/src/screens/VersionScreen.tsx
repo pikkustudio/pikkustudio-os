@@ -4,7 +4,6 @@ import { Link } from '../blocks/Link'
 import { ArrowLeft, Boxes, Check, Clock, Database, FileText, FlaskConical, Globe, History, KeyRound, RefreshCw, Settings, ShieldCheck, Trash2, TriangleAlert, Undo2, Workflow, type LucideIcon } from 'lucide-react'
 import { Button, buttonVariants } from '../ui/button'
 import { Input } from '../ui/input'
-import { Art } from '../blocks/ExploreHub'
 import { NextCard } from '../blocks/NextCard'
 import { Page } from '../blocks/Page'
 import { PageHead } from '../blocks/PageHead'
@@ -179,7 +178,7 @@ function Detail({ v, view }: { v: Release; view: ReleasesView }) {
     <Page gap="snug">
       <PageHead crumb={m.versions_screen__title()} title={title} text={numbered(v) ? m.version_screen__byline_short({ who: who(v), when: when(v), version: v.version }) : m.version_screen__byline_unnumbered({ who: who(v), when: when(v) })} size="lead" />
 
-      <NextCard label={shelfWords[o]()} hue={hero.hue} art={<Art />} title={hero.title} why={hero.why}>
+      <NextCard label={shelfWords[o]()} hue={hero.hue} page="versions" title={hero.title} why={hero.why}>
         {o === 'working' ? <ShelfStrip phase={v.step} since={v.at} onHero /> : null}
         <div className="flex flex-wrap gap-3">
           {gate && edit && v.wait !== 'builder' ? (
@@ -222,7 +221,7 @@ function Detail({ v, view }: { v: Release; view: ReleasesView }) {
       {o === 'failed' ? (
         <PikkuSays text={m.version_screen__i_can_read_failed()}>
           <Button variant="bordered" size="compact" onClick={() => say(m.version_screen__say_fix({ title }))}>
-            {m.routine_screen__fix_it()}
+            {m.workflow_screen__fix_it()}
           </Button>
         </PikkuSays>
       ) : null}
@@ -278,7 +277,7 @@ function Detail({ v, view }: { v: Release; view: ReleasesView }) {
       ) : null}
 
       {o === 'failed' ? (
-        <Section title={m.routine_screen__what_went_wrong()}>
+        <Section title={m.workflow_screen__what_went_wrong()}>
           <RowStack>
             <RowCard tile={<TriangleAlert className="size-5" />} title={failWords[v.failedAt ?? 'build']()} caption={v.reason ? asI18n(v.reason) : m.version_screen__no_reason()}>
               <Dot tone="bad">{m.version_screen__did_not_go_live()}</Dot>
@@ -299,11 +298,11 @@ function Detail({ v, view }: { v: Release; view: ReleasesView }) {
       {o !== 'working' ? <Checks v={v} detail={detail} /> : null}
 
       {panel?.kind === 'log' ? (
-        <SidePanel icon={History} label={m.routine_screen__what_happened()} title={m.routine_screen__what_happened()} sub={m.version_screen__the_record_from_building_and()} onClose={() => setPanel(null)}>
+        <SidePanel icon={History} label={m.workflow_screen__what_happened()} title={m.workflow_screen__what_happened()} sub={m.version_screen__the_record_from_building_and()} onClose={() => setPanel(null)}>
           {detail.logLoading ? (
             <div role="status" aria-busy="true" className="h-48 animate-pulse rounded-card bg-secondary" />
           ) : detail.logError ? (
-            <ErrorState error={detail.logError} what={m.routine_screen__what_happened()} />
+            <ErrorState error={detail.logError} what={m.workflow_screen__what_happened()} />
           ) : detail.log ? (
             <pre dir="ltr" className="max-h-[70vh] overflow-auto rounded-card bg-secondary p-4 font-mono text-[13px] leading-[1.6] whitespace-pre-wrap">
               {asI18n(detail.log)}

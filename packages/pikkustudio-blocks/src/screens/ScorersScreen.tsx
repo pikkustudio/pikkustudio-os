@@ -33,19 +33,6 @@ const sampling = (s: Scorer): I18nString => {
   return Number.isInteger(every) ? m.scorers_screen__one_in({ count: every }) : m.scorers_screen__percent({ percent: Math.round(s.sampleRate * 100) })
 }
 
-function Art() {
-  return (
-    <>
-      <circle cx="230" cy="40" r="120" className="fill-w1" />
-      <circle cx="50" cy="190" r="100" className="fill-w2" />
-      <circle cx="170" cy="130" r="58" className="fill-w3" />
-      <circle cx="270" cy="165" r="9" className="fill-coral" />
-      <rect x="136" y="92" width="68" height="84" rx="12" className="fill-w6" opacity="0.92" />
-      <path d="M152 134l12 12 24-26" fill="none" className="stroke-w2" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
-    </>
-  )
-}
-
 export function ScorersScreen() {
   const key = useProjectKey()
   const projectName = useProjectName()
@@ -85,7 +72,7 @@ export function ScorersScreen() {
   return (
     <Page gap="snug">
       {head}
-      <NextCard label={m.scorers_screen__title()} hue="sea" art={<Art />} title={title} why={why}>
+      <NextCard label={m.scorers_screen__title()} hue="sea" page="scorers" title={title} why={why}>
         <div>
           <Button variant="hero" size="pageLg" type="button" onClick={ask}>
             <PikkuDot />

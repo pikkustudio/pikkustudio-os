@@ -15,18 +15,6 @@ import { Dot } from '../blocks/RowCard'
 import { ago } from '../lib/virtualUsers'
 import { failedRunsSay, RecentRuns, toWorkItems, useTimedHistory, useWorkMeta, WorkList, WorkSkeleton, type RunRow, type TaskRun } from './work-shared'
 
-function Art() {
-  return (
-    <>
-      <circle cx="220" cy="60" r="118" className="fill-w1" />
-      <circle cx="60" cy="180" r="96" className="fill-w2" />
-      <circle cx="170" cy="120" r="62" className="fill-w6" opacity="0.92" />
-      <path d="M170 86v34l22 14" fill="none" className="stroke-w2" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="268" cy="168" r="9" className="fill-coral" />
-    </>
-  )
-}
-
 const runState = (run: TaskRun): Pick<RunRow, 'tone' | 'state'> =>
   run.status === 'failed'
     ? { tone: 'bad', state: m.work_list__went_wrong() }
@@ -34,20 +22,20 @@ const runState = (run: TaskRun): Pick<RunRow, 'tone' | 'state'> =>
       ? { tone: 'quiet', state: m.work_list__skipped() }
       : { tone: 'ok', state: m.work_list__went_fine() }
 
-export function TimedTasksScreen() {
+export function ScheduledTasksScreen() {
   const key = useProjectKey()
   const projectName = useProjectName()
   const { say } = useContext(ShellCtx)
   const q = useWorkMeta(key)
   const history = useTimedHistory(key)
 
-  const head = <PageHead crumb={projectName} title={m.timed_tasks__title()} text={m.timed_tasks__text()} size="lead" developerDetails />
+  const head = <PageHead crumb={projectName} title={m.scheduled_tasks__title()} text={m.scheduled_tasks__text()} size="lead" developerDetails />
 
   if (q.isError)
     return (
       <Page gap="snug">
         {head}
-        <ErrorState error={q.error} what={m.timed_tasks__title()} onRetry={() => void q.refetch()} retrying={q.isFetching} />
+        <ErrorState error={q.error} what={m.scheduled_tasks__title()} onRetry={() => void q.refetch()} retrying={q.isFetching} />
       </Page>
     )
 
@@ -55,10 +43,10 @@ export function TimedTasksScreen() {
   const items = toWorkItems(wires, q.data?.functions, (w) => [
     [m.work_list__tech_name(), w.name],
     [m.work_list__tech_function(), w.pikkuFuncId],
-    [m.timed_tasks__tech_schedule(), w.schedule],
+    [m.scheduled_tasks__tech_schedule(), w.schedule],
   ])
-  const ask = () => say(m.timed_tasks__ask_say())
-  const add = () => say(m.timed_tasks__add_say())
+  const ask = () => say(m.scheduled_tasks__ask_say())
+  const add = () => say(m.scheduled_tasks__add_say())
   const runs = history.data
   const titleOf = (name: string) => items.find((i) => i.id === name || wires[i.id]?.name === name)?.title ?? name
   const runRows: RunRow[] = Object.entries(runs ?? {})
@@ -68,25 +56,25 @@ export function TimedTasksScreen() {
   const failed = runRows.filter((r) => r.tone === 'bad').length
   const fixAll = () => say(failedRunsSay(runRows))
   const title = q.isPending
-    ? m.timed_tasks__hero_loading()
+    ? m.scheduled_tasks__hero_loading()
     : failed === 1
       ? m.work_list__hero_failed_one()
       : failed > 1
         ? m.work_list__hero_failed_many({ count: failed })
         : items.length === 0
-          ? m.timed_tasks__hero_none()
+          ? m.scheduled_tasks__hero_none()
           : items.length === 1
-            ? m.timed_tasks__hero_one()
-            : m.timed_tasks__hero_many({ count: items.length })
+            ? m.scheduled_tasks__hero_one()
+            : m.scheduled_tasks__hero_many({ count: items.length })
 
   return (
     <Page gap="snug">
       {head}
-      <NextCard label={m.timed_tasks__title()} hue="teal" art={<Art />} title={title} why={failed ? m.work_list__why_failed() : items.length ? m.timed_tasks__why() : m.timed_tasks__why_none()}>
+      <NextCard label={m.scheduled_tasks__title()} hue="teal" page="scheduled-tasks" title={title} why={failed ? m.work_list__why_failed() : items.length ? m.scheduled_tasks__why() : m.scheduled_tasks__why_none()}>
         <div>
           <Button variant="hero" size="pageLg" type="button" onClick={failed ? fixAll : items.length ? ask : add}>
             <PikkuDot />
-            {failed ? m.work_list__fix_all() : items.length ? m.timed_tasks__hero_ask() : m.timed_tasks__hero_add()}
+            {failed ? m.work_list__fix_all() : items.length ? m.scheduled_tasks__hero_ask() : m.scheduled_tasks__hero_add()}
           </Button>
         </div>
       </NextCard>
@@ -94,18 +82,18 @@ export function TimedTasksScreen() {
       {q.isPending ? (
         <WorkSkeleton />
       ) : items.length === 0 ? (
-        <EmptyState layout="row" icon={Clock} title={m.timed_tasks__empty()} text={m.timed_tasks__empty_text()}>
+        <EmptyState layout="row" icon={Clock} title={m.scheduled_tasks__empty()} text={m.scheduled_tasks__empty_text()}>
           <Button type="button" size="page" onClick={add}>
             <PikkuDot />
-            {m.timed_tasks__hero_add()}
+            {m.scheduled_tasks__hero_add()}
           </Button>
         </EmptyState>
       ) : (
         <WorkList
           items={items}
           icon={Clock}
-          own={m.timed_tasks__list()}
-          search={m.timed_tasks__search()}
+          own={m.scheduled_tasks__list()}
+          search={m.scheduled_tasks__search()}
           noDescription={m.work_list__no_description()}
           side={(id) => {
             const r = runs?.[id] ?? runs?.[wires[id].name]
@@ -113,9 +101,9 @@ export function TimedTasksScreen() {
               <span className="flex flex-col items-end gap-1">
                 <span className="inline-flex items-center gap-2 text-px14 font-semibold text-ink-2">
                   <CalendarClock className="size-4" aria-hidden="true" />
-                  {describeSchedule(wires[id].schedule) ?? m.timed_tasks__custom()}
+                  {describeSchedule(wires[id].schedule) ?? m.scheduled_tasks__custom()}
                 </span>
-                {r?.lastRun ? <Dot tone={runState(r.lastRun).tone}>{m.timed_tasks__last_run({ state: runState(r.lastRun).state, when: ago(r.lastRun.startedAt) })}</Dot> : r?.nextRun ? <span className="text-px13 text-muted-foreground">{m.timed_tasks__next_run({ when: ago(r.nextRun) })}</span> : null}
+                {r?.lastRun ? <Dot tone={runState(r.lastRun).tone}>{m.scheduled_tasks__last_run({ state: runState(r.lastRun).state, when: ago(r.lastRun.startedAt) })}</Dot> : r?.nextRun ? <span className="text-px13 text-muted-foreground">{m.scheduled_tasks__next_run({ when: ago(r.nextRun) })}</span> : null}
               </span>
             )
           }}

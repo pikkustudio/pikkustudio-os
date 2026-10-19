@@ -16,7 +16,7 @@ const card =
 
 export function LitellmHero({ st, loading, open, retry }: { st: string; loading: boolean; open: (p: 'litellm') => void; retry: () => void }) {
   return (
-    <HeroShell hue="petrol" art="ai">
+    <HeroShell hue="petrol" page="choose-ai">
 <div>
         {st === 'normal' ? (
           <>

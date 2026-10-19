@@ -13,7 +13,7 @@ test('a bare team address stays exactly as typed, so a team that is not found ke
 
 test('a team page and a project page keep their address', () => {
   expect(roundTrip('/acme/new-project').outside).toBe('/acme/new-project')
-  expect(roundTrip('/acme/no-such-project/overview').outside).toBe('/acme/no-such-project/overview')
+  expect(roundTrip('/acme/no-such-project/home').outside).toBe('/acme/no-such-project/home')
 })
 
 test('a bare inbox address is a project page, so it is not read as a team', () => {

@@ -29,9 +29,9 @@ export const checkPage = pikkuFunc({
   auth: true,
   input: CheckPageInput,
   output: CheckPageOutput,
-  func: async ({ studio }, { key, path }) => {
+  func: async ({ studio }, { key, path }, { rpc }) => {
     const running = studio.projects.runningProject(key)
     if (!running) throw new Error('That project is not open')
-    return runCheck(studio.tools, running, path)
+    return runCheck(await rpc.invoke('studio:resolveChromium', {}), running, path)
   },
 })

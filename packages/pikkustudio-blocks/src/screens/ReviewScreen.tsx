@@ -208,14 +208,14 @@ export function ReviewScreen({ subject }: { subject: ReviewSubject }) {
 
   if (total === 0)
     return shell(
-      <Hero hue="sea" art="bubbles" title={subject === 'ui' ? m.review_empty__title_screens() : m.review_empty__title()} why={subject === 'ui' ? m.review_empty__text_screens() : m.review_empty__text()} actions={<Button variant="hero" size="hero" type="button" disabled={queue.isFetching} onClick={() => queue.refetch()}><RefreshCw />{m.review_state__check_again()}</Button>} />,
+      <Hero hue="sea" page={subject === 'ui' ? 'review-ui' : 'review'} title={subject === 'ui' ? m.review_empty__title_screens() : m.review_empty__title()} why={subject === 'ui' ? m.review_empty__text_screens() : m.review_empty__text()} actions={<Button variant="hero" size="hero" type="button" disabled={queue.isFetching} onClick={() => queue.refetch()}><RefreshCw />{m.review_state__check_again()}</Button>} />,
     )
 
   if (!current)
     return shell(
       <Hero
         hue="teal"
-        art="arch"
+        page={subject === 'ui' ? 'review-ui' : 'review'}
         title={m.review_done__title()}
         why={kept + rejected > 0 ? m.review_done__text({ kept, rejected }) : m.review_done__text_quiet()}
         hint={skipped.length > 0 ? m.review_done__skipped({ count: skipped.length }) : undefined}

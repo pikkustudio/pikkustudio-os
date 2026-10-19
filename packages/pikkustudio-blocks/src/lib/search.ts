@@ -1,6 +1,6 @@
 import { safeRedirect } from './sign-in-redirect'
 
-export const validateStudioSearch = (s: Record<string, unknown>): { size?: 'mobile' | 'tablet' | 'small' | 'big'; embed?: '1'; mock?: string; run?: string; team?: string; project?: string; view?: 'healthy' | 'empty' | 'problem' | 'loading' | 'error' | 'restore-error'; look?: 'light' | 'dark'; panel?: 'chat' | 'updates' | 'changes' | 'workspace' | 'provider' | 'diff' | 'why' | 'local' | 'accounts' | 'keys' | 'litellm' | 'pitch'; pitch?: 'a' | 'b'; via?: string; show?: 'done' | 'returning' | 'company' | 'empty' | 'loading' | 'error' | 'signin' | 'notin' | 'publishing' | 'live'; note?: string; email?: string; lang?: 'en' | 'de' | 'ar'; device?: 'phone' | 'text'; mode?: 'theme' | 'element' | 'component' | 'translations' | 'chat' | 'impersonate' | 'none'; screen?: 'tablet' | 'phone'; app?: 'staff'; pg?: string; item?: string; change?: string; stage?: string; target?: string; file?: string; folder?: string; redirect?: string; parts?: 'library' | 'app'; part?: string } => {
+export const validateStudioSearch = (s: Record<string, unknown>): { size?: 'mobile' | 'tablet' | 'small' | 'big'; embed?: '1'; run?: string; team?: string; project?: string; view?: 'healthy' | 'empty' | 'problem' | 'loading' | 'error' | 'restore-error'; look?: 'light' | 'dark'; panel?: 'chat' | 'updates' | 'changes' | 'workspace' | 'provider' | 'diff' | 'why' | 'local' | 'accounts' | 'keys' | 'litellm' | 'pitch'; pitch?: 'a' | 'b'; via?: string; show?: 'done' | 'returning' | 'company' | 'empty' | 'loading' | 'error' | 'signin' | 'notin' | 'publishing' | 'live'; lang?: 'en' | 'de' | 'ar'; device?: 'phone' | 'text'; mode?: 'theme' | 'element' | 'component' | 'translations' | 'chat' | 'impersonate' | 'none'; screen?: 'tablet' | 'phone'; app?: 'staff'; stage?: string; target?: string; redirect?: string; fq?: string; who?: string; reach?: string; scope?: string; builtin?: '1'; fn?: string } => {
     const pick = <T extends string>(v: unknown, ok: readonly T[]) => (ok.includes(v as T) ? (v as T) : undefined)
     return {
       size: pick(s.size, ['mobile', 'tablet', 'small', 'big'] as const),
@@ -14,24 +14,20 @@ export const validateStudioSearch = (s: Record<string, unknown>): { size?: 'mobi
       team: typeof s.team === 'string' && s.team ? s.team : undefined,
       project: typeof s.project === 'string' && s.project ? s.project : undefined,
       run: typeof s.run === 'string' ? s.run : undefined,
-      mock: typeof s.mock === 'string' ? s.mock : undefined,
-      note: typeof s.note === 'string' ? s.note : undefined,
-      email: typeof s.email === 'string' ? s.email : undefined,
       lang: pick(s.lang, ['en', 'de', 'ar'] as const),
       device: pick(s.device, ['phone', 'text'] as const),
       mode: pick(s.mode, ['theme', 'element', 'component', 'translations', 'chat', 'impersonate', 'none'] as const),
       screen: pick(s.screen, ['tablet', 'phone'] as const),
       app: pick(s.app, ['staff'] as const),
-      pg: typeof s.pg === 'string' ? s.pg : undefined,
-      item: typeof s.item === 'string' ? s.item : undefined,
-      change: typeof s.change === 'string' && s.change ? s.change : undefined,
       stage: typeof s.stage === 'string' && s.stage ? s.stage : undefined,
       target: typeof s.target === 'string' && s.target ? s.target : undefined,
-      file: typeof s.file === 'string' && s.file ? s.file : undefined,
-      folder: typeof s.folder === 'string' && s.folder ? s.folder : undefined,
       redirect: safeRedirect(s.redirect),
-      parts: pick(s.parts, ['library', 'app'] as const),
-      part: typeof s.part === 'string' && s.part ? s.part : undefined,
+      fq: typeof s.fq === 'string' && s.fq ? s.fq : undefined,
+      who: typeof s.who === 'string' && s.who ? s.who : undefined,
+      reach: typeof s.reach === 'string' && s.reach ? s.reach : undefined,
+      scope: typeof s.scope === 'string' && s.scope ? s.scope : undefined,
+      builtin: s.builtin === '1' || s.builtin === 1 ? ('1' as const) : undefined,
+      fn: typeof s.fn === 'string' && s.fn ? s.fn : undefined,
     }
   
 }

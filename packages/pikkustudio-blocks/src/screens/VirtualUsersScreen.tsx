@@ -2,7 +2,6 @@ import { m } from '@/i18n/messages'
 import { asI18n, sep, type I18nString } from '@pikku/react'
 import { useContext, useState } from 'react'
 import { Button } from '../ui/button'
-import { Art } from '../blocks/ExploreHub'
 import { EmptyState } from '../blocks/EmptyState'
 import { Bot } from 'lucide-react'
 import { ErrorState } from '../blocks/ErrorState'
@@ -59,7 +58,7 @@ export function VirtualUsersScreen() {
             <NextCard
               label={m.virtual_users_screen__next_step()}
               hue="petrol"
-              art={<Art />}
+              page="virtual-users"
               title={
                 found.length > 0
                   ? found.length === 1

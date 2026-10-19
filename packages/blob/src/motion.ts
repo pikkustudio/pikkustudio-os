@@ -11,7 +11,7 @@ import {
   type BlobSettings,
 } from './core'
 
-export type BlobFx = 'idle' | 'speaking' | 'thinking' | 'sleeping'
+export type BlobFx = 'idle' | 'speaking' | 'thinking' | 'sleeping' | 'lost'
 
 export type Morph = {
   cur: BlobShape
@@ -92,7 +92,21 @@ export function frameShape(m: Morph, f: FrameInput): BlobShape {
   let ox = 0
   let oy = 0
   let bl = 1
-  if (fx === 'thinking') {
+  if (fx === 'lost') {
+    const s = Math.sin(t * 0.8)
+    const scan = Math.sign(s) * Math.pow(Math.abs(s), 0.35)
+    if (!still) {
+      ox = scan * 0.07
+      oy = -0.012 + Math.sin(t * 1.3) * 0.01
+      const r = scan * 0.07
+      const c = Math.cos(r), n = Math.sin(r)
+      pts = pts.map(([x, y]): [number, number] => [x * c - y * n, x * n + y * c])
+      if (t % 3.1 < 0.12) bl = 0.12
+    } else {
+      ox = 0.03
+      oy = -0.01
+    }
+  } else if (fx === 'thinking') {
     if (!still) {
       ox = Math.cos(t * 1.6) * 0.02
       oy = Math.sin(t * 1.6) * 0.015
@@ -104,7 +118,7 @@ export function frameShape(m: Morph, f: FrameInput): BlobShape {
   }
   return {
     pts,
-    eyes: m.cur.eyes.map((e) => ({ x: e.x + ox, y: e.y + oy, w: e.w, h: e.h * bl })),
+    eyes: m.cur.eyes.map((e) => ({ ...e, x: e.x + ox, y: e.y + oy, h: e.h * bl })),
     extra: m.cur.extra,
     extraA: m.cur.extraA,
   }
