@@ -47,6 +47,24 @@ test('lists lines newest first and filters on the server', async () => {
   assert.deepStrictEqual((await source.list(ctx, { limit: 1 })).map((l) => l.message), ['slow'])
 })
 
+test('filters by wire, source and a search across function and trace, and counts facets whatever the filters', async () => {
+  const db = open()
+  await kyselyLogStore(db).append('k1', [
+    line(1000, 'info', 'started', { wire: 'cli', fn: 'migrate' }),
+    line(2000, 'error', 'boom', { trace: 'abc123' }),
+    line(3000, 'warn', 'slow', { source: 'website', wire: null, fn: null }),
+  ])
+  await kyselyLogStore(db).append('other', [line(4000, 'error', 'not mine', { fn: 'other' })])
+  const source = kyselyLogSource(db)
+  assert.deepStrictEqual((await source.list(ctx, { wire: 'cli' })).map((l) => l.message), ['started'])
+  assert.deepStrictEqual((await source.list(ctx, { source: 'website' })).map((l) => l.message), ['slow'])
+  assert.deepStrictEqual((await source.list(ctx, { source: 'server' })).map((l) => l.message), ['boom', 'started'])
+  assert.deepStrictEqual((await source.list(ctx, { search: 'migr' })).map((l) => l.message), ['started'])
+  assert.deepStrictEqual((await source.list(ctx, { search: 'c12' })).map((l) => l.message), ['boom'])
+  assert.deepStrictEqual(await source.facets!(ctx, {}), { levels: { error: 1, warn: 1, info: 1 }, functions: ['getTodos', 'migrate'], wires: ['cli', 'http'] })
+  assert.deepStrictEqual((await source.facets!(ctx, { since: new Date(1500).toISOString() })).levels, { error: 1, warn: 1, info: 0 })
+})
+
 test('summarises calls into totals, traffic and functions, and groups what failed', async () => {
   const db = open()
   await kyselyLogStore(db).append('k1', [], undefined, [

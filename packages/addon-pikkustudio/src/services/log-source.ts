@@ -31,10 +31,31 @@ export interface LogQuery {
   limit?: number
   level?: LogLevel
   search?: string
+  wire?: string
+  source?: 'server' | 'website'
   functionName?: string
   traceId?: string
   tenantOrgId?: string
   tenantUserId?: string
+}
+
+/** What a filter can be set to over a window, counted on the server whatever filters are on. */
+export interface LogFacets {
+  levels: Record<LogLevel, number>
+  functions: string[]
+  wires: string[]
+}
+
+export const facetsOf = (lines: readonly LogLine[]): LogFacets => {
+  const levels: Record<LogLevel, number> = { error: 0, warn: 0, info: 0 }
+  const functions = new Set<string>()
+  const wires = new Set<string>()
+  for (const l of lines) {
+    levels[l.level] += 1
+    if (l.functionName) functions.add(l.functionName)
+    if (l.wire) wires.add(l.wire)
+  }
+  return { levels, functions: [...functions].sort(), wires: [...wires].sort() }
 }
 
 export interface Failure {
@@ -71,6 +92,7 @@ export interface MetricsSummary {
 export interface LogSource {
   list(ctx: SourceContext, query: LogQuery): Promise<LogLine[]>
   failures(ctx: SourceContext, options: { since: number; limit?: number }): Promise<Failure[]>
+  facets?(ctx: SourceContext, options: { since?: string }): Promise<LogFacets>
 }
 
 export interface MetricSource {

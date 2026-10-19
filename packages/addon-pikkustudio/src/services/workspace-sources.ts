@@ -1,6 +1,6 @@
 import { sql, type Kysely } from 'kysely'
 import type { LogLevel } from './log-store.js'
-import type { Failure, LogLine, LogSource, MetricSource, MetricsSummary } from './log-source.js'
+import type { Failure, LogFacets, LogLine, LogSource, MetricSource, MetricsSummary } from './log-source.js'
 
 const MAX_LINES = 2000
 const MAX_FAILURES = 50
@@ -8,6 +8,11 @@ const MAX_FAILURES = 50
 const escapeLike = (text: string) => text.replace(/[\\%_]/g, (c) => `\\${c}`)
 
 const numberOr = (v: unknown, fallback: number | null) => (v === null || v === undefined ? fallback : Number(v))
+
+const sinceOf = (since: string | undefined) => {
+  const at = since ? Date.parse(since) : NaN
+  return Number.isFinite(at) ? at : null
+}
 
 const firstLine = (text: string | null) => (text ?? '').split('\n')[0]!.trim()
 
@@ -30,22 +35,37 @@ const lineOf = (r: LineRow): LogLine => ({
 export const kyselyLogSource = (db: Kysely<any>): LogSource & MetricSource => ({
   async list({ key }, query) {
     let q = db.selectFrom('log_entry').selectAll().where('project_id', '=', key)
-    if (query.since) {
-      const since = Date.parse(query.since)
-      if (Number.isFinite(since)) q = q.where('at', '>', since)
-    }
+    const since = sinceOf(query.since)
+    if (since !== null) q = q.where('at', '>', since)
     if (query.level) q = q.where('level', '=', query.level)
+    if (query.wire) q = q.where('wire', '=', query.wire)
+    if (query.source) q = q.where('source', query.source === 'server' ? '=' : '!=', 'server')
     if (query.functionName) q = q.where('fn', '=', query.functionName)
     if (query.traceId) q = q.where('trace', '=', query.traceId)
     if (query.tenantOrgId) q = q.where('tenant_org_id', '=', query.tenantOrgId)
     if (query.tenantUserId) q = q.where('tenant_user_id', '=', query.tenantUserId)
-    if (query.search) q = q.where(sql<boolean>`text like ${`%${escapeLike(query.search)}%`} escape '\\'`)
+    if (query.search) {
+      const like = `%${escapeLike(query.search)}%`
+      q = q.where(sql<boolean>`(text like ${like} escape '\\' or fn like ${like} escape '\\' or trace like ${like} escape '\\' or wire like ${like} escape '\\')`)
+    }
     const rows = (await q
       .orderBy('at', 'desc')
       .orderBy('log_id', 'desc')
       .limit(Math.min(Math.max(1, query.limit ?? 500), MAX_LINES))
       .execute()) as LineRow[]
     return rows.map(lineOf)
+  },
+
+  async facets({ key }, { since }) {
+    let base = db.selectFrom('log_entry').where('project_id', '=', key)
+    const from = sinceOf(since)
+    if (from !== null) base = base.where('at', '>', from)
+    const levels = (await base.select((eb) => ['level', eb.fn.countAll<number>().as('count')]).groupBy('level').execute()) as { level: string; count: number }[]
+    const functions = (await base.select('fn').distinct().where('fn', 'is not', null).where('fn', '!=', '').orderBy('fn').execute()) as { fn: string }[]
+    const wires = (await base.select('wire').distinct().where('wire', 'is not', null).where('wire', '!=', '').orderBy('wire').execute()) as { wire: string }[]
+    const facets: LogFacets = { levels: { error: 0, warn: 0, info: 0 }, functions: functions.map((r) => r.fn), wires: wires.map((r) => r.wire) }
+    for (const r of levels) if (r.level in facets.levels) facets.levels[r.level as LogLevel] = Number(r.count)
+    return facets
   },
 
   async failures({ key }, { since, limit = 6 }) {

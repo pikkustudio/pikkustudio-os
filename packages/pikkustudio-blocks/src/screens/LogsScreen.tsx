@@ -1,24 +1,18 @@
 import { asI18n, sep, type I18nNode, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
-import { Fragment, useContext, useMemo, useState } from 'react'
+import { Fragment, useContext, useEffect, useMemo, useState } from 'react'
 import {
-  columnFilteringFeature,
   columnVisibilityFeature,
   createColumnHelper,
   createExpandedRowModel,
-  createFilteredRowModel,
   createPaginatedRowModel,
   createSortedRowModel,
-  filterFn_equalsString,
-  filterFn_includesString,
-  globalFilteringFeature,
   rowExpandingFeature,
   rowPaginationFeature,
   rowSortingFeature,
   sortFn_basic,
   tableFeatures,
   useTable,
-  type ColumnFiltersState,
   type ColumnVisibilityState,
   type ExpandedState,
   type PaginationState,
@@ -91,17 +85,13 @@ const pageSize = 25
 const severity: Record<Level, number> = { error: 0, warn: 1, info: 2 }
 
 const features = tableFeatures({
-  columnFilteringFeature,
   columnVisibilityFeature,
-  globalFilteringFeature,
   rowSortingFeature,
   rowPaginationFeature,
   rowExpandingFeature,
-  filteredRowModel: createFilteredRowModel(),
   sortedRowModel: createSortedRowModel(),
   paginatedRowModel: createPaginatedRowModel(),
   expandedRowModel: createExpandedRowModel(),
-  filterFns: { equalsString: filterFn_equalsString, includesString: filterFn_includesString },
   sortFns: { basic: sortFn_basic },
 })
 const col = createColumnHelper<typeof features, Entry>()
@@ -119,29 +109,56 @@ const columns = col.columns([
   col.accessor('at', { header: () => labels.at(), cell: (c) => <span dir="ltr" className="font-mono text-[13px] whitespace-nowrap text-ink-2 tabular-nums">{clock(c.getValue())}</span> }),
   col.accessor('level', {
     header: () => labels.level(),
-    filterFn: 'equalsString',
     sortFn: (a, b) => severity[a.original.level] - severity[b.original.level],
     cell: (c) => <span className={`rounded-full px-2.5 py-0.5 text-[12px] font-bold ${levelTone[c.getValue()]}`}>{name(c.getValue())}</span>,
   }),
-  col.accessor('source', { header: () => labels.source(), filterFn: 'equalsString', cell: (c) => <span className="text-[14px] text-ink-2">{sourceName(c.getValue())}</span> }),
-  col.accessor('wire', { header: () => labels.wire(), filterFn: 'equalsString', cell: (c) => <span dir="ltr" className="rounded-md border border-border px-2 py-0.5 font-mono text-[12px] text-ink-2">{c.getValue()}</span> }),
-  col.accessor('fn', { header: () => labels.fn(), filterFn: 'equalsString', cell: (c) => <span dir="ltr" className="block truncate font-mono text-[13px] text-ink-2">{c.getValue()}</span> }),
+  col.accessor('source', { header: () => labels.source(), cell: (c) => <span className="text-[14px] text-ink-2">{sourceName(c.getValue())}</span> }),
+  col.accessor('wire', { header: () => labels.wire(), cell: (c) => <span dir="ltr" className="rounded-md border border-border px-2 py-0.5 font-mono text-[12px] text-ink-2">{c.getValue()}</span> }),
+  col.accessor('fn', { header: () => labels.fn(), cell: (c) => <span dir="ltr" className="block truncate font-mono text-[13px] text-ink-2">{c.getValue()}</span> }),
   col.accessor('text', { header: () => labels.text(), enableSorting: false, cell: (c) => <span dir="ltr" className="block truncate font-mono text-[13px]">{c.getValue()}</span> }),
   col.accessor('ms', { header: () => labels.ms(), enableSorting: true, cell: (c) => <span dir="ltr" className="block text-end font-mono text-[13px] text-ink-2 tabular-nums">{c.getValue() === null ? sep('—') : m.logs_screen__ms({ ms: c.getValue() ?? '' })}</span> }),
   col.accessor('trace', {
     header: () => labels.trace(),
-    filterFn: 'equalsString',
     enableSorting: false,
     cell: (c) => <span dir="ltr" className="font-mono text-[13px] text-ink-2">{c.getValue()}</span>,
   }),
-  col.accessor('org', { header: () => labels.org(), filterFn: 'equalsString', enableSorting: false, cell: (c) => <span dir="ltr" className="block truncate font-mono text-px13 text-ink-2">{c.getValue()}</span> }),
-  col.accessor('user', { header: () => labels.user(), filterFn: 'equalsString', enableSorting: false, cell: (c) => <span dir="ltr" className="block truncate font-mono text-px13 text-ink-2">{c.getValue()}</span> }),
+  col.accessor('org', { header: () => labels.org(), enableSorting: false, cell: (c) => <span dir="ltr" className="block truncate font-mono text-px13 text-ink-2">{c.getValue()}</span> }),
+  col.accessor('user', { header: () => labels.user(), enableSorting: false, cell: (c) => <span dir="ltr" className="block truncate font-mono text-px13 text-ink-2">{c.getValue()}</span> }),
 ])
 const widths: Record<string, string> = { open: 'w-9', at: 'w-32', level: 'w-26', source: 'w-24', wire: 'w-28', fn: 'w-36', ms: 'w-24', trace: 'w-28', org: 'w-28', user: 'w-28' }
 const empty: LogRow[] = []
 const noEntries: Entry[] = []
 
-export type LogsFeed = { rows: LogRow[]; isPending: boolean; error: unknown; isFetching: boolean; updatedAt: number; retry: () => void }
+export type LogsFeed = { rows: LogRow[]; facets: LogFacets; isPending: boolean; error: unknown; isFetching: boolean; updatedAt: number; retry: () => void }
+
+type LogFacets = { levels: Record<Level, number>; functions: string[]; wires: string[] }
+const noFacets: LogFacets = { levels: { error: 0, warn: 0, info: 0 }, functions: [], wires: [] }
+
+/** Every filter the server applies. The empty string means not filtered. */
+export type LogFilters = { range: string; search: string; level: string; source: string; wire: string; fn: string; trace: string; org: string; user: string }
+const NO_FILTERS: LogFilters = { range: '1440', search: '', level: '', source: '', wire: '', fn: '', trace: '', org: '', user: '' }
+const SEARCH_WAIT_MS = 300
+
+const useDebounced = <T,>(value: T, ms: number) => {
+  const [settled, setSettled] = useState(value)
+  useEffect(() => {
+    const timer = setTimeout(() => setSettled(value), ms)
+    return () => clearTimeout(timer)
+  }, [value, ms])
+  return settled
+}
+
+const queryOf = (f: LogFilters) => ({
+  minutes: Number(f.range),
+  ...(f.search.trim() ? { search: f.search.trim() } : {}),
+  ...(f.level ? { level: f.level as Level } : {}),
+  ...(f.source ? { source: f.source as 'server' | 'website' } : {}),
+  ...(f.wire ? { wire: f.wire } : {}),
+  ...(f.fn ? { functionName: f.fn } : {}),
+  ...(f.trace ? { traceId: f.trace } : {}),
+  ...(f.org ? { tenantOrgId: f.org } : {}),
+  ...(f.user ? { tenantUserId: f.user } : {}),
+})
 
 type LogLine = { timestamp: string; level: Level; source?: string; functionName: string; message: string; traceId?: string; tenantOrgId?: string | null; tenantUserId?: string | null; wire: string | null; ms: number | null }
 
@@ -151,14 +168,18 @@ const rowsOf = (lines: LogLine[]): LogRow[] =>
 /** What the open copy printed: this computer, a cloud sandbox or a published stage, read through the same function. */
 export function LogsScreen() {
   const [live, setLive] = useState(false)
+  const [filters, setFilters] = useState<LogFilters>(NO_FILTERS)
+  const search = useDebounced(filters.search, SEARCH_WAIT_MS)
   const key = useProjectKey()
   const project = useProjectTarget()
   const target = { kind: project.kind, name: project.name }
-  const logs = usePikkuQuery('studio:projectLogEntries', { key, target, limit: 1000 }, { enabled: !!key, refetchInterval: live ? 2000 : false })
-  const lines = (logs.data as { logs: LogLine[] } | undefined)?.logs
+  const logs = usePikkuQuery('studio:projectLogEntries', { key, target, limit: 1000, ...queryOf({ ...filters, search }) }, { enabled: !!key, refetchInterval: live ? 2000 : false, placeholderData: (previous: unknown) => previous } as never)
+  const data = logs.data as { logs: LogLine[]; facets?: LogFacets } | undefined
+  const lines = data?.logs
   const rows = useMemo(() => (lines ? rowsOf(lines) : empty), [lines])
   const feed: LogsFeed = {
     rows,
+    facets: data?.facets ?? noFacets,
     isPending: !!key && logs.isPending,
     error: logs.error,
     isFetching: logs.isFetching,
@@ -168,6 +189,8 @@ export function LogsScreen() {
   return (
     <LogsView
       feed={feed}
+      filters={filters}
+      onFilters={setFilters}
       live={live}
       onLive={setLive}
       head={
@@ -179,53 +202,47 @@ export function LogsScreen() {
   )
 }
 
-export function LogsView({ feed, live, onLive, head }: { feed: LogsFeed; live: boolean; onLive: (on: boolean) => void; head: I18nNode }) {
+export function LogsView({ feed, filters, onFilters, live, onLive, head }: { feed: LogsFeed; filters: LogFilters; onFilters: (filters: LogFilters) => void; live: boolean; onLive: (on: boolean) => void; head: I18nNode }) {
   const { say } = useContext(ShellCtx)
-  const [range, setRange] = useState('1440')
-  const rows = useMemo(() => (feed.rows.length ? feed.rows.map(fromRow) : noEntries), [feed.rows])
-  const now = feed.updatedAt || Date.now()
-  const [globalFilter, setGlobalFilter] = useState('')
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const inRange = useMemo(() => (feed.rows.length ? feed.rows.map(fromRow) : noEntries), [feed.rows])
   const [sorting, setSorting] = useState<SortingState>([{ id: 'at', desc: true }])
   const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize })
   const [expanded, setExpanded] = useState<ExpandedState>({})
   const [visibility, setVisibility] = useState<ColumnVisibilityState>({ source: false, org: false, user: false })
   const [picking, setPicking] = useState(false)
-  const inRange = useMemo(() => (rows.length ? rows.filter((r) => now - r.at <= Number(range) * 60_000) : noEntries), [rows, range, now])
   const table = useTable({
     features,
     columns,
     data: inRange,
     getRowId: (r) => String(r.id),
     getRowCanExpand: () => true,
-    globalFilterFn: 'includesString',
-    getColumnCanGlobalFilter: (c) => c.id === 'text' || c.id === 'fn' || c.id === 'trace' || c.id === 'wire',
-    state: { globalFilter, columnFilters, sorting, pagination, expanded, columnVisibility: visibility },
-    onGlobalFilterChange: setGlobalFilter,
-    onColumnFiltersChange: setColumnFilters,
+    state: { sorting, pagination, expanded, columnVisibility: visibility },
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
     onExpandedChange: setExpanded,
     onColumnVisibilityChange: setVisibility,
   })
 
-  const filter = (id: string) => (columnFilters.find((f) => f.id === id)?.value as string | undefined) ?? 'all'
-  const setFilter = (id: string, value: string) => setColumnFilters((all) => [...all.filter((f) => f.id !== id), ...(value === 'all' ? [] : [{ id, value }])])
-  const count = (l: Level) => inRange.filter((r) => r.level === l).length
-  const found = table.getFilteredRowModel().rows
+  const filter = (id: keyof LogFilters) => filters[id] || 'all'
+  const change = (next: Partial<LogFilters>) => {
+    onFilters({ ...filters, ...next })
+    setPagination((p) => ({ ...p, pageIndex: 0 }))
+  }
+  const setFilter = (id: keyof LogFilters, value: string) => change({ [id]: value === 'all' ? '' : value })
+  const count = (l: Level) => feed.facets.levels[l]
+  const found = table.getPrePaginatedRowModel().rows
   const pageRows = table.getRowModel().rows
   const line = (r: Entry) => `${clock(r.at)} ${name(r.level).toUpperCase()} ${r.source} ${r.wire} ${r.fn} ${r.ms ?? '-'}ms ${r.trace} ${r.text}`
   const copy = (value: string) => void navigator.clipboard?.writeText(value).catch(() => undefined)
-  const clear = globalFilter || columnFilters.length > 0
+  const clear = (Object.keys(NO_FILTERS) as (keyof LogFilters)[]).some((k) => k !== 'range' && filters[k] !== '')
   const from = pagination.pageIndex * pagination.pageSize
-  const functions = useMemo(() => [...new Set(inRange.map((r) => String(r.fn)).filter(Boolean))].sort(), [inRange])
+  const functions = feed.facets.functions
+  const wires = feed.facets.wires
   const show = (entry: Entry) => {
-    setGlobalFilter('')
-    setColumnFilters([{ id: 'level', value: entry.level }, ...(entry.fn ? [{ id: 'fn', value: String(entry.fn) }] : [])])
+    onFilters({ ...NO_FILTERS, range: filters.range, level: entry.level, fn: String(entry.fn) })
     setSorting([{ id: 'at', desc: true }])
-    const index = inRange.filter((r) => r.level === entry.level && r.fn === entry.fn).sort((a, b) => b.at - a.at).findIndex((r) => r.id === entry.id)
-    setPagination({ pageIndex: Math.max(0, Math.floor(index / pageSize)), pageSize })
-    setExpanded({ [String(entry.id)]: true })
+    setPagination({ pageIndex: 0, pageSize })
+    setExpanded({})
   }
 
   return (
@@ -236,7 +253,7 @@ export function LogsView({ feed, live, onLive, head }: { feed: LogsFeed; live: b
       <div className="flex flex-wrap items-center gap-3">
         <label className="relative min-w-60 flex-1 basis-72">
           <Search className="pointer-events-none absolute top-1/2 start-4 size-4.5 -translate-y-1/2 text-muted-foreground" />
-          <Input value={globalFilter} onChange={(e) => setGlobalFilter(e.target.value)} placeholder={m.logs_screen__search()} aria-label={m.logs_screen__search()} className="h-11.5 rounded-full ps-11" />
+          <Input value={filters.search} onChange={(e) => change({ search: e.target.value })} placeholder={m.logs_screen__search()} aria-label={m.logs_screen__search()} className="h-11.5 rounded-full ps-11" />
         </label>
         <Segmented label={m.logs_screen__level()} value={filter('level')} options={sample().levels.map(([id, t]): [string, I18nString] => [id, id === 'all' ? t : m.logs_screen__level_count({ level: t, count: count(id as Level) })])} onChange={(v) => setFilter('level', v)} />
         <Segmented
@@ -244,12 +261,25 @@ export function LogsView({ feed, live, onLive, head }: { feed: LogsFeed; live: b
           value={filter('source')}
           options={[
             ['all', m.logs_screen__source_all()],
-            ['Server', m.logs_screen__source_server()],
-            ['Website', m.logs_screen__source_website()],
+            ['server', m.logs_screen__source_server()],
+            ['website', m.logs_screen__source_website()],
           ]}
           onChange={(v) => setFilter('source', v)}
         />
-        <Segmented label={m.logs_screen__time_range()} value={range} options={sample().ranges} onChange={setRange} />
+        <Segmented label={m.logs_screen__time_range()} value={filters.range} options={sample().ranges} onChange={(v) => change({ range: v })} />
+        {wires.length > 1 ? (
+          <Select value={filter('wire')} onValueChange={(v) => setFilter('wire', v)}>
+            <SelectTrigger shape="pill" aria-label={m.logs_screen__type()} className="max-w-48">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{m.logs_screen__level_all()}</SelectItem>
+              {wires.map((wire) => (
+                <SelectItem key={wire} value={wire}>{asI18n(wire)}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : null}
         {functions.length > 1 ? (
           <Select value={filter('fn')} onValueChange={(v) => setFilter('fn', v)}>
             <SelectTrigger shape="pill" aria-label={m.logs_screen__function()} className="max-w-64">
@@ -278,15 +308,22 @@ export function LogsView({ feed, live, onLive, head }: { feed: LogsFeed; live: b
             {m.logs_screen__trace_chip({ id: filter('trace') })}
           </Button>
         ) : null}
+        {filter('org') !== 'all' ? (
+          <Button variant="selected" size="compact" onClick={() => setFilter('org', 'all')}>
+            {m.logs_screen__org_chip({ id: filter('org') })}
+          </Button>
+        ) : null}
+        {filter('user') !== 'all' ? (
+          <Button variant="selected" size="compact" onClick={() => setFilter('user', 'all')}>
+            {m.logs_screen__user_chip({ id: filter('user') })}
+          </Button>
+        ) : null}
         <span>{found.length === 0 ? m.logs_screen__no_lines() : m.logs_screen__lines_range({ from: from + 1, to: from + pageRows.length, total: found.length })}</span>
         {clear ? (
           <Button
             variant="bordered"
             size="compact"
-            onClick={() => {
-              setGlobalFilter('')
-              setColumnFilters([])
-            }}
+            onClick={() => change({ ...NO_FILTERS, range: filters.range })}
           >
             {m.logs_screen__clear_filters()}
           </Button>
@@ -378,6 +415,16 @@ export function LogsView({ feed, live, onLive, head }: { feed: LogsFeed; live: b
                         <Button variant="bordered" size="compact" onClick={() => setFilter('trace', row.original.trace)}>
                           <Search />{m.logs_screen__whole_trace()}
                         </Button>
+                        {row.original.org ? (
+                          <Button variant="bordered" size="compact" onClick={() => setFilter('org', row.original.org)}>
+                            <Search />{m.logs_screen__whole_org()}
+                          </Button>
+                        ) : null}
+                        {row.original.user ? (
+                          <Button variant="bordered" size="compact" onClick={() => setFilter('user', row.original.user)}>
+                            <Search />{m.logs_screen__whole_user()}
+                          </Button>
+                        ) : null}
                         <Button variant="bordered" size="compact" onClick={() => copy(row.original.trace)}>
                           <Copy />{m.logs_screen__copy_trace_id()}
                         </Button>
@@ -393,7 +440,7 @@ export function LogsView({ feed, live, onLive, head }: { feed: LogsFeed; live: b
           </tbody>
         </table>
         {found.length === 0 ? (
-          <p className="px-5 py-10 text-center text-[15px] text-muted-foreground">{inRange.length === 0 ? m.logs_screen__empty_none_yet() : m.logs_screen__empty_no_match()}</p>
+          <p className="px-5 py-10 text-center text-[15px] text-muted-foreground">{!clear ? m.logs_screen__empty_none_yet() : m.logs_screen__empty_no_match()}</p>
         ) : null}
       </div>
 
