@@ -36,14 +36,14 @@ import { Page } from '../blocks/Page'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { useProjectKey } from '../lib/project'
 import { ShellCtx } from '../lib/shell'
-import { useSlots } from '../lib/slots'
+import { TargetSwitch } from '../blocks/TargetSwitch'
 import { useProjectTarget } from '../lib/project-target'
 import { ErrorState } from '../blocks/ErrorState'
 
 type Level = 'error' | 'warn' | 'info'
 type Source = 'Server' | 'Website'
-type Entry = { id: number; at: number; level: Level; source: Source; fn: I18nString; wire: I18nString; ms: number | null; trace: I18nString; text: I18nString }
-export type LogRow = { id: number; at: number; level: Level; source: string; wire: string | null; fn: string | null; ms: number | null; trace: string | null; text: string }
+type Entry = { id: number; at: number; level: Level; source: Source; fn: I18nString; wire: I18nString; ms: number | null; trace: I18nString; text: I18nString; org: I18nString; user: I18nString }
+export type LogRow = { id: number; at: number; level: Level; source: string; wire: string | null; fn: string | null; ms: number | null; trace: string | null; text: string; tenantOrgId?: string | null; tenantUserId?: string | null }
 const sample = (): { levels: Array<[string, I18nString]>; ranges: Array<[string, I18nString]> } => ({
   levels: [
     ['all', m.logs_screen__level_all()],
@@ -64,7 +64,7 @@ const fromRow = (r: LogRow): Entry => {
   const fn = r.fn ?? ''
   const trace = r.trace ?? ''
   const text = r.text
-  return { id: r.id, at: r.at, level: r.level, ms: r.ms, source: r.source === 'server' ? 'Server' : 'Website', wire: asI18n(wire), fn: asI18n(fn), trace: asI18n(trace), text: asI18n(text) }
+  return { id: r.id, at: r.at, level: r.level, ms: r.ms, source: r.source === 'server' ? 'Server' : 'Website', wire: asI18n(wire), fn: asI18n(fn), trace: asI18n(trace), text: asI18n(text), org: asI18n(r.tenantOrgId ?? ''), user: asI18n(r.tenantUserId ?? '') }
 }
 
 const clock = (at: number): I18nString => {
@@ -84,6 +84,8 @@ const labels: Record<string, () => I18nString> = {
   text: () => m.logs_screen__message(),
   ms: () => m.logs_screen__duration(),
   trace: () => m.logs_screen__trace_id(),
+  org: () => m.logs_screen__tenant_org(),
+  user: () => m.logs_screen__tenant_user(),
 }
 const pageSize = 25
 const severity: Record<Level, number> = { error: 0, warn: 1, info: 2 }
@@ -132,33 +134,49 @@ const columns = col.columns([
     enableSorting: false,
     cell: (c) => <span dir="ltr" className="font-mono text-[13px] text-ink-2">{c.getValue()}</span>,
   }),
+  col.accessor('org', { header: () => labels.org(), filterFn: 'equalsString', enableSorting: false, cell: (c) => <span dir="ltr" className="block truncate font-mono text-px13 text-ink-2">{c.getValue()}</span> }),
+  col.accessor('user', { header: () => labels.user(), filterFn: 'equalsString', enableSorting: false, cell: (c) => <span dir="ltr" className="block truncate font-mono text-px13 text-ink-2">{c.getValue()}</span> }),
 ])
-const widths: Record<string, string> = { open: 'w-9', at: 'w-32', level: 'w-26', source: 'w-24', wire: 'w-28', fn: 'w-36', ms: 'w-24', trace: 'w-28' }
+const widths: Record<string, string> = { open: 'w-9', at: 'w-32', level: 'w-26', source: 'w-24', wire: 'w-28', fn: 'w-36', ms: 'w-24', trace: 'w-28', org: 'w-28', user: 'w-28' }
 const empty: LogRow[] = []
 const noEntries: Entry[] = []
 
 export type LogsFeed = { rows: LogRow[]; isPending: boolean; error: unknown; isFetching: boolean; updatedAt: number; retry: () => void }
 
-export function LogsScreen() {
-  const target = useProjectTarget()
-  const { StageLogs } = useSlots()
-  if (target.kind === 'stage' && StageLogs) return <StageLogs name={target.name} />
-  return <WorkspaceLogs />
-}
+type LogLine = { timestamp: string; level: Level; source?: string; functionName: string; message: string; traceId?: string; tenantOrgId?: string | null; tenantUserId?: string | null; wire: string | null; ms: number | null }
 
-function WorkspaceLogs() {
+const rowsOf = (lines: LogLine[]): LogRow[] =>
+  lines.map((l, i) => ({ id: lines.length - i, at: Date.parse(l.timestamp), level: l.level, source: l.source ?? 'server', wire: l.wire, fn: l.functionName || null, ms: l.ms, trace: l.traceId ?? null, text: l.message, tenantOrgId: l.tenantOrgId ?? null, tenantUserId: l.tenantUserId ?? null }))
+
+/** What the open copy printed: this computer, a cloud sandbox or a published stage, read through the same function. */
+export function LogsScreen() {
   const [live, setLive] = useState(false)
   const key = useProjectKey()
-  const logs = usePikkuQuery('studio:projectLogEntries', { key, limit: 1000 }, { enabled: !!key, refetchInterval: live ? 2000 : false })
+  const project = useProjectTarget()
+  const target = { kind: project.kind, name: project.name }
+  const logs = usePikkuQuery('studio:projectLogEntries', { key, target, limit: 1000 }, { enabled: !!key, refetchInterval: live ? 2000 : false })
+  const lines = (logs.data as { logs: LogLine[] } | undefined)?.logs
+  const rows = useMemo(() => (lines ? rowsOf(lines) : empty), [lines])
   const feed: LogsFeed = {
-    rows: (logs.data as { entries: LogRow[] } | undefined)?.entries ?? empty,
+    rows,
     isPending: !!key && logs.isPending,
     error: logs.error,
     isFetching: logs.isFetching,
     updatedAt: logs.dataUpdatedAt,
     retry: () => void logs.refetch(),
   }
-  return <LogsView feed={feed} live={live} onLive={setLive} head={<PageHead crumb={m.logs_screen__crumb()} title={m.logs_screen__title()} text={m.logs_screen__text()} size="lead" />} />
+  return (
+    <LogsView
+      feed={feed}
+      live={live}
+      onLive={setLive}
+      head={
+        <PageHead crumb={m.logs_screen__crumb()} title={m.logs_screen__title()} text={m.logs_screen__text()} size="lead">
+          <TargetSwitch />
+        </PageHead>
+      }
+    />
+  )
 }
 
 export function LogsView({ feed, live, onLive, head }: { feed: LogsFeed; live: boolean; onLive: (on: boolean) => void; head: I18nNode }) {
@@ -171,7 +189,7 @@ export function LogsView({ feed, live, onLive, head }: { feed: LogsFeed; live: b
   const [sorting, setSorting] = useState<SortingState>([{ id: 'at', desc: true }])
   const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize })
   const [expanded, setExpanded] = useState<ExpandedState>({})
-  const [visibility, setVisibility] = useState<ColumnVisibilityState>({ source: false })
+  const [visibility, setVisibility] = useState<ColumnVisibilityState>({ source: false, org: false, user: false })
   const [picking, setPicking] = useState(false)
   const inRange = useMemo(() => (rows.length ? rows.filter((r) => now - r.at <= Number(range) * 60_000) : noEntries), [rows, range, now])
   const table = useTable({

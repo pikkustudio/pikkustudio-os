@@ -5143,5 +5143,9 @@
   "live_panel__ask_say": "Tell me about the live connection \"{title}\": what does it do and who can use it?",
   "live_panel__tech_name": "Name in code",
   "live_panel__tech_route": "Address",
-  "explore_hub__live_text": "The parts of your app that update while people watch, and who can join in."
+  "explore_hub__live_text": "The parts of your app that update while people watch, and who can join in.",
+  "logs_screen__tenant_org": "Organisation",
+  "logs_screen__tenant_user": "User",
+  "metrics_traffic__calls": "{n} calls",
+  "metrics_traffic__sub": "How many calls came in, and how long they took, across the time you picked."
 }

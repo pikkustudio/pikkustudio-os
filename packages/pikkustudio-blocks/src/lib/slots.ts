@@ -63,7 +63,7 @@ export type Slots = {
   TeamNav?: ComponentType<{ itemClass: string; labelClass: string; collapsed: boolean }>
   /** History of the deployed copy of a project; absent where nothing deploys. A hook, called every render. */
   useStageAudit?: (projectKey: string, refetchInterval: number) => { data?: StageAuditPage }
-  /** Requests and speed of a published copy, by target name; null asks only where the site is. A hook, called every render. */
+  /** Requests and speed of a published copy for the Performance screen, by target name; null asks only where the site is. Logs and Metrics read contributed sources instead. A hook, called every render. */
   useLiveMetrics?: (name: string | null, hours: number) => LiveMetrics
   /** How often each analytics event fired on a published copy over the last days; null when that copy is not published. A hook, called every render. */
   useAnalyticsEventCounts?: (stageName: string | null, days: number) => AnalyticsEventCounts | null
@@ -81,7 +81,6 @@ export type Slots = {
   RailFoot?: ComponentType<{ collapsed: boolean }>
   LiveAppHealth?: ComponentType
   Workspaces?: ComponentType
-  StageLogs?: ComponentType<{ name: string }>
   /** Where the project is published, shown in the chat panel above the message box. */
   ChatPublishStatus?: ComponentType<{ projectKey: string }>
   /**

@@ -1,4 +1,4 @@
-import { asI18n, sep, type I18nNode, type I18nString } from '@pikku/react'
+import { asI18n, type I18nNode, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useContext, useMemo, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
@@ -22,7 +22,7 @@ import { useProjectQuery } from '../lib/projectRpc'
 import { LOCAL_WORKSPACE, formatTarget, useProjectTarget } from '../lib/project-target'
 import { useSlots, type AnalyticsEventCount, type AnalyticsEventCounts, type LiveMetrics } from '../lib/slots'
 import { getLocale } from '@/paraglide/runtime.js'
-import { Bars, Figure, clock, seconds, speed, words } from './metrics-shared'
+import { Bars, Figure, seconds, words } from './metrics-shared'
 
 type UseLive = (name: string | null, hours: number) => LiveMetrics
 
@@ -128,139 +128,11 @@ function Quiet({ hours, label }: { hours: string; label: I18nString }) {
   return <NextCard label={label} hue="teal" page="metrics" title={m.metrics_live__quiet_title()} why={hours === '24' ? m.metrics_live__quiet_text_day() : m.metrics_live__quiet_text_week()} />
 }
 
-const perHour = (v: number) => m.metrics_live__per_hour({ n: Math.round(v) })
 const points = (live: LiveMetrics, pick: (b: LiveMetrics['traffic'][number]) => number | null) =>
   live.traffic.flatMap((b) => {
     const v = pick(b)
     return v === null ? [] : [[b.at, v] as [number, number]]
   })
-
-export function LiveMetricsScreen({ name, use }: { name: string; use: UseLive }) {
-  const { say } = useContext(ShellCtx)
-  const [hours, setHours] = useState('24')
-  const [showAll, setShowAll] = useState(false)
-  const [to] = useState(() => Math.ceil(Date.now() / HOUR) * HOUR)
-  const from = to - Number(hours) * HOUR
-  const s = useLive(name, Number(hours), use)
-  const head = (
-    <PageHead crumb={m.metrics_screen__crumb_app()} title={m.metrics_screen__title_app()} text={m.metrics_live__text()} size="lead" developerDetails>
-      <LiveSwitch />
-      <Segmented label={m.metrics_screen__time_range()} value={hours} options={liveRanges()} onChange={setHours} />
-    </PageHead>
-  )
-  return (
-    <Gate live={s.live} head={head} label={m.metrics_live__how_answering()}>
-      {() => {
-        if (!s.requests)
-          return (
-            <>
-              <Quiet hours={hours} label={m.metrics_live__how_answering()} />
-              <AnalyticsEvents stage={name} />
-            </>
-          )
-        const slowNow = s.average !== null && s.average > 2000
-        const verdict = s.errors > 0 ? m.metrics_screen__verdict_failed() : slowNow ? m.metrics_screen__verdict_slow() : m.metrics_screen__verdict_ok()
-        const detail = s.errors > 0 ? m.metrics_live__detail_failed({ count: s.errors, total: s.requests }) : slowNow ? m.metrics_screen__detail_slow() : m.metrics_live__detail_ok()
-        const fixPrompt = m.metrics_live__fix_prompt({ problems: s.failing.map((f) => m.metrics_live__fix_problem({ name: f.name, count: f.errors })).join(' ') })
-        const topSlow = s.slow[0]?.avgMs ?? 1
-        const shown = showAll ? s.slow : s.slow.slice(0, 5)
-        return (
-          <>
-            <NextCard label={m.metrics_live__how_answering()} hue={s.errors > 0 ? 'petrol' : 'teal'} page="metrics" title={verdict} why={detail}>
-              {s.errors > 0 ? (
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                  <Button variant="hero" size="pageLg" type="button" onClick={() => say(fixPrompt)}>
-                    <PikkuDot />
-                    {m.metrics_screen__fix_it()}
-                  </Button>
-                  <span className="text-px15 text-hero-ink-2">{m.metrics_live__assistant_note()}</span>
-                </div>
-              ) : null}
-              <div className="mt-2 grid grid-cols-3 gap-6 border-t border-hero-ink/20 pt-5" data-testid="metrics-live-cards">
-                <Figure label={m.metrics_live__visits()} value={s.requests} note={m.metrics_screen__in_this_time()} />
-                <Figure label={m.metrics_screen__how_fast()} value={s.average !== null ? seconds(s.average) : m.metrics_screen__nothing_yet()} note={m.metrics_screen__on_average()} />
-                <Figure label={m.metrics_screen__slowest()} value={seconds(s.slowest)} note={m.metrics_screen__the_longest_it_took()} />
-              </div>
-            </NextCard>
-
-            <Section title={m.performance_screen__over_time()} sub={m.metrics_live__over_time_sub()}>
-              <div className="grid gap-4 lg:grid-cols-2">
-                <Bars title={m.metrics_live__visits()} hue="teal" points={points(s.live, (b) => b.requests)} from={from} to={to} top={Math.max(1, ...s.live.traffic.map((b) => b.requests))} say={perHour} />
-                <Bars title={m.metrics_screen__how_fast()} hue="petrol" points={points(s.live, (b) => (b.requests ? b.avgMs : null))} from={from} to={to} top={Math.max(1, ...s.live.traffic.map((b) => b.avgMs)) * 1.1} say={seconds} />
-              </div>
-            </Section>
-
-            <div className="grid gap-4 lg:grid-cols-2">
-              <Section title={m.metrics_screen__longest_title()} sub={m.metrics_screen__longest_sub()}>
-                <div className="rounded-empty border border-border bg-card p-5" data-testid="metrics-live-slowest">
-                  {s.slow.length === 0 ? (
-                    <p className="text-px15 text-muted-foreground">{m.metrics_screen__none_app()}</p>
-                  ) : (
-                    <ul className="flex flex-col gap-4">
-                      {shown.map((f) => {
-                        const fast = speed(f.avgMs!)
-                        return (
-                          <li key={f.name}>
-                            <div className="flex items-baseline justify-between gap-3">
-                              <span className="min-w-0 truncate text-px15 font-semibold">{asI18n(f.name)}</span>
-                              <span className="shrink-0 text-sm tabular-nums">
-                                <span className={`font-semibold ${fast.text}`}>{fast.word}</span>
-                                <span className="text-muted-foreground">{sep(' · ')}{seconds(f.avgMs!)}</span>
-                              </span>
-                            </div>
-                            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-secondary" data-hue="teal">
-                              <div className={`h-full rounded-full ${fast.bar}`} style={{ width: `${Math.max(3, (f.avgMs! / topSlow) * 100)}%` }} />
-                            </div>
-                            <div className="mt-1 text-px13 text-muted-foreground">{m.metrics_screen__happened({ count: f.requests })}</div>
-                          </li>
-                        )
-                      })}
-                    </ul>
-                  )}
-                  {s.slow.length > 5 ? (
-                    <button type="button" onClick={() => setShowAll((v) => !v)} className="mt-4 text-px15 font-semibold text-hero hover:underline">
-                      {showAll ? m.metrics_screen__show_fewer() : m.metrics_screen__show_more({ count: s.slow.length - 5 })}
-                    </button>
-                  ) : null}
-                </div>
-              </Section>
-
-              <Section title={m.metrics_screen__wrong_title()} sub={m.metrics_live__wrong_sub()}>
-                <div className="rounded-empty border border-border bg-card p-5" data-testid="metrics-live-errors">
-                  {s.failing.length === 0 ? (
-                    <p className="text-px15 text-muted-foreground">{m.metrics_screen__nothing_wrong()}</p>
-                  ) : (
-                    <ul className="flex flex-col divide-y divide-border">
-                      {s.failing.slice(0, 6).map((f) => (
-                        <li key={f.name} className="py-3 first:pt-0 last:pb-0">
-                          <div className="flex items-baseline justify-between gap-3">
-                            <span className="min-w-0 truncate text-px15 font-semibold">{asI18n(f.name)}</span>
-                            {f.lastRun ? <span className="shrink-0 text-px13 text-muted-foreground">{m.metrics_live__last_at({ time: clock(f.lastRun) })}</span> : null}
-                          </div>
-                          <p className="mt-0.5 text-sm text-ink-2">{m.metrics_live__failed_of({ count: f.errors, total: f.requests })}</p>
-                          <div className="mt-2 flex flex-wrap items-center gap-2">
-                            <AskPikku label={m.metrics_screen__fix_this()} prompt={m.metrics_live__fix_problem({ name: f.name, count: f.errors })} />
-                            <Button asChild variant="ghost" size="compact">
-                              <Link {...keep} to={'/logs' as never}>
-                                {m.metrics_live__see_notes()}
-                              </Link>
-                            </Button>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </Section>
-            </div>
-
-            <AnalyticsEvents stage={name} />
-          </>
-        )
-      }}
-    </Gate>
-  )
-}
 
 export function LivePerformanceScreen({ name, use }: { name: string; use: UseLive }) {
   const [hours, setHours] = useState('24')

@@ -4937,5 +4937,9 @@
   "live_panel__ask_say": "Erzähl mir von der Live-Verbindung \"{title}\": Was tut sie und wer darf sie nutzen?",
   "live_panel__tech_name": "Name im Code",
   "live_panel__tech_route": "Adresse",
-  "explore_hub__live_text": "Die Teile deiner App, die sich aktualisieren, während Leute zuschauen, und wer teilnehmen darf."
+  "explore_hub__live_text": "Die Teile deiner App, die sich aktualisieren, während Leute zuschauen, und wer teilnehmen darf.",
+  "logs_screen__tenant_org": "Organisation",
+  "logs_screen__tenant_user": "Nutzer",
+  "metrics_traffic__calls": "{n} Aufrufe",
+  "metrics_traffic__sub": "Wie viele Aufrufe ankamen und wie lange sie dauerten, über den gewählten Zeitraum."
 }

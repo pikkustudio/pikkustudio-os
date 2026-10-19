@@ -138,3 +138,58 @@ export function useRange() {
 }
 
 export const readMetrics = (q: { data?: unknown }) => ((q.data as { metrics: Metric[] } | undefined)?.metrics ?? []) as Metric[]
+
+export type SummaryFunction = { name: string; wire: string | null; requests: number; errors: number; avgMs: number | null; lastRun: number | null }
+export type SummaryFailure = { functionName: string; wire: string | null; message: string; count: number; last: number | null }
+export type MetricsSummary = {
+  totals: { requests: number; errors: number; avgMs: number | null; maxMs: number | null }
+  traffic: Array<{ at: number; requests: number; errors: number; avgMs: number; maxMs: number }>
+  functions: SummaryFunction[]
+  failures: SummaryFailure[]
+}
+
+/** One failure, named and explained the way the Metrics screen talks about it. */
+export type Problem = { name: string; why: string; count: number; last: number | null }
+
+export const problemsOf = (failures: SummaryFailure[]): Problem[] => {
+  const groups = new Map<string, Problem>()
+  for (const f of failures) {
+    const name = nameOf({ wireType: f.wire, wireId: f.functionName || null })
+    const why = reason(f.message)
+    const id = `${name}|${why}`
+    const g = groups.get(id) ?? { name, why, count: 0, last: null }
+    g.count += f.count
+    g.last = f.last === null ? g.last : Math.max(g.last ?? 0, f.last)
+    groups.set(id, g)
+  }
+  return [...groups.values()].sort((a, b) => (b.last ?? 0) - (a.last ?? 0))
+}
+
+/** Functions by the name people see, slowest on average first. */
+export const slowestOf = (functions: SummaryFunction[]) => {
+  const groups = new Map<string, { name: string; count: number; total: number }>()
+  for (const f of functions) {
+    if (f.avgMs === null || !f.requests) continue
+    const name = nameOf({ wireType: f.wire, wireId: f.name })
+    const g = groups.get(name) ?? { name, count: 0, total: 0 }
+    g.count += f.requests
+    g.total += f.avgMs * f.requests
+    groups.set(name, g)
+  }
+  return [...groups.values()].map((g) => ({ name: g.name, count: g.count, average: g.total / g.count })).sort((a, b) => b.average - a.average)
+}
+
+const HOUR = 3_600_000
+const remoteRanges = (): Array<[string, I18nString]> => [
+  ['1440', m.metrics_shared__last_day()],
+  ['10080', m.metrics_live__last_week()],
+]
+
+/** The time window: minutes on this computer, days for a copy in the cloud, where numbers arrive by the hour. */
+export function useMetricsWindow(remote: boolean) {
+  const local = useRange()
+  const [range, setRange] = useState('1440')
+  const [to] = useState(() => Math.ceil(Date.now() / HOUR) * HOUR)
+  if (!remote) return { ...local, options: ranges() }
+  return { range, setRange, to, from: to - Number(range) * 60_000, options: remoteRanges() }
+}

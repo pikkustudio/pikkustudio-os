@@ -5281,5 +5281,9 @@
   "live_panel__ask_say": "حدّثني عن الاتصال المباشر \"{title}\": ماذا يفعل ومن يستطيع استخدامه؟",
   "live_panel__tech_name": "الاسم في الشيفرة",
   "live_panel__tech_route": "العنوان",
-  "explore_hub__live_text": "أجزاء تطبيقك التي تتحدّث بينما يتابع الناس، ومن يستطيع الانضمام."
+  "explore_hub__live_text": "أجزاء تطبيقك التي تتحدّث بينما يتابع الناس، ومن يستطيع الانضمام.",
+  "logs_screen__tenant_org": "المؤسسة",
+  "logs_screen__tenant_user": "المستخدم",
+  "metrics_traffic__calls": "{n} طلبات",
+  "metrics_traffic__sub": "كم طلبًا وصل، وكم استغرق، خلال الفترة التي اخترتها."
 }
