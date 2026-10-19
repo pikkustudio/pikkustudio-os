@@ -4,11 +4,8 @@ import { mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { spawn } from 'node:child_process'
 
-export const DEFAULT_RELEASES_REPO = 'pikkujs/studio'
+export const DEFAULT_RELEASES_URL = 'https://releases.pikkustudio.app/studio'
 const CHECK_EVERY_MS = 6 * 60 * 60 * 1000
-
-type Asset = { name: string; url: string }
-type Release = { tag_name: string; assets: Asset[] }
 
 export type UpdateResult =
   | { status: 'current'; version: string }
@@ -16,10 +13,9 @@ export type UpdateResult =
   | { status: 'unavailable'; reason: string }
 
 export type UpdateOptions = {
-  repo: string
+  baseUrl: string
   home: string
   current: string
-  token?: string
   platform?: string
   fetch?: typeof fetch
   extract?: (archive: Uint8Array, into: string) => Promise<void>
@@ -59,42 +55,30 @@ const untar = (archive: Uint8Array, into: string): Promise<void> =>
   })
 
 export async function checkForUpdate(options: UpdateOptions): Promise<UpdateResult> {
-  const { repo, home, current, token } = options
+  const { baseUrl, home, current } = options
   const request = options.fetch ?? fetch
   const platform = options.platform ?? platformTag()
-  const auth: Record<string, string> = token ? { authorization: `Bearer ${token}` } : {}
-  const headers = { 'user-agent': 'pikku-studio-updater', ...auth }
-
-  const download = async (asset: Asset): Promise<Uint8Array> => {
-    const response = await request(asset.url, { headers: { ...headers, accept: 'application/octet-stream' } })
-    if (!response.ok) throw new Error(`${asset.name}: HTTP ${response.status}`)
-    return new Uint8Array(await response.arrayBuffer())
-  }
+  const headers = { 'user-agent': 'pikku-studio-updater' }
 
   try {
-    const response = await request(`https://api.github.com/repos/${repo}/releases/latest`, {
-      headers: { ...headers, accept: 'application/vnd.github+json' },
-    })
-    if (!response.ok) return { status: 'unavailable', reason: `Could not read the latest release (HTTP ${response.status})` }
-    const release = (await response.json()) as Release
-    const version = release.tag_name.replace(/^v/, '')
+    const latest = await request(`${baseUrl}/latest.json`, { headers })
+    if (!latest.ok) return { status: 'unavailable', reason: `Could not read the latest release (HTTP ${latest.status})` }
+    const version = String(((await latest.json()) as { version: string }).version).replace(/^v/, '')
     if (compareVersions(version, current) <= 0) return { status: 'current', version: current }
     if ((await stagedVersion(home)) === version) return { status: 'staged', version }
 
     const name = `studio-${version}-${platform}.tar.gz`
-    const archive = release.assets.find((a) => a.name === name)
-    const sums = release.assets.find((a) => a.name === 'SHA256SUMS')
-    if (!archive) return { status: 'unavailable', reason: `Release ${version} has no build for ${platform}` }
-    if (!sums) return { status: 'unavailable', reason: `Release ${version} has no SHA256SUMS` }
-
-    const expected = new TextDecoder()
-      .decode(await download(sums))
+    const sumsResponse = await request(`${baseUrl}/${version}/SHA256SUMS`, { headers })
+    if (!sumsResponse.ok) return { status: 'unavailable', reason: `Release ${version} has no SHA256SUMS` }
+    const expected = (await sumsResponse.text())
       .split('\n')
       .map((line) => line.trim().split(/\s+/))
       .find(([, file]) => file === name)?.[0]
-    if (!expected) return { status: 'unavailable', reason: `SHA256SUMS has no entry for ${name}` }
+    if (!expected) return { status: 'unavailable', reason: `Release ${version} has no build for ${platform}` }
 
-    const bytes = await download(archive)
+    const archive = await request(`${baseUrl}/${version}/${name}`, { headers })
+    if (!archive.ok) throw new Error(`${name}: HTTP ${archive.status}`)
+    const bytes = new Uint8Array(await archive.arrayBuffer())
     const actual = createHash('sha256').update(bytes).digest('hex')
     if (actual !== expected) return { status: 'unavailable', reason: `Checksum mismatch for ${name}; the download was discarded` }
 
@@ -120,14 +104,13 @@ export function startUpdater(
   logger: UpdaterLogger,
   env: NodeJS.ProcessEnv = process.env
 ): () => void {
-  const repo = env.PIKKU_STUDIO_RELEASES_REPO ?? DEFAULT_RELEASES_REPO
-  const token = env.PIKKU_STUDIO_UPDATE_TOKEN ?? env.GITHUB_TOKEN
+  const baseUrl = env.PIKKU_STUDIO_RELEASES_URL ?? DEFAULT_RELEASES_URL
   let running = false
   const tick = async () => {
     if (running) return
     running = true
     try {
-      const result = await checkForUpdate({ repo, home, current, token })
+      const result = await checkForUpdate({ baseUrl, home, current })
       if (result.status === 'staged') logger.info(`Studio ${result.version} is downloaded and will start on the next launch`)
       else if (result.status === 'unavailable') logger.warn(`Update check skipped: ${result.reason}`)
     } finally {

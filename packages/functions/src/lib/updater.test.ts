@@ -6,19 +6,15 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { checkForUpdate, compareVersions, stagedVersion } from './updater.js'
 
+const base = 'https://releases.test/studio'
 const sha = (bytes: Uint8Array) => createHash('sha256').update(bytes).digest('hex')
 
-const releaseFetch = (tag: string, files: Record<string, Uint8Array>, calls: string[] = []) =>
+const releaseFetch = (version: string, files: Record<string, Uint8Array>, calls: string[] = []) =>
   (async (input: RequestInfo | URL) => {
     const url = String(input)
     calls.push(url)
-    if (url.endsWith('/releases/latest')) {
-      return Response.json({
-        tag_name: tag,
-        assets: Object.keys(files).map((name) => ({ name, url: `https://assets.test/${name}` })),
-      })
-    }
-    const file = files[url.replace('https://assets.test/', '')]
+    if (url === `${base}/latest.json`) return Response.json({ version })
+    const file = files[url.replace(`${base}/${version}/`, '')]
     return file ? new Response(file as BodyInit) : new Response('missing', { status: 404 })
   }) as typeof fetch
 
@@ -42,7 +38,7 @@ describe('checkForUpdate', () => {
     await writeFile(join(into, 'root'), bytes)
   }
   const options = (fetchImpl: typeof fetch, current = '0.1.0') => ({
-    repo: 'pikkujs/studio',
+    baseUrl: base,
     home,
     current,
     platform: 'linux-x64',
@@ -54,7 +50,7 @@ describe('checkForUpdate', () => {
     const name = 'studio-0.2.0-linux-x64.tar.gz'
     const result = await checkForUpdate(
       options(
-        releaseFetch('v0.2.0', {
+        releaseFetch('0.2.0', {
           [name]: archive,
           'studio-0.2.0-darwin-arm64.tar.gz': new Uint8Array([1]),
           SHA256SUMS: new TextEncoder().encode(`${sha(archive)}  ${name}\n`),
@@ -69,7 +65,7 @@ describe('checkForUpdate', () => {
 
   test('does nothing when already on the latest version', async () => {
     const calls: string[] = []
-    const result = await checkForUpdate(options(releaseFetch('v0.1.0', {}, calls)))
+    const result = await checkForUpdate(options(releaseFetch('0.1.0', {}, calls)))
     expect(result).toEqual({ status: 'current', version: '0.1.0' })
     expect(calls).toHaveLength(1)
     expect(await stagedVersion(home)).toBeNull()
@@ -79,7 +75,7 @@ describe('checkForUpdate', () => {
     const name = 'studio-0.2.0-linux-x64.tar.gz'
     const result = await checkForUpdate(
       options(
-        releaseFetch('v0.2.0', {
+        releaseFetch('0.2.0', {
           [name]: archive,
           SHA256SUMS: new TextEncoder().encode(`${'0'.repeat(64)}  ${name}\n`),
         })
@@ -92,7 +88,12 @@ describe('checkForUpdate', () => {
 
   test('reports a release with no build for this platform', async () => {
     const result = await checkForUpdate(
-      options(releaseFetch('v0.2.0', { 'studio-0.2.0-darwin-arm64.tar.gz': archive, SHA256SUMS: archive }))
+      options(
+        releaseFetch('0.2.0', {
+          'studio-0.2.0-darwin-arm64.tar.gz': archive,
+          SHA256SUMS: new TextEncoder().encode(`${sha(archive)}  studio-0.2.0-darwin-arm64.tar.gz\n`),
+        })
+      )
     )
     expect(result).toEqual({ status: 'unavailable', reason: 'Release 0.2.0 has no build for linux-x64' })
   })
@@ -103,14 +104,14 @@ describe('checkForUpdate', () => {
       [name]: archive,
       SHA256SUMS: new TextEncoder().encode(`${sha(archive)}  ${name}\n`),
     }
-    await checkForUpdate(options(releaseFetch('v0.2.0', files)))
+    await checkForUpdate(options(releaseFetch('0.2.0', files)))
     const calls: string[] = []
-    const again = await checkForUpdate(options(releaseFetch('v0.2.0', files, calls)))
+    const again = await checkForUpdate(options(releaseFetch('0.2.0', files, calls)))
     expect(again).toEqual({ status: 'staged', version: '0.2.0' })
     expect(calls).toHaveLength(1)
   })
 
-  test('survives an unreachable releases API', async () => {
+  test('survives an unreachable releases host', async () => {
     const failing = (async () => {
       throw new Error('offline')
     }) as unknown as typeof fetch
