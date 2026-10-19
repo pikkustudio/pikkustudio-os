@@ -102,7 +102,6 @@ export function ExploreHub() {
           ))}
           <HubRow hue="petrol" Icon={Zap} title={m.functions_screen__title()} text={m.explore_hub__functions_text()} to="/functions" />
           <HubRow hue="teal" Icon={Radio} title={m.live_screen__title()} text={m.explore_hub__live_text()} to="/live-connections" />
-          <HubRow hue="sea" Icon={Wrench} title={m.tools_screen__title()} text={m.explore_hub__tools_text()} to="/helper-tools" />
           <HubRow hue="teal" Icon={Send} title={m.outgoing__title()} text={m.explore_hub__outgoing_text()} to="/outgoing-messages" />
           <HubRow hue="sea" Icon={LayoutTemplate} title={m.screens_page__title()} text={m.explore_hub__screens_text()} to="/screens" />
         </div>

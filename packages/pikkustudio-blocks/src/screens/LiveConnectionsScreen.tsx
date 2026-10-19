@@ -19,7 +19,7 @@ import { LivePanel, abilityLabel } from '../blocks/LivePanel'
 import { WorkSkeleton } from './work-shared'
 import { useProjectKey, useProjectName } from '../lib/project'
 import { ShellCtx } from '../lib/shell'
-import { scopeNotes } from '../lib/functions'
+import { scopeNotes, type FunctionsMeta } from '../lib/functions'
 import { countFor, filtersFrom, hasFilters, liveFrom, matches, searchFrom, useLiveMeta, whoHas, WHO, type Filters, type Live, type Who } from '../lib/live-connections'
 
 const SHOWN = 40
@@ -41,7 +41,7 @@ export function LiveConnectionsScreen() {
 
   const filters = filtersFrom(search)
   const list = useMemo(() => liveFrom(q.data), [q.data])
-  const notes = useMemo(() => scopeNotes(q.data), [q.data])
+  const notes = useMemo(() => scopeNotes(q.data as FunctionsMeta | undefined), [q.data])
   const set = (patch: Partial<Filters>) => {
     setShown(SHOWN)
     void navigate({ to: '.', search: ((prev: object) => ({ ...prev, ...searchFrom({ ...filters, ...patch }) })) as never, replace: true })

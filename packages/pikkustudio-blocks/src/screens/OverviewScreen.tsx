@@ -16,7 +16,7 @@ import { useSlots } from '../lib/slots'
 
 const dot = { ok: 'bg-success ring-success-soft', warn: 'bg-warning ring-card', info: 'bg-info ring-info-soft' }
 
-const PAGE_OF: Record<string, '/workflows' | '/scheduled-tasks' | '/queues' | '/emails' | '/functions' | '/live-connections' | '/helper-tools' | undefined> = { functions: '/functions', channels: '/live-connections', mcpTools: '/helper-tools', workflows: '/workflows', schedulers: '/scheduled-tasks', queues: '/queues', emails: '/emails' }
+const PAGE_OF: Record<string, '/workflows' | '/scheduled-tasks' | '/queues' | '/emails' | '/functions' | '/live-connections' | undefined> = { functions: '/functions', channels: '/live-connections', mcpTools: '/functions', workflows: '/workflows', schedulers: '/scheduled-tasks', queues: '/queues', emails: '/emails' }
 
 /** The parts an app is made of; a function so the words follow the language. */
 const areas = (): Array<[I18nString, string, I18nString, I18nString]> => [
@@ -119,7 +119,7 @@ export function OverviewScreen() {
                   </>
                 )
                 return to ? (
-                  <Link key={title} {...keep} to={to} className={`${row} transition-colors duration-140 hover:bg-secondary active:bg-surface-3`}>
+                  <Link key={title} {...keep} to={to} search={countKey === 'mcpTools' ? ({ reach: 'helper' } as never) : undefined} className={`${row} transition-colors duration-140 hover:bg-secondary active:bg-surface-3`}>
                     {body}
                   </Link>
                 ) : (

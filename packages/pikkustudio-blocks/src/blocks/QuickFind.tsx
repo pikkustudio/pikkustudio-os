@@ -46,7 +46,6 @@ const pages = (): Hit[] => (
     [m.quick_find__queues(), '/queues', Layers],
     [m.quick_find__functions(), '/functions', Zap],
     [m.live_screen__title(), '/live-connections', Radio],
-    [m.tools_screen__title(), '/helper-tools', Wrench],
     [m.database__title(), '/database', Database],
     [m.signin_options__title(), '/sign-in-options', LogIn],
     [m.outgoing__title(), '/outgoing-messages', Send],

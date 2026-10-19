@@ -1,4 +1,4 @@
-const PAGE_SCOPED = ['file', 'folder', 'item', 'pg', 'part', 'parts', 'stage', 'view', 'show', 'note', 'email', 'pitch', 'redirect', 'fq', 'who', 'reach', 'scope', 'builtin', 'fn', 'kind', 'ch', 'tl']
+const PAGE_SCOPED = ['file', 'folder', 'item', 'pg', 'part', 'parts', 'stage', 'view', 'show', 'note', 'email', 'pitch', 'redirect', 'fq', 'who', 'reach', 'scope', 'builtin', 'fn', 'kind', 'ch']
 
 export const withoutPageParams = (search: object) => {
   const next: Record<string, unknown> = { ...search }

@@ -23,7 +23,10 @@ type DbTable = { name: string; columns: Column[]; source?: string }
 type Schema = { tables?: DbTable[] } | null
 
 const HIDDEN = /^(migrations|pgmigrations|sql_migrations|kysely_migration.*|sqlite_.*|_cf_.*)$/
+const BUILT_IN = /^(user|account|session|verification|authjs_.*|pikku_.*|workflow_.*|channels|channel_subscriptions|webhook_delivery.*|secrets.*|secret_.*|credential.*|audit|virtual_user_.*|agent_.*|ai_.*)$/
 const SHOWN_FIELDS = 6
+
+const isBuiltIn = (t: DbTable) => (!!t.source && t.source !== 'app') || BUILT_IN.test(t.name)
 
 const fieldsOf = (t: DbTable) => t.columns.filter((c) => !c.isPrimaryKey).map((c) => c.name)
 
@@ -73,8 +76,8 @@ export function DatabaseScreen() {
     )
 
   const tables = (q.data?.tables ?? []).filter((t) => !HIDDEN.test(t.name)).sort((a, b) => a.name.localeCompare(b.name))
-  const own = tables.filter((t) => !t.source || t.source === 'app')
-  const builtIn = tables.filter((t) => t.source && t.source !== 'app')
+  const own = tables.filter((t) => !isBuiltIn(t))
+  const builtIn = tables.filter(isBuiltIn)
   const ask = () => say(own.length ? m.database__ask_say() : m.database__add_say())
   const title = q.isPending ? m.database__hero_loading() : own.length === 0 ? m.database__hero_none() : own.length === 1 ? m.database__hero_one() : m.database__hero_many({ count: own.length })
 
