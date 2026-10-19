@@ -20,6 +20,7 @@
     "@pikkustudio/addon-inbox": "workspace:*",
     "@pikkustudio/addon-review": "workspace:*",
     "@pikkustudio/addon-spindle": "workspace:*",
+    "@pikku/assistant-ui": "^0.12.14",
     "@pikku/react": "^0.12.16",
     "@pikkustudio/blocks": "workspace:*",
     "@pikkustudio/theme": "workspace:*",

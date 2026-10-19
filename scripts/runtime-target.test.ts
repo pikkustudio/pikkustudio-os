@@ -20,15 +20,15 @@ describe('runtime target', () => {
   })
   test('missing git fails with a hint', () => {
     const root = mkdtempSync(join(tmpdir(), 'rt-'))
-    expect(() => checkGit(root, 'darwin-arm64', 'darwin-arm64')).toThrow('bundle-git-darwin.sh')
-    expect(() => checkGit(root, 'linux-x64', 'darwin-arm64')).toThrow('build-git.sh linux/x64')
+    expect(() => checkGit(root, 'darwin-arm64')).toThrow('fetch-git.sh darwin/arm64')
+    expect(() => checkGit(root, 'linux-x64')).toThrow('fetch-git.sh linux/x64')
   })
   test('a Linux git for a darwin target is rejected', () => {
     const root = withGit('darwin-arm64', [0x7f, 0x45, 0x4c, 0x46, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xb7, 0])
-    expect(() => checkGit(root, 'darwin-arm64', 'darwin-arm64')).toThrow('linux-arm64 binary')
+    expect(() => checkGit(root, 'darwin-arm64')).toThrow('linux-arm64 binary')
   })
   test('a matching git is accepted', () => {
     const root = withGit('darwin-arm64', [0xcf, 0xfa, 0xed, 0xfe, 0x0c, 0, 0, 0x01])
-    expect(checkGit(root, 'darwin-arm64', 'darwin-arm64')).toContain('darwin-arm64')
+    expect(checkGit(root, 'darwin-arm64')).toContain('darwin-arm64')
   })
 })

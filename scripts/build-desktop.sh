@@ -12,9 +12,7 @@ esac
 bundles=${TAURI_BUNDLES:-}
 [ -n "$bundles" ] || { [ "$(uname -s)" = Darwin ] && bundles=app || bundles=all; }
 [ -x ".deploy/uv/$target/bin/uv" ] || sh scripts/fetch-uv.sh "${target/-//}"
-if [ ! -x ".deploy/git/$target/bin/git" ]; then
-  if [ "$(uname -s)" = Darwin ]; then bash scripts/bundle-git-darwin.sh; else sh scripts/build-git.sh "${target/-//}"; fi
-fi
+[ -x ".deploy/git/$target/bin/git" ] || sh scripts/fetch-git.sh "${target/-//}"
 bun run prebuild
 (cd apps/studio && bun run build)
 bun scripts/build-runtime.ts

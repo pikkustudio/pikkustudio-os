@@ -17,7 +17,7 @@ trap 'rm -rf "$tmp"' EXIT
 url="https://github.com/astral-sh/uv/releases/download/$version/uv-$triple.tar.gz"
 curl -fsSL "$url" -o "$tmp/uv.tar.gz"
 expected=$(curl -fsSL "$url.sha256" | cut -d' ' -f1)
-actual=$(shasum -a 256 "$tmp/uv.tar.gz" | cut -d' ' -f1)
+actual=$( (sha256sum "$tmp/uv.tar.gz" 2>/dev/null || shasum -a 256 "$tmp/uv.tar.gz") | cut -d' ' -f1)
 [ "$expected" = "$actual" ] || { echo "uv checksum mismatch for $triple" >&2; exit 1; }
 tar xzf "$tmp/uv.tar.gz" -C "$tmp"
 rm -rf "$out" && mkdir -p "$out/bin"

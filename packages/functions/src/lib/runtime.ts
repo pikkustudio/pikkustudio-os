@@ -92,8 +92,9 @@ export async function installEmbeddedRuntime(home: string): Promise<string | nul
     process.env.GIT_EXEC_PATH ??= join(git, 'libexec', 'git-core')
     process.env.GIT_TEMPLATE_DIR ??= join(git, 'share', 'git-core', 'templates')
   }
-  if (gitBin && !process.env.GIT_SSL_CAINFO && !existsSync('/etc/ssl/certs/ca-certificates.crt')) {
-    process.env.GIT_SSL_CAINFO = join(git, 'etc', 'ca-certificates.crt')
+  if (gitBin && !process.env.GIT_SSL_CAINFO) {
+    const system = '/etc/ssl/certs/ca-certificates.crt'
+    process.env.GIT_SSL_CAINFO = existsSync(system) ? system : join(git, 'etc', 'ca-certificates.crt')
   }
   process.env.BUN_BE_BUN = '1'
   process.env.PIKKU_PI_ROOT = join(dir, 'pi')

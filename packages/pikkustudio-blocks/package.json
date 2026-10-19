@@ -28,6 +28,7 @@
     "LICENSE"
   ],
   "peerDependencies": {
+    "@pikku/assistant-ui": "*",
     "@pikku/react": "*",
     "lucide-react": "*",
     "react": "^19.0.0"
