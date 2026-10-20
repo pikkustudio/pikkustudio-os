@@ -7,14 +7,18 @@ import { join } from 'node:path'
 import { after, before, describe, test } from 'node:test'
 import { StudioProjectsService, type AccountProvider, type SourceProject } from '../../src/services/projects.js'
 import { StudioPublisher } from '../../src/services/publish.js'
+import { projectLogEntries } from '../../src/functions/project-log-entries.function.js'
+import { pickSource } from '../../src/lib/target-sources.js'
+import type { LogSource } from '../../src/services/log-source.js'
 
 const held: SourceProject = { projectId: 'p1', name: 'Bakery', gitRepoUrl: null }
 
-// A workspace's Studio: answers listProjects and whatever `answers` holds; any other call is a 404, as an older Studio
-// without that call answers.
+// A workspace's Studio: answers listProjects and whatever `answers` holds; any other call is a 404 with the body Pikku
+// gives a route it has no wiring for, as an older Studio without that call answers.
 const answers: Record<string, unknown> = {}
 const asked: { name: string; body: Record<string, unknown> }[] = []
 let failWith: number | null = null
+let failBody: string | null = null
 const workspace = createServer((req: IncomingMessage, res: ServerResponse) => {
   let raw = ''
   req.on('data', (chunk) => (raw += chunk))
@@ -25,11 +29,11 @@ const workspace = createServer((req: IncomingMessage, res: ServerResponse) => {
     if (name === 'listProjects') return void res.end(JSON.stringify({ projects: [{ key: 'app' }] }))
     if (failWith) {
       res.statusCode = failWith
-      return void res.end(JSON.stringify({ error: 'boom' }))
+      return void res.end(failBody ?? JSON.stringify({ error: 'boom' }))
     }
     if (!(name in answers)) {
       res.statusCode = 404
-      return void res.end(JSON.stringify({ error: 'Not found' }))
+      return void res.end(JSON.stringify({ name: 'NotFoundError', message: 'The server cannot find the requested resource.', errorId: 'e1' }))
     }
     res.end(JSON.stringify(answers[name]))
   })
@@ -59,6 +63,7 @@ const reset = () => {
   for (const k of Object.keys(answers)) delete answers[k]
   asked.length = 0
   failWith = null
+  failBody = null
 }
 
 describe('a source project is answered by its workspace', () => {
@@ -74,6 +79,68 @@ describe('a source project is answered by its workspace', () => {
     assert.strictEqual(await studio.workspaceStudio(KEY, 'projectMetricsSummary', {}), null)
     failWith = 500
     await assert.rejects(studio.workspaceStudio(KEY, 'projectMetricsSummary', {}), /The workspace answered 500/)
+  })
+
+  test('a 404 from a call that ran, or from something in front of the workspace, is a failure, not a missing call', async () => {
+    reset()
+    const studio = await service()
+    failWith = 404
+    failBody = JSON.stringify({ name: 'NotFoundError', message: 'No project app here', errorId: 'e2' })
+    await assert.rejects(studio.workspaceStudio(KEY, 'projectLogEntries', {}), /The workspace answered 404: No project app here/)
+    failBody = 'no such host'
+    await assert.rejects(studio.workspaceStudio(KEY, 'projectLogEntries', {}), /The workspace answered 404/)
+    failBody = JSON.stringify({ name: 'NotFoundError', message: 'The server cannot find the requested resource.', payload: { id: 'x' } })
+    await assert.rejects(studio.workspaceStudio(KEY, 'projectLogEntries', {}), /The workspace answered 404/)
+  })
+
+  test("the key's own workspace is asked for its logs before a contributed sandbox source", () => {
+    const sandbox = { name: 'sandbox source' }
+    const local = { name: 'local source' }
+    const sources = { workspace: local, sandbox }
+    assert.deepStrictEqual(pickSource(sources, KEY, { kind: 'workspace', name: 'ws' }), { kind: 'sandbox', delegate: true, fallback: sandbox })
+    assert.deepStrictEqual(pickSource(sources, KEY, { kind: 'workspace', name: 'local' }), { kind: 'workspace', delegate: true })
+    assert.deepStrictEqual(pickSource(sources, KEY, { kind: 'workspace', name: 'other' }), { kind: 'sandbox', source: sandbox })
+    assert.deepStrictEqual(pickSource({ workspace: local }, KEY, { kind: 'workspace', name: 'ws' }), { kind: 'sandbox', delegate: true })
+    assert.deepStrictEqual(pickSource(sources, 'local-one', { kind: 'workspace', name: 'local' }), { kind: 'workspace', source: local })
+  })
+
+  describe('logs of a source project in its workspace', () => {
+    const line = { timestamp: new Date(1000).toISOString(), level: 'info' as const, functionName: 'hello', message: 'from telemetry', wire: null, ms: null }
+    const sandbox: LogSource = { list: async () => [line], failures: async () => [] }
+    const logsOf = (studio: StudioProjectsService) =>
+      (projectLogEntries as unknown as { func: (s: object, i: object, w: object) => Promise<{ logs: { message: string }[]; facets: unknown }> }).func(
+        { logSources: { sandbox }, studioProjects: studio },
+        { key: KEY, target: { kind: 'workspace', name: 'ws' }, minutes: 60, limit: 10 },
+        { session: {} },
+      )
+
+    test('come from the Studio in the workspace, asked with its own key and the same filters', async () => {
+      reset()
+      const facets = { levels: { error: 0, warn: 0, info: 1 }, functions: ['hello'], wires: [] }
+      answers.projectLogEntries = { logs: [{ ...line, message: 'from the workspace' }], facets, kinds: ['workspace'] }
+      const out = await logsOf(await service())
+      assert.deepStrictEqual(out.logs.map((l) => l.message), ['from the workspace'])
+      assert.deepStrictEqual(out.facets, facets)
+      const body = asked.find((a) => a.name === 'projectLogEntries')?.body
+      assert.strictEqual(body?.key, 'app')
+      assert.deepStrictEqual(body?.target, { kind: 'workspace', name: 'local' })
+      assert.strictEqual(body?.limit, 10)
+      assert.ok(typeof body?.since === 'string')
+    })
+
+    test('come from the contributed sandbox source while the workspace is off, without asking it', async () => {
+      reset()
+      const out = await logsOf(await service('off'))
+      assert.deepStrictEqual(out.logs.map((l) => l.message), ['from telemetry'])
+      assert.deepStrictEqual(asked, [])
+    })
+
+    test('surface a workspace failure instead of answering empty', async () => {
+      reset()
+      failWith = 404
+      failBody = JSON.stringify({ name: 'NotFoundError', message: 'No project app here' })
+      await assert.rejects(logsOf(await service()), /The workspace answered 404: No project app here/)
+    })
   })
 
   test('the workspace is asked with its own key for the project', async () => {

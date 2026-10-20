@@ -63,13 +63,16 @@ export const projectLogEntries = pikkuFunc({
     const since = minutes ? new Date(Date.now() - minutes * 60_000).toISOString() : query.since
     const filters = { ...query, since }
     const picked = pickSource(logSources, key, target)
-    if ('delegate' in picked) {
+    // The project's own workspace answers first; a contributed source only when that workspace can't.
+    const source = 'delegate' in picked ? picked.fallback : picked.source
+    if ('delegate' in picked || !source) {
       const out = await studioProjects.workspaceStudio<Output | OlderOutput>(key, 'projectLogEntries', { ...filters, target: LOCAL_TARGET })
-      const logs = fromOlder(out)
-      return { logs, facets: out?.facets ?? facetsOf(logs), kinds }
+      if (out || !source) {
+        const logs = fromOlder(out)
+        return { logs, facets: out?.facets ?? facetsOf(logs), kinds }
+      }
     }
     const ctx = await sourceContext(studioProjects, key, target, session)
-    const source = picked.source
     const [logs, facets] = await Promise.all([
       source.list(ctx, { ...filters, limit: Math.min(query.limit ?? 500, 2000) }),
       source.facets ? source.facets(ctx, { since }) : source.list(ctx, { since, limit: 2000 }).then(facetsOf),

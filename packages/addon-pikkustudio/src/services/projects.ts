@@ -245,6 +245,32 @@ export interface WorkspaceTarget {
 const WORKSPACE_TARGET_TTL = 30_000
 
 /**
+ * Pikku answers a route it has no wiring for with a bare NotFoundError: that name and its stock message, nothing
+ * else. A call that ran and found nothing (no such project, no published copy) says what it missed, and any other
+ * 404 (a proxy or router in front of the workspace) has no such body; both are real failures, not a missing call.
+ */
+const MISSING_CALL = { name: 'NotFoundError', message: 'The server cannot find the requested resource.' }
+
+export const isMissingCall = (status: number, body: string): boolean => {
+  if (status !== 404) return false
+  try {
+    const parsed = JSON.parse(body) as { name?: unknown; message?: unknown; payload?: unknown }
+    return parsed.name === MISSING_CALL.name && parsed.message === MISSING_CALL.message && parsed.payload === undefined
+  } catch {
+    return false
+  }
+}
+
+const errorMessageOf = (body: string) => {
+  try {
+    const message = (JSON.parse(body) as { message?: unknown }).message
+    return typeof message === 'string' && message ? `: ${message}` : ''
+  } catch {
+    return ''
+  }
+}
+
+/**
  * A project a contributed source holds that this computer does not: `<source>:<id>`, or `<source>:<id>@<workspace>`
  * for one of its workspaces by slug. The source is its namespace in `projectSources`; the ids are the source's own,
  * so core only reads the shape. A project on this computer keeps its own key, which has no `:`.
@@ -1603,10 +1629,11 @@ export class StudioProjectsService {
     const target = await this.workspaceTarget(key)
     if (target.state !== 'ready') return null
     const res = await fetch(`${target.url}/studio/${name}`, { method: 'POST', headers: { ...target.headers, 'content-type': 'application/json' }, body: JSON.stringify({ ...data, key: target.remoteKey }) })
+    if (res.ok) return (await res.json()) as T
+    const body = await res.text()
     // An older Studio in the workspace has no such call: the workspace doesn't have this, so the caller answers empty.
-    if (res.status === 404) return null
-    if (!res.ok) throw new Error(`The workspace answered ${res.status}`)
-    return (await res.json()) as T
+    if (isMissingCall(res.status, body)) return null
+    throw new Error(`The workspace answered ${res.status}${errorMessageOf(body)}`)
   }
 
   /**

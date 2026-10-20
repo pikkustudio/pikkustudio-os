@@ -26,14 +26,22 @@ export const sourceContext = async (projects: Pick<StudioProjectsService, 'list'
   return { key, target, session, project: (await sourceProjectOf(projects, key)) ?? { source: null, sourceId: null } }
 }
 
+/** Whether a target is the workspace a source key names: the project's own Studio there holds what it printed. */
+export const isOwnWorkspace = (key: string, target: TargetRef): boolean => {
+  const ref = sourceOf(key)
+  return !!ref && target.kind === 'workspace' && (target.name === LOCAL_WORKSPACE || target.name === ref.workspace)
+}
+
 /**
- * The source for a target, or what to do instead. A source key is a project this computer does not hold:
- * without a sandbox source its own workspace is asked, as before sources existed.
+ * The source for a target, or what to do instead. A source key is a project this computer does not hold: its own
+ * workspace is asked, since the Studio there keeps the project's lines and calls. A sandbox source, when one is
+ * contributed, is the fallback for when that workspace is not up or is too old to answer. Any other sandbox of a
+ * source key, with no sandbox source, is asked of the key's workspace, as before sources existed.
  */
-export const pickSource = <T>(sources: Partial<Record<SourceKind, T>> | undefined, key: string, target: TargetRef): { kind: SourceKind; source: T } | { kind: SourceKind; delegate: true } => {
+export const pickSource = <T>(sources: Partial<Record<SourceKind, T>> | undefined, key: string, target: TargetRef): { kind: SourceKind; source: T } | { kind: SourceKind; delegate: true; fallback?: T } => {
   const kind = sourceKindOf(target)
   const source = sources?.[kind]
-  if (kind === 'workspace' && sourceOf(key)) return { kind, delegate: true }
+  if (isOwnWorkspace(key, target)) return kind === 'sandbox' && source ? { kind, delegate: true, fallback: source } : { kind, delegate: true }
   if (source) return { kind, source }
   if (kind === 'sandbox' && sourceOf(key)) return { kind, delegate: true }
   throw new TargetNotAvailableError(kind)
