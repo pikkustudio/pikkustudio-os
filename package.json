@@ -22,7 +22,7 @@
     "build:desktop": "bash scripts/build-desktop.sh"
   },
   "devDependencies": {
-    "@pikku/cli": "^0.12.195",
+    "@pikku/cli": "^0.12.196",
     "@pikku/deploy-standalone": "^0.12.28",
     "@types/bun": "^1.4.3",
     "@types/node": "^24",
@@ -43,11 +43,11 @@
     "@pikku/ai-vercel": "^0.12.16",
     "@pikku/better-auth": "^0.12.59",
     "@pikku/bun-server": "^0.12.15",
-    "@pikku/core": "^0.12.145",
+    "@pikku/core": "^0.12.146",
     "@pikku/fetch": "^0.12.13",
-    "@pikku/kysely": "^0.13.39",
+    "@pikku/kysely": "^0.13.40",
     "@pikku/kysely-bun-sqlite": "^0.12.11",
-    "@pikku/modelcontextprotocol": "^0.12.18",
+    "@pikku/modelcontextprotocol": "^0.12.19",
     "@pikku/react": "^0.12.17",
     "@pikku/schedule": "^0.12.11",
     "@pikku/schema-cfworker": "^0.12.9",
