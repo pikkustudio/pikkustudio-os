@@ -1,3 +1,5 @@
 {
-  "$schema": "https://inlang.com/schema/inlang-message-format"
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "inbox_addon__title": "البريد الوارد",
+  "inbox_inbox__title": "البريد الوارد"
 }

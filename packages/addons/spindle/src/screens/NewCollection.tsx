@@ -25,7 +25,7 @@ export default function NewCollection({ navigate }: ScreenProps) {
             e.preventDefault()
             void run(m.spindle_shared__busy_creating(), async () => {
               const kb = await rpc.invoke('spindle:spindleCreateKnowledgeBase', { name: name.trim(), description: description.trim() })
-              navigate(`/collections/${kb.kb_id}`)
+              navigate(`/spindle/collections/${kb.kb_id}`)
             })
           }}
         >
@@ -41,7 +41,7 @@ export default function NewCollection({ navigate }: ScreenProps) {
             <Button type="submit" size="page" disabled={busy !== null || name.trim() === ''}>
               {m.spindle_newcollection__create_collection()}
             </Button>
-            <Button type="button" size="page" variant="bordered" onClick={() => navigate('/collections')}>
+            <Button type="button" size="page" variant="bordered" onClick={() => navigate('/spindle/collections')}>
               {m.spindle_newcollection__cancel()}
             </Button>
           </div>

@@ -96,7 +96,7 @@ export default function Library({ navigate }: ScreenProps) {
         {busy ? <StatusLine tone="wait" text={m.asset__text({ busy })} /> : null}
         {suggestions > 0 ? (
           <RowCard flag tile={<Sparkles className="size-5" />} title={m.spindle_library__suggestion_count({ count: suggestions })} caption={m.spindle_library__review_them_and_decide_which_collections()}>
-            <Button size="compact" onClick={() => navigate('/suggestions')}>
+            <Button size="compact" onClick={() => navigate('/spindle/suggestions')}>
               {m.spindle_library__see_suggestions()}
             </Button>
           </RowCard>
@@ -134,7 +134,7 @@ export default function Library({ navigate }: ScreenProps) {
                           {a.status === 'failed' ? m.spindle_library__try_again() : m.spindle_library__read_it()}
                         </Button>
                       ) : null}
-                      <Button size="compact" variant="bordered" onClick={() => navigate(`/files/${a.asset_id}`)}>
+                      <Button size="compact" variant="bordered" onClick={() => navigate(`/spindle/files/${a.asset_id}`)}>
                         {m.spindle_library__open()}
                       </Button>
                     </RowCard>

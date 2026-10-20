@@ -213,5 +213,13 @@
   "spindle_suggestions__spindle": "Spindle",
   "spindle_suggestions__spindle_suggests_a_collection": "Spindle schlägt eine Sammlung vor",
   "spindle_suggestions__suggestions": "Vorschläge",
-  "spindle_suggestions__that_did_not_work": "Das hat nicht geklappt"
+  "spindle_suggestions__that_did_not_work": "Das hat nicht geklappt",
+  "spindle__title": "Spindle",
+  "spindle_library__title": "Bibliothek",
+  "spindle_search__title": "Suche",
+  "spindle_collections__title": "Sammlungen",
+  "spindle_new_collection__title": "Neue Sammlung",
+  "spindle_collection__title": "Sammlung",
+  "spindle_suggestions__title": "Vorschläge",
+  "spindle_file__title": "Datei"
 }

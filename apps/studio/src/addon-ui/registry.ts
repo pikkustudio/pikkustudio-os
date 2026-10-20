@@ -4,7 +4,7 @@ import type { ComponentType } from 'react'
 export type AddonScreenDef = {
   path: string
   title: string
-  nav?: boolean
+  nav?: { area: string; icon: string; order: number; badge?: string }
   scopes?: readonly string[]
   component?: () => Promise<{ default: ComponentType<{ params: Record<string, string>; navigate: (path: string) => void }> }>
   app?: string

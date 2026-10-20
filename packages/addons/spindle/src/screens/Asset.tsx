@@ -76,7 +76,7 @@ export default function Asset({ params, navigate }: ScreenProps) {
           <RowStack>
             {d.collections.map((c) => (
               <RowCard key={c.kb_id} on tile={<Folders className="size-5" />} title={asI18n(c.name)} caption={c.source === 'workflow' && c.reason ? asI18n(c.reason) : m.spindle_asset__added_by_you()}>
-                <Button size="compact" variant="bordered" onClick={() => navigate(`/collections/${c.kb_id}`)}>
+                <Button size="compact" variant="bordered" onClick={() => navigate(`/spindle/collections/${c.kb_id}`)}>
                   {m.spindle_asset__open()}
                 </Button>
                 <Button size="compact" variant="ghost" disabled={busy !== null} onClick={() => void run(m.spindle_shared__busy_taking_out(), async () => void (await rpc.invoke('spindle:spindlePlaceAsset', { kbId: c.kb_id, assetId, state: 'removed' })))}>

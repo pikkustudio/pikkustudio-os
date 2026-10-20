@@ -41,7 +41,7 @@ export default function Collection({ params, navigate }: ScreenProps) {
         <PageHead crumb={m.spindle_collection__collections()} title={asI18n(detail.kb.name)} text={detail.kb.description ? asI18n(detail.kb.description) : undefined}>
           {sure ? (
             <div className="flex gap-2">
-              <Button size="page" variant="destructive" disabled={busy !== null} onClick={() => void run(m.spindle_shared__busy_deleting(), async () => { await rpc.invoke('spindle:spindleDeleteKnowledgeBase', { kbId }); navigate('/collections') })}>
+              <Button size="page" variant="destructive" disabled={busy !== null} onClick={() => void run(m.spindle_shared__busy_deleting(), async () => { await rpc.invoke('spindle:spindleDeleteKnowledgeBase', { kbId }); navigate('/spindle/collections') })}>
                 {m.spindle_collection__yes_delete_it()}
               </Button>
               <Button size="page" variant="bordered" onClick={() => setSure(false)}>
@@ -69,7 +69,7 @@ export default function Collection({ params, navigate }: ScreenProps) {
                 return (
                   <RowCard key={a.asset_id} on tile={<Icon className="size-5" />} title={asI18n(a.title)} caption={a.source === 'workflow' && a.reason ? asI18n(a.reason) : kindOf(a.kind).label()}>
                     <Dot tone={state.tone}>{state.label()}</Dot>
-                    <Button size="compact" variant="bordered" onClick={() => navigate(`/files/${a.asset_id}`)}>
+                    <Button size="compact" variant="bordered" onClick={() => navigate(`/spindle/files/${a.asset_id}`)}>
                       {m.spindle_collection__open()}
                     </Button>
                     <Button size="compact" variant="ghost" disabled={busy !== null} onClick={() => void run(m.spindle_shared__busy_taking_out(), async () => void (await rpc.invoke('spindle:spindlePlaceAsset', { kbId, assetId: a.asset_id, state: 'removed' })))}>

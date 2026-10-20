@@ -102,7 +102,7 @@ export default function Search({ navigate }: ScreenProps) {
                       <span className="flex-1">
                         {m.spindle_search__citation({ title: c.title, where: where(c) })}
                       </span>
-                      <Button size="compact" variant="bordered" onClick={() => navigate(`/files/${c.assetId}`)}>
+                      <Button size="compact" variant="bordered" onClick={() => navigate(`/spindle/files/${c.assetId}`)}>
                         {m.spindle_search__open()}
                       </Button>
                     </li>
@@ -118,7 +118,7 @@ export default function Search({ navigate }: ScreenProps) {
             <RowStack>
               {hits.map((h) => (
                 <RowCard key={h.passageId} tile={<SearchIcon className="size-5" />} title={<span className="text-[16px] font-medium">{excerpt(h.text)}</span>} caption={m.spindle_search__found_by({ where: where(h), matchedBy: h.matchedBy })}>
-                  <Button size="compact" variant="bordered" onClick={() => navigate(`/files/${h.assetId}`)}>
+                  <Button size="compact" variant="bordered" onClick={() => navigate(`/spindle/files/${h.assetId}`)}>
                     {m.spindle_search__open_file()}
                   </Button>
                 </RowCard>

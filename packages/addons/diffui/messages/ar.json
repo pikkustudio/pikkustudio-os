@@ -7,5 +7,7 @@
   "diffui_home__prototype": "النموذج الأولي",
   "diffui_home__prototype_alt": "النموذج الأولي",
   "diffui_home__theme_dark": "داكن",
-  "diffui_home__theme_light": "فاتح"
+  "diffui_home__theme_light": "فاتح",
+  "diffui__title": "Diff UI",
+  "diffui_home__title": "Diff UI"
 }

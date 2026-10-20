@@ -1,11 +1,12 @@
-import { defineScreens } from '@pikku/core/addon'
+import { pikkuStudio } from '@pikku/core/addon'
 
-export default defineScreens({
-  title: 'Inbox',
+export default pikkuStudio({
+  title: 'inbox_addon__title',
   screens: [
     {
       path: '/inbox',
-      title: 'Inbox',
+      title: 'inbox_inbox__title',
+      scope: 'project',
       scopes: ['inbox:read'],
       component: () => import('./screens/Inbox.js'),
     },

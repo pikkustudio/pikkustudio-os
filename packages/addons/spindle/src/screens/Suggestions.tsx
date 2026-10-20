@@ -101,7 +101,7 @@ export default function Suggestions({ navigate }: ScreenProps) {
         {busy ? <StatusLine tone="wait" text={m.asset__text({ busy })} /> : null}
         {loaded && proposals.length === 0 ? (
           <EmptyState title={m.spindle_suggestions__nothing_to_decide()} text={m.spindle_suggestions__every_file_is_in_a_collection()}>
-            <Button size="page" variant="bordered" onClick={() => navigate('/collections')}>
+            <Button size="page" variant="bordered" onClick={() => navigate('/spindle/collections')}>
               {m.spindle_suggestions__see_collections()}
             </Button>
           </EmptyState>

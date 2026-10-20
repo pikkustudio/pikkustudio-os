@@ -233,5 +233,13 @@
   "spindle_suggestions__spindle": "Spindle",
   "spindle_suggestions__spindle_suggests_a_collection": "Spindle يقترح مجموعة",
   "spindle_suggestions__suggestions": "الاقتراحات",
-  "spindle_suggestions__that_did_not_work": "لم ينجح ذلك"
+  "spindle_suggestions__that_did_not_work": "لم ينجح ذلك",
+  "spindle__title": "Spindle",
+  "spindle_library__title": "المكتبة",
+  "spindle_search__title": "البحث",
+  "spindle_collections__title": "المجموعات",
+  "spindle_new_collection__title": "مجموعة جديدة",
+  "spindle_collection__title": "مجموعة",
+  "spindle_suggestions__title": "الاقتراحات",
+  "spindle_file__title": "ملف"
 }

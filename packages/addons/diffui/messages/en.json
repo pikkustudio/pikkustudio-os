@@ -7,5 +7,7 @@
   "diffui_home__prototype": "Prototype",
   "diffui_home__prototype_alt": "prototype",
   "diffui_home__theme_dark": "dark",
-  "diffui_home__theme_light": "light"
+  "diffui_home__theme_light": "light",
+  "diffui__title": "Diff UI",
+  "diffui_home__title": "Diff UI"
 }
