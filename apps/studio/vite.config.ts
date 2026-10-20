@@ -6,6 +6,7 @@ import { paraglideVitePlugin } from '@inlang/paraglide-js'
 import { fileURLToPath, URL } from 'node:url'
 import { testIds } from './build/testids.plugin.ts'
 import { inlangProject } from '../../scripts/inlang-project.mjs'
+import { routeIgnorePattern } from '../../scripts/route-ignore.mjs'
 
 const base = process.env.PIKKUSTUDIO_FRONTEND_BASE || '/'
 
@@ -51,7 +52,7 @@ export default defineConfig(() => {
     // on message edits. Must run first.
     paraglideVitePlugin({ project: inlangProject(fileURLToPath(new URL('.', import.meta.url))), outdir: './src/paraglide' }),
     tailwindcss(),
-    tanstackStart({ spa: { enabled: true, prerender: { outputPath: '/index.html' } }, router: {} }),
+    tanstackStart({ spa: { enabled: true, prerender: { outputPath: '/index.html' } }, router: { routeFileIgnorePattern: routeIgnorePattern(fileURLToPath(new URL('.', import.meta.url))) } }),
     // Stamps the `data-testid`s browser scenarios address controls by, derived from each
     // control's i18n message key. A standalone pre-transform rather than a `babel` option
     // on react(): @vitejs/plugin-react@6 (rolldown/oxc) drops that option, and this must

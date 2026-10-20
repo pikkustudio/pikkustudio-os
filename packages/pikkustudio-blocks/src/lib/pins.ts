@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useLocation } from '@tanstack/react-router'
 import { useProjectSlug } from './project'
+import { registry, type NavPin } from './nav-registry'
 
-export const MOVABLE = ['virtual-users', 'translations', 'artifacts', 'content', 'front-doors', 'audit', 'emails', 'inbox', 'knowledge', 'publish', 'workflows', 'assistants'] as const
-export type Movable = (typeof MOVABLE)[number]
-
-const DEFAULT_ON: readonly Movable[] = ['emails', 'inbox', 'knowledge', 'publish', 'workflows', 'assistants']
+// The pages a project can pin to its rail, and which are pinned by default, come from the nav registry (core's
+// pins). A pin is stored by its page's id, the path without its slash.
+export type Movable = string
+export const pinId = (pin: NavPin): Movable => pin.path.slice(1)
+export const MOVABLE: readonly Movable[] = registry.pins.map(pinId)
+const DEFAULT_ON: readonly Movable[] = registry.pins.filter((pin) => pin.on).map(pinId)
 
 const key = (slug: string) => `studio:pins:${slug}`
 const offKey = (slug: string) => `studio:pins-off:${slug}`
@@ -14,7 +17,7 @@ const EVENT = 'studio:pins'
 const list = (k: string): Movable[] => {
   try {
     const v = JSON.parse(localStorage.getItem(k) ?? '[]')
-    return Array.isArray(v) ? v.filter((x): x is Movable => (MOVABLE as readonly string[]).includes(x)) : []
+    return Array.isArray(v) ? v.filter((x): x is Movable => MOVABLE.includes(x)) : []
   } catch {
     return []
   }
@@ -55,4 +58,4 @@ export function usePins() {
 }
 
 export const useCurrentMovable = (): Movable | null =>
-  useLocation({ select: (l) => (MOVABLE as readonly string[]).find((id) => l.pathname.endsWith(`/${id}`)) as Movable | undefined ?? null })
+  useLocation({ select: (l) => MOVABLE.find((id) => l.pathname.endsWith(`/${id}`)) ?? null })

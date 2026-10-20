@@ -6,6 +6,8 @@
 //
 //   node scripts/link-addon.mjs             wire every addon present, with pikku.cloud.json
 //   node scripts/link-addon.mjs --operator  also wire the operator addons, with pikku.operator.json
+//   node scripts/link-addon.mjs --test      only the local test addons (packages/addons/spindle and diffui), to try the
+//                                          addon screens and nav across more than one addon; never part of the app
 //   node scripts/link-addon.mjs --unlink    back to the open build
 //
 // Each addon's wire/*.ts is copied to .studio-addons/wire/, which pikku.cloud.json lists as a source directory: the
@@ -23,6 +25,8 @@ const args = new Set(process.argv.slice(2))
 
 // The operator addons only make sense on top of the cloud one; the open build has neither.
 const OPERATOR_ONLY = new Set(['addon-pikkucontrolpanel'])
+// Workspace packages already in node_modules: linking them only copies their wire/ files, and unlinking leaves them be.
+const TEST_ADDONS = ['packages/addons/spindle', 'packages/addons/diffui']
 
 const unlinkAll = () => {
   if (!existsSync(stateFile)) {
@@ -30,7 +34,8 @@ const unlinkAll = () => {
     return 0
   }
   const { addons = [] } = JSON.parse(readFileSync(stateFile, 'utf8'))
-  for (const { name } of addons) {
+  for (const { name, test } of addons) {
+    if (test) continue
     const target = join(root, 'node_modules', name)
     if (existsSync(target) || lstatSync(target, { throwIfNoEntry: false })?.isSymbolicLink()) rmSync(target, { recursive: true, force: true })
   }
@@ -40,6 +45,25 @@ const unlinkAll = () => {
 
 if (args.has('--unlink')) {
   console.log(`Unlinked ${unlinkAll()} addon(s); the next build is the open one`)
+  process.exit(0)
+}
+
+const copyWire = (dir) => {
+  const wire = join(dir, 'wire')
+  if (!existsSync(wire)) return
+  mkdirSync(join(linked, 'wire'), { recursive: true })
+  for (const file of readdirSync(wire).filter((f) => f.endsWith('.ts'))) copyFileSync(join(wire, file), join(linked, 'wire', file))
+}
+
+if (args.has('--test')) {
+  unlinkAll()
+  const addons = TEST_ADDONS.map((dir) => {
+    copyWire(join(root, dir))
+    return { name: JSON.parse(readFileSync(join(root, dir, 'package.json'), 'utf8')).name, dir, test: true }
+  })
+  mkdirSync(linked, { recursive: true })
+  writeFileSync(stateFile, JSON.stringify({ config: 'pikku.cloud.json', addons }, null, 2) + '\n')
+  console.log(`Linked the test addons ${addons.map((a) => a.name).join(', ')}; builds now use pikku.cloud.json`)
   process.exit(0)
 }
 
@@ -65,11 +89,7 @@ for (const dir of present) {
   mkdirSync(dirname(target), { recursive: true })
   rmSync(target, { recursive: true, force: true })
   symlinkSync(relative(dirname(target), dir), target)
-  const wire = join(dir, 'wire')
-  if (existsSync(wire)) {
-    mkdirSync(join(linked, 'wire'), { recursive: true })
-    for (const file of readdirSync(wire).filter((f) => f.endsWith('.ts'))) copyFileSync(join(wire, file), join(linked, 'wire', file))
-  }
+  copyWire(dir)
   addons.push({ name: manifest.name, dir: relative(root, dir) })
 }
 

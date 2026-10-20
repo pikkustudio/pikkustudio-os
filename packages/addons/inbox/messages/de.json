@@ -1,5 +1,6 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
   "inbox_addon__title": "Posteingang",
-  "inbox_inbox__title": "Posteingang"
+  "inbox_inbox__title": "Posteingang",
+  "inbox_message__title": "Nachricht im Posteingang"
 }

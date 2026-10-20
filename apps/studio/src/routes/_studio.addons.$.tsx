@@ -1,19 +1,9 @@
-import { createFileRoute, notFound } from '@tanstack/react-router'
-import { AddonHost } from '@/addon-ui/AddonHost'
-import { installedAddons } from '@/addon-ui/registry'
-import { resolveAddonScreen } from '@/addon-ui/resolve'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
-const resolve = (splat: string | undefined) => {
-  const resolved = resolveAddonScreen(installedAddons, splat ?? '')
-  if (!resolved?.screen.component) throw notFound()
-  return resolved
-}
-
+// An addon's screens used to live at /addons/<addon>/<path>; they are at their own path now. Old links still open.
 export const Route = createFileRoute('/_studio/addons/$')({
-  loader: ({ params }) => {
-    resolve(params._splat)
-  },
-  component: function AddonRoute() {
-    return <AddonHost resolved={resolve(Route.useParams()._splat)} />
+  beforeLoad: ({ params, search }) => {
+    const [, ...rest] = (params._splat ?? '').split('/').filter(Boolean)
+    throw redirect({ to: `/${rest.join('/')}` as never, search: search as never, replace: true })
   },
 })

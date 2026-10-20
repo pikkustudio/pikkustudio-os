@@ -1,22 +1,12 @@
 import type { LocationRewrite } from '@tanstack/react-router'
+import { GLOBAL, PAGES, SPLAT, TEAM_PAGES } from './nav-registry'
 
 // Every studio URL is scoped by its team: /<team>/projects, /<team>/<project>/<page>. The open edition
 // has one team, `local`. Inside the app the team and the project ride in the `team` and `project`
 // search params, so routes stay /projects and /home.
 
-// Not scoped by a team: onboarding, your own account, and the signed-in template app at /app.
-const GLOBAL = new Set(['claim-stripe', 'sign-in', 'your-name', 'choose-ai', 'new-team', 'profile', 'accept-invite', 'account', 'app', 'login', 'signup', 'admin', 'cli-auth', 'oauth', 'connect'])
-// The team's own pages: no project in their URL.
-const TEAM_PAGES = new Set(['projects', 'secrets', 'studio-metrics', 'new-project'])
-// Project pages. The value says whether the page reads the project's running app: those show the start screen until it is up.
-// Publish and Resume never call it; the rest are team pages.
-export const PAGES: Record<string, boolean> = {
-  home: true, project: false, review: false, 'review-ui': false, 'review-fixes': false, resume: false, publish: false, build: false, lab: false,
-  billing: false, team: false, settings: false, 'project-settings': false, plans: false, ai: false, domains: false, workspaces: false, 'secret-access': false, 'project-secrets': true,
-  'changes': true, design: true, emails: true, inbox: false, translations: true, artifacts: true, knowledge: true, content: true,
-  'front-doors': true, code: true, audit: true, apps: true, explore: true, logs: true, performance: true, metrics: true, scorers: true, checks: true, connections: true, 'incoming-alerts': true,
-  assistants: true, 'virtual-users': true, accounts: true, workflows: true, 'scheduled-tasks': true, 'queues': true, database: true, 'sign-in-options': true, 'outgoing-messages': true, screens: true, functions: true, 'live-connections': true, versions: false, addons: true, 'add-ons': true, mocks: true, surface: true, switches: true, permissions: true, security: true,
-}
+// Which first segment is outside any team, a team page or a project page comes from the nav registry: each screen's
+// scope, core's and every wired addon's.
 const isPage = (name: string) => Object.hasOwn(PAGES, name)
 
 export const pageNeedsApp = (pathname: string) => {
@@ -37,7 +27,6 @@ export const keepSearch = (prev: object) => prev
 
 // Entity ids used to ride in the query (?email=, ?file=). Old links still open: they are rewritten to the path form.
 const LEGACY: Record<string, string> = { changes: 'change', emails: 'email', inbox: 'message', knowledge: 'note', code: 'file' }
-const SPLAT = new Set(['knowledge', 'code'])
 export const encodePath = (v: string) => v.split('/').map(encodeURIComponent).join('/')
 
 const legacyToPath = (url: URL) => {

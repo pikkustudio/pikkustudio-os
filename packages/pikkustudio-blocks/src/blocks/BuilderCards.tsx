@@ -2,7 +2,7 @@ import { asI18n, type I18nNode, type I18nString } from '@pikku/react'
 import { useNavigate } from '@tanstack/react-router'
 import { ArrowRight, CircleAlert, Flag, type LucideIcon } from 'lucide-react'
 import { m } from '@/i18n/messages'
-import { PAGES } from '../lib/project-url'
+import { PAGES } from '../lib/nav-registry'
 import { Button } from '../ui/button'
 
 const TONE = {

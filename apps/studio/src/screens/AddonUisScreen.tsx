@@ -8,8 +8,6 @@ import { useProjectName } from '@pikkustudio/blocks/lib/project'
 import { m } from '@/i18n/messages'
 import { installedAddons } from '@/addon-ui/registry'
 
-const where = (name: string, path: string) => `${name}${path === '/' ? '' : path}`
-
 export function AddonUisScreen() {
   const projectName = useProjectName()
   return (
@@ -38,8 +36,7 @@ export function AddonUisScreen() {
                 {ext.screens.map((s) => (
                   <Link
                     key={s.path}
-                    to="/addons/$"
-                    params={{ _splat: where(ext.name, s.path) }}
+                    to={s.path as never}
                     search={((prev: object) => prev) as never}
                     className="grid grid-cols-[minmax(0,1fr)_auto_22px] items-center gap-4 rounded-xl border border-border px-4 py-3 no-underline transition-colors duration-140 hover:border-primary hover:bg-secondary"
                   >

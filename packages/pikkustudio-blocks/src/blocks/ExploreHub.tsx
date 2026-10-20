@@ -3,7 +3,7 @@ import { m } from '@/i18n/messages'
 import { useContext } from 'react'
 import { Link } from './Link'
 import { useProjectName } from '../lib/project'
-import { Inbox, AppWindow, BookOpen, Bot, ClipboardCheck, ChevronRight, Clock, Database, FileCode, FileText, HeartPulse, History, KeyRound, Languages, Layers, Mail, Plug, Radio, Wrench, ScrollText, LayoutTemplate, Search, Send, LogIn, Upload, Users, Wallet, Zap, type LucideIcon } from 'lucide-react'
+import { Bot, ChevronRight, Clock, Database, HeartPulse, KeyRound, Plug, ScrollText, Search, Wallet, type LucideIcon } from 'lucide-react'
 import { Button } from '../ui/button'
 import { ShellCtx } from '../lib/shell'
 import { keep } from '../lib/links'
@@ -12,7 +12,9 @@ import { NextCard } from './NextCard'
 import { PageHead } from './PageHead'
 import { Section } from './Section'
 import { questions, type Question } from './exploreSample'
-import { MOVABLE, usePins, type Movable } from '../lib/pins'
+import { usePins } from '../lib/pins'
+import { registry } from '../lib/nav-registry'
+import { msg, navIcon } from '../lib/nav-labels'
 
 const icons: Record<string, LucideIcon> = { away: ScrollText, secrets: KeyRound, cost: Wallet, who: KeyRound, own: Clock, mem: Database, well: HeartPulse, ai: Bot, plug: Plug }
 
@@ -51,21 +53,6 @@ function Row({ q }: { q: Question }) {
   return <HubRow hue={q.hue} Icon={icons[q.id]} title={q.q} text={q.ask[0]} to={pages[q.id]} onPick={() => say(q.q)} />
 }
 
-const movable: Record<Movable, { hue: Hue; Icon: LucideIcon; title: () => I18nString; text: () => I18nString }> = {
-  'virtual-users': { hue: 'teal', Icon: Users, title: () => m.explore_hub__virtual_users_title(), text: () => m.explore_hub__virtual_users_text() },
-  translations: { hue: 'sea', Icon: Languages, title: () => m.explore_hub__translations_title(), text: () => m.explore_hub__translations_text() },
-  artifacts: { hue: 'petrol', Icon: Layers, title: () => m.explore_hub__artifacts_title(), text: () => m.explore_hub__artifacts_text() },
-  content: { hue: 'teal', Icon: FileText, title: () => m.explore_hub__content_title(), text: () => m.explore_hub__content_text() },
-  'front-doors': { hue: 'sea', Icon: AppWindow, title: () => m.explore_hub__front_doors_title(), text: () => m.explore_hub__front_doors_text() },
-  audit: { hue: 'petrol', Icon: History, title: () => m.explore_hub__audit_title(), text: () => m.explore_hub__audit_text() },
-  emails: { hue: 'teal', Icon: Mail, title: () => m.screen_names__emails(), text: () => m.explore_hub__emails_text() },
-  inbox: { hue: 'sea', Icon: Inbox, title: () => m.inbox__title(), text: () => m.explore_hub__inbox_text() },
-  knowledge: { hue: 'sea', Icon: BookOpen, title: () => m.screen_names__knowledge(), text: () => m.explore_hub__knowledge_text() },
-  publish: { hue: 'petrol', Icon: Upload, title: () => m.shell_layout__publish(), text: () => m.explore_hub__publish_text() },
-  workflows: { hue: 'teal', Icon: Clock, title: () => m.shell_layout__workflows(), text: () => m.explore_hub__workflows_text() },
-  assistants: { hue: 'sea', Icon: Bot, title: () => m.assistants_screen__title(), text: () => m.explore_hub__assistants_text() },
-}
-
 export function ExploreHub() {
   const projectName = useProjectName()
   const { openFind, say } = useContext(ShellCtx)
@@ -95,27 +82,15 @@ export function ExploreHub() {
         </div>
       </NextCard>
 
-      <Section title={m.explore_hub__more_of_your_project()}>
-        <div className="divide-y divide-border overflow-hidden rounded-[22px] border border-border bg-card">
-          {MOVABLE.map((id) => (
-            <HubRow key={id} hue={movable[id].hue} Icon={movable[id].Icon} title={movable[id].title()} text={movable[id].text()} aside={pins.includes(id) ? m.explore_hub__on_your_sidebar() : undefined} to={`/${id}`} />
-          ))}
-          <HubRow hue="petrol" Icon={Zap} title={m.functions_screen__title()} text={m.explore_hub__functions_text()} to="/functions" />
-          <HubRow hue="teal" Icon={Radio} title={m.live_screen__title()} text={m.explore_hub__live_text()} to="/live-connections" />
-          <HubRow hue="teal" Icon={Send} title={m.outgoing__title()} text={m.explore_hub__outgoing_text()} to="/outgoing-messages" />
-          <HubRow hue="sea" Icon={LayoutTemplate} title={m.screens_page__title()} text={m.explore_hub__screens_text()} to="/screens" />
-        </div>
-      </Section>
-
-      <Section title={m.explore_hub__for_developers()}>
-        <div className="divide-y divide-border overflow-hidden rounded-[22px] border border-border bg-card">
-          <HubRow hue="petrol" Icon={FileCode} title={m.code_screen__title()} text={m.explore_hub__code_text()} to="/code" />
-          <HubRow hue="sea" Icon={Database} title={m.database__title()} text={m.explore_hub__database_text()} to="/database" />
-          <HubRow hue="petrol" Icon={LogIn} title={m.signin_options__title()} text={m.explore_hub__signin_options_text()} to="/sign-in-options" />
-          <HubRow hue="teal" Icon={Layers} title={m.surface__title()} text={m.explore_hub__surface_text()} to="/surface" />
-          <HubRow hue="teal" Icon={ClipboardCheck} title={m.scorers_screen__title()} text={m.explore_hub__scorers_text()} to="/scorers" />
-        </div>
-      </Section>
+      {registry.explore.map((section) => (
+        <Section key={section.title} title={msg(section.title)}>
+          <div className="divide-y divide-border overflow-hidden rounded-[22px] border border-border bg-card">
+            {section.rows.map((row) => (
+              <HubRow key={row.path} hue={row.hue} Icon={navIcon(row.icon)} title={msg(row.title)} text={msg(row.text)} aside={pins.includes(row.path.slice(1)) ? m.explore_hub__on_your_sidebar() : undefined} to={row.path} />
+            ))}
+          </div>
+        </Section>
+      ))}
 
       <Section title={m.explore_hub__things_to_look_into()}>
         <div className="divide-y divide-border overflow-hidden rounded-[22px] border border-border bg-card">

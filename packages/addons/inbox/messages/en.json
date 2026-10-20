@@ -1,5 +1,6 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
   "inbox_addon__title": "Inbox",
-  "inbox_inbox__title": "Inbox"
+  "inbox_inbox__title": "Inbox",
+  "inbox_message__title": "Inbox message"
 }

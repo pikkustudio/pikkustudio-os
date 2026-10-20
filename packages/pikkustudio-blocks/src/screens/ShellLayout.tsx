@@ -13,8 +13,9 @@ import { getLocale } from '@/paraglide/runtime.js'
 import { languageName } from '../lib/i18n'
 import { useProjectChecklist } from '../lib/project-flow'
 import { useProjectKey, useProjectMissing, useProjectName, useProjectSlug } from '../lib/project'
-import { useAddonNav } from '../lib/addon-nav'
 import { isTeamScoped, pageNeedsApp } from '../lib/project-url'
+import { TEAM_PAGES, navEntries, registry, type NavScreen } from '../lib/nav-registry'
+import { msg, navIcon } from '../lib/nav-labels'
 import { usePikkuChat } from '../lib/chat'
 import { LocalAccountName, LocalShellAccount, LocalWorkspaceAbout, SignOutSection } from '../blocks/ShellAccount'
 import { useSlot, useSlotList } from '../lib/studio-slots'
@@ -23,7 +24,7 @@ import { SCREEN_NAME, agentName } from '../lib/screen-names'
 import { modeForPath, useBuilderChat } from '../lib/builder-chat'
 import { usePageTitle } from '../lib/page-title'
 import { useProjectQuery } from '../lib/projectRpc'
-import { MOVABLE, usePins, type Movable } from '../lib/pins'
+import { pinId, usePins } from '../lib/pins'
 import { AttachedChips } from '../blocks/AttachedChips'
 import { freeSelectionSlot, selectionColor } from '../lib/selection-colors'
 import { ShellCtx, type AttachRef, type Attachment, type PanelId, type PublishNote, type View } from '../lib/shell'
@@ -46,7 +47,7 @@ import { ChecksCard, MilestoneCard, OpenScreenCard } from '../blocks/BuilderCard
 import { useCanEdit, useProjectTarget } from '../lib/project-target'
 import { useStickToBottom } from '../lib/stick-to-bottom'
 import { useComposerExtras } from '../lib/composer-extras'
-import { BarChart3, GitPullRequest, Archive, Inbox, type LucideIcon, ArrowDown, ArrowLeft, ArrowRight, Bell, BookOpen, Check, CircleAlert, FileText, FolderOpen, Globe, History, Home, Info, Compass, KeyRound, ListChecks, Search, Laptop, LayoutGrid, Mail, MessageCircle, MessageCircleQuestion, MousePointer2, Palette, ShieldCheck, Smartphone, Upload, PanelLeftClose, PanelLeftOpen, Menu, User, UserRoundCheck, Wrench, X, CheckCheck, ScrollText, Clock, Bot } from 'lucide-react'
+import { GitPullRequest, Archive, type LucideIcon, ArrowDown, ArrowRight, Bell, Check, CircleAlert, FolderOpen, Globe, History, Info, Search, MessageCircle, MessageCircleQuestion, Palette, PanelLeftClose, PanelLeftOpen, Menu, User, X, CheckCheck, ScrollText, KeyRound, Laptop, MousePointer2, ShieldCheck, Wrench } from 'lucide-react'
 
 // The app shell: rail, preview drawer (right edge), Pikku button + bubble, side panels.
 // Every screen route is a child of this layout. Page content lives in the route files.
@@ -58,8 +59,6 @@ import { BarChart3, GitPullRequest, Archive, Inbox, type LucideIcon, ArrowDown, 
 
 const item =
   'flex w-full items-center gap-3 rounded-lg px-3 group-data-[collapsed]/rail:justify-center group-data-[collapsed]/rail:px-0 text-start font-semibold no-underline transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'
-const PIN_ICON: Record<Movable, LucideIcon> = { 'virtual-users': UserRoundCheck, translations: Globe, artifacts: FileText, content: FolderOpen, 'front-doors': Smartphone, audit: History, emails: Mail, inbox: Inbox, knowledge: BookOpen, publish: Upload, workflows: Clock, assistants: Bot }
-const pinLabel = (id: Movable): I18nString => ({ 'virtual-users': m.quick_find__virtual_users, translations: m.quick_find__translations, artifacts: SCREEN_NAME.artifacts, content: m.content__title, 'front-doors': m.front_doors__title, audit: m.quick_find__audit, emails: SCREEN_NAME.emails, inbox: m.inbox__title, knowledge: SCREEN_NAME.knowledge, publish: m.shell_layout__publish, workflows: m.shell_layout__workflows, assistants: m.assistants_screen__title })[id]()
 const navItem = `${item} h-9.25 text-[14px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`
 const lbl = 'group-data-[collapsed]/rail:hidden'
 const RAIL_KEY = 'studio.rail.collapsed'
@@ -163,7 +162,6 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
   const projectName = useProjectName()
   const projectSlug = useProjectSlug()
   const projectMissing = useProjectMissing()
-  const addonNav = useAddonNav()
   const copy = useCopy()
   const Account = useSlot('shell.account', LocalShellAccount)
   const About = useSlot('shell.workspaceAbout', LocalWorkspaceAbout)
@@ -177,7 +175,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
   const path = useLocation({ select: (l) => l.pathname })
   const project = useLocation({ select: (l) => (l.search as { project?: string }).project })
   // Only a team's pages need a project; leaving for a page outside any team (profile, account, sign-in) must not bounce back.
-  const needsProject = !project && isTeamScoped(path) && !/\/(projects|secrets|account|studio-metrics|new-project|sign-in|your-name|choose-ai|settings|team|billing|plans|ai\/usage|ai\/gateway)$/.test(path) && !/^\/admin(\/|$)/.test(path)
+  const needsProject = !project && isTeamScoped(path) && !TEAM_PAGES.has(path.split('/').filter(Boolean)[0] ?? '')
   const panel: PanelId | '' = q.panel ?? ''
   const set = (patch: Record<string, unknown>) =>
     navigate({ to: '.', search: ((prev: object) => ({ ...prev, ...patch })) as never, replace: true })
@@ -218,6 +216,18 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
   const [bubbleDraft, setBubbleDraft] = useState('')
   const projectKey = useProjectKey()
   const journey = useProjectChecklist(projectKey).data?.started !== false
+  const teamNav = navEntries('team')
+  const projectNav = navEntries('project')
+  const accountNav = navEntries('account')
+  const navLink = (screen: NavScreen) => {
+    const Icon = navIcon(screen.nav!.icon)
+    return (
+      <Link {...keep} {...tip(msg(screen.title))} key={screen.path} to={screen.path as never} className={navItem} data-testid={`nav-${screen.path.slice(1).replace(/\//g, '-')}`}>
+        <Icon className="size-5" />
+        <span className={lbl}>{msg(screen.title)}</span>
+      </Link>
+    )
+  }
   const composerRef = useRef<HTMLTextAreaElement>(null)
   const extras = useComposerExtras(projectKey)
   const dictate = (text: string) => {
@@ -379,63 +389,36 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
               <kbd className={`rounded border border-border px-1 text-[11px] leading-4 ${lbl}`}>{m.shell_layout__find_shortcut()}</kbd>
             </button>
             <nav className="flex flex-col gap-0.5" aria-label={m.shell_layout__main()}>
-              <Link {...keep} {...tip(m.quick_find__projects())} to="/projects" className={`${item} h-11.5 text-[15px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`}>
-                <FolderOpen className="size-5.5" />
-                <span className={lbl}>{m.quick_find__projects()}</span>
-              </Link>
-            </nav>
-            {addonNav ? (
-              <div className="flex flex-col gap-0.5 px-1">
-                <Link {...keep} {...tip(addonNav.back ? asI18n(addonNav.back.label) : m.shell_layout__back_to({ project: projectName }))} to={(addonNav.back?.to ?? '/home') as never} className={`${navItem} mb-1`}>
-                  <ArrowLeft className="rtl:-scale-x-100 size-5" />
-                  <span className={lbl}>{addonNav.back ? asI18n(addonNav.back.label) : m.shell_layout__back_to({ project: projectName })}</span>
-                </Link>
-                <div className={`mb-1.5 px-3 text-[13px] font-semibold text-muted-foreground ${lbl}`}>{asI18n(addonNav.title)}</div>
-                {addonNav.items.map((n) => (
-                  <Link {...keep} {...tip(asI18n(n.label))} key={n.splat} to={(n.to ?? '/addons/$') as never} params={(n.to ? undefined : { _splat: n.splat }) as never} activeOptions={{ exact: true }} aria-current={n.splat === addonNav.current || (!n.to && n.splat.includes('/') && addonNav.current.startsWith(`${n.splat}/`)) ? 'page' : 'false'} className={navItem}>
-                    <LayoutGrid className="size-5" />
-                    <span className={lbl}>{asI18n(n.label)}</span>
+              {navEntries('rail').map((s) => {
+                const Icon = navIcon(s.nav!.icon)
+                return (
+                  <Link {...keep} {...tip(msg(s.title))} key={s.path} to={s.path as never} className={`${item} h-11.5 text-[15px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`}>
+                    <Icon className="size-5.5" />
+                    <span className={lbl}>{msg(s.title)}</span>
                   </Link>
-                ))}
-              </div>
-            ) : /\/studio-metrics$/.test(path) || !projectSlug || projectMissing ? (
-              <TeamNav itemClass={navItem} labelClass={lbl} collapsed={collapsed} />
+                )
+              })}
+            </nav>
+            {/\/studio-metrics$/.test(path) || !projectSlug || projectMissing ? (
+              <>
+                {teamNav.length ? (
+                  <div className="flex flex-col gap-0.5 px-1">
+                    {teamNav.map(navLink)}
+                  </div>
+                ) : null}
+                <TeamNav itemClass={navItem} labelClass={lbl} collapsed={collapsed} />
+              </>
             ) : (
             <div className="flex flex-col gap-0.5 px-1">
               <div className={`mb-1.5 px-3 text-[13px] font-semibold text-muted-foreground ${lbl}`}>{projectName}</div>
               <TargetSwitcher collapsed={collapsed} />
-              <Link {...keep} {...tip(m.shell_layout__home())} to="/home" className={navItem}>
-                <Home className="size-5" />
-                <span className={lbl}>{m.shell_layout__home()}</span>
-              </Link>
-              {journey ? (
-                <Link {...keep} {...tip(SCREEN_NAME.project())} to={'/project' as never} className={navItem} data-testid="nav-project">
-                  <ListChecks className="size-5" />
-                  <span className={lbl}>{SCREEN_NAME.project()}</span>
-                </Link>
-            ) : null}
-              <Link {...keep} {...tip(m.shell_layout__explore())} to={'/explore' as never} className={navItem}>
-                <Compass className="size-5" />
-                <span className={lbl}>{m.shell_layout__explore()}</span>
-              </Link>
-              <Link {...keep} {...tip(m.shell_layout__changes())} to={'/changes' as never} className={navItem}>
-                <GitPullRequest className="size-5" />
-                <span className={lbl}>{m.shell_layout__changes()}</span>
-              </Link>
-              <Link {...keep} {...tip(SCREEN_NAME.frontend())} to="/design" className={navItem}>
-                <Palette className="size-5" />
-                <span className={lbl}>{SCREEN_NAME.frontend()}</span>
-              </Link>
-              <Link {...keep} {...tip(m.shell_layout__analytics())} to={'/metrics' as never} className={navItem}>
-                <BarChart3 className="size-5" />
-                <span className={lbl}>{m.shell_layout__analytics()}</span>
-              </Link>
-              {MOVABLE.filter((id) => pins.includes(id)).map((id) => {
-                const Icon = PIN_ICON[id]
+              {projectNav.filter((s) => s.nav!.when !== 'journey' || journey).map(navLink)}
+              {registry.pins.filter((pin) => pins.includes(pinId(pin))).map((pin) => {
+                const Icon = navIcon(pin.icon)
                 return (
-                  <Link {...keep} {...tip(pinLabel(id))} key={id} to={`/${id}` as never} className={navItem}>
+                  <Link {...keep} {...tip(msg(pin.label))} key={pin.path} to={pin.path as never} className={navItem}>
                     <Icon className="size-5" />
-                    <span className={lbl}>{pinLabel(id)}</span>
+                    <span className={lbl}>{msg(pin.label)}</span>
                   </Link>
                 )
               })}
@@ -455,7 +438,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
                 {collapsed ? <PanelLeftOpen className="size-5 rtl:-scale-x-100" /> : <PanelLeftClose className="size-5 rtl:-scale-x-100" />}
                 <span className={lbl}>{m.shell_layout__collapse_nav()}</span>
               </button>
-              <Account collapsed={collapsed} expanded={panel === 'workspace'} onOpen={() => setPanel('workspace')} onAccount={() => navigate({ to: '/account', search: ((prev: object) => ({ ...prev, panel: undefined })) as never })} />
+              <Account collapsed={collapsed} expanded={panel === 'workspace'} onOpen={() => setPanel('workspace')} onAccount={() => navigate({ to: (accountNav[0]?.path ?? '/account') as never, search: ((prev: object) => ({ ...prev, panel: undefined })) as never })} />
             </div>
           </aside>
 
@@ -859,6 +842,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
                     </div>
                   }
                 />
+                {accountNav.length > 1 ? <nav className="flex flex-col gap-0.5">{accountNav.slice(1).map(navLink)}</nav> : null}
               </div>
             ) : null}
           </aside>

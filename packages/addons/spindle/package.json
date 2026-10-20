@@ -48,5 +48,10 @@
   },
   "dependencies": {
     "@pikku/kysely": "^0.13.40"
+  },
+  "studio": {
+    "addon": "spindle",
+    "ui": "./src",
+    "messages": "./messages/{locale}.json"
   }
 }

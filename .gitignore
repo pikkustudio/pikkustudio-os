@@ -20,3 +20,7 @@ apps/studio/injected
 
 # Addon SDK tarballs `pikku all` emits next to each addon
 *.sdk.tgz
+
+# Addon screen routes scripts/gen-addons.mjs writes
+apps/studio/src/routes/_studio/
+apps/studio/src/routes/_bare/

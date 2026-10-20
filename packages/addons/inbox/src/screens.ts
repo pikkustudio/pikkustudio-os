@@ -10,5 +10,12 @@ export default pikkuStudio({
       scopes: ['inbox:read'],
       component: () => import('./screens/Inbox.js'),
     },
+    {
+      path: '/inbox/:messageId',
+      title: 'inbox_message__title',
+      scope: 'project',
+      scopes: ['inbox:read'],
+      component: () => import('./screens/Inbox.js'),
+    },
   ],
 })

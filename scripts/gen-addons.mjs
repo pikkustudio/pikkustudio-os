@@ -4,14 +4,17 @@
 //   apps/studio/src/addons.gen.ts            the slot contributions, each addon's studio.slots.ts (lazy imports only)
 //   apps/studio/src/styles/addons.gen.css    @source lines so Tailwind sees the classes in each addon's UI
 //   .studio-addons/project.inlang/           the inlang project with each addon's messages added (only when linked)
+//   apps/studio/src/nav.gen.json             the nav registry: core's screens (src/core-screens.ts) and every wired addon's
+//   apps/studio/src/nav-icons.gen.ts         the lucide icons the registry names
+//   apps/studio/src/routes/_studio/, _bare/  a route file per addon screen, at its real path (`layout: 'bare'` in _bare)
 //
 // An addon says what it brings in its package.json:
 //   "studio": { "addon": "cloud", "slots": "./src/studio.slots.ts", "ui": "./src", "messages": "./messages/{locale}.json",
 //               "overrides": "./messages/overrides/{locale}.json" }
 // `slots` must be exported by the package as "./studio-slots".
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join, relative, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const app = join(root, 'apps/studio')
@@ -88,4 +91,189 @@ if (withMessages.length || withOverrides.length) {
   write(join(inlang, 'settings.json'), JSON.stringify(settings, null, 2) + '\n')
 }
 
+await writeNav()
+
 console.log(addons.length ? `Studio app takes ${addons.map((a) => a.addon).join(', ')}` : 'Studio app takes no private addon')
+
+// The nav registry. Each wired addon's screens come from the host's generated installed-addons file (its `ui: true`
+// wirings), its package from the addons meta. Precedence: a first-party addon (by package name) may take a core
+// screen's path or a reserved path with `replaces: true`; the core's route file for that path is then left out of the
+// route tree. Any other clash fails the build, naming both sides.
+async function writeNav() {
+  const FIRST_PARTY = new Set(['@pikkustudio/addon-cloud', '@pikkustudio/addon-controlpanel', '@pikkustudio/addon-spindle', '@pikkustudio/addon-diffui', '@pikkustudio/addon-inbox'])
+  const RESERVED = new Set(['sign-in', 'connect', 'p', 'addons', 'add-ons'])
+  const functions = join(root, 'packages/functions/.pikku')
+  const installedFile = join(functions, 'screens/pikku-installed-addons.gen.ts')
+  const installed = existsSync(installedFile) ? (await import(pathToFileURL(installedFile).href)).installedAddons : []
+  const metaFile = join(functions, 'addon/pikku-addons-meta.gen.json')
+  const meta = existsSync(metaFile) ? JSON.parse(readFileSync(metaFile, 'utf8')) : {}
+  const core = (await import(pathToFileURL(join(app, 'src/core-screens.ts')).href)).default
+  const errors = []
+
+  const segs = (path) => path.split('/').filter(Boolean)
+  const norm = (path) => '/' + segs(path).map((s) => (s.startsWith(':') ? ':' : s)).join('/')
+  const first = (path) => segs(path)[0] ?? ''
+
+  // Message keys: the core's own files, plus each addon's (its studio.messages, else messages/en.json).
+  const readKeys = (file) => (existsSync(file) ? Object.keys(JSON.parse(readFileSync(file, 'utf8'))) : [])
+  const coreKeys = new Set([...readKeys(join(app, 'messages/en.json')), ...readKeys(join(root, 'packages/pikkustudio-blocks/messages/en.json'))])
+  const packageDir = (pkg) => join(root, 'node_modules', pkg)
+  const addonKeys = (pkg) => {
+    const manifest = readJson(join(packageDir(pkg), 'package.json'))
+    const pattern = manifest.studio?.messages ?? './messages/{locale}.json'
+    return new Set([...coreKeys, ...readKeys(join(packageDir(pkg), pattern.replace('{locale}', 'en')))])
+  }
+  function readJson(file) {
+    return existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : {}
+  }
+
+  const coreScreens = core.screens.map((s) => ({ ...s, addon: null }))
+  const coreMessage = (key, where) => {
+    if (!coreKeys.has(key)) errors.push(`core-screens.ts: ${where} names the message "${key}", which the core's message files do not have`)
+  }
+  for (const s of coreScreens) coreMessage(s.title, `screen ${s.path}`)
+  for (const p of core.pins) coreMessage(p.label, `pin ${p.path}`)
+  for (const q of core.quickFind) coreMessage(q.label, `QuickFind entry ${q.path}`)
+  for (const section of core.explore) {
+    coreMessage(section.title, 'an Explore section')
+    for (const row of section.rows) {
+      coreMessage(row.title, `Explore row ${row.path}`)
+      coreMessage(row.text, `Explore row ${row.path}`)
+    }
+  }
+
+  const addonScreens = []
+  for (const addon of installed) {
+    const pkg = meta[addon.name]?.package ?? addon.name
+    const keys = addonKeys(pkg)
+    const firstParty = FIRST_PARTY.has(pkg)
+    for (const screen of addon.screens) {
+      const who = `addon "${addon.name}" (${pkg}) screen ${screen.path}`
+      if (!keys.has(screen.title)) errors.push(`${who} names the message "${screen.title}", which neither the core nor ${pkg} has`)
+      if (screen.replaces && !firstParty) {
+        errors.push(`${who} sets replaces, but only a first-party addon may replace a core screen`)
+        continue
+      }
+      if ((RESERVED.has(first(screen.path)) || core.unscoped.includes(first(screen.path))) && !(firstParty && screen.replaces)) {
+        errors.push(`${who} claims the reserved path /${first(screen.path)}, which only a first-party addon can take, with replaces`)
+        continue
+      }
+      if (screen.needsApp && screen.scope !== 'project') errors.push(`${who} sets needsApp, which only a project screen may`)
+      addonScreens.push({ ...screen, needsApp: screen.scope === 'project' ? !!screen.needsApp : undefined, addon: addon.name, package: pkg, component: undefined, app: screen.app })
+    }
+  }
+
+  // Core screens a first-party addon replaces; any other same-path pair is a clash.
+  const replaced = new Set()
+  const byPath = new Map()
+  for (const s of coreScreens) byPath.set(norm(s.path), s)
+  for (const s of addonScreens) {
+    const key = norm(s.path)
+    const other = byPath.get(key)
+    if (other) {
+      const them = other.addon ? `addon "${other.addon}" (${other.package}) screen ${other.path}` : `core screen ${other.path}`
+      const me = `addon "${s.addon}" (${s.package}) screen ${s.path}`
+      if (!other.addon && s.replaces) replaced.add(key)
+      else {
+        errors.push(`${me} clashes with ${them}: both are at ${key}`)
+        continue
+      }
+    } else if (s.replaces && !RESERVED.has(first(s.path)) && !core.unscoped.includes(first(s.path))) {
+      errors.push(`addon "${s.addon}" (${s.package}) screen ${s.path} sets replaces, but no core screen is at ${key}`)
+    }
+    byPath.set(key, s)
+  }
+  const screens = [...coreScreens.filter((s) => !replaced.has(norm(s.path))), ...addonScreens]
+
+  // The URL rewrite places a page by its first segment, so every screen under one segment must share a scope.
+  const scopeOf = new Map(core.unscoped.map((seg) => [seg, { scope: 'studio', who: 'core (unscoped)' }]))
+  for (const s of screens) {
+    const seg = first(s.path)
+    const who = s.addon ? `addon "${s.addon}" (${s.package}) screen ${s.path}` : `core screen ${s.path}`
+    const had = scopeOf.get(seg)
+    if (had && had.scope !== s.scope && !(s.addon && s.replaces)) errors.push(`${who} is scope ${s.scope}, but ${had.who} puts /${seg} in scope ${had.scope}`)
+    else if (!had) scopeOf.set(seg, { scope: s.scope, who })
+  }
+
+  // Icons: every one the registry names must be a lucide icon.
+  const pascal = (name) => name.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join('')
+  const icons = new Set([...screens.flatMap((s) => (s.nav ? [s.nav.icon] : [])), ...core.pins.map((p) => p.icon), ...core.quickFind.map((q) => q.icon), ...core.explore.flatMap((x) => x.rows.map((r) => r.icon))])
+  const lucideNames = new Set(Object.keys(await import('lucide-react')))
+  for (const icon of icons) if (!lucideNames.has(pascal(icon))) errors.push(`The nav names the icon "${icon}", which lucide-react does not have (${pascal(icon)})`)
+
+  if (errors.length) throw new Error(`The nav registry has problems:\n  ${errors.join('\n  ')}`)
+
+  // Core route files a replacing addon takes over: matched by the path each file serves.
+  const routes = join(app, 'src/routes')
+  const routePath = (file) => {
+    const name = file.replace(/\.tsx$/, '').split('.')
+    if (!['_studio', '_welcome'].includes(name[0]) && name[0] !== 'connect') return null
+    const parts = name.filter((p, i) => !(i === 0 && p.startsWith('_')) && p !== 'index').map((p) => (p === '$' ? '*' : p.startsWith('$') ? ':' : p))
+    return '/' + parts.join('/')
+  }
+  const ignored = readdirSync(routes).filter((f) => f.endsWith('.tsx') && replaced.has(norm(routePath(f) ?? '')))
+
+  for (const dir of ['_studio', '_bare']) rmSync(join(routes, dir), { recursive: true, force: true })
+  const bare = addonScreens.some((s) => s.layout === 'bare')
+  if (bare) {
+    write(
+      join(routes, '_bare/route.tsx'),
+      [
+        '// Generated by scripts/gen-addons.mjs: the layout for addon screens with `layout: \'bare\'`, signed in but without the shell; do not edit.',
+        "import { createFileRoute, Outlet } from '@tanstack/react-router'",
+        "import { requireStudioSession } from '@/lib/studio-gate'",
+        '',
+        "export const Route = createFileRoute('/_bare')({ beforeLoad: requireStudioSession, component: Outlet })",
+        '',
+      ].join('\n'),
+    )
+  }
+  for (const s of addonScreens) {
+    const layout = s.layout === 'bare' ? '_bare' : '_studio'
+    const parts = segs(s.path).map((p) => (p.startsWith(':') ? `$${p.slice(1)}` : p))
+    write(
+      join(routes, layout, `${parts.join('.')}.index.tsx`),
+      [
+        `// Generated by scripts/gen-addons.mjs from the "${s.addon}" addon's screen ${s.path}; do not edit.`,
+        "import { createFileRoute } from '@tanstack/react-router'",
+        "import { AddonScreenRoute } from '@/addon-ui/AddonScreenRoute'",
+        '',
+        `export const Route = createFileRoute('/${layout}/${parts.join('/')}/')({`,
+        `  component: () => <AddonScreenRoute addon=${JSON.stringify(s.addon)} path=${JSON.stringify(s.path)} />,`,
+        '})',
+        '',
+      ].join('\n'),
+    )
+  }
+
+  const clean = (s) => Object.fromEntries(Object.entries({ path: s.path, title: s.title, scope: s.scope, nav: s.nav, needsApp: s.needsApp, layout: s.layout, scopes: s.scopes, replaces: s.replaces, addon: s.addon }).filter(([, v]) => v !== undefined))
+  const has = new Set(screens.map((s) => norm(s.path)))
+  write(
+    join(app, 'src/nav.gen.json'),
+    JSON.stringify(
+      {
+        screens: screens.map(clean),
+        unscoped: core.unscoped,
+        pins: core.pins.filter((p) => has.has(norm(p.path))),
+        quickFind: core.quickFind.filter((q) => has.has(norm(q.path))),
+        explore: core.explore.map((x) => ({ ...x, rows: x.rows.filter((r) => has.has(norm(r.path))) })),
+        ignoredRoutes: ignored,
+      },
+      null,
+      2,
+    ) + '\n',
+  )
+  const sorted = [...icons].sort()
+  write(
+    join(app, 'src/nav-icons.gen.ts'),
+    [
+      '// Generated by scripts/gen-addons.mjs: the lucide icons src/nav.gen.json names; do not edit.',
+      `import { ${sorted.map(pascal).join(', ')}, type LucideIcon } from 'lucide-react'`,
+      '',
+      'export const navIcons: Record<string, LucideIcon> = {',
+      ...sorted.map((icon) => `  ${JSON.stringify(icon)}: ${pascal(icon)},`),
+      '}',
+      '',
+    ].join('\n'),
+  )
+}
