@@ -1,7 +1,8 @@
-// Wires the private Studio addons that are checked out under packages/addon-pikku* into this checkout, the way
-// link-pikku.mjs wires a pikku checkout: a symlink in node_modules, so bun.lock never changes. The addons are not
-// workspaces (package.json negates them) and list only optional peers, so everything they import resolves from
-// this repo's node_modules. An addon that is not checked out (an empty submodule folder) is skipped, which is
+// Wires the private Studio addons into this checkout, the way link-pikku.mjs wires a pikku checkout: a symlink in
+// node_modules, so bun.lock never changes. The addons live in one private monorepo, checked out at
+// packages/pikkustudio-private (a submodule with update = none), one addon per packages/<name>. They are not
+// workspaces (package.json negates the submodule) and list only optional peers, so everything they import resolves
+// from this repo's node_modules. When the submodule is not checked out (an empty folder) no addon is found, which is
 // what keeps the open build working without it.
 //
 //   node scripts/link-addon.mjs             wire every addon present, with pikku.cloud.json
@@ -23,8 +24,10 @@ const linked = join(root, '.studio-addons')
 const stateFile = join(linked, 'addons.json')
 const args = new Set(process.argv.slice(2))
 
-// The operator addons only make sense on top of the cloud one; the open build has neither.
-const OPERATOR_ONLY = new Set(['addon-pikkucontrolpanel'])
+// The private monorepo's addons, one per folder.
+const PRIVATE = join(root, 'packages/pikkustudio-private/packages')
+// The operator addons (by package name) only make sense on top of the cloud one; the open build has neither.
+const OPERATOR_ONLY = new Set(['@pikkustudio/addon-controlpanel'])
 // Workspace packages already in node_modules: linking them only copies their wire/ files, and unlinking leaves them be.
 const TEST_ADDONS = ['packages/addons/spindle', 'packages/addons/diffui']
 
@@ -67,11 +70,10 @@ if (args.has('--test')) {
   process.exit(0)
 }
 
-const present = readdirSync(join(root, 'packages'), { withFileTypes: true })
-  .filter((e) => e.isDirectory() && e.name.startsWith('addon-pikku') && e.name !== 'addon-pikkustudio')
-  .filter((e) => existsSync(join(root, 'packages', e.name, 'package.json')))
-  .filter((e) => args.has('--operator') || !OPERATOR_ONLY.has(e.name))
-  .map((e) => join(root, 'packages', e.name))
+const present = (existsSync(PRIVATE) ? readdirSync(PRIVATE, { withFileTypes: true }) : [])
+  .filter((e) => e.isDirectory() && existsSync(join(PRIVATE, e.name, 'package.json')))
+  .map((e) => join(PRIVATE, e.name))
+  .filter((dir) => args.has('--operator') || !OPERATOR_ONLY.has(JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8')).name))
 
 if (!present.length) {
   unlinkAll()

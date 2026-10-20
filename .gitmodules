@@ -1,8 +1,4 @@
-[submodule "packages/addon-pikkucloud"]
-	path = packages/addon-pikkucloud
-	url = git@github.com:pikkustudio/pikkustudio-cloud.git
-	update = none
-[submodule "packages/addon-pikkucontrolpanel"]
-	path = packages/addon-pikkucontrolpanel
-	url = git@github.com:pikkustudio/pikkustudio-controlpanel.git
+[submodule "pikkustudio-private"]
+	path = packages/pikkustudio-private
+	url = /Users/yasser/git/pikkustudio/pikkustudio-private
 	update = none

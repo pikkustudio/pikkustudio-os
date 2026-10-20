@@ -1,6 +1,6 @@
 name: Desktop
 # Two editions from one checkout. `desktop` is the open build: no submodule, and its artifacts may be public.
-# `cloud` is the same build with the private cloud addon (packages/addon-pikkucloud, a submodule with update = none)
+# `cloud` is the same build with the private cloud addon (in packages/pikkustudio-private, the private addons monorepo: a submodule with update = none)
 # checked out using the CLOUD_ADDON_DEPLOY_KEY secret. It never runs for a pull request, never goes through
 # upload-artifact (a public repo's artifacts are downloadable), and is skipped when the secret is not set.
 
@@ -108,7 +108,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.CLOUD_ADDON_DEPLOY_KEY }}
       - name: Cloud addon
-        run: git -c submodule.packages/addon-pikkucloud.update=checkout submodule update --init packages/addon-pikkucloud
+        run: git -c submodule.pikkustudio-private.update=checkout submodule update --init packages/pikkustudio-private
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.4.1
