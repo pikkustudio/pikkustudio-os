@@ -172,6 +172,15 @@ export const studioRuntimeDir = (projectDir: string): string => {
   return resolve(projectDir, config.rootDir ?? '.', config.runtimeDir ?? '.pikku-runtime', 'studio')
 }
 
+/** Where the project's pikku writes its function meta: under the config's `outDir`, which a monorepo template moves. */
+export const functionsMetaFile = (projectDir: string): string => {
+  let config: { rootDir?: string; outDir?: string } = {}
+  try {
+    config = JSON.parse(readFileSync(join(projectDir, 'pikku.config.json'), 'utf8'))
+  } catch {}
+  return resolve(projectDir, config.rootDir ?? '.', config.outDir ?? '.pikku', 'function', 'pikku-functions-meta-verbose.gen.json')
+}
+
 export interface SourceProject {
   projectId: string
   name: string
@@ -1775,7 +1784,7 @@ export class StudioProjectsService {
   async projectMeta(key: string): Promise<Record<string, unknown> | null> {
     const remote = await this.inWorkspace<Record<string, unknown> | null>(key, 'projectMeta', {}, null)
     if (remote) return remote.answer
-    const raw = await readFile(join(await this.projectDir(key), '.pikku', 'function', 'pikku-functions-meta-verbose.gen.json'), 'utf8').catch(() => null)
+    const raw = await readFile(functionsMetaFile(await this.projectDir(key)), 'utf8').catch(() => null)
     return raw ? (JSON.parse(raw) as Record<string, unknown>) : null
   }
 
