@@ -17,3 +17,6 @@ apps/studio/injected
 **/gen.mjs
 .studio-addons
 *.gen.css
+
+# Addon SDK tarballs `pikku all` emits next to each addon
+*.sdk.tgz

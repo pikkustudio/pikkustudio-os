@@ -48,12 +48,15 @@ test('naming an addon that is not installed is refused', async () => {
   await assert.rejects(run({ 'x-pikku-addon': 'ghost', host: 'localhost' }, { userId: 'owner', scopes: [] }))
 })
 
-test("an addon's call reaches only that addon's own functions", async () => {
-  assert.equal(addonMayCall('cloud', '/rpc/cloud:listPlans'), true)
-  assert.equal(addonMayCall('cloud', '/rpc/cloud%3AlistPlans'), true)
-  assert.equal(addonMayCall('cloud', '/rpc/studio:account'), false)
-  assert.equal(addonMayCall('cloud', '/rpc/cloudy:listPlans'), false)
-  assert.equal(addonMayCall('cloud', '/studio/account'), false)
+test("an addon's call goes only through the rpc route, to an addon function; Pikku checks which addons it reaches", async () => {
+  assert.equal(addonMayCall('/rpc/cloud:listPlans'), true)
+  assert.equal(addonMayCall('/rpc/cloud%3AlistPlans'), true)
+  assert.equal(addonMayCall('/rpc/cloudapi:listPlans'), true)
+  assert.equal(addonMayCall('/rpc/listPlans'), false)
+  assert.equal(addonMayCall('/rpc/:listPlans'), false)
+  assert.equal(addonMayCall('/rpc/cloud:'), false)
+  assert.equal(addonMayCall('/studio/account'), false)
+  assert.equal(addonMayCall(undefined), false)
   addonRoles.invoices = ['invoices:read']
-  await assert.rejects(run({ 'x-pikku-addon': 'invoices' }, { userId: 'u', scopes: [] }, '/rpc/studio:account'), /only call its own functions/)
+  await assert.rejects(run({ 'x-pikku-addon': 'invoices' }, { userId: 'u', scopes: [] }, '/workflow/x/status/1'), /only call addon functions/)
 })
