@@ -19,27 +19,27 @@ const contribution = (slot: string, render: (props: any) => ReactNode, more: Par
 const within = (contributions: RegisteredContribution[], Screen: ComponentType) =>
   html(createElement(StudioSlotsProvider, { value: contributions }, createElement(Screen)))
 
-const Default = ({ collapsed }: { collapsed: boolean }) => <i>default {String(collapsed)}</i>
+const Default = () => <i>default</i>
 
 describe('studio slots', () => {
   test('a single slot shows the core default when nothing is contributed', async () => {
     const Screen = () => {
-      const Switcher = useSlot('project.targetSwitcher', Default)
-      return <Switcher collapsed />
+      const Health = useSlot('overview.liveHealth', Default)
+      return <Health />
     }
-    expect(await within([], Screen)).toBe('<i>default true</i>')
+    expect(await within([], Screen)).toBe('<i>default</i>')
   })
 
   test('a single slot shows the highest-priority contribution', async () => {
     const Screen = () => {
-      const Switcher = useSlot('project.targetSwitcher', Default)
-      return <Switcher collapsed={false} />
+      const Health = useSlot('overview.liveHealth', Default)
+      return <Health />
     }
     const out = await within(
-      [contribution('project.targetSwitcher', () => <b>low</b>), contribution('project.targetSwitcher', ({ collapsed }) => <b>high {String(collapsed)}</b>, { priority: 2 })],
+      [contribution('overview.liveHealth', () => <b>low</b>), contribution('overview.liveHealth', () => <b>high</b>, { priority: 2 })],
       Screen,
     )
-    expect(out).toBe('<b>high false</b>')
+    expect(out).toBe('<b>high</b>')
   })
 
   test('a list slot renders every contribution, highest priority first, from several addons', async () => {
@@ -71,14 +71,14 @@ describe('studio slots', () => {
     console.error = () => {}
     try {
       const Screen = () => {
-        const Switcher = useSlot('project.targetSwitcher', Default)
-        return <Switcher collapsed />
+        const Health = useSlot('overview.liveHealth', Default)
+        return <Health />
       }
-      const broken = contribution('project.targetSwitcher', () => {
+      const broken = contribution('overview.liveHealth', () => {
         throw new Error('boom')
       })
       // Server rendering has no error boundaries: it renders the slot's fallback and leaves the rest to the client.
-      expect(await within([broken], Screen)).toBe('<i>default true</i>')
+      expect(await within([broken], Screen)).toBe('<i>default</i>')
     } finally {
       console.warn = original
       console.error = errors

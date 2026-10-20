@@ -1,13 +1,14 @@
 import { asI18n, type I18nNode, type I18nString } from '@pikku/react'
 import { Link } from './Link'
-import { Cloud, FolderOpen, Laptop, LogOut, ShieldCheck, User, type LucideIcon } from 'lucide-react'
+import { Cloud, FolderOpen, Laptop, LogOut, ShieldCheck, User, Users, type LucideIcon } from 'lucide-react'
 import { m } from '@/i18n/messages'
 import { keep } from '../lib/links'
-import { useAccount } from '../lib/onboarding'
 import { useProjectSlug } from '../lib/project'
 import { useTeamProjects } from './TeamProjects'
 import { useSignOut } from '../lib/onboarding'
 import { useCopy } from '../lib/copy'
+import { useCurrentTeam, useShellAccount } from '../lib/account'
+import { LOCAL_TEAM, useTeamSlug } from '../lib/team'
 
 // The foot of the shell rail: where the work lives (opens the workspace panel), then who is signed in.
 
@@ -82,20 +83,33 @@ export function ShellAccountView({
   )
 }
 
-export function LocalShellAccount({ expanded, onOpen, onAccount, collapsed }: { expanded: boolean; onOpen: () => void; onAccount: () => void; collapsed?: boolean }) {
-  const accountName = useAccount().data?.name
+type ShellAccountProps = { expanded: boolean; onOpen: () => void; onAccount: () => void; collapsed?: boolean }
+
+// studio:account answers who is signed in. Without a signed-in user the work is on this computer; with one, the rail's
+// foot names the team the work belongs to and the account.
+export function ShellAccount({ expanded, onOpen, onAccount, collapsed }: ShellAccountProps) {
+  const account = useShellAccount().data
+  const team = useCurrentTeam()
+  const local = useTeamSlug() === LOCAL_TEAM
+  const user = account?.user
+  const accountName = user?.name || account?.name
   const name = accountName ? asI18n(accountName) : undefined
+  if (!user)
+    return (
+      <ShellAccountView icon={Laptop} scope={m.shell__scope_pc()} scopeNote={m.shell__scope_pc_note()} name={name} note={m.shell__workspace()} expanded={expanded} onOpen={onOpen} onAccount={onAccount} collapsed={collapsed} />
+    )
   return (
     <ShellAccountView
-      icon={Laptop}
-      scope={m.shell__scope_pc()}
-      scopeNote={m.shell__scope_pc_note()}
+      icon={local ? Laptop : Users}
+      scope={local ? m.shell__scope_pc() : team ? asI18n(team.name) : m.shell__scope_team()}
+      scopeNote={local ? m.shell__scope_pc_note() : team?.personal ? m.shell__scope_personal_note() : m.shell__scope_team_note()}
       name={name}
-      note={m.shell__workspace()}
+      note={user.email ? asI18n(user.email) : m.shell__workspace()}
       expanded={expanded}
       onOpen={onOpen}
       onAccount={onAccount}
       collapsed={collapsed}
+      tile={!local && team && !team.personal ? team.name : undefined}
     />
   )
 }
@@ -180,8 +194,9 @@ export function WorkspaceProjects() {
   )
 }
 
-export function LocalAccountName() {
-  return <>{useAccount().data?.name ?? ''}</>
+export function AccountName() {
+  const account = useShellAccount().data
+  return <>{account?.user?.name || account?.name || ''}</>
 }
 
 export function SignOutSection() {

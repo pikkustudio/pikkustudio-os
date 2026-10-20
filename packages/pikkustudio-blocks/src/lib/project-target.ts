@@ -1,7 +1,6 @@
 import { useNavigate, useSearch } from '@tanstack/react-router'
-import { createContext, createElement, useContext, useEffect, useMemo, type ReactNode } from 'react'
+import { createContext, createElement, useContext, useEffect, type ReactNode } from 'react'
 import { ProjectRpcCtx, type ProjectInvoke } from './projectRpc'
-import { useProjectKey } from './project'
 
 export type ProjectTargetKind = 'workspace' | 'stage'
 export type TargetRef = { kind: ProjectTargetKind; name: string }
@@ -59,14 +58,6 @@ export const usePutTargetInUrl = (target: TargetRef | undefined) => {
   useEffect(() => {
     if (hasProject && wanted && wanted !== have) navigate({ to: '.', search: ((prev: object) => ({ ...prev, target: wanted })) as never, replace: true })
   }, [hasProject, wanted, have])
-}
-
-export function LocalProjectTargetProvider({ children }: { children: ReactNode }) {
-  usePutTargetInUrl(DEFAULT_TARGET)
-  const key = useProjectKey()
-  const invoke = useContext(ProjectRpcCtx)
-  const value = useMemo<ProjectTarget>(() => ({ kind: 'workspace', name: LOCAL_WORKSPACE, readOnly: false, rpc: bindRpc(invoke, key) }), [invoke, key])
-  return createElement(ProjectTargetProvider, { value, children })
 }
 
 export class ReadOnlyTargetError extends Error {

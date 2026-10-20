@@ -10,7 +10,14 @@ export type Account = {
   signedIn: boolean
   apiUrl: string
   consoleUrl: string
+  user: { name: string | null; email: string | null } | null
+  teams: AccountTeam[]
+  currentTeam: string | null
+  links: { id: string; path: string }[]
+  scopes: string[]
 }
+
+export type AccountTeam = { slug: string; name: string; personal: boolean; memberCount: number; projectCount: number }
 
 export type AiOptions = {
   keys: { id: string; name: string; envVar: string; baseUrl: string; model: string }[]

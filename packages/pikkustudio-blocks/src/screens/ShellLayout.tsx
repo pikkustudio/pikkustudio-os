@@ -14,11 +14,15 @@ import { languageName } from '../lib/i18n'
 import { useProjectChecklist } from '../lib/project-flow'
 import { useProjectKey, useProjectMissing, useProjectName, useProjectSlug } from '../lib/project'
 import { isTeamScoped, pageNeedsApp } from '../lib/project-url'
-import { TEAM_PAGES, navEntries, registry, type NavScreen } from '../lib/nav-registry'
+import { TEAM_PAGES, registry, type NavScreen } from '../lib/nav-registry'
 import { NavBadge } from '../blocks/NavBadge'
 import { msg, navIcon } from '../lib/nav-labels'
 import { usePikkuChat } from '../lib/chat'
-import { LocalAccountName, LocalShellAccount, LocalWorkspaceAbout, SignOutSection } from '../blocks/ShellAccount'
+import { AccountName, LocalWorkspaceAbout, ShellAccount, SignOutSection } from '../blocks/ShellAccount'
+import { ProjectTargetsProvider, TargetSwitcher } from '../blocks/ProjectTargets'
+import { NotificationBell } from '../blocks/NotificationBell'
+import { ChatPublishStatus } from '../blocks/ChatPublishStatus'
+import { useNavEntries } from '../lib/nav-visibility'
 import { useSlot, useSlotList } from '../lib/studio-slots'
 import { useCopy } from '../lib/copy'
 import { SCREEN_NAME, agentName } from '../lib/screen-names'
@@ -39,7 +43,6 @@ import { QuickFind } from '../blocks/QuickFind'
 import { SlashMenu, slashMatches, slashOptionId } from '../blocks/SlashMenu'
 import { UpdatesFeed } from '../blocks/UpdatesFeed'
 import { ProjectRunGate } from '../blocks/ProjectRunGate'
-import { LocalProjectTargetProvider } from '../lib/project-target'
 import { Toaster } from '../blocks/Toaster'
 import { ComposerTools } from '../blocks/ComposerTools'
 import { NoAiCard } from '../blocks/NoAiCard'
@@ -151,11 +154,10 @@ function Note({
 }
 
 export function ShellLayout({ children }: { children?: ReactNode }) {
-  const Target = useSlot('project.targetProvider', LocalProjectTargetProvider)
   return (
-    <Target>
+    <ProjectTargetsProvider>
       <ShellLayoutInner>{children}</ShellLayoutInner>
-    </Target>
+    </ProjectTargetsProvider>
   )
 }
 
@@ -164,13 +166,10 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
   const projectSlug = useProjectSlug()
   const projectMissing = useProjectMissing()
   const copy = useCopy()
-  const Account = useSlot('shell.account', LocalShellAccount)
   const About = useSlot('shell.workspaceAbout', LocalWorkspaceAbout)
-  const AccountName = useSlot('shell.accountName', LocalAccountName)
   const TeamNav = useSlotList('shell.teamNav')
   const ProjectNav = useSlotList('shell.projectNav')
   const RailFoot = useSlotList('shell.railFoot')
-  const TargetSwitcher = useSlot('project.targetSwitcher')
   const navigate = useNavigate()
   const q = useSearch({ strict: false }) as { view?: View; look?: 'light' | 'dark'; panel?: PanelId; show?: 'done'; project?: string; change?: string }
   const path = useLocation({ select: (l) => l.pathname })
@@ -217,9 +216,10 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
   const [bubbleDraft, setBubbleDraft] = useState('')
   const projectKey = useProjectKey()
   const journey = useProjectChecklist(projectKey).data?.started !== false
-  const teamNav = navEntries('team')
-  const projectNav = navEntries('project')
-  const accountNav = navEntries('account')
+  const railNav = useNavEntries('rail')
+  const teamNav = useNavEntries('team')
+  const projectNav = useNavEntries('project')
+  const accountNav = useNavEntries('account')
   const navLink = (screen: NavScreen) => {
     const Icon = navIcon(screen.nav!.icon)
     return (
@@ -265,7 +265,6 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
   const guide = usePikkuChat(projectKey, pageTitle)
   const builder = useBuilderChat(projectKey, workMode)
   const canEdit = useCanEdit()
-  const ChatPublishStatus = useSlot('chat.publishStatus')
   const { openWorkspace, missing: targetMissing } = useProjectTarget()
   const chat = workMode ? builder : guide
   const changesQ = useProjectQuery<{ changes: { changeId: string; title: string; body: string | null; status: string; createdAt: string }[] }>(projectKey, 'console:listStudioChanges', { status: ['open', 'claimed', 'needs_answer', 'in_progress'] }, { refetchInterval: 6000, handlesErrors: true })
@@ -391,7 +390,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
               <kbd className={`rounded border border-border px-1 text-[11px] leading-4 ${lbl}`}>{m.shell_layout__find_shortcut()}</kbd>
             </button>
             <nav className="flex flex-col gap-0.5" aria-label={m.shell_layout__main()}>
-              {navEntries('rail').map((s) => {
+              {railNav.map((s) => {
                 const Icon = navIcon(s.nav!.icon)
                 return (
                   <Link {...keep} {...tip(msg(s.title))} key={s.path} to={s.path as never} className={`${item} h-11.5 text-[15px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`}>
@@ -430,6 +429,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
             </div>
             )}
             <div className="mt-auto flex flex-col gap-2.5">
+              <NotificationBell collapsed={collapsed} />
               <RailFoot collapsed={collapsed} />
               <button
                 type="button"
@@ -442,7 +442,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
                 {collapsed ? <PanelLeftOpen className="size-5 rtl:-scale-x-100" /> : <PanelLeftClose className="size-5 rtl:-scale-x-100" />}
                 <span className={lbl}>{m.shell_layout__collapse_nav()}</span>
               </button>
-              <Account collapsed={collapsed} expanded={panel === 'workspace'} onOpen={() => setPanel('workspace')} onAccount={() => navigate({ to: (accountNav[0]?.path ?? '/account') as never, search: ((prev: object) => ({ ...prev, panel: undefined })) as never })} />
+              <ShellAccount collapsed={collapsed} expanded={panel === 'workspace'} onOpen={() => setPanel('workspace')} onAccount={() => navigate({ to: (accountNav[0]?.path ?? '/account') as never, search: ((prev: object) => ({ ...prev, panel: undefined })) as never })} />
             </div>
           </aside>
 

@@ -15,7 +15,7 @@ import type { VaultAdmin } from '@pikkustudio/vault/admin'
 import type { InboxStore } from '@pikkustudio/addon-inbox/types'
 import type { CommentStore, VerdictStore } from '@pikkustudio/addon-review/types'
 import type { worktreeMetaSource } from './lib/worktree-meta-source.js'
-import type { LogSources, MetricSources, StageAnalytics, StageAudit, StageDirectory, StageReleases, StageSettingsStore } from '@pikkustudio/addon-studio/sources'
+import type { LogSources, MetricSources, StageAnalytics, StageAudit, StageDirectory, StageReleases, StageSettingsStore, AccountSource, NotificationSource, TargetSources } from '@pikkustudio/addon-studio/sources'
 import type { AccountProvider, ProjectDecoratorFactory, PublishTarget, ScopedSource, StudioPresence } from '@pikkustudio/addon-studio/services'
 
 export interface UserSession extends CoreUserSession {
@@ -63,6 +63,11 @@ export interface SingletonServices extends CoreSingletonServices<Config> {
   stageReleases?: StageReleases
   stageSettings?: StageSettingsStore
   stageAnalytics?: StageAnalytics
+  // Contributed by a host that holds accounts, published copies and notifications (none in the open build): the
+  // shell's account, the targets beyond this computer's workspace, and the unread count.
+  accountSource?: AccountSource
+  targetSources?: TargetSources
+  notificationSource?: NotificationSource
   // Contributed by a wired addon (none in the open build): the account Studio signs in to, where it can publish,
   // the team's shared dev credentials, extra project fields and background presence reporting.
   studioAccount?: AccountProvider

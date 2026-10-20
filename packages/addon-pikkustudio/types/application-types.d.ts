@@ -11,6 +11,7 @@ import type { LogStore } from '../src/services/log-store.js'
 import type { LogSources, MetricSources, StageAudit, StageDirectory } from '../src/services/log-source.js'
 import type { StageAnalytics, StageReleases, StageSettingsStore } from '../src/services/stage-source.js'
 import type { StudioPublisher } from '../src/services/publish.js'
+import type { AccountSource, NotificationSource, TargetSources } from '../src/services/shell-source.js'
 import type { StudioSettingsFile } from '../src/services/settings.js'
 import type { ToolResolver } from '../src/lib/tools/resolver.js'
 import type { BuilderSession } from '@pikkustudio/builder'
@@ -40,6 +41,9 @@ export interface SingletonServices extends CoreSingletonServices<Config> {
   stageReleases?: StageReleases
   stageSettings?: StageSettingsStore
   stageAnalytics?: StageAnalytics
+  accountSource?: AccountSource
+  targetSources?: TargetSources
+  notificationSource?: NotificationSource
 }
 
 export interface Services extends CoreServices<SingletonServices> {}

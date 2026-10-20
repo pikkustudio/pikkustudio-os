@@ -13,7 +13,8 @@ import { AiLitellmPanel, AiProviderPanel, providers } from '../blocks/AiConnectP
 import { useHasSlot, useSlot } from '../lib/studio-slots'
 import { useCopy } from '../lib/copy'
 import { CloudPanel } from '../blocks/CloudPanel'
-import { PanelRow } from '../blocks/ShellAccount'
+import { PanelRow, ShellAccount } from '../blocks/ShellAccount'
+import { useShellAccount } from '../lib/account'
 import { useAccount, useProjectRun, useRecentProjects, useStartProjectRun, useAttachFile, newProjectName, type ProjectRun } from '../lib/onboarding'
 import { ArrowRight, Bell, Check, CircleAlert, FolderOpen, Laptop, MessageCircle, Pin, ShieldCheck, User, X, CheckCheck } from 'lucide-react'
 import { safeRedirect } from '../lib/sign-in-redirect'
@@ -95,8 +96,7 @@ export function OnboardingLayout() {
   const router = useRouter()
   const q = useSearch({ strict: false }) as { redirect?: string; look?: 'light' | 'dark'; panel?: PanelId; show?: string; pitch?: 'a' | 'b'; via?: string; run?: string }
   const panel: PanelId | '' = q.panel ?? ''
-  const ShellAccount = useSlot('shell.account')
-  const hasAccount = useHasSlot('shell.account')
+  const hasAccount = !!useShellAccount().data?.user
   const WorkspaceAbout = useSlot('shell.workspaceAbout')
   const hasAbout = useHasSlot('shell.workspaceAbout')
   const copy = useCopy()

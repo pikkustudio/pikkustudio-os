@@ -6,15 +6,16 @@ import { Bot, Search, type LucideIcon } from 'lucide-react'
 import { keep } from '../lib/links'
 import { navEntries, registry } from '../lib/nav-registry'
 import { msg, navIcon } from '../lib/nav-labels'
+import { useCanSee } from '../lib/scopes'
 
 type Hit = { key: string; label: string; hint: string; id: string; Icon: LucideIcon }
 
 // Core's QuickFind list from the nav registry, then each wired addon's nav screens, then asking Pikku.
-const pages = (): Hit[] => [
+const pages = (canSee: (scopes: readonly string[] | undefined) => boolean): Hit[] => [
   ...registry.quickFind.map((p) => ({ key: `page-${p.path}`, label: msg(p.label), hint: '', id: p.path, Icon: navIcon(p.icon) })),
   ...(['rail', 'team', 'project', 'account'] as const).flatMap((area) =>
     navEntries(area)
-      .filter((s) => s.addon)
+      .filter((s) => s.addon && canSee(s.scopes))
       .map((s) => ({ key: `page-${s.path}`, label: msg(s.title), hint: '', id: s.path, Icon: navIcon(s.nav!.icon) })),
   ),
   { key: 'page-ask', label: m.quick_find__ask_pikku(), hint: m.quick_find__ask_in_your_own_words(), id: '', Icon: Bot },
@@ -22,6 +23,7 @@ const pages = (): Hit[] => [
 
 export function QuickFind({ onClose, onAsk }: { onClose: () => void; onAsk: (text: I18nString) => void }) {
   const go = useNavigate()
+  const canSee = useCanSee()
   const [q, setQ] = useState('')
   const [at, setAt] = useState(0)
   const input = useRef<HTMLInputElement>(null)
@@ -29,7 +31,8 @@ export function QuickFind({ onClose, onAsk }: { onClose: () => void; onAsk: (tex
 
   const needle = q.trim().toLowerCase()
   const words = needle.split(/\s+/).filter(Boolean)
-  const hits = needle ? pages().filter((h) => words.every((w) => `${h.label} ${h.hint}`.toLowerCase().includes(w))) : pages()
+  const all = pages(canSee)
+  const hits = needle ? all.filter((h) => words.every((w) => `${h.label} ${h.hint}`.toLowerCase().includes(w))) : all
   const pick = (h?: Hit) => {
     if (!h) return
     if (h.id) go({ ...keep, to: h.id as never })
