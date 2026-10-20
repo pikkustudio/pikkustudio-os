@@ -3,8 +3,8 @@ import { studioInboxAccess } from './studio-inbox-access.ts'
 
 const access = studioInboxAccess({
   list: async () => [
-    { key: 'mine', cloudProjectId: null },
-    { key: 'linked', cloudProjectId: 'c1' },
+    { key: 'mine', sourceId: null },
+    { key: 'linked', sourceId: 'c1' },
   ],
 })
 

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { pikkuFunc } from '#pikku/addon/function'
-import { onlineIdOf } from '../services/projects.js'
+import { sourceProjectOf } from '../lib/target-sources.js'
 
 export const ProjectStageAuditInput = z.object({ key: z.string(), limit: z.number().int().min(1).max(200).optional() })
 
@@ -29,8 +29,8 @@ export const projectStageAudit = pikkuFunc({
   output: ProjectStageAuditOutput,
   func: async ({ stageAudit, studioProjects }, { key, limit }, { session }) => {
     if (!stageAudit) return none
-    const cloudProjectId = onlineIdOf(key) ?? ((await studioProjects.list().catch(() => [])).find((p) => p.key === key)?.cloudProjectId ?? null)
-    if (!cloudProjectId) return none
-    return (await stageAudit.page({ key, session, project: { cloudProjectId } }, { limit: limit ?? 30 })) ?? none
+    const project = await sourceProjectOf(studioProjects, key)
+    if (!project) return none
+    return (await stageAudit.page({ key, session, project }, { limit: limit ?? 30 })) ?? none
   },
 })

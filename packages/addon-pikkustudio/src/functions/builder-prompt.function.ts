@@ -19,7 +19,9 @@ export const builderPrompt = pikkuSessionlessFunc({
     const profile = name
       ? `The person you are working with is called ${name}. Address them by that name.${about ? ` About them: ${about}. Tailor your answers to that.` : ''}`
       : undefined
-    const spoken = languageRule(language ?? http?.request?.header('x-studio-locale') ?? undefined)
+    const locale = language ?? http?.request?.header('x-studio-locale') ?? undefined
+    const spoken = languageRule(locale)
+    studioBuilder.setLocale(key, locale)
     if (explore) {
       await studioBuilder.directions(slotKey(key, mode), message, DIRECTIONS, [spoken, context].filter(Boolean).join('\n\n') || undefined)
       return studioBuilder.state(slotKey(key, mode))

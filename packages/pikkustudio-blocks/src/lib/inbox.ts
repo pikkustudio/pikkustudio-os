@@ -1,6 +1,6 @@
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import type { UseQueryResult } from '@tanstack/react-query'
-import { hostProjectId, useProjectKey } from './project'
+import { sourceIdOf, useProjectKey } from './project'
 import { useProjectTarget } from './project-target'
 
 export type InboxChannel = 'email' | 'sms'
@@ -32,7 +32,7 @@ export type InboxMessage = InboxSummary & { cc: string[]; bcc: string[]; html: s
 
 export type InboxList = { messages: InboxSummary[]; retentionDays: number }
 
-export const inboxProjectKey = (key: string) => hostProjectId(key).replace(/@.*$/, '')
+export const inboxProjectKey = (key: string) => sourceIdOf(key).replace(/@.*$/, '')
 
 export const useInboxScope = () => {
   const key = useProjectKey()

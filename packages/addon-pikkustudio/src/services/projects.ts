@@ -19,8 +19,6 @@ import { previewViteConfig } from './vite-preview.js'
 
 const execFileAsync = promisify(execFile)
 
-/** Where a project is: on this computer, held by the account host (online, from the contributed AccountProvider), or both. */
-export type ProjectLocation = 'local' | 'online' | 'both'
 
 const RESERVED_SLUGS = new Set(['projects', 'secrets', 'new-project', 'sign-in', 'your-name', 'choose-ai'])
 const projectSlug = (text: string) =>
@@ -63,9 +61,11 @@ export interface StudioProject {
   owner: string
   slug: string
   name: string
-  location: ProjectLocation
+  /** On this computer when it has a path; otherwise only a contributed source holds it. */
   path: string | null
-  cloudProjectId: string | null
+  /** The contributed source that holds the project (its namespace in `projectSources`), and the project's id there. */
+  source: string | null
+  sourceId: string | null
   gitRepoUrl: string | null
   current: boolean
   missing: boolean
@@ -135,7 +135,7 @@ export const studioRuntimeDir = (projectDir: string): string => {
   return resolve(projectDir, config.rootDir ?? '.', config.runtimeDir ?? '.pikku-runtime', 'studio')
 }
 
-export interface OnlineProject {
+export interface SourceProject {
   projectId: string
   name: string
   gitRepoUrl: string | null
@@ -151,22 +151,27 @@ export interface StudioAccount {
 
 export type SignInStatus = 'pending' | 'confirmed' | 'expired' | 'rejected'
 
+/**
+ * A contributed project source (`projectSources.<namespace>`): the projects it holds, and the account Studio signs in to
+ * through it. Its projects are keyed `<namespace>:<id>`; core routes a key to the source it names.
+ */
 export interface AccountProvider {
   account(): Promise<StudioAccount>
-  /** The projects the account holds online: one team's, by its slug, or every team's. */
-  projects(team?: string): Promise<OnlineProject[]>
+  /** The projects the source holds: one team's, by its slug, or every team's. */
+  projects(team?: string): Promise<SourceProject[]>
   startSignIn(): Promise<{ code: string; url: string; expiresAt: string }>
   pollSignIn(code: string): Promise<SignInStatus>
   signOut(): Promise<void>
-  modelAccess(): Promise<{ proxyUrl: string; apiKey: string }>
+  /** The account's AI endpoint. `locale` is the viewer's, so a refusal (no credit, say) comes back in their language. */
+  modelAccess(locale?: string): Promise<{ proxyUrl: string; apiKey: string }>
   /** The model account AI runs, through `modelAccess`, when PIKKU_STUDIO_MODEL does not name one. */
   model?: string
   link(projectId: string): Promise<AccountLink | null>
-  locate(path: string, online: OnlineProject[]): Promise<{ projectId: string; project: OnlineProject | null } | null>
+  locate(path: string, held: SourceProject[]): Promise<{ projectId: string; project: SourceProject | null } | null>
   adopt(projectId: string, path: string): Promise<void>
-  /** Opens a project's online workspace: creates it when there is none and wakes it when it sleeps. */
+  /** Opens a project's workspace in the source: creates it when there is none and wakes it when it sleeps. */
   workspaceLink?(projectId: string, workspace?: string): Promise<WorkspaceLink>
-  /** Where a project's online workspace stands, without creating or waking it. */
+  /** Where a project's workspace in the source stands, without creating or waking it. */
   workspaceStatus?(projectId: string, workspace?: string): Promise<WorkspaceStatus>
   gitCredential?(projectId: string): Promise<{ username: string; password: string }>
 }
@@ -194,17 +199,17 @@ export interface WorkspaceTarget {
 const WORKSPACE_TARGET_TTL = 30_000
 
 /**
- * A project the account host holds that this computer does not: `online:<projectId>`, or `online:<projectId>@<workspace>`
- * for one of its online workspaces by slug. The ids are the account's own; core only reads the shape.
+ * A project a contributed source holds that this computer does not: `<source>:<id>`, or `<source>:<id>@<workspace>`
+ * for one of its workspaces by slug. The source is its namespace in `projectSources`; the ids are the source's own,
+ * so core only reads the shape. A project on this computer keeps its own key, which has no `:`.
  */
-export const ONLINE_KEY = 'online:'
-export const isOnlineKey = (key: string) => key.startsWith(ONLINE_KEY)
-export const onlineKeyParts = (key: string) => {
-  const [projectId, workspace] = key.slice(ONLINE_KEY.length).split('@')
-  return { projectId, workspace: workspace || undefined }
+export const sourceOf = (key: string): { source: string; id: string; workspace?: string } | null => {
+  const at = key.indexOf(':')
+  if (at <= 0) return null
+  const [id, workspace] = key.slice(at + 1).split('@')
+  return id ? { source: key.slice(0, at), id, workspace: workspace || undefined } : null
 }
-/** The account's id for an online key, or null for a project on this computer. */
-export const onlineIdOf = (key: string) => (isOnlineKey(key) ? onlineKeyParts(key).projectId || null : null)
+export const sourceKey = (source: string, id: string, workspace?: string) => `${source}:${id}${workspace ? `@${workspace}` : ''}`
 
 export interface AccountLink {
   apiUrl: string
@@ -516,7 +521,8 @@ export interface StudioProjectsOptions {
   currentRoot?: string | null
   // A sandbox serves one project (PIKKU_STUDIO_PROJECT): only currentRoot is listed or openable.
   pinned?: boolean
-  account?: AccountProvider
+  /** The contributed project sources, by namespace. The first one is the account Studio signs in to. */
+  sources?: Record<string, AccountProvider>
   home?: string
   devCommand?: (port: number) => { command: string; args: string[] }
   installCommand?: (dir: string) => { command: string; args: string[] } | null
@@ -562,7 +568,7 @@ export class StudioProjectsService {
   private apps = new Map<string, RunningApp[]>()
   private keeping = new Set<Promise<unknown>>()
   private lastUsed = new Map<string, number>()
-  private account: AccountProvider
+  private sources: Record<string, AccountProvider>
   private home: string
 
   private reaped: Promise<void> | undefined
@@ -570,7 +576,7 @@ export class StudioProjectsService {
   private served = new Map<string, { child: ChildProcess; port: number; worktree: string }>()
 
   constructor(private options: StudioProjectsOptions = {}) {
-    this.account = options.account ?? localAccount
+    this.sources = options.sources ?? {}
     this.home = options.home ?? studioHome()
     this.supervisor = new Supervisor({ pidFile: join(this.home, 'supervisor.pids.json') })
     process.once('exit', () => this.killAll())
@@ -725,6 +731,25 @@ export class StudioProjectsService {
     })())
   }
 
+  /** The source Studio signs in to: the first contributed one, or none. */
+  get accountSource(): string | null {
+    return Object.keys(this.sources)[0] ?? null
+  }
+
+  private get account(): AccountProvider {
+    return this.sources[this.accountSource ?? ''] ?? localAccount
+  }
+
+  /** The source a key or name points at, or null when it names none Studio has. */
+  private sourceFor(name: string | undefined): AccountProvider | null {
+    return name ? this.sources[name] ?? null : null
+  }
+
+  /** The model a source's AI runs when PIKKU_STUDIO_MODEL does not name one. */
+  accountModel(source?: string): string | undefined {
+    return (source ? this.sourceFor(source) : this.account)?.model
+  }
+
   private async owner(): Promise<string> {
     const handle = (await this.account.account().catch(() => null))?.handle
     const named = ownerSlug(handle) || ownerSlug(await this.options.owner?.().catch(() => ''))
@@ -753,8 +778,11 @@ export class StudioProjectsService {
     return this.account.account()
   }
 
-  modelAccess() {
-    return this.account.modelAccess()
+  /** A source's AI endpoint (the account's when no source is named), in the viewer's locale for any refusal. */
+  modelAccess(locale?: string, source?: string) {
+    const from = source ? this.sourceFor(source) : this.account
+    if (!from) return Promise.reject(new Error('Choose your AI before building'))
+    return from.modelAccess(locale)
   }
 
   accountLink(projectId: string) {
@@ -774,8 +802,8 @@ export class StudioProjectsService {
   }
 
   /**
-   * Every project, or one team's: an account team's online projects (the copy on this computer standing in
-   * for its online entry), or for the `local` team the projects that are only on this computer.
+   * Every project, or one team's: a source team's projects (the copy on this computer standing in for the source's
+   * entry), or for the `local` team the projects that are only on this computer.
    */
   async list(team?: string): Promise<StudioProject[]> {
     const entries = await this.registry()
@@ -787,24 +815,35 @@ export class StudioProjectsService {
       const pinned = entries.filter((e) => resolve(e.path) === current)
       entries.splice(0, entries.length, ...pinned)
     }
-    const onlineTeam = team && team !== LOCAL_TEAM ? team : undefined
-    const online = this.options.pinned ? [] : await this.account.projects(onlineTeam).catch(() => [] as OnlineProject[])
+    const sourceTeam = team && team !== LOCAL_TEAM ? team : undefined
+    const held = this.options.pinned
+      ? []
+      : await Promise.all(
+          Object.entries(this.sources).map(async ([source, from]) => ({ source, from, projects: await from.projects(sourceTeam).catch(() => [] as SourceProject[]) }))
+        )
     const claimed = new Set<string>()
+    const locate = async (path: string) => {
+      for (const { source, from, projects } of held) {
+        const found = await from.locate(path, projects).catch(() => null)
+        if (found) return { source, ...found }
+      }
+      return null
+    }
     const local = await Promise.all(
-      entries.map(async (entry): Promise<StudioProject> => {
+      entries.map(async (entry): Promise<StudioProject & { linked: boolean }> => {
         const missing = !existsSync(entry.path)
-        const found = missing ? null : await this.account.locate(entry.path, online).catch(() => null)
-        const linkedId = found?.projectId ?? null
+        const found = missing ? null : await locate(entry.path)
         const match = found?.project ?? null
-        if (match) claimed.add(match.projectId)
+        if (found && match) claimed.add(sourceKey(found.source, match.projectId))
         return {
           key: entry.id,
           owner: entry.owner ?? '',
           slug: entry.slug ?? entry.id,
           name: match?.name ?? entry.name ?? (missing ? basename(entry.path) : await projectName(entry.path)),
-          location: match ? 'both' : 'local',
           path: entry.path,
-          cloudProjectId: match?.projectId ?? linkedId,
+          source: found?.source ?? null,
+          sourceId: found?.projectId ?? null,
+          linked: !!match,
           gitRepoUrl: match?.gitRepoUrl ?? null,
           current: resolve(entry.path) === current,
           missing,
@@ -813,30 +852,33 @@ export class StudioProjectsService {
         }
       })
     )
-    const remote = online
-      .filter((p) => !claimed.has(p.projectId))
-      .map(
-        (p): StudioProject => ({
-          key: `${ONLINE_KEY}${p.projectId}`,
-          owner: '',
-          slug: '',
-          name: p.name,
-          location: 'online',
-          path: null,
-          cloudProjectId: p.projectId,
-          gitRepoUrl: p.gitRepoUrl,
-          current: false,
-          missing: false,
-          open: false,
-          worktrees: [],
-        })
-      )
+    const remote = held.flatMap(({ source, projects }) =>
+      projects
+        .filter((p) => !claimed.has(sourceKey(source, p.projectId)))
+        .map(
+          (p): StudioProject & { linked: boolean } => ({
+            key: sourceKey(source, p.projectId),
+            owner: '',
+            slug: '',
+            name: p.name,
+            path: null,
+            source,
+            sourceId: p.projectId,
+            linked: true,
+            gitRepoUrl: p.gitRepoUrl,
+            current: false,
+            missing: false,
+            open: false,
+            worktrees: [],
+          })
+        )
+    )
     const owner = await this.owner()
     const taken = new Set(local.map((p) => `${p.owner}/${p.slug}`))
-    const here = team === undefined ? local : local.filter((p) => (onlineTeam ? p.location === 'both' : !p.cloudProjectId))
+    const here = team === undefined ? local : local.filter((p) => (sourceTeam ? p.linked : !p.sourceId))
     return [
-      ...here,
-      ...(team === LOCAL_TEAM ? [] : remote).map((project) => {
+      ...here.map(({ linked: _, ...project }) => project),
+      ...(team === LOCAL_TEAM ? [] : remote).map(({ linked: _, ...project }) => {
         const base = projectSlug(project.name) || 'project'
         let slug = base
         for (let n = 2; taken.has(`${owner}/${slug}`); n++) slug = `${base}-${n}`
@@ -922,17 +964,20 @@ export class StudioProjectsService {
     await writeFile(this.intakeFile(key), JSON.stringify({ path: path ?? 'design', done: false, idea: idea ?? null, surfaces: surfaces ?? [], devices: devices ?? [], answers: [], skipped: path === 'interview' ? [] : ['questions'], run: null, jobs: {}, samples: false }) + '\n')
   }
 
-  async clone(cloudProjectId: string): Promise<StudioProject> {
-    const project = (await this.account.projects()).find((p) => p.projectId === cloudProjectId)
-    if (!project) throw new Error('That project is not in your account')
+  /** Brings a source's project (`<source>:<id>`) onto this computer, linked back to the source. */
+  async clone(key: string): Promise<StudioProject> {
+    const ref = sourceOf(key)
+    const from = this.sourceFor(ref?.source)
+    const project = ref && from ? (await from.projects()).find((p) => p.projectId === ref.id) : undefined
+    if (!from || !project) throw new Error('That project is not in your account')
     if (!project.gitRepoUrl) throw new Error(`${project.name} has no repository to clone`)
     if (await this.nameTaken(project.name)) throw new Error(`You already have a project called ${project.name}`)
     const id = randomUUID().slice(0, 8)
     const root = join(this.projectsDir, id)
     try {
-      const credential = await this.account.gitCredential?.(project.projectId)
+      const credential = await from.gitCredential?.(project.projectId)
       await cloneLayout(root, project.gitRepoUrl, this.home, async (path) => {
-        await this.account.adopt(project.projectId, path)
+        await from.adopt(project.projectId, path)
         await commitPaths(path, ['pikku.config.json'], 'Link to the account')
       }, credential, project.productionBranch)
     } catch (error) {
@@ -1455,19 +1500,26 @@ export class StudioProjectsService {
     return { entry, worktree }
   }
 
-  async workspaceLink(key: string): Promise<WorkspaceLink> {
-    if (!isOnlineKey(key)) throw new Error('Only an online project has a workspace link')
-    if (!this.account.workspaceLink) throw new Error('Online workspaces are not part of this edition')
-    const { projectId, workspace } = onlineKeyParts(key)
-    return this.account.workspaceLink(projectId, workspace)
+  /** The source a key names and the project's id and workspace there; throws for a key no source of Studio's holds. */
+  private sourceRef(key: string) {
+    const ref = sourceOf(key)
+    if (!ref) throw new Error('Only a project a source holds has a workspace there')
+    const from = this.sourceFor(ref.source)
+    if (!from) throw new Error(`Studio has no ${ref.source} source`)
+    return { from, id: ref.id, workspace: ref.workspace }
   }
 
-  /** Where an online project's workspace stands and how far its start has got, without starting it. */
+  async workspaceLink(key: string): Promise<WorkspaceLink> {
+    const { from, id, workspace } = this.sourceRef(key)
+    if (!from.workspaceLink) throw new Error('This source has no workspaces to open')
+    return from.workspaceLink(id, workspace)
+  }
+
+  /** Where a source's project workspace stands and how far its start has got, without starting it. */
   async workspaceStatus(key: string): Promise<WorkspaceProgress> {
-    if (!isOnlineKey(key)) throw new Error('Only an online project has a workspace')
-    if (!this.account.workspaceStatus) return { state: 'off', phase: null, error: null }
-    const { projectId, workspace } = onlineKeyParts(key)
-    const link = await this.account.workspaceStatus(projectId, workspace)
+    const { from, id, workspace } = this.sourceRef(key)
+    if (!from.workspaceStatus) return { state: 'off', phase: null, error: null }
+    const link = await from.workspaceStatus(id, workspace)
     if (link.state === 'off') return { state: 'off', phase: null, error: null }
     if (link.state === 'failed') return { state: 'failed', phase: link.phase ?? null, error: link.error ?? null }
     if (link.state === 'starting') return { state: 'starting', phase: link.phase ?? 'machine', error: null }
@@ -1477,12 +1529,12 @@ export class StudioProjectsService {
 
   private workspaceTargets = new Map<string, { at: number; target: WorkspaceTarget }>()
 
-  /** Where to send an online project's requests. Passing a request through never starts a workspace; that is for opening it. */
+  /** Where to send a source project's requests. Passing a request through never starts a workspace; that is for opening it. */
   async workspaceTarget(key: string): Promise<WorkspaceTarget | { state: 'starting' | 'off' }> {
     const cached = this.workspaceTargets.get(key)
     if (cached && Date.now() - cached.at < WORKSPACE_TARGET_TTL) return cached.target
-    const { projectId, workspace } = onlineKeyParts(key)
-    const link = this.account.workspaceStatus ? await this.account.workspaceStatus(projectId, workspace) : await this.workspaceLink(key)
+    const { from, id, workspace } = this.sourceRef(key)
+    const link = from.workspaceStatus ? await from.workspaceStatus(id, workspace) : await this.workspaceLink(key)
     if (link.state === 'off' || link.state === 'failed') return { state: 'off' }
     if (link.state !== 'ready' || !link.url) return { state: 'starting' }
     const headers: Record<string, string> = link.token ? { authorization: `Bearer ${link.token}` } : {}

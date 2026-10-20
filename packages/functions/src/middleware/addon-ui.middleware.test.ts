@@ -49,12 +49,12 @@ test('naming an addon that is not installed is refused', async () => {
 })
 
 test("an addon's call goes only through the rpc route, to an addon function; Pikku checks which addons it reaches", async () => {
-  assert.equal(addonMayCall('/rpc/cloud:listPlans'), true)
-  assert.equal(addonMayCall('/rpc/cloud%3AlistPlans'), true)
-  assert.equal(addonMayCall('/rpc/cloudapi:listPlans'), true)
+  assert.equal(addonMayCall('/rpc/billing:listPlans'), true)
+  assert.equal(addonMayCall('/rpc/billing%3AlistPlans'), true)
+  assert.equal(addonMayCall('/rpc/billingapi:listPlans'), true)
   assert.equal(addonMayCall('/rpc/listPlans'), false)
   assert.equal(addonMayCall('/rpc/:listPlans'), false)
-  assert.equal(addonMayCall('/rpc/cloud:'), false)
+  assert.equal(addonMayCall('/rpc/billing:'), false)
   assert.equal(addonMayCall('/studio/account'), false)
   assert.equal(addonMayCall(undefined), false)
   addonRoles.invoices = ['invoices:read']

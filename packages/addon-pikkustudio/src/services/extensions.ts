@@ -19,7 +19,8 @@ export type ProjectDecoratorFactory = (projects: StudioProjectsService) => Proje
 export interface PresenceHost {
   projects: StudioProjectsService
   idleMinutes(): Promise<number>
-  location: 'desktop' | 'cloud'
+  /** Studio runs as a hosted service (PIKKU_STUDIO_SERVICE_TOKEN), not on someone's own computer. */
+  serviceMode: boolean
 }
 
 /** Background reporting that runs while Studio is up, contributed as `studioPresence.<addon>`; returns how to stop it. */

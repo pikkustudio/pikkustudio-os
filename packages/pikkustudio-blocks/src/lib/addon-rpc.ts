@@ -18,8 +18,8 @@ const retryUnlessClientError = (failureCount: number, error: Error) => {
  * `<target>:<name>`, with the header naming the addon whose screens make them: the target itself by default, or the
  * addon that `uses` it, which Pikku checks. Addon UI never needs the app's generated client, nor any other API.
  *
- *   const cloud = createAddonRpc<RPCMap>('cloud')
- *   const api = createAddonRpc<CloudApiMap>('cloudapi', { caller: 'cloud' })
+ *   const billing = createAddonRpc<RPCMap>('billing')
+ *   const api = createAddonRpc<BillingApiMap>('billingapi', { caller: 'billing' })
  */
 export const createAddonRpc = <Map extends AddonRPCMap>(target: string, { caller = target }: { caller?: string } = {}) => {
   const addon = target

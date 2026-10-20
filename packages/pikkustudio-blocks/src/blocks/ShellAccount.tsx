@@ -275,7 +275,7 @@ export function WorkspaceProjects() {
                 >
                   <FolderOpen className="size-4.5 shrink-0 text-muted-foreground" />
                   <span className="min-w-0 flex-1 truncate">{projectName}</span>
-                  {p.location === 'local' ? null : <Cloud className="size-4 shrink-0 text-muted-foreground" />}
+                  {!p.source ? null : <Cloud className="size-4 shrink-0 text-muted-foreground" />}
                 </Link>
               </li>
             )

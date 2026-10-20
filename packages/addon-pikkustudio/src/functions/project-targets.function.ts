@@ -1,7 +1,6 @@
 import { z } from 'zod'
 import { pikkuFunc } from '#pikku/addon/function'
-import { onlineIdOf } from '../services/projects.js'
-import { SourceKindSchema, kindsOf } from '../lib/target-sources.js'
+import { SourceKindSchema, kindsOf, stageContext } from '../lib/target-sources.js'
 
 export const ProjectTargetsInput = z.object({ key: z.string() })
 
@@ -22,9 +21,8 @@ export const projectTargets = pikkuFunc({
   func: async ({ logSources, metricSources, stageDirectory, studioProjects }, { key }, { session }) => {
     const kinds = kindsOf(logSources, metricSources)
     if (!stageDirectory) return { kinds, stages: [], sandboxes: [] }
-    const cloudProjectId = onlineIdOf(key) ?? ((await studioProjects.list().catch(() => [])).find((p) => p.key === key)?.cloudProjectId ?? null)
-    if (!cloudProjectId) return { kinds, stages: [], sandboxes: [] }
-    const ctx = { key, session, project: { cloudProjectId } }
+    const ctx = await stageContext(studioProjects, key, session)
+    if (!ctx) return { kinds, stages: [], sandboxes: [] }
     const [stages, sandboxes] = await Promise.all([stageDirectory.stages(ctx), stageDirectory.sandboxes?.(ctx) ?? Promise.resolve([])])
     return { kinds, stages, sandboxes }
   },

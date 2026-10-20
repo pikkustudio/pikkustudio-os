@@ -37,7 +37,8 @@ export interface StudioServicesOptions {
   projects?: StudioProjectsService
   publisher?: StudioPublisher
   publishTargets?: PublishTarget[]
-  account?: AccountProvider
+  /** The contributed project sources, by namespace (`projectSources.<namespace>`). */
+  sources?: Record<string, AccountProvider>
   builder?: BuilderSession
   projectEnv?: (key: string, generated: Record<string, string>) => Promise<Record<string, string>>
   devContributors?: string[]
@@ -72,7 +73,7 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
     options.projects ??
     new StudioProjectsService({
       home,
-      account: options.account,
+      sources: options.sources,
       currentRoot: process.env.PIKKU_STUDIO_PROJECT || null,
       pinned: Boolean(process.env.PIKKU_STUDIO_PROJECT),
       appsManifest: process.env.FRONTENDS_MANIFEST_FILE,
@@ -87,21 +88,21 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
   const studioModels = new Map<string, string>()
   const studioBuilder =
     options.builder ??
-    new BuilderSession(async (key, mode) => {
+    new BuilderSession(async (key, mode, locale) => {
       const env = await studioAi.env()
       const proxyUrl = process.env.PIKKU_BUILDER_PROXY_URL
       const proxyKey = process.env.PIKKU_BUILDER_PROXY_KEY
-      const cloud =
+      const account =
         proxyUrl && proxyKey
           ? { proxyUrl, apiKey: proxyKey }
-          : env.PIKKU_STUDIO_AI === 'cloud'
-            ? await studioProjects.modelAccess()
+          : env.PIKKU_STUDIO_AI === 'source'
+            ? await studioProjects.modelAccess(locale, env.PIKKU_STUDIO_AI_SOURCE)
             : null
       const litellm =
         env.PIKKU_STUDIO_AI_PROVIDER === 'litellm' && env.PIKKU_STUDIO_AI_BASE_URL
           ? { proxyUrl: `${env.PIKKU_STUDIO_AI_BASE_URL.replace(/\/+$/, '')}/v1`, apiKey: env.PIKKU_STUDIO_AI_KEY ?? 'none' }
           : null
-      if (!cloud && !env.PIKKU_STUDIO_AI) throw new Error('Choose your AI before building')
+      if (!account && !env.PIKKU_STUDIO_AI) throw new Error('Choose your AI before building')
       const launch = await studioProjects.builderLaunch(key, mode)
       return {
         ...launch,
@@ -110,10 +111,10 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
               model: studioModels.get(key) ?? env.PIKKU_STUDIO_MODEL,
               proxy: { url: litellm.proxyUrl, key: litellm.apiKey },
             }
-          : cloud
+          : account
           ? {
               model: studioModels.get(key) ?? process.env.PIKKU_STUDIO_MODEL ?? env.PIKKU_STUDIO_MODEL ?? 'deepseek-v4.1-flash',
-              proxy: { url: cloud.proxyUrl, key: cloud.apiKey },
+              proxy: { url: account.proxyUrl, key: account.apiKey },
             }
           : { provider: env.PIKKU_STUDIO_AI_PROVIDER, model: studioModels.get(key) ?? env.PIKKU_STUDIO_MODEL },
         env: { ...launch.env, ...env, PIKKU_DEV_LOG: studioProjects.latestLog(key) },
@@ -145,7 +146,8 @@ export { kyselyLogStore } from './log-store.js'
 export type { ProjectStore, RegistryEntry, StudioProject } from './projects.js'
 export { StudioPublisher } from './publish.js'
 export type { PublishTarget, Runner } from './publish.js'
-export type { AccountLink, AccountProvider, OnlineProject, StudioAccount, WorkspacePhase, WorkspaceProgress } from './projects.js'
+export { sourceKey, sourceOf } from './projects.js'
+export type { AccountLink, AccountProvider, SourceProject, StudioAccount, WorkspacePhase, WorkspaceProgress } from './projects.js'
 export type { PresenceHost, ProjectDecorator, ProjectDecoratorFactory, StudioPresence } from './extensions.js'
 export { StudioHooks } from './hooks.js'
 export type { SignInChoice, StudioSettings } from './settings.js'

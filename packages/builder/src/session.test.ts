@@ -36,6 +36,19 @@ const until = async (check: () => Promise<boolean>) => {
 }
 
 describe('BuilderSession', () => {
+  test("the launcher hears the viewer's language for the project and every slot of it", async () => {
+    const home = await mkdtemp(join(tmpdir(), 'pikku-builder-'))
+    const heard: Array<[string, string | undefined]> = []
+    const builder = new BuilderSession(async (key, _mode, locale) => {
+      heard.push([key, locale])
+      return { cwd: home, run, launch: () => spawn(process.execPath, ['-e', fakePi], { stdio: ['pipe', 'pipe', 'pipe'] }) }
+    }, home)
+    builder.setLocale('shop', 'de')
+    await builder.prompt('shop', 'Add a home page')
+    await until(async () => !(await builder.state('shop')).busy)
+    assert.ok(heard.length > 0)
+    assert.ok(heard.every(([key, locale]) => key === 'shop' && locale === 'de'))
+  })
   test('a new conversation keeps the old one to come back to', async () => {
     const home = await mkdtemp(join(tmpdir(), 'pikku-builder-'))
     const builder = new BuilderSession(

@@ -12,13 +12,13 @@ import { StateScreen } from './StateScreen'
 
 export type AppNotRunningState = 'off' | 'starting' | 'failed'
 
-export type LaunchWhere = 'online' | 'local'
+export type LaunchWhere = 'source' | 'local'
 export type StageWayOut = { name: string; onPublish: () => void; onWorkspace: () => void; outdated?: boolean }
-export type LaunchChoices = { primary: LaunchWhere; onPick: (where: LaunchWhere) => void; onlineOff?: boolean }
+export type LaunchChoices = { primary: LaunchWhere; onPick: (where: LaunchWhere) => void; sourceOff?: boolean }
 
 export type LaunchPhase = 'machine' | 'studio' | 'sync' | 'project' | 'connect'
 
-export const ONLINE_LAUNCH: LaunchPhase[] = ['machine', 'studio', 'sync', 'project', 'connect']
+export const SOURCE_LAUNCH: LaunchPhase[] = ['machine', 'studio', 'sync', 'project', 'connect']
 export const LOCAL_LAUNCH: LaunchPhase[] = ['sync', 'project', 'connect']
 
 export const phaseLabel = (phase: LaunchPhase) =>
@@ -183,24 +183,24 @@ export function AppNotRunning({
   }
 
   if (choices) {
-    const order: LaunchWhere[] = choices.primary === 'online' ? ['online', 'local'] : ['local', 'online']
+    const order: LaunchWhere[] = choices.primary === 'source' ? ['source', 'local'] : ['local', 'source']
     const title = m.project_launch__title()
     return (
-      <StateScreen label={title} hue="teal" page="resume" title={title} why={choices.onlineOff ? m.project_launch__online_off() : m.project_launch__why()}>
+      <StateScreen label={title} hue="teal" page="resume" title={title} why={choices.sourceOff ? m.project_launch__source_off() : m.project_launch__why()}>
         <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-3" data-testid="project-launch-choices">
           {order.map((where, i) => {
-            const Icon = where === 'online' ? Globe : Laptop
+            const Icon = where === 'source' ? Globe : Laptop
             return (
               <Button
                 key={where}
                 variant={i === 0 ? 'hero' : 'heroGhost'}
                 size="page"
                 type="button"
-                disabled={where === 'online' && choices.onlineOff}
+                disabled={where === 'source' && choices.sourceOff}
                 onClick={() => choices.onPick(where)}
               >
                 <Icon className="size-5" aria-hidden="true" />
-                {where === 'online' ? m.project_launch__online() : m.project_launch__local()}
+                {where === 'source' ? m.project_launch__source() : m.project_launch__local()}
               </Button>
             )
           })}

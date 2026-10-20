@@ -112,7 +112,9 @@ export const projectGuideSay = pikkuSessionlessFunc({
       }
     }
     const after = await view(s, workflowService as never, key)
-    const spoken = languageRule(language ?? http?.request?.header('x-studio-locale') ?? undefined)
+    const locale = language ?? http?.request?.header('x-studio-locale') ?? undefined
+    const spoken = languageRule(locale)
+    s.builder.setLocale(key, locale)
     const context = [spoken, guideContext(after.list, Date.now(), note ? [note] : [])].filter(Boolean).join('\n\n')
     const text = kickoff ? KICKOFF : greet ? GREET : changed ? changedText(changed.step, changed.state) : skip && !message?.trim() ? SKIPPED : (message ?? '')
     return s.builder.prompt(key, text, context, 'project')
@@ -130,7 +132,9 @@ export const projectGuideAct = pikkuSessionlessFunc({
     const s = studio as never as Studio & { builder: Studio['builder'] }
     const before = await view(s, workflowService as never, key)
     if (!allowed(before.list, step, action)) throw new Error('That is not possible at this point')
-    const spoken = languageRule(language ?? http?.request?.header('x-studio-locale') ?? undefined)
+    const locale = language ?? http?.request?.header('x-studio-locale') ?? undefined
+    const spoken = languageRule(locale)
+    s.builder.setLocale(key, locale)
     const build = (text: string, job: 'backend' | 'tests' | 'prep') => s.projects.noteJob(key, job).then(() => s.builder.prompt(key, text, spoken, 'build'))
     if (action === 'reopen' || (action === 'undo' && step === 'questions')) await s.projects.reopenQuestions(key)
     else if (action === 'skip' && step === 'questions') {

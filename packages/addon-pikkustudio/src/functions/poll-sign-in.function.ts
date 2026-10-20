@@ -8,16 +8,17 @@ export const PollSignInOutput = z.object({ status: z.enum(['pending', 'confirmed
 
 export const pollSignIn = pikkuSessionlessFunc({
   expose: true,
-  description: 'Check whether a Pikku Studio Cloud sign-in was confirmed.',
+  description: 'Check whether a sign-in to the account was confirmed.',
   input: PollSignInInput,
   output: PollSignInOutput,
   func: async ({ studioProjects, studioSettings, studioAi, studioHooks, auth }, { code }, { http }) => {
     const status = await studioProjects.pollSignIn(code)
     if (status === 'confirmed') {
       await startSession(auth, http)
-      await studioSettings.update({ signIn: 'cloud' })
+      const source = studioProjects.accountSource!
+      await studioSettings.update({ signIn: source })
       studioHooks.changed()
-      if (!(await studioAi.choice())) await studioAi.set({ kind: 'cloud' })
+      if (!(await studioAi.choice())) await studioAi.set({ kind: 'source', source })
     }
     return { status }
   },

@@ -1955,7 +1955,7 @@
       }
     }
   ],
-  "project_facts__online": "{count} online",
+  "project_facts__source": "{count} online",
   "project_facts__live": [
     {
       "declarations": [
@@ -3515,9 +3515,9 @@
   "read_only_notice__open_workspace": "Arbeitsbereich öffnen, um etwas zu ändern",
   "project_launch__title": "Lass uns dein Projekt starten",
   "project_launch__why": "Wähle, wo es laufen soll. Du kannst jederzeit wechseln, und nichts von dem, was du gemacht hast, geht verloren.",
-  "project_launch__online": "Online",
+  "project_launch__source": "Online",
   "project_launch__local": "Auf deinem Computer",
-  "project_launch__online_off": "Um es online laufen zu lassen, stell es zuerst online.",
+  "project_launch__source_off": "Um es online laufen zu lassen, stell es zuerst online.",
   "project_launch__opening_title": "Dein Arbeitsbereich öffnet sich",
   "project_launch__opening_lead": "Einen Moment, das dauert meist ein, zwei Minuten. Dein Projekt erscheint genau hier, sobald es bereit ist.",
   "project_launch__step_machine": "Einen Rechner holen",
@@ -3526,7 +3526,7 @@
   "project_launch__step_project": "Dein Projekt starten",
   "project_launch__step_connect": "Verbinden",
   "project_launch__failed_title": "Dein Arbeitsbereich hat sich nicht geöffnet",
-  "project_launch__failed_online": "Etwas hat deinen Online-Arbeitsbereich beim Öffnen gestoppt. Ein neuer Versuch startet ihn von vorn.",
+  "project_launch__failed_source": "Etwas hat deinen Online-Arbeitsbereich beim Öffnen gestoppt. Ein neuer Versuch startet ihn von vorn.",
   "project_launch__stage_title": "{name} ist noch nicht live",
   "project_launch__stage_why": "Bei {name} läuft gerade nichts, deshalb gibt es hier noch nichts zu sehen. Veröffentliche dein Projekt dorthin oder arbeite in deinem Arbeitsbereich weiter.",
   "project_launch__stage_publish": "Zum Veröffentlichen",

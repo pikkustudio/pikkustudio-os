@@ -2103,7 +2103,7 @@
       }
     }
   ],
-  "project_facts__online": "{count} عبر الإنترنت",
+  "project_facts__source": "{count} عبر الإنترنت",
   "project_facts__live": [
     {
       "declarations": [
@@ -3763,9 +3763,9 @@
   "read_only_notice__open_workspace": "افتح مساحة عملك لإجراء التغييرات",
   "project_launch__title": "لنشغّل مشروعك",
   "project_launch__why": "اختر أين يعمل. يمكنك التبديل في أي وقت، ولن يضيع شيء مما صنعته.",
-  "project_launch__online": "عبر الإنترنت",
+  "project_launch__source": "عبر الإنترنت",
   "project_launch__local": "على جهازك",
-  "project_launch__online_off": "لتشغيله عبر الإنترنت، انشره على الإنترنت أولًا.",
+  "project_launch__source_off": "لتشغيله عبر الإنترنت، انشره على الإنترنت أولًا.",
   "project_launch__opening_title": "جارٍ فتح مساحة عملك",
   "project_launch__opening_lead": "لحظات، يستغرق هذا عادةً دقيقة أو دقيقتين. سيظهر مشروعك هنا فور أن يصبح جاهزًا.",
   "project_launch__step_machine": "تجهيز جهاز",
@@ -3774,7 +3774,7 @@
   "project_launch__step_project": "تشغيل مشروعك",
   "project_launch__step_connect": "الاتصال",
   "project_launch__failed_title": "لم تُفتح مساحة عملك",
-  "project_launch__failed_online": "أوقف شيء ما مساحة عملك على الإنترنت أثناء فتحها. المحاولة من جديد تبدأ من البداية.",
+  "project_launch__failed_source": "أوقف شيء ما مساحة عملك على الإنترنت أثناء فتحها. المحاولة من جديد تبدأ من البداية.",
   "project_launch__stage_title": "{name} ليس منشورًا بعد",
   "project_launch__stage_why": "لا شيء يعمل على {name} الآن، لذلك لا يوجد ما يُعرض هنا. انشر مشروعك هناك، أو تابع العمل في مساحة عملك.",
   "project_launch__stage_publish": "الذهاب إلى النشر",

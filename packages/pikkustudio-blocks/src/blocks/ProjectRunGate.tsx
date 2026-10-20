@@ -4,10 +4,10 @@ import { useQueryClient } from '@tanstack/react-query'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { m } from '@/i18n/messages'
 import { useNavigate } from '@tanstack/react-router'
-import { isKeyOf, isOnlineKey, useProjectKey } from '../lib/project'
+import { isKeyOf, sourceOf, useProjectKey } from '../lib/project'
 import { DEFAULT_TARGET, formatTarget, useProjectTarget } from '../lib/project-target'
 import { useProjectQuery } from '../lib/projectRpc'
-import { AppNotRunning, LOCAL_LAUNCH, ONLINE_LAUNCH, launchSteps, phaseLabel, type LaunchPhase, type LaunchWhere, type StageWayOut } from './AppNotRunning'
+import { AppNotRunning, LOCAL_LAUNCH, SOURCE_LAUNCH, launchSteps, phaseLabel, type LaunchPhase, type LaunchWhere, type StageWayOut } from './AppNotRunning'
 import { useTeamProjects, type ListedProject } from './TeamProjects'
 import { CardsSkeleton } from './QueryState'
 
@@ -34,7 +34,7 @@ export function ProjectRunGate({ children }: { children: I18nNode }) {
     return <AppNotRunning state="off" onStart={wayOut.onWorkspace} stage={wayOut} />
   }
   if (!key || !project) return <>{children}</>
-  return isOnlineKey(key) ? <OnlineGate project={{ ...project, key }}>{children}</OnlineGate> : <LocalGate project={project}>{children}</LocalGate>
+  return sourceOf(key) ? <SourceWorkspaceGate project={{ ...project, key }}>{children}</SourceWorkspaceGate> : <LocalGate project={project}>{children}</LocalGate>
 }
 
 function StageGate({ stage, children }: { stage: StageWayOut; children: I18nNode }) {
@@ -46,10 +46,10 @@ function StageGate({ stage, children }: { stage: StageWayOut; children: I18nNode
 }
 
 /**
- * A project the account host keeps online: its workspace there is woken through the host (studio:workspaceLink, which the
- * contributed AccountProvider answers), and watched until it is ready. Nothing here starts anything on this computer.
+ * A project a contributed source holds (its key names the source): its workspace there is woken through studio:workspaceLink,
+ * which core routes to the source the key names, and watched until it is ready. Nothing here starts anything on this computer.
  */
-function OnlineGate({ project, children }: { project: ListedProject; children: I18nNode }) {
+function SourceWorkspaceGate({ project, children }: { project: ListedProject; children: I18nNode }) {
   const client = useQueryClient()
   const navigate = useNavigate()
   const status = usePikkuQuery('studio:workspaceStatus' as never, { key: project.key } as never, {
@@ -69,21 +69,21 @@ function OnlineGate({ project, children }: { project: ListedProject; children: I
   const waking = link.isPending || (link.isSuccess && now.state === 'off' && Date.now() - link.submittedAt < WAKE_GRACE_MS)
   const pick = (where: LaunchWhere) => {
     setStall(null)
-    if (where === 'online') link.mutate({ key: project.key })
-    else if (project.location === 'both') navigate({ to: '.', search: ((prev: object) => ({ ...prev, target: formatTarget(DEFAULT_TARGET) })) as never })
-    else if (project.cloudProjectId) clone.mutate({ cloudProjectId: project.cloudProjectId } as never)
+    if (where === 'source') link.mutate({ key: project.key })
+    else if (project.path) navigate({ to: '.', search: ((prev: object) => ({ ...prev, target: formatTarget(DEFAULT_TARGET) })) as never })
+    else if (project.source && project.sourceId) clone.mutate({ key: `${project.source}:${project.sourceId}` } as never)
   }
 
   if (now.state === 'ready') return <>{children}</>
   if (clone.isPending) return <AppNotRunning state="starting" steps={launchSteps(LOCAL_LAUNCH, 'sync')} onStart={() => undefined} />
   if (clone.isError) return <AppNotRunning state="failed" name={project.name} error={clone.error} onStart={() => pick('local')} />
-  if (link.isError) return <AppNotRunning state="failed" name={project.name} reason={m.project_launch__failed_online()} logText={messageOf(link.error)} onStart={() => pick('online')} />
-  if (now.state === 'failed' && !waking) return <AppNotRunning state="failed" name={project.name} reason={m.project_launch__failed_online()} logText={now.error ?? ''} onStart={() => pick('online')} />
+  if (link.isError) return <AppNotRunning state="failed" name={project.name} reason={m.project_launch__failed_source()} logText={messageOf(link.error)} onStart={() => pick('source')} />
+  if (now.state === 'failed' && !waking) return <AppNotRunning state="failed" name={project.name} reason={m.project_launch__failed_source()} logText={now.error ?? ''} onStart={() => pick('source')} />
   if (stalled && stall && !link.isPending)
-    return <AppNotRunning state="failed" name={project.name} reason={m.project_launch__stalled({ step: phaseLabel(stall.phase) })} logText={`Workspace start has been at the "${stall.phase}" step since ${new Date(stall.since).toISOString()}.`} onStart={() => pick('online')} />
-  if (now.state === 'starting' || waking) return <AppNotRunning state="starting" steps={launchSteps(ONLINE_LAUNCH, now.state === 'starting' ? (now.phase ?? 'machine') : 'machine')} onStart={() => undefined} />
-  if (status.isPending) return <AppNotRunning state="starting" steps={launchSteps(ONLINE_LAUNCH, 'machine')} onStart={() => undefined} />
-  return <AppNotRunning state="off" onStart={() => pick('online')} choices={{ primary: 'online', onPick: pick, onlineOff: false }} />
+    return <AppNotRunning state="failed" name={project.name} reason={m.project_launch__stalled({ step: phaseLabel(stall.phase) })} logText={`Workspace start has been at the "${stall.phase}" step since ${new Date(stall.since).toISOString()}.`} onStart={() => pick('source')} />
+  if (now.state === 'starting' || waking) return <AppNotRunning state="starting" steps={launchSteps(SOURCE_LAUNCH, now.state === 'starting' ? (now.phase ?? 'machine') : 'machine')} onStart={() => undefined} />
+  if (status.isPending) return <AppNotRunning state="starting" steps={launchSteps(SOURCE_LAUNCH, 'machine')} onStart={() => undefined} />
+  return <AppNotRunning state="off" onStart={() => pick('source')} choices={{ primary: 'source', onPick: pick, sourceOff: false }} />
 }
 
 function LocalGate({ project, children }: { project: ListedProject; children: I18nNode }) {
@@ -114,7 +114,7 @@ function LocalGate({ project, children }: { project: ListedProject; children: I1
   if (apps.isPending) return <AppNotRunning state="starting" steps={steps} onStart={() => undefined} />
   if (broken || start.isError) return <AppNotRunning state="failed" name={name} error={start.error ?? restart.error} onStart={() => restart.mutate({ key })} starting={restart.isPending || start.isPending} />
   if (list.length === 0 && (start.isPending || start.isSuccess || tried.current !== key)) return <AppNotRunning state="starting" steps={steps} onStart={() => undefined} />
-  if (list.length === 0) return <AppNotRunning state="off" onStart={() => pick('local')} choices={{ primary: 'local', onPick: pick, onlineOff: true }} />
+  if (list.length === 0) return <AppNotRunning state="off" onStart={() => pick('local')} choices={{ primary: 'local', onPick: pick, sourceOff: true }} />
   if (list.some((a) => a.state !== 'ready')) return <AppNotRunning state="starting" steps={steps} onStart={() => undefined} />
   return <>{children}</>
 }

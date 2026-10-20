@@ -55,7 +55,7 @@ const setup = async (entrySource: string, env?: () => Record<string, string>, pa
   git(path, 'add', '-A')
   git(path, 'commit', '-qm', 'init')
   const service = new StudioProjectsService({
-    account,
+    sources: { host: account },
     home: join(base, 'studio'),
     projectsDir: join(base, 'studio', 'local'),
     designEntry: join(source, 'design.mjs'),

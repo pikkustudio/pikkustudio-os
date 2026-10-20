@@ -129,14 +129,23 @@ export class BuilderSession {
   private starting = new Set<string>()
   private drives = new Map<string, Drive>()
   private modes = new Map<string, BuilderMode>()
+  private locales = new Map<string, string>()
 
   constructor(
-    private launcher: (key: string, mode?: BuilderMode) => Promise<BuilderLaunch>,
+    private launcher: (key: string, mode?: BuilderMode, locale?: string) => Promise<BuilderLaunch>,
     private home = builderHome()
   ) {}
 
   private resolve(key: string, mode?: BuilderMode) {
-    return this.launcher(projectKey(key), mode)
+    const project = projectKey(key)
+    return this.launcher(project, mode, this.locales.get(project))
+  }
+
+  /** The language of the person driving a project's builder, handed to the launcher so what it reports reads in it. */
+  setLocale(project: string, locale: string | undefined) {
+    const key = projectKey(project)
+    if (locale) this.locales.set(key, locale)
+    else this.locales.delete(key)
   }
 
   private async logCrash(key: string, what: string, output: string) {

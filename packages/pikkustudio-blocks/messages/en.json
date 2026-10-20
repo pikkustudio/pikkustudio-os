@@ -2076,7 +2076,7 @@
       }
     }
   ],
-  "project_facts__online": "{count} online",
+  "project_facts__source": "{count} online",
   "project_facts__live": [
     {
       "declarations": [
@@ -3727,9 +3727,9 @@
   "read_only_notice__open_workspace": "Open your workspace to make changes",
   "project_launch__title": "Let's get your project running",
   "project_launch__why": "Pick where it should run. You can switch any time, and nothing you have made is lost.",
-  "project_launch__online": "Online",
+  "project_launch__source": "Online",
   "project_launch__local": "On your computer",
-  "project_launch__online_off": "To run it online, put it online first.",
+  "project_launch__source_off": "To run it online, put it online first.",
   "project_launch__opening_title": "Opening your workspace",
   "project_launch__opening_lead": "Hang tight, this usually takes a minute or two. Your project shows up right here as soon as it is ready.",
   "project_launch__step_machine": "Getting a machine",
@@ -3738,7 +3738,7 @@
   "project_launch__step_project": "Starting your project",
   "project_launch__step_connect": "Connecting",
   "project_launch__failed_title": "Your workspace did not open",
-  "project_launch__failed_online": "Something stopped your online workspace while it was opening. Trying again starts it from the beginning.",
+  "project_launch__failed_source": "Something stopped your online workspace while it was opening. Trying again starts it from the beginning.",
   "project_launch__stage_title": "{name} is not live yet",
   "project_launch__stage_why": "Nothing is running at {name} right now, so there is nothing to show here. Publish to put your project there, or carry on in your workspace.",
   "project_launch__stage_publish": "Go to Publish",

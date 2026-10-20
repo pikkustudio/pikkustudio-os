@@ -16,7 +16,7 @@ import {
 import { ServiceUnavailableError } from '@pikku/core/errors'
 import type { StageContext, StageReleases } from '../../src/services/stage-source.js'
 
-const ctx = { project: { key: 'p', cloudProjectId: 'c1' } } as unknown as StageContext
+const ctx = { project: { key: 'p', source: 'host', sourceId: 'c1' } } as unknown as StageContext
 const stage = (name: string, production = false): TargetOption => ({ kind: 'stage', name, label: production ? null : name, live: true, production, isDefault: false, branch: null, forChanges: false })
 const sandbox = (name: string): TargetOption => ({ kind: 'workspace', name, label: name, live: true, production: false, isDefault: true, branch: 'main', forChanges: false })
 

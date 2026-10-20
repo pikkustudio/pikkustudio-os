@@ -42,7 +42,8 @@ export interface Studio {
 
 /** What the wired addons add to Studio, read from the services their contributors provide. */
 export interface StudioExtensions {
-  account?: AccountProvider
+  /** Contributed project sources by namespace (`projectSources.<namespace>`). */
+  sources?: Record<string, AccountProvider>
   publishTargets?: PublishTarget[]
   teamSource?: (projectId: string, projectPath: string) => ScopedSource | undefined
   projectDecorators?: ProjectDecoratorFactory[]
@@ -65,7 +66,7 @@ export async function createStudio(home = studioHome(), db?: Kysely<any>, extens
   if (runtime) process.env.PIKKU_STUDIO_CORE_BIN = join(runtime, 'bin')
   const core = await createStudioServices({
     home,
-    account: extensions.account,
+    sources: extensions.sources,
     publishTargets: extensions.publishTargets,
     teamSource: extensions.teamSource,
     projectStore: db ? kyselyProjectStore(db, fileProjectStore(home)) : undefined,

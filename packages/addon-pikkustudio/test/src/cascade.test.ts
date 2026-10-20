@@ -142,10 +142,11 @@ describe('lease', () => {
 })
 
 describe('owner', () => {
-  test('Pikku Studio Cloud owns a record only when linked and signed in', () => {
-    assert.equal(ownerFor(true, true), 'cloud')
-    assert.equal(ownerFor(true, false), 'local')
-    assert.equal(ownerFor(false, true), 'local')
-    assert.equal(active({ owner: () => 'cloud', local: 'L', cloud: 'F' }), 'F')
+  test('a source owns a record only when linked to it and signed in', () => {
+    assert.equal(ownerFor('host', true), 'host')
+    assert.equal(ownerFor('host', false), 'local')
+    assert.equal(ownerFor(null, true), 'local')
+    assert.equal(active({ owner: () => 'host', local: 'L', sources: { host: 'F' } }), 'F')
+    assert.equal(active({ owner: () => 'gone', local: 'L', sources: { host: 'F' } }), 'L')
   })
 })

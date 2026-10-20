@@ -70,7 +70,8 @@ export interface SingletonServices extends CoreSingletonServices<Config> {
   notificationSource?: NotificationSource
   // Contributed by a wired addon (none in the open build): the account Studio signs in to, where it can publish,
   // the team's shared dev credentials, extra project fields and background presence reporting.
-  studioAccount?: AccountProvider
+  /** Contributed project sources by namespace; the first is the account Studio signs in to. */
+  projectSources?: Record<string, AccountProvider>
   publishTargets?: Record<string, PublishTarget>
   teamSource?: (projectId: string, projectPath: string) => ScopedSource | undefined
   projectDecorators?: Record<string, ProjectDecoratorFactory>

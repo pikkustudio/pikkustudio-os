@@ -3,7 +3,7 @@ import { VercelAgentRunner } from '@pikku/ai-vercel'
 
 type ChatAi = {
   chatConfig(): { baseUrl: string; apiKey: string; model: string; provider: string } | null
-  usesCloud(): boolean
+  usesSource(): string | null
 }
 
 type Access = () => Promise<{ proxyUrl: string; apiKey: string }>
@@ -22,7 +22,7 @@ const accountFetch = (access: Access) => (async (input: Parameters<typeof fetch>
 export const studioAgentRunner = (ai: ChatAi, access: Access, accountModel?: string) =>
   new VercelAgentRunner({
     studio: () => {
-      if (ai.usesCloud()) {
+      if (ai.usesSource()) {
         const model = process.env.PIKKU_STUDIO_MODEL ?? accountModel
         if (!model) throw new Error('The account AI does not name a model; set PIKKU_STUDIO_MODEL.')
         return createOpenAICompatible({ name: 'account', baseURL: 'http://account.invalid/v1', apiKey: 'account', fetch: accountFetch(access) }).chatModel(model)

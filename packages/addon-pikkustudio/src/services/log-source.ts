@@ -9,7 +9,8 @@ export type TargetRef = { kind: 'workspace' | 'stage'; name: string }
 export interface SourceContext {
   key: string
   target: TargetRef
-  project?: { cloudProjectId?: string | null }
+  /** The source that holds the project (its namespace) and the project's id there. */
+  project?: { source?: string | null; sourceId?: string | null }
   session?: unknown
 }
 

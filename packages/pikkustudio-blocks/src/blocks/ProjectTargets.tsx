@@ -5,7 +5,7 @@ import { Eye, Laptop, Pencil } from 'lucide-react'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { m } from '@/i18n/messages'
 import { useTeamProjects } from './TeamProjects'
-import { onlineKey, useProjectSlug } from '../lib/project'
+import { sourceKey, useProjectSlug } from '../lib/project'
 import { ProjectRpcCtx, type ProjectInvoke } from '../lib/projectRpc'
 import { useTeamSlug } from '../lib/team'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
@@ -83,7 +83,7 @@ export function ProjectTargetsProvider({ children }: { children: ReactNode }) {
     if (ref.kind !== 'stage') return base
     return readOnlyInvoke((_key, name, data) => rpc.invoke('studio:targetCall', { key: projectKey, target: ref, name, data }) as never, ref.name)
   }, [ref.kind, ref.name, projectKey, rpc, base])
-  const key = project ? onlineKey(project, ref) : slug
+  const key = project ? sourceKey(project, ref) : slug
   const value = useMemo<ProjectTarget>(
     () => ({
       kind: ref.kind,

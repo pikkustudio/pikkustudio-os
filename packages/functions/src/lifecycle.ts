@@ -15,7 +15,7 @@ export const lifecycle = pikkuServerLifecycle({
     const host = {
       projects: studio.projects,
       idleMinutes: async () => (await sleepSettings(studio)).idleMinutes,
-      location: serviceModeOn() ? ('cloud' as const) : ('desktop' as const),
+      serviceMode: serviceModeOn(),
     }
     stopPresence = Object.values(studioPresence ?? {}).map((start) => start(host, logger))
     if (!serviceModeOn()) stopReaper = startIdleReaper(studio, logger)

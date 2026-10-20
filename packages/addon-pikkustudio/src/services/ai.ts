@@ -37,12 +37,13 @@ export const SUBSCRIPTION_PROVIDERS: SubscriptionProvider[] = [
 export type AiChoice =
   | { kind: 'key'; provider: string; model: string; baseUrl?: string }
   | { kind: 'subscription'; provider: string }
-  | { kind: 'cloud' }
+  /** The AI of a contributed source's account, by the source's namespace. */
+  | { kind: 'source'; source: string }
 
 export type AiInput =
   | { kind: 'key'; provider: string; apiKey: string; model?: string; baseUrl?: string }
   | { kind: 'subscription'; provider: string }
-  | { kind: 'cloud' }
+  | { kind: 'source'; source: string }
 
 async function litellmModel(baseUrl: string, apiKey: string): Promise<string> {
   const response = await fetch(`${baseUrl}/v1/models`, {
@@ -62,8 +63,10 @@ export class StudioAi {
     const path = join(home, 'ai.json')
     if (!existsSync(path)) return
     const stored = JSON.parse(readFileSync(path, 'utf8'))
-    if (stored.choice?.kind !== 'fabric') return
-    stored.choice.kind = 'cloud'
+    // Older homes stored a source's AI by the source's name alone (`{ kind: <name> }`).
+    const kind = stored.choice?.kind
+    if (typeof kind !== 'string' || ['key', 'subscription', 'source'].includes(kind)) return
+    stored.choice = { kind: 'source', source: kind }
     writeFileSync(path, JSON.stringify(stored, null, 2) + '\n')
   }
 
@@ -85,9 +88,11 @@ export class StudioAi {
     return JSON.parse(await readFile(this.keysPath, 'utf8'))
   }
 
-  usesCloud(): boolean {
-    if (!existsSync(this.choicePath)) return false
-    return (JSON.parse(readFileSync(this.choicePath, 'utf8')).choice as AiChoice | null)?.kind === 'cloud'
+  /** The source whose account AI was chosen, or null when the AI is a key or subscription of the person's own. */
+  usesSource(): string | null {
+    if (!existsSync(this.choicePath)) return null
+    const choice = JSON.parse(readFileSync(this.choicePath, 'utf8')).choice as AiChoice | null
+    return choice?.kind === 'source' ? choice.source : null
   }
 
   chatConfig(): { baseUrl: string; apiKey: string; model: string; provider: string } | null {
@@ -133,7 +138,7 @@ export class StudioAi {
       }
       choice = { kind: 'subscription', provider: input.provider }
     } else {
-      choice = { kind: 'cloud' }
+      choice = { kind: 'source', source: input.source }
     }
     await mkdir(this.home, { recursive: true })
     await writeFile(this.choicePath, JSON.stringify({ choice }, null, 2) + '\n')
@@ -148,7 +153,7 @@ export class StudioAi {
   async env(): Promise<Record<string, string>> {
     const choice = await this.choice()
     if (!choice) return {}
-    if (choice.kind === 'cloud') return { PIKKU_STUDIO_AI: 'cloud' }
+    if (choice.kind === 'source') return { PIKKU_STUDIO_AI: 'source', PIKKU_STUDIO_AI_SOURCE: choice.source }
     if (choice.kind === 'subscription') {
       return { PIKKU_STUDIO_AI: 'subscription', PIKKU_STUDIO_AI_PROVIDER: choice.provider }
     }

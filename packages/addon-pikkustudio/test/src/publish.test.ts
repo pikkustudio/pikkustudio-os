@@ -4,18 +4,18 @@ import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, test } from 'node:test'
-import { StudioProjectsService, type AccountProvider, type OnlineProject } from '../../src/services/projects.js'
+import { StudioProjectsService, type AccountProvider, type SourceProject } from '../../src/services/projects.js'
 
 const target: PublishTarget = {
   id: 'cloud',
-  readiness: (project, account) => (!account.signedIn ? 'sign-in' : !project.cloudProjectId ? 'not-in-cloud' : 'ready'),
+  readiness: (project, account) => (!account.signedIn ? 'sign-in' : !project.sourceId ? 'not-in-cloud' : 'ready'),
   deploy: (from, run, onLine) => run('npx', ['pikku', 'cloud', 'deploy', 'apply', '-y'], from, onLine),
 }
 import { publishPrompt, StudioPublisher, type PublishTarget, type Runner } from '../../src/services/publish.js'
 
-const shop: OnlineProject = { projectId: 'p-shop', name: 'Shop', slug: 'shop', productionBranch: 'main', gitRepoUrl: 'https://github.com/acme/shop.git' }
+const shop: SourceProject = { projectId: 'p-shop', name: 'Shop', slug: 'shop', productionBranch: 'main', gitRepoUrl: 'https://github.com/acme/shop.git' }
 
-const account = (signedIn: boolean, cloud: OnlineProject[]): AccountProvider => ({
+const account = (signedIn: boolean, cloud: SourceProject[]): AccountProvider => ({
   account: async () => ({ signedIn, apiUrl: 'http://cloud', consoleUrl: 'http://cloud/console' }),
   projects: async () => cloud,
   startSignIn: async () => ({ code: 'ABCD', url: 'http://cloud', expiresAt: new Date().toISOString() }),
@@ -40,7 +40,7 @@ const account = (signedIn: boolean, cloud: OnlineProject[]): AccountProvider => 
   signOut: async () => {},
 })
 
-const setup = async (signedIn: boolean, cloud: OnlineProject[], remote?: string) => {
+const setup = async (signedIn: boolean, cloud: SourceProject[], remote?: string) => {
   const base = await mkdtemp(join(tmpdir(), 'pikku-studio-publish-'))
   const path = join(base, 'shop')
   await mkdir(path)
@@ -51,7 +51,7 @@ const setup = async (signedIn: boolean, cloud: OnlineProject[], remote?: string)
   git('commit', '-qm', 'init')
   if (remote) git('remote', 'add', 'origin', remote)
   const projects = new StudioProjectsService({
-    account: account(signedIn, cloud),
+    sources: { host: account(signedIn, cloud) },
     home: join(base, 'studio'),
     devCommand: () => ({ command: 'sleep', args: ['30'] }),
     installCommand: () => null,

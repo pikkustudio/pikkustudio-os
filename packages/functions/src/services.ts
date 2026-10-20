@@ -81,7 +81,7 @@ export const createSingletonServices = pikkuServices(async (config, existingServ
   const studio =
     existingServices?.studio ??
     (await createStudio(undefined, kysely, {
-      account: existingServices?.studioAccount,
+      sources: existingServices?.projectSources,
       publishTargets: Object.values(existingServices?.publishTargets ?? {}),
       teamSource: existingServices?.teamSource,
       projectDecorators: Object.values(existingServices?.projectDecorators ?? {}),
@@ -90,7 +90,7 @@ export const createSingletonServices = pikkuServices(async (config, existingServ
   return {
     ...(existingServices ?? {}),
     config,
-    agentRunner: existingServices?.agentRunner ?? studioAgentRunner(studio.ai, () => studio.projects.modelAccess(), existingServices?.studioAccount?.model),
+    agentRunner: existingServices?.agentRunner ?? studioAgentRunner(studio.ai, () => studio.projects.modelAccess(undefined, studio.ai.usesSource() ?? undefined), studio.projects.accountModel()),
     agentStorage: existingServices?.agentStorage ?? new KyselyAgentStorageService(kysely as any),
     agentRunState: existingServices?.agentRunState ?? new KyselyAgentRunStateService(kysely as any),
     agentRunService: existingServices?.agentRunService ?? new KyselyAgentRunService(kysely as any),

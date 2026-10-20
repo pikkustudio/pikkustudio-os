@@ -8,12 +8,15 @@ export type ListedProject = {
   slug: string
   owner?: string
   name: string
-  location: 'local' | 'online' | 'both'
-  cloudProjectId: string | null
+  /** On this computer when it has a path. */
+  path?: string | null
+  /** The contributed source that holds the project, and its id there. */
+  source: string | null
+  sourceId: string | null
   open: boolean
   busy?: boolean
   missing: boolean
-  workspaces?: { local: number; online: number }
+  workspaces?: Record<string, number> // by where: `local`, or a source's namespace
   live?: { places: number } | null
   attention?: number
   workingNow?: string[]

@@ -20,7 +20,8 @@ const Fact = ({ icon: Icon, className, children }: { icon: typeof Cloud; classNa
 
 export function ProjectFacts({ item, className }: { item: Project; className?: string }) {
   const { workspaces, live, attention, workingNow } = item
-  const placed = (workspaces?.local ?? 0) + (workspaces?.online ?? 0)
+  const elsewhere = Object.entries(workspaces ?? {}).reduce((n, [where, count]) => (where === 'local' ? n : n + count), 0)
+  const placed = (workspaces?.local ?? 0) + elsewhere
   const empty = workspaces && !placed && !live && !attention && !workingNow?.length
   const shown = !!(workspaces || live !== undefined || attention || workingNow?.length)
   if (!shown) return null
@@ -33,7 +34,7 @@ export function ProjectFacts({ item, className }: { item: Project; className?: s
           {attention ? <Fact icon={TriangleAlert} className="font-bold text-warning-foreground">{m.project_facts__attention({ count: attention })}</Fact> : null}
           {workingNow?.length ? <Fact icon={Users}>{names(workingNow)}</Fact> : null}
           {workspaces?.local ? <Fact icon={Monitor}>{m.project_facts__local({ count: workspaces.local })}</Fact> : null}
-          {workspaces?.online ? <Fact icon={Cloud}>{m.project_facts__online({ count: workspaces.online })}</Fact> : null}
+          {elsewhere ? <Fact icon={Cloud}>{m.project_facts__source({ count: elsewhere })}</Fact> : null}
           {live ? <Fact icon={Globe} className="text-success-foreground">{m.project_facts__live({ count: live.places })}</Fact> : live === null ? <span>{m.project_facts__not_live()}</span> : null}
         </>
       )}

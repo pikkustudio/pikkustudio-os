@@ -9,16 +9,17 @@ export const SignOutOutput = Settings
 
 export const signOut = pikkuSessionlessFunc({
   expose: true,
-  description: 'Sign out of Pikku Studio Cloud, or stop using Studio locally.',
+  description: 'Sign out of the account, or stop using Studio locally.',
   input: SignOutInput,
   output: SignOutOutput,
   func: async ({ studioProjects, studioSettings, studioAi, studioHooks, auth }, _input, { http }) => {
     await endSession(auth, http)
     const current = await studioSettings.read()
-    if (current.signIn === 'cloud') {
+    if (current.signIn && current.signIn !== 'local') {
       await studioProjects.signOut()
       studioHooks.changed()
-      if ((await studioAi.choice())?.kind === 'cloud') await studioAi.clear()
+      const ai = await studioAi.choice()
+      if (ai?.kind === 'source' && ai.source === current.signIn) await studioAi.clear()
     }
     return studioSettings.update({ signIn: null })
   },

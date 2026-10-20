@@ -33,7 +33,7 @@ export const account = pikkuSessionlessFunc({
   output: AccountOutput,
   func: async ({ studioSettings, studioProjects, studioAi, auth, accountSource }, { team }, { session, http }) => {
     const [current, account, viewer] = await Promise.all([studioSettings.read(), studioProjects.getAccount(), viewerOf(accountSource, { team, session })])
-    const chosen = current.signIn === 'cloud' && !account.signedIn ? null : current.signIn
+    const chosen = current.signIn && current.signIn !== 'local' && !account.signedIn ? null : current.signIn
     const signIn = chosen && !session ? await startSession(auth, http).then(() => chosen, () => null) : chosen
     return { signIn, name: current.name, about: current.about, ai: await studioAi.choice(), ...account, ...viewer }
   },

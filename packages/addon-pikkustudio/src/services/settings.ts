@@ -1,8 +1,9 @@
-import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync } from 'node:fs'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 
-export type SignInChoice = 'local' | 'cloud'
+/** `local`, or the namespace of the contributed source Studio signed in to. */
+export type SignInChoice = string
 
 export interface StudioSettings {
   signIn: SignInChoice | null
@@ -11,13 +12,7 @@ export interface StudioSettings {
 }
 
 export class StudioSettingsFile {
-  constructor(private path: string) {
-    if (!existsSync(path)) return
-    const stored = JSON.parse(readFileSync(path, 'utf8'))
-    if (stored.signIn !== 'fabric') return
-    stored.signIn = 'cloud'
-    writeFileSync(path, JSON.stringify(stored, null, 2) + '\n')
-  }
+  constructor(private path: string) {}
 
   async read(): Promise<StudioSettings> {
     if (!existsSync(this.path)) return { signIn: null, name: null, about: null }

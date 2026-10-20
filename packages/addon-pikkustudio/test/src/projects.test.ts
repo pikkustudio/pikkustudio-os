@@ -6,10 +6,10 @@ import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, test } from 'node:test'
-import { StudioProjectsService, cloneProblem, linkedRepos, repoName, type OnlineProject, type AccountProvider } from '../../src/services/projects.js'
+import { StudioProjectsService, cloneProblem, linkedRepos, repoName, type SourceProject, type AccountProvider } from '../../src/services/projects.js'
 import { symlink } from 'node:fs/promises'
 
-const fakeAccount = (projects: OnlineProject[]): AccountProvider => ({
+const fakeAccount = (projects: SourceProject[]): AccountProvider => ({
   account: async () => ({ signedIn: projects.length > 0, apiUrl: 'http://cloud', consoleUrl: 'http://cloud' }),
   projects: async () => projects,
   startSignIn: async () => ({ code: 'ABCD', url: 'http://cloud/cli-auth', expiresAt: new Date().toISOString() }),
@@ -48,10 +48,10 @@ const repo = async (base: string, name: string, remote?: string) => {
   return path
 }
 
-const setup = async (cloud: OnlineProject[] = []) => {
+const setup = async (cloud: SourceProject[] = []) => {
   const base = await mkdtemp(join(tmpdir(), 'pikku-studio-projects-'))
   const service = new StudioProjectsService({
-    account: fakeAccount(cloud),
+    sources: { host: fakeAccount(cloud) },
     home: join(base, 'studio'),
     projectsDir: join(base, 'studio', 'local'),
     devCommand: () => ({ command: 'sleep', args: ['30'] }),
@@ -68,7 +68,7 @@ describe('StudioProjectsService', () => {
   test('updates the database and commits the migration in the worktree', async () => {
     const base = await mkdtemp(join(tmpdir(), 'pikku-studio-projects-'))
     const service = new StudioProjectsService({
-      account: fakeAccount([]),
+      sources: { host: fakeAccount([]) },
       home: join(base, 'studio'),
       databaseCommands: () => [{ command: 'sh', args: ['-c', 'mkdir -p db/sqlite && echo "create table agent_run (id text);" > db/sqlite/0007-pikku-runtime.sql'] }],
       installCommand: () => null,
@@ -94,7 +94,7 @@ describe('StudioProjectsService', () => {
   test('says why a project stopped while starting', async () => {
     const base = await mkdtemp(join(tmpdir(), 'pikku-studio-projects-'))
     const service = new StudioProjectsService({
-      account: fakeAccount([]),
+      sources: { host: fakeAccount([]) },
       home: join(base, 'studio'),
       devCommand: () => ({ command: 'sh', args: ['-c', "echo \"Error: The 'agent' schema is not in this database\" >&2; exit 1"] }),
       installCommand: () => null,
@@ -109,7 +109,7 @@ describe('StudioProjectsService', () => {
     const base = await mkdtemp(join(tmpdir(), 'pikku-studio-projects-'))
     const outside = join(homedir(), `.pikku-studio-probe-${process.pid}`)
     const service = new StudioProjectsService({
-      account: fakeAccount([]),
+      sources: { host: fakeAccount([]) },
       home: join(base, 'studio'),
       devCommand: () => ({
         command: 'sh',
@@ -132,7 +132,7 @@ describe('StudioProjectsService', () => {
     const base = await mkdtemp(join(tmpdir(), 'pikku-studio-projects-'))
     const make = () =>
       new StudioProjectsService({
-        account: fakeAccount([]),
+        sources: { host: fakeAccount([]) },
         home: join(base, 'studio'),
         devCommand: () => ({ command: 'sh', args: ['-c', 'sleep 300 & echo $! > helper.pid; wait'] }),
         installCommand: () => null,
@@ -274,17 +274,18 @@ describe('StudioProjectsService', () => {
   })
 
   test('lists local, cloud and both', async () => {
-    const shop: OnlineProject = { projectId: 'p-shop', name: 'Shop', slug: 'shop', productionBranch: 'main', gitRepoUrl: 'https://github.com/acme/shop.git' }
-    const blog: OnlineProject = { projectId: 'p-blog', name: 'Blog', slug: 'blog', productionBranch: 'main', gitRepoUrl: 'https://github.com/acme/blog' }
+    const shop: SourceProject = { projectId: 'p-shop', name: 'Shop', slug: 'shop', productionBranch: 'main', gitRepoUrl: 'https://github.com/acme/shop.git' }
+    const blog: SourceProject = { projectId: 'p-blog', name: 'Blog', slug: 'blog', productionBranch: 'main', gitRepoUrl: 'https://github.com/acme/blog' }
     const { base, service } = await setup([shop, blog])
     await service.add(await repo(base, 'notes'))
     await service.add(await repo(base, 'shop', 'git@github.com:acme/shop.git'))
     const projects = await service.list()
     const by = Object.fromEntries(projects.map((p) => [p.name, p]))
-    assert.equal(by.notes.location, 'local')
-    assert.equal(by.Shop.location, 'both')
-    assert.equal(by.Shop.cloudProjectId, 'p-shop')
-    assert.equal(by.Blog.location, 'online')
+    assert.equal(by.notes.source, null)
+    assert.ok(by.Shop.path)
+    assert.equal(by.Shop.source, 'host')
+    assert.equal(by.Shop.sourceId, 'p-shop')
+    assert.equal(by.Blog.key, 'host:p-blog')
     assert.equal(by.Blog.path, null)
     assert.equal(projects.length, 3)
   })
@@ -414,15 +415,16 @@ describe('StudioProjectsService', () => {
     const { base } = await setup()
     const origin = await repo(base, 'origin-blog')
     const { service } = await setup([{ projectId: 'p-blog', name: 'Blog', slug: 'blog', productionBranch: 'main', gitRepoUrl: origin }])
-    const project = await service.clone('p-blog')
-    assert.equal(project.location, 'both')
+    const project = await service.clone('host:p-blog')
+    assert.equal(project.source, 'host')
+    assert.ok(project.path)
     assert.ok(existsSync(join(project.path!, 'package.json')))
     const config = JSON.parse(await readFile(join(project.path!, 'pikku.config.json'), 'utf8'))
     assert.equal(config.cloud.projectId, 'p-blog')
     const opened = await service.open(project.key)
     assert.match(await readFile(join(opened.worktree, 'pikku.config.json'), 'utf8'), /p-blog/)
     service.close(project.key)
-    assert.equal((await service.list()).filter((p) => p.cloudProjectId === 'p-blog').length, 1)
+    assert.equal((await service.list()).filter((p) => p.sourceId === 'p-blog').length, 1)
   })
 
   test('opens a project in a subfolder of a bigger repo at that subfolder', async () => {
@@ -456,7 +458,7 @@ describe('StudioProjectsService', () => {
   test('writes the dev overlay under the runtime dir and removes the old root one', async () => {
     const base = await mkdtemp(join(tmpdir(), 'pikku-studio-projects-'))
     const service = new StudioProjectsService({
-      account: fakeAccount([]),
+      sources: { host: fakeAccount([]) },
       home: join(base, 'studio'),
       projectsDir: join(base, 'studio', 'local'),
       devCommand: () => ({ command: 'sh', args: ['-c', 'echo "$@" > dev-args.txt; sleep 30', 'sh'] }),
@@ -517,7 +519,7 @@ describe('projectEnv', () => {
 
   test('registers a project under the key it is given, and keeps it', async () => {
     const base = await mkdtemp(join(tmpdir(), 'pikku-studio-key-'))
-    const service = new StudioProjectsService({ account: fakeAccount([]), home: join(base, 'studio'), confine: false })
+    const service = new StudioProjectsService({ sources: { host: fakeAccount([]) }, home: join(base, 'studio'), confine: false })
     const path = await repo(base, 'shop')
     assert.equal((await service.add(path, 'app')).key, 'app')
     assert.equal((await service.add(path, 'app')).key, 'app')
@@ -534,7 +536,7 @@ describe('projectEnv', () => {
     process.env.PIKKU_STARTER_TEMPLATE = starter
     try {
       const service = new StudioProjectsService({
-        account: fakeAccount([]),
+        sources: { host: fakeAccount([]) },
         home: join(base, 'studio'),
         projectsDir: join(base, 'studio', 'local'),
         installCommand: () => null,

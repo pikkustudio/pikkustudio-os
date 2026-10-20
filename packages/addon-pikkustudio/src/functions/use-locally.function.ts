@@ -9,7 +9,7 @@ export const UseLocallyOutput = Settings
 
 export const useLocally = pikkuSessionlessFunc({
   expose: true,
-  description: 'Use Studio without a Pikku Studio Cloud account.',
+  description: 'Use Studio without an account.',
   input: UseLocallyInput,
   output: UseLocallyOutput,
   func: async ({ studioSettings, auth }, _input, { http }) => {

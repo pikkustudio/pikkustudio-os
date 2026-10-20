@@ -27,7 +27,7 @@ export class StudioAudit {
         outcome text not null
       )
     `)
-    this.db.exec("update studio_audit set subject = 'cloud' where type = 'ai.choose' and subject = 'fabric'")
+    this.db.exec("update studio_audit set subject = 'source' where type = 'ai.choose' and subject not in ('key', 'subscription', 'source')")
   }
 
   record(type: string, outcome: StudioAuditEvent['outcome'], subject: string | null = null, project: string | null = null) {

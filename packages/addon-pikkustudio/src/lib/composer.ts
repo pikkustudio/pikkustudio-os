@@ -14,8 +14,8 @@ export async function modelEndpoint(studio: { ai: StudioAi; projects: StudioProj
   const env = await studio.ai.env()
   const configured = process.env.PIKKU_STUDIO_MODEL ?? env.PIKKU_STUDIO_MODEL ?? null
   if (proxyUrl && proxyKey) return { baseUrl: withV1(proxyUrl), apiKey: proxyKey, fallback: configured }
-  if (env.PIKKU_STUDIO_AI === 'fabric' || env.PIKKU_STUDIO_AI === 'cloud') {
-    const access = await studio.projects.modelAccess().catch(() => null)
+  if (env.PIKKU_STUDIO_AI === 'source') {
+    const access = await studio.projects.modelAccess(undefined, env.PIKKU_STUDIO_AI_SOURCE).catch(() => null)
     return access ? { baseUrl: withV1(access.proxyUrl), apiKey: access.apiKey, fallback: configured ?? 'deepseek-v4.1-flash' } : null
   }
   if (env.PIKKU_STUDIO_AI === 'key' && env.PIKKU_STUDIO_AI_BASE_URL) {

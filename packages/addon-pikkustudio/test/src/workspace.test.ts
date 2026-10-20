@@ -5,9 +5,9 @@ import { mkdir, mkdtemp, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, test } from 'node:test'
-import { StudioProjectsService, type AccountProvider, type OnlineProject } from '../../src/services/projects.js'
+import { StudioProjectsService, type AccountProvider, type SourceProject } from '../../src/services/projects.js'
 
-const cloud: OnlineProject = { projectId: 'p1', name: 'Bakery', gitRepoUrl: null }
+const cloud: SourceProject = { projectId: 'p1', name: 'Bakery', gitRepoUrl: null }
 
 const account = (calls: string[]): AccountProvider => ({
   account: async () => ({ signedIn: true, apiUrl: 'http://cloud', consoleUrl: 'http://cloud' }),
@@ -37,10 +37,10 @@ describe('workspaces', () => {
   test('a cloud project asks Pikku Studio Cloud where its workspace is served', async () => {
     const calls: string[] = []
     const base = await mkdtemp(join(tmpdir(), 'pikku-studio-ws-'))
-    const service = new StudioProjectsService({ account: account(calls), home: join(base, 'studio'), startApps: false })
-    assert.deepStrictEqual(await service.workspaceLink('online:p1'), { state: 'ready', url: 'https://ws-p1.example.test' })
+    const service = new StudioProjectsService({ sources: { host: account(calls) }, home: join(base, 'studio'), startApps: false })
+    assert.deepStrictEqual(await service.workspaceLink('host:p1'), { state: 'ready', url: 'https://ws-p1.example.test' })
     assert.deepStrictEqual(calls, ['p1'])
-    await assert.rejects(service.workspaceLink('local-one'), /Only an online project/)
+    await assert.rejects(service.workspaceLink('local-one'), /Only a project a source holds/)
   })
 
   test('a pinned studio lists and opens only its own project', async () => {
@@ -48,7 +48,7 @@ describe('workspaces', () => {
     const mine = await repo(base, 'mine')
     const other = await repo(base, 'other')
     const service = new StudioProjectsService({
-      account: account([]),
+      sources: { host: account([]) },
       home: join(base, 'studio'),
       currentRoot: mine,
       pinned: true,
@@ -73,10 +73,10 @@ describe('workspaces', () => {
     const base = await mkdtemp(join(tmpdir(), 'pikku-studio-ws-'))
     let state: 'starting' | 'ready' = 'starting'
     const provider: AccountProvider = { ...account([]), workspaceLink: async () => (state === 'ready' ? { state, url: `http://127.0.0.1:${port}`, token: 'tok' } : { state, url: '' }) }
-    const service = new StudioProjectsService({ account: provider, home: join(base, 'studio'), startApps: false })
-    assert.deepStrictEqual(await service.workspaceTarget('online:p1'), { state: 'starting' })
+    const service = new StudioProjectsService({ sources: { host: provider }, home: join(base, 'studio'), startApps: false })
+    assert.deepStrictEqual(await service.workspaceTarget('host:p1'), { state: 'starting' })
     state = 'ready'
-    assert.deepStrictEqual(await service.workspaceTarget('online:p1'), { state: 'ready', url: `http://127.0.0.1:${port}`, headers: { authorization: 'Bearer tok' }, remoteKey: 'app' })
+    assert.deepStrictEqual(await service.workspaceTarget('host:p1'), { state: 'ready', url: `http://127.0.0.1:${port}`, headers: { authorization: 'Bearer tok' }, remoteKey: 'app' })
     assert.deepStrictEqual(seen, [{ url: '/studio/listProjects', auth: 'Bearer tok' }])
     server.close()
   })
