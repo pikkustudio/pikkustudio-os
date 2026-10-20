@@ -997,21 +997,6 @@
   "explore_sample__who_ask_1": "Meine Schwester zum Helfen einladen",
   "explore_sample__who_ask_2": "Wer darf das bearbeiten?",
   "explore_sample__who_q": "Wer darf rein?",
-  "cloud_pitch__a_stripe_sandbox_to": "Eine Stripe-Sandbox zum Ausprobieren",
-  "cloud_pitch__ai_keeps_an_eye": "Die KI behält deine laufende App im Blick und repariert sie, wenn etwas kaputtgeht, oft schon bevor es jemand merkt.",
-  "cloud_pitch__cheap_hosting": "Günstiges Hosting",
-  "cloud_pitch__everything_after_the_build": "Alles nach dem Bauen wird für dich erledigt.",
-  "cloud_pitch__cloud_is_where_your": "Bei Pikku Studio Cloud geht deine App online.",
-  "cloud_pitch__not_now": "Nicht jetzt",
-  "cloud_pitch__pick_the_ai_that": "Wähle die KI, die baut",
-  "cloud_pitch__put_your_app_online": "Bring deine App mit einem Klick online, zu einem Preis, der zu einem ersten Projekt passt.",
-  "cloud_pitch__see_what_cloud_costs": "Preise von Pikku Studio Cloud ansehen",
-  "cloud_pitch__studio_is_all_you": "Studio reicht zum Bauen völlig aus. Pikku Studio Cloud kommt dazu, wenn du live gehen willst.",
-  "cloud_pitch__switch_between_the_best": "Wechsle jederzeit zwischen den besten Modellen. Keine Schlüssel suchen, keine Konten verwalten.",
-  "cloud_pitch__take_pretend_payments_while": "Nimm beim Bauen Test-Zahlungen an, damit die Kasse funktioniert, bevor echtes Geld im Spiel ist.",
-  "cloud_pitch__watching_and_self_healing": "Überwachung und Selbstheilung",
-  "cloud_pitch__what_cloud_adds": "Was Pikku Studio Cloud dazugibt",
-  "cloud_pitch__what_cloud_is": "Was Pikku Studio Cloud ist",
   "front_doors__add_say": "Ich hätte gern einen weiteren Zugang zu diesem Projekt. Bitte frag mich, welchen: eine Website, einen Befehl, ein KI-Assistenten-Werkzeug oder eine Chat-App.",
   "front_doors__cli_caption": "Diese Befehle tippt man in ein Terminal, um deine App zu benutzen.",
   "front_doors__copy": "Ersten Befehl kopieren",
@@ -3530,7 +3515,6 @@
   "page_breadcrumb__browse_part": "Bausteine durchsuchen",
   "page_breadcrumb__menu_part": "Bausteine",
   "page_breadcrumb__trigger_part": "Baustein: {name}. Bausteine durchsuchen",
-  "cloud_panel__title": "Pikku Cloud",
   "accounts_screen__title": "Konten",
   "accounts_screen__text": "Die Menschen, die sich bei deiner App angemeldet haben. Deine Testpersonen sind das nicht; die findest du unter Virtuelle Nutzer.",
   "accounts_screen__list_label": "Angemeldete Menschen",
@@ -4948,8 +4932,6 @@
   "metrics_traffic__sub": "Wie viele Aufrufe ankamen und wie lange sie dauerten, über den gewählten Zeitraum.",
   "copy__brand_name": "Pikku Studio",
   "copy__brand_label": "Pikku Studio",
-  "copy__diff_hosted_title": "",
-  "copy__diff_hosted_text": "",
   "action_notice__fix": "Beheben",
   "release_flags__place_live": "deine Live-Seite",
   "release_flags__tests_failed_name": "Fehlgeschlagene Prüfungen: {count}",
@@ -4999,5 +4981,57 @@
   "account_unreachable__text": "Die Arbeit dieses Teams liegt online, und dein Konto ist gerade nicht erreichbar. Alles auf diesem Computer funktioniert weiter.",
   "account_unreachable__retry": "Noch einmal versuchen",
   "builder_chat__no_credit": "Lade Guthaben für {org} auf, um mit der KI von Pikku Studio Cloud zu bauen.",
-  "builder_chat__add_credit": "Guthaben aufladen"
+  "builder_chat__add_credit": "Guthaben aufladen",
+  "shell__team_title": "Dein Team",
+  "shell__places_title": "Wo deine Arbeit liegt",
+  "shell__teams_title": "Teams",
+  "shell__local": "Lokal",
+  "shell__personal": "Persönlich",
+  "shell__n_projects": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} Projekt",
+        "countPlural=other": "{count} Projekte"
+      }
+    }
+  ],
+  "shell__team_summary": [
+    {
+      "declarations": [
+        "input people",
+        "local peoplePlural = people: plural"
+      ],
+      "selectors": [
+        "peoplePlural"
+      ],
+      "match": {
+        "peoplePlural=one": "{people} Person, {projects}.",
+        "peoplePlural=other": "{people} Personen, {projects}."
+      }
+    }
+  ],
+  "shell__team_others": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Dein Team (eine weitere Person)",
+        "countPlural=other": "Dein Team ({count} weitere)"
+      }
+    }
+  ],
+  "shell__team_others_note": "Die Projekte des Teams, online gespeichert. Was du nicht gespeichert hast, bleibt auf diesem Computer.",
+  "shell__account_title": "Dein Konto"
 }

@@ -1,16 +1,14 @@
-// Open/OSS boundary: packages/pikkustudio-blocks may not name Pikku Studio Cloud, except in the pitch ("what Pikku Studio Cloud adds").
-// Allowed: CloudPitch*.tsx, the name `CloudPitch`, catalog keys prefixed `cloud_pitch__`, the field name `cloudProjectId`, and the
-// listed wire constants. Everything else that speaks of Pikku Studio Cloud comes from the private cloud addon: its slot
-// contributions (studio.slots.ts), its backend sources and its message overrides. Run: bun run check:cloud-boundary
+// Open/OSS boundary: packages/pikkustudio-blocks may not name Pikku Studio Cloud. Allowed: the field name `cloudProjectId`
+// and the listed wire constants. Everything that speaks of Pikku Studio Cloud comes from the private cloud addon: its
+// screens (some replace core ones, handing in their parts as props), its nav entries and its backend sources.
+// Run: bun run check:cloud-boundary
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const pkg = path.join(root, 'packages/pikkustudio-blocks')
-const PITCH_FILE = /(^|\/)CloudPitch[^/]*\.tsx$/
-// `CloudPitch` is the pitch component and `cloud_pitch__*` its messages; screens may mount and ask for them.
-const ALLOWED_IDENTIFIERS = [/cloudProjectId/g, /\bCloudPitch\b/g, /\bcloud_pitch__\w+/g]
+const ALLOWED_IDENTIFIERS = [/cloudProjectId/g]
 // Wire constants shared with a server; changing them would break existing data. Each needs a reason.
 const WIRE = [
   { file: 'src/lib/seal.ts', line: /^const SALT = 'pikkufabric\/sealed-box\/v1'$/, why: 'HKDF salt shared with the unsealing server; changing it makes existing sealed values unreadable' },
@@ -32,18 +30,17 @@ const scan = (rel, text) => {
 
 for (const file of walk(path.join(pkg, 'src'))) {
   const rel = path.relative(pkg, file).split(path.sep).join('/')
-  if (PITCH_FILE.test(file.split(path.sep).join('/')) || !/\.(tsx?|css|json)$/.test(file)) continue
+  if (!/\.(tsx?|css|json)$/.test(file)) continue
   scan(rel, fs.readFileSync(file, 'utf8'))
 }
 
 const catalog = JSON.parse(fs.readFileSync(path.join(pkg, 'messages/en.json'), 'utf8'))
 for (const [key, value] of Object.entries(catalog)) {
-  if (key.startsWith('cloud_pitch__')) continue
   if (/fabric|pikku studio cloud/i.test(key + String(value))) hits.push(`messages/en.json: ${key}: ${String(value).slice(0, 100)}`)
 }
 
 if (hits.length) {
-  console.error(`Pikku Studio Cloud is named ${hits.length} time(s) in the open package outside the pitch:\n${hits.join('\n')}`)
+  console.error(`Pikku Studio Cloud is named ${hits.length} time(s) in the open package:\n${hits.join('\n')}`)
   process.exit(1)
 }
 console.log('check-cloud-boundary: 0 hits')

@@ -4,13 +4,15 @@ import { ArrowRight, Pencil, Play } from 'lucide-react'
 import { Button } from '../ui/button'
 import { keep } from '../lib/links'
 import type { Project } from './ProjectCard'
-import { useHasSlot, useSlotList } from '../lib/studio-slots'
+import type { ComponentType } from 'react'
 
 const goesTo = { running: 'Open', progress: 'Open', live: 'Open', sketch: 'Continue' }
 
-export function ProjectActions({ item, className }: { item: Project; className?: string }) {
-  const ProjectCardExtra = useSlotList('projects.card.extra')
-  const extra = useHasSlot('projects.card.extra')
+/** More on a project's card that a host brings. Given, it also takes the place of the card's Rename. */
+export type ProjectCardExtra = ComponentType<{ item: Project }>
+
+export function ProjectActions({ item, className, extra: Extra }: { item: Project; className?: string; extra?: ProjectCardExtra }) {
+  const extra = !!Extra
   return (
     <div className={className}>
           {item.state === 'running' || item.state === 'progress' || item.state === 'live' ? (
@@ -43,7 +45,7 @@ export function ProjectActions({ item, className }: { item: Project; className?:
               {m.project_actions__rename()}
             </Button>
           ) : null}
-          <ProjectCardExtra item={item} />
+          {Extra ? <Extra item={item} /> : null}
         </div>
   )
 }

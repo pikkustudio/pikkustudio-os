@@ -1,5 +1,5 @@
 import { m } from '@/i18n/messages'
-import { useContext } from 'react'
+import { Fragment, useContext, type ReactNode } from 'react'
 import { Button } from '../ui/button'
 import { useProjectKey, useProjectName } from '../lib/project'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
@@ -7,17 +7,14 @@ import { EmptyState } from '../blocks/EmptyState'
 import { Rocket } from 'lucide-react'
 import { PageHead } from '../blocks/PageHead'
 import { PublishHosts } from '../blocks/PublishHosts'
-import { useKeyedSlot } from '../lib/studio-slots'
 import { ShellCtx } from '../lib/shell'
 
 
-// The panel an addon gives a publish target it brings; a target nobody draws a panel for shows nothing here.
-function PublishTarget({ id }: { id: string }) {
-  const Target = useKeyedSlot('publish.target', id)
-  return <Target />
-}
-
-export function PublishScreen() {
+/**
+ * Publishing the project. `targets` are the panels for publish targets a host brings, by the target's id from
+ * studio:publishOptions; a target with no panel shows nothing here.
+ */
+export function PublishScreen({ targets: panels = {} }: { targets?: Partial<Record<string, ReactNode>> } = {}) {
   const projectName = useProjectName()
   const key = useProjectKey()
   const { view, open } = useContext(ShellCtx)
@@ -42,7 +39,7 @@ export function PublishScreen() {
           </Button>
         </EmptyState>
       ) : (
-        targets.map((id) => <PublishTarget key={id} id={id} />)
+        targets.map((id) => <Fragment key={id}>{panels[id] ?? null}</Fragment>)
       )}
       <PublishHosts />
     </div>

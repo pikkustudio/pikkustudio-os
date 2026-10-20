@@ -1,15 +1,14 @@
 import { safeRedirect } from './sign-in-redirect'
 
-export const validateStudioSearch = (s: Record<string, unknown>): { size?: 'mobile' | 'tablet' | 'small' | 'big'; embed?: '1'; run?: string; team?: string; project?: string; view?: 'healthy' | 'empty' | 'problem' | 'loading' | 'error' | 'restore-error'; look?: 'light' | 'dark'; panel?: 'chat' | 'updates' | 'changes' | 'workspace' | 'provider' | 'diff' | 'why' | 'local' | 'accounts' | 'keys' | 'litellm' | 'pitch'; pitch?: 'a' | 'b'; via?: string; show?: 'done' | 'returning' | 'company' | 'empty' | 'loading' | 'error' | 'signin' | 'notin' | 'publishing' | 'live'; lang?: 'en' | 'de' | 'ar'; device?: 'phone' | 'text'; mode?: 'theme' | 'element' | 'component' | 'translations' | 'chat' | 'impersonate' | 'none'; screen?: 'tablet' | 'phone'; app?: 'staff'; stage?: string; target?: string; redirect?: string; fq?: string; who?: string; reach?: string; scope?: string; builtin?: '1'; fn?: string } => {
+export const validateStudioSearch = (s: Record<string, unknown>): { size?: 'mobile' | 'tablet' | 'small' | 'big'; embed?: '1'; run?: string; team?: string; project?: string; view?: 'healthy' | 'empty' | 'problem' | 'loading' | 'error' | 'restore-error'; look?: 'light' | 'dark'; panel?: 'chat' | 'updates' | 'changes' | 'workspace' | 'provider' | 'diff' | 'why' | 'local' | 'accounts' | 'keys' | 'litellm'; via?: string; show?: 'done' | 'returning' | 'company' | 'empty' | 'loading' | 'error' | 'signin' | 'notin' | 'publishing' | 'live'; lang?: 'en' | 'de' | 'ar'; device?: 'phone' | 'text'; mode?: 'theme' | 'element' | 'component' | 'translations' | 'chat' | 'impersonate' | 'none'; screen?: 'tablet' | 'phone'; app?: 'staff'; stage?: string; target?: string; redirect?: string; fq?: string; who?: string; reach?: string; scope?: string; builtin?: '1'; fn?: string } => {
     const pick = <T extends string>(v: unknown, ok: readonly T[]) => (ok.includes(v as T) ? (v as T) : undefined)
     return {
       size: pick(s.size, ['mobile', 'tablet', 'small', 'big'] as const),
       embed: s.embed === '1' || s.embed === 1 ? ('1' as const) : undefined,
       view: pick(s.view, ['healthy', 'empty', 'problem', 'loading', 'error', 'restore-error'] as const),
       look: pick(s.look, ['light', 'dark'] as const),
-      panel: pick(s.panel, ['chat', 'updates', 'changes', 'workspace', 'diff', 'why', 'local', 'accounts', 'keys', 'provider', 'litellm', 'pitch'] as const),
+      panel: pick(s.panel, ['chat', 'updates', 'changes', 'workspace', 'diff', 'why', 'local', 'accounts', 'keys', 'provider', 'litellm'] as const),
       via: typeof s.via === 'string' ? s.via : undefined,
-      pitch: pick(s.pitch, ['a', 'b'] as const),
       show: pick(s.show, ['done', 'returning', 'company', 'empty', 'loading', 'error', 'signin', 'notin', 'publishing', 'live'] as const),
       team: typeof s.team === 'string' && s.team ? s.team : undefined,
       project: typeof s.project === 'string' && s.project ? s.project : undefined,

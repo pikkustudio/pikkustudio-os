@@ -8,6 +8,7 @@ import { Page } from '../blocks/Page'
 import { PageHead } from '../blocks/PageHead'
 import { EmptyState } from '../blocks/EmptyState'
 import { ProjectsGrid } from '../blocks/ProjectsGrid'
+import type { ProjectCardExtra } from '../blocks/ProjectActions'
 import type { Project, ProjectState } from '../blocks/ProjectCard'
 import { CardsSkeleton, QueryState } from '../blocks/QueryState'
 import { keep } from '../lib/links'
@@ -45,7 +46,8 @@ const TeamName = ({ children }: { children: (name: string) => ReactNode }) => {
   return <>{children(team?.slug === slug ? team.name : slug)}</>
 }
 
-export function ProjectsScreen() {
+/** The team's projects. `cardExtra` is more a host shows on each project's card. */
+export function ProjectsScreen({ cardExtra }: { cardExtra?: ProjectCardExtra } = {}) {
   const team = useTeamProjects()
   const cards = { ...team, data: team.data?.map((p) => ({ ...toCard(p), ...overlayOf(p) })).sort(byVisit) } as UseQueryResult<Project[]>
   const local = useTeamSlug() === LOCAL_TEAM
@@ -78,7 +80,7 @@ export function ProjectsScreen() {
           )
         }
       >
-        {(items) => <ProjectsGrid items={items} />}
+        {(items) => <ProjectsGrid items={items} cardExtra={cardExtra} />}
       </QueryState>
     </Page>
   )

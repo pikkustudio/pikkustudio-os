@@ -6,6 +6,10 @@ export type AddonScreenDef = {
   title: string
   nav?: { area: string; icon: string; order: number; badge?: string }
   scopes?: readonly string[]
+  /** A first-party addon's screen in place of a core one (scripts/gen-addons.mjs allows it only for those). */
+  replaces?: boolean
+  /** 'bare' (the only one pikkuStudio allows) renders without the shell. */
+  layout?: string
   component?: () => Promise<{ default: ComponentType<{ params: Record<string, string>; navigate: (path: string) => void }> }>
   app?: string
 }

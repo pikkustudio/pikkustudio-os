@@ -1,4 +1,4 @@
-import { asI18n } from '@pikku/react'
+import { asI18n, type I18nNode } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useContext, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
@@ -11,21 +11,20 @@ import { InlineAlert } from './InlineAlert'
 import { PikkuDot } from './PikkuDot'
 import { Spinner } from './Spinner'
 import { ShellCtx } from '../lib/shell'
-import { useHasSlot, useSlotList } from '../lib/studio-slots'
 import { useImportProject } from '../lib/onboarding'
 
+/** Where a host lets a project be brought in from, first in the panel (`from`), and how from a terminal (`developer`). */
+export type BringFrom = { from?: I18nNode; developer?: I18nNode }
+
 /** Bring in a project that already lives somewhere else: from the host's own source when it has one, or from a link. */
-export function BringProjectPanel({ onClose }: { onClose: () => void }) {
-  const ImportSources = useSlotList('project.import.sources')
-  const ImportDeveloper = useSlotList('project.import.developer')
-  const developer = useHasSlot('project.import.developer')
+export function BringProjectPanel({ onClose, from, developer }: { onClose: () => void } & BringFrom) {
   const { say } = useContext(ShellCtx)
   const navigate = useNavigate()
   const client = useQueryClient()
   const bring = useImportProject()
   const [url, setUrl] = useState('')
   const [name, setName] = useState('')
-  const [hosted, setHosted] = useState(false)
+  const hosted = !!from
 
   const opened = (project: string, team?: string) => {
     void client.invalidateQueries()
@@ -40,7 +39,7 @@ export function BringProjectPanel({ onClose }: { onClose: () => void }) {
 
   return (
     <SidePanel icon={FolderInput} label={m.bring_project__title()} title={m.bring_project__title()} sub={m.bring_project__sub()} onClose={onClose}>
-      <ImportSources onImported={opened} onActive={setHosted} />
+      {from ?? null}
 
       <form
         className="flex flex-col gap-3"
@@ -104,7 +103,7 @@ export function BringProjectPanel({ onClose }: { onClose: () => void }) {
         <details className="text-ink-2">
           <summary className="cursor-pointer text-[14px] font-bold">{m.bring_project__developer_details()}</summary>
           <div className="mt-3 flex flex-col gap-3">
-            <ImportDeveloper />
+            {developer}
           </div>
         </details>
       ) : null}

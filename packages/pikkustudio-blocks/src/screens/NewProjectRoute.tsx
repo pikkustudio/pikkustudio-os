@@ -1,5 +1,6 @@
 import { m } from '@/i18n/messages'
 import { useEffect, useRef, useState } from 'react'
+import type { I18nNode } from '@pikku/react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { newProjectName, useAttachFile, useProjectRun, useStartProjectRun, type ProjectRun } from '../lib/onboarding'
@@ -7,7 +8,8 @@ import { useNoteRun } from '../lib/project-flow'
 import { OnbCtx, type OnbState, type Uses } from './OnboardingLayout'
 import { NewProjectScreen } from './NewProjectScreen'
 
-export function NewProjectRoute() {
+/** The New project screen with its run state. `bringFrom` and `bringDeveloper` are a host's ways to bring a project in. */
+export function NewProjectRoute({ bringFrom, bringDeveloper }: { bringFrom?: I18nNode; bringDeveloper?: I18nNode } = {}) {
   const navigate = useNavigate()
   const q = useSearch({ strict: false }) as { show?: string; run?: string; path?: string }
   const run = useProjectRun(q.run)
@@ -103,7 +105,7 @@ export function NewProjectRoute() {
         run: run.data ?? (failure ? ({ error: failure } as ProjectRun) : undefined),
       }}
     >
-      <NewProjectScreen />
+      <NewProjectScreen bring={{ from: bringFrom, developer: bringDeveloper }} />
     </OnbCtx.Provider>
   )
 }

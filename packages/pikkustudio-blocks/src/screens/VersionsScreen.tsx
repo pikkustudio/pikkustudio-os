@@ -19,7 +19,6 @@ import { PikkuDot } from '../blocks/PikkuDot'
 import { ago, canGoBack, dayTime, failWords, shelfPart, shelfTone, shelfWords, titleOf, versionLine, when, who } from '../blocks/ShelfMeta'
 import { stepNames } from '../blocks/ShelfStrip'
 import { useReleasePreview, useReleases, type Release, type ReleasesView } from '../lib/releases'
-import { useKeyedSlot } from '../lib/studio-slots'
 import { useProjectTarget } from '../lib/project-target'
 import { GroupRows } from './VersionScreen'
 import { useProjectName } from '../lib/project'
@@ -62,7 +61,10 @@ const publishLink = (variant: 'hero' | 'bordered', text: I18nString) => (
   </Link>
 )
 
-export function VersionsScreen() {
+/** A host's own rows for one kind of copy: how its published versions go live (`mode`) and what it sent (`sent`). */
+export type VersionsExtraRows = Partial<Record<string, { mode?: I18nNode; sent?: I18nNode }>>
+
+export function VersionsScreen({ extraRows = {} }: { extraRows?: VersionsExtraRows } = {}) {
   const view = useReleases()
   const projectName = useProjectName()
   const [mode, setMode] = useState('cards')
@@ -73,12 +75,12 @@ export function VersionsScreen() {
           <Segmented label={m.versions_screen__how_show()} value={mode} options={[['cards', m.versions_screen__view_cards()], ['rows', m.versions_screen__view_rows()]]} onChange={setMode} />
         ) : null}
       </PageHead>
-      <Body view={view} mode={mode} />
+      <Body view={view} mode={mode} extraRows={extraRows} />
     </Page>
   )
 }
 
-function Body({ view, mode }: { view: ReleasesView; mode: string }) {
+function Body({ view, mode, extraRows }: { view: ReleasesView; mode: string; extraRows: VersionsExtraRows }) {
   const { say } = useContext(ShellCtx)
   if (view.state === 'loading')
     return (
@@ -102,7 +104,7 @@ function Body({ view, mode }: { view: ReleasesView; mode: string }) {
       </>
     )
   if (view.state === 'off' || view.releases.length === 0) return <NothingYet view={view} />
-  return <History view={view} mode={mode} />
+  return <History view={view} mode={mode} extraRows={extraRows} />
 }
 
 function NothingYet({ view }: { view: ReleasesView }) {
@@ -143,11 +145,10 @@ function Pending({ view }: { view: ReleasesView }) {
 
 type Fault = { text: I18nString; ask: I18nString }
 
-function History({ view, mode }: { view: ReleasesView; mode: string }) {
+function History({ view, mode, extraRows }: { view: ReleasesView; mode: string; extraRows: VersionsExtraRows }) {
   const { say } = useContext(ShellCtx)
   const { kind } = useProjectTarget()
-  const ReleaseMode = useKeyedSlot('versions.releaseMode', kind)
-  const ReleaseSent = useKeyedSlot('versions.sent', kind)
+  const extra = extraRows[kind]
   const preview = useReleasePreview()
   const edit = !view.readOnly && !!view.actions
   const [filter, setFilter] = useState('all')
@@ -250,7 +251,7 @@ function History({ view, mode }: { view: ReleasesView; mode: string }) {
             </Switch>
           </RowCard>
         ) : null}
-        <ReleaseMode />
+        {extra?.mode ?? null}
       </Section>
 
       <Pending view={view} />
@@ -298,7 +299,7 @@ function History({ view, mode }: { view: ReleasesView; mode: string }) {
         )}
       </Section>
 
-      <ReleaseSent />
+      {extra?.sent ?? null}
 
       {back ? (
         <SidePanel icon={Undo2} label={m.versions_screen__go_back_title()} title={m.versions_screen__go_back_title()} sub={m.versions_screen__go_back_sub()} onClose={() => setBack(null)}>

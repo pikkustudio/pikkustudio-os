@@ -11,7 +11,7 @@
     "build:panel": "vite build -c vite.injected.config.ts",
     "preview": "vite preview --port 4741 --strictPort",
     "lint": "oxlint",
-    "tsc": "tsc --noEmit --incremental --tsBuildInfoFile node_modules/.cache/app-tsc.tsbuildinfo",
+    "tsc": "tsc -p tsconfig.gen.json --noEmit --incremental --tsBuildInfoFile node_modules/.cache/app-tsc.tsbuildinfo",
     "tsc:i18n": "tsc --noEmit -p tsconfig.i18n.json"
   },
   "dependencies": {

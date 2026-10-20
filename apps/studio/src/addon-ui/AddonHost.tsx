@@ -14,11 +14,17 @@ export function AddonHost({ resolved }: { resolved: ResolvedAddonScreen }) {
     [go],
   )
   if (!Screen) return null
+  const screenEl = (
+    <Suspense fallback={null}>
+      <Screen params={params} navigate={navigate} />
+    </Suspense>
+  )
+  // A screen that replaces a core one (first-party only) renders that core screen, whose calls are core's own: it
+  // runs with the app's client, as the core route did. Its calls to the addon still name it (createAddonRpc's caller).
+  if (screen.replaces) return screenEl
   return (
     <AddonProvider key={addon.name} addon={addon.name}>
-      <Suspense fallback={null}>
-        <Screen params={params} navigate={navigate} />
-      </Suspense>
+      {screenEl}
     </AddonProvider>
   )
 }

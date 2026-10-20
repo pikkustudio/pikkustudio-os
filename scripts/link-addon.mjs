@@ -5,7 +5,9 @@
 // from this repo's node_modules. When the submodule is not checked out (an empty folder) no addon is found, which is
 // what keeps the open build working without it.
 //
-//   node scripts/link-addon.mjs             wire every addon present, with pikku.cloud.json
+//   node scripts/link-addon.mjs             wire every addon present but the operator ones, with pikku.cloud.json (the
+//                                          online build: cloud and web)
+//   node scripts/link-addon.mjs --app       the app's build: as above, without the website's own pages (addon-web)
 //   node scripts/link-addon.mjs --operator  also wire the operator addons, with pikku.operator.json
 //   node scripts/link-addon.mjs --test      only the local test addons (packages/addons/spindle and diffui), to try the
 //                                          addon screens and nav across more than one addon; never part of the app
@@ -28,6 +30,8 @@ const args = new Set(process.argv.slice(2))
 const PRIVATE = join(root, 'packages/pikkustudio-private/packages')
 // The operator addons (by package name) only make sense on top of the cloud one; the open build has neither.
 const OPERATOR_ONLY = new Set(['@pikkustudio/addon-controlpanel'])
+// The website's own pages (sign-in, sign-up, CLI and OAuth approval); the online builds have them, the app does not.
+const WEB_ONLY = new Set(['@pikkustudio/addon-web'])
 // Workspace packages already in node_modules: linking them only copies their wire/ files, and unlinking leaves them be.
 const TEST_ADDONS = ['packages/addons/spindle', 'packages/addons/diffui']
 
@@ -73,7 +77,11 @@ if (args.has('--test')) {
 const present = (existsSync(PRIVATE) ? readdirSync(PRIVATE, { withFileTypes: true }) : [])
   .filter((e) => e.isDirectory() && existsSync(join(PRIVATE, e.name, 'package.json')))
   .map((e) => join(PRIVATE, e.name))
-  .filter((dir) => args.has('--operator') || !OPERATOR_ONLY.has(JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8')).name))
+  .filter((dir) => {
+    const name = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8')).name
+    if (OPERATOR_ONLY.has(name) && !args.has('--operator')) return false
+    return !(WEB_ONLY.has(name) && args.has('--app'))
+  })
 
 if (!present.length) {
   unlinkAll()

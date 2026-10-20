@@ -15,8 +15,6 @@ import { localeFetch } from '@/lib/locale-fetch'
 import { PreferencesContext } from '@/contexts/preferences'
 import { DefaultErrorPage } from '@/components/DefaultErrorPage'
 import { DefaultNotFoundPage } from '@/components/DefaultNotFoundPage'
-import { StudioSlotsProvider } from '@pikkustudio/blocks/lib/studio-slots'
-import { slotContributions } from '@/addons.gen'
 import { TeamGuard } from '@pikkustudio/blocks/blocks/TeamGuard'
 import { useAccount } from '@pikkustudio/blocks/lib/onboarding'
 import { StudioLoading } from '@pikkustudio/blocks/blocks/StudioLoading'
@@ -50,11 +48,7 @@ const localeScript = `try{var l=localStorage.getItem('${LOCALE_KEY}')||localStor
 function SessionGate({ children }: { children: ReactNode }) {
   const account = useAccount()
   if (account.isPending) return <StudioLoading />
-  return (
-    <StudioSlotsProvider value={slotContributions}>
-      <TeamGuard>{children}</TeamGuard>
-    </StudioSlotsProvider>
-  )
+  return <TeamGuard>{children}</TeamGuard>
 }
 
 function RootDocument({ children }: { children: ReactNode }) {

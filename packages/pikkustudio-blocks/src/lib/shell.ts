@@ -2,7 +2,7 @@ import type { I18nString } from '@pikku/react'
 import { createContext } from 'react'
 
 export type View = 'healthy' | 'empty' | 'problem'
-export type PanelId = 'chat' | 'updates' | 'changes' | 'workspace' | 'account' | 'pitch'
+export type PanelId = 'chat' | 'updates' | 'changes' | 'workspace' | 'account'
 
 export type AttachRef = { omId: string; omIndex: number; text: I18nString; meta: I18nString; where: I18nString }
 

@@ -1,12 +1,11 @@
 import { Link } from '../blocks/Link'
-import { useContext } from 'react'
+import { useContext, type ComponentType } from 'react'
 import { Button } from '../ui/button'
 import { ArrowRight, Laptop, User } from 'lucide-react'
 import { Hero as HeroShell, heroH1, heroLead } from '../blocks/OnbHero'
-import { useHasSlot, useSlot } from '../lib/studio-slots'
 import { useCopy } from '../lib/copy'
 import { RowCard, RowStack } from '../blocks/RowCard'
-import { OnbCtx } from './OnboardingLayout'
+import { OnbCtx, type PanelId } from './OnboardingLayout'
 import { useAccount, useRecentProjects, useSignOut, useUseLocally } from '../lib/onboarding'
 import { asI18n } from '@pikku/react'
 import { m } from '@/i18n/messages'
@@ -42,10 +41,14 @@ function SignedInNotice() {
   )
 }
 
-export function OnbSignInScreen() {
+/** What a hero on the sign-in step is handed. */
+export type SignInHeroProps = { st: string; loading: boolean; open: (panel: PanelId | '') => void; done: () => void }
+
+/** The sign-in step. A host that signs people in elsewhere gives its own `hero`; using Studio here is then the other way. */
+export function OnbSignInScreen({ hero }: { hero?: ComponentType<SignInHeroProps> } = {}) {
   const account = useAccount()
   if (account.data?.signedIn && account.data.signIn && account.data.signIn !== 'local') return <SignedInNotice />
-  return <SignInChoices />
+  return <SignInChoices hero={hero} />
 }
 
 // The sign-in step's own hero: use Studio here, on this computer.
@@ -119,10 +122,10 @@ function LocalSignInHero({ st, loading, done }: { st: string; loading: boolean; 
   )
 }
 
-function SignInChoices() {
+function SignInChoices({ hero }: { hero?: ComponentType<SignInHeroProps> }) {
   const { st, go, open } = useContext(OnbCtx)
-  const Hero = useSlot('onboarding.signIn.hero', LocalSignInHero)
-  const hosted = useHasSlot('onboarding.signIn.hero')
+  const Hero = hero ?? LocalSignInHero
+  const hosted = !!hero
   const copy = useCopy()
   const account = useAccount().data
   const locally = useUseLocally()

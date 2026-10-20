@@ -5,7 +5,7 @@ import { ArrowRight, Check, ExternalLink, Lock, Pause, Pencil, RotateCcw, Sparkl
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { keep } from '../lib/links'
-import { ProjectActions } from './ProjectActions'
+import { ProjectActions, type ProjectCardExtra } from './ProjectActions'
 import { ProjectFacts } from './ProjectFacts'
 import { ProjectThumb, type ProjectLook } from './ProjectThumb'
 
@@ -40,7 +40,7 @@ export const chips = (): Record<ProjectState, { text: I18nString; icon: typeof C
   paused: { text: m.project_card__paused(), icon: Pause, variant: 'pillMute' },
 })
 
-export function ProjectCard({ item }: { item: Project }) {
+export function ProjectCard({ item, extra }: { item: Project; extra?: ProjectCardExtra }) {
   const chip = chips()[item.state]
   const Icon = chip.icon
   return (
@@ -78,7 +78,7 @@ export function ProjectCard({ item }: { item: Project }) {
           {item.visitors ? <span>{m.project_card__visitors_this_week({ count: item.visitors })}</span> : null}
           {item.usage ? <span>{item.usage}</span> : null}
         </span>
-        <ProjectActions item={item} className="mt-auto flex flex-wrap items-center gap-2 pt-2" />
+        <ProjectActions item={item} extra={extra} className="mt-auto flex flex-wrap items-center gap-2 pt-2" />
       </div>
     </article>
   )

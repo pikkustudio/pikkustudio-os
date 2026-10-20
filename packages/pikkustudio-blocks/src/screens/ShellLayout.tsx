@@ -2,7 +2,6 @@ import { asI18n, sep, type I18nNode, type I18nString } from '@pikku/react'
 import { Blob, type BlobPoseName } from '../blocks/Blob'
 import { PikkuMark } from '../blocks/PikkuMark'
 import { ChangesPanel } from '../changes-panel/ChangesPanel'
-import { CloudPanel } from '../blocks/CloudPanel'
 import { EmptyState } from '../blocks/EmptyState'
 import { NotFoundPage } from '../blocks/NotFoundPage'
 import { Outlet, useLocation, useNavigate, useSearch } from '@tanstack/react-router'
@@ -18,12 +17,11 @@ import { TEAM_PAGES, registry, type NavScreen } from '../lib/nav-registry'
 import { NavBadge } from '../blocks/NavBadge'
 import { msg, navIcon } from '../lib/nav-labels'
 import { usePikkuChat } from '../lib/chat'
-import { AccountName, LocalWorkspaceAbout, ShellAccount, SignOutSection } from '../blocks/ShellAccount'
+import { AccountName, ShellAccount, SignOutSection, WorkspaceAbout } from '../blocks/ShellAccount'
 import { ProjectTargetsProvider, TargetSwitcher } from '../blocks/ProjectTargets'
 import { NotificationBell } from '../blocks/NotificationBell'
 import { ChatPublishStatus } from '../blocks/ChatPublishStatus'
 import { useNavEntries } from '../lib/nav-visibility'
-import { useSlot, useSlotList } from '../lib/studio-slots'
 import { useCopy } from '../lib/copy'
 import { SCREEN_NAME, agentName } from '../lib/screen-names'
 import { modeForPath, useBuilderChat } from '../lib/builder-chat'
@@ -167,10 +165,6 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
   const projectSlug = useProjectSlug()
   const projectMissing = useProjectMissing()
   const copy = useCopy()
-  const About = useSlot('shell.workspaceAbout', LocalWorkspaceAbout)
-  const TeamNav = useSlotList('shell.teamNav')
-  const ProjectNav = useSlotList('shell.projectNav')
-  const RailFoot = useSlotList('shell.railFoot')
   const navigate = useNavigate()
   const q = useSearch({ strict: false }) as { view?: View; look?: 'light' | 'dark'; panel?: PanelId; show?: 'done'; project?: string; change?: string }
   const path = useLocation({ select: (l) => l.pathname })
@@ -340,7 +334,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
   const [helperHot, setHelperHot] = useState(false)
   const unread = needsPerson && isDismissed
 
-  const panelTitle: Record<PanelId, I18nString> = { chat: workMode ? agentName(workMode) : m.parts__talk_to_pikku(), updates: m.shell_layout__updates(), changes: m.shell_layout__changes(), workspace: m.shell_layout__your_workspace(), account: m.shell_layout__your_account(), pitch: m.cloud_panel__title() }
+  const panelTitle: Record<PanelId, I18nString> = { chat: workMode ? agentName(workMode) : m.parts__talk_to_pikku(), updates: m.shell_layout__updates(), changes: m.shell_layout__changes(), workspace: m.shell_layout__your_workspace(), account: m.shell_layout__your_account() }
   const aboutScreen: I18nString | null = onEmails || fill ? null : onArtifacts ? SCREEN_NAME.artifacts() : onKnowledge ? SCREEN_NAME.knowledge() : onProject ? SCREEN_NAME.project() : onPublish ? m.shell_layout__publish() : (pageTitle ?? null)
   const bubbleActions: { label: I18nString; yes: boolean; run: () => void }[] = pending.length
     ? [
@@ -403,14 +397,11 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
               })}
             </nav>
             {/\/studio-metrics$/.test(path) || !projectSlug || projectMissing ? (
-              <>
-                {teamNav.length ? (
-                  <div className="flex flex-col gap-0.5 px-1">
-                    {teamNav.map(navLink)}
-                  </div>
-                ) : null}
-                <TeamNav itemClass={navItem} labelClass={lbl} collapsed={collapsed} />
-              </>
+              teamNav.length ? (
+                <div className="flex flex-col gap-0.5 px-1">
+                  {teamNav.map(navLink)}
+                </div>
+              ) : null
             ) : (
             <div className="flex flex-col gap-0.5 px-1">
               <div className={`mb-1.5 px-3 text-[13px] font-semibold text-muted-foreground ${lbl}`}>{projectName}</div>
@@ -426,12 +417,10 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
                   </Link>
                 )
               })}
-              <ProjectNav itemClass={navItem} labelClass={lbl} collapsed={collapsed} />
             </div>
             )}
             <div className="mt-auto flex flex-col gap-2.5">
               <NotificationBell collapsed={collapsed} />
-              <RailFoot collapsed={collapsed} />
               <button
                 type="button"
                 onClick={toggleRail}
@@ -827,15 +816,13 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
               </div>
             ) : null}
 
-            {panel === 'pitch' ? <CloudPanel avatar={<Avatar mood="calm" size="md" />} onClose={() => setPanel('')} /> : null}
-
             {panel === 'workspace' ? (
               <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-auto px-6 pt-5 pb-7">
                 <div className="grid grid-cols-[auto_1fr] items-start gap-3 rounded-[18px] bg-secondary p-4">
                   <Avatar mood="calm" size="md" />
                   <p className="font-heading text-[17px] leading-[1.4] text-pretty">{m.shell_layout__where_work_lives()}</p>
                 </div>
-                <About
+                <WorkspaceAbout
                   pikku={
                     <div className="flex items-start gap-3.5">
                       <span className="grid size-10 shrink-0 place-items-center">

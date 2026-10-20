@@ -1061,21 +1061,6 @@
   "explore_sample__who_ask_1": "ادع أختي للمساعدة",
   "explore_sample__who_ask_2": "من يستطيع تعديل هذا؟",
   "explore_sample__who_q": "من يسمح له بالدخول؟",
-  "cloud_pitch__a_stripe_sandbox_to": "بيئة تجريبية من Stripe للتجربة",
-  "cloud_pitch__ai_keeps_an_eye": "يراقب الذكاء الاصطناعي تطبيقكم المنشور ويصلحه عند حدوث عطل، وغالبا قبل أن يلاحظ أحد.",
-  "cloud_pitch__cheap_hosting": "استضافة منخفضة التكلفة",
-  "cloud_pitch__everything_after_the_build": "كل ما بعد البناء نتولاه عنكم.",
-  "cloud_pitch__cloud_is_where_your": "Pikku Studio Cloud هو المكان الذي ينطلق منه تطبيقكم على الإنترنت.",
-  "cloud_pitch__not_now": "ليس الآن",
-  "cloud_pitch__pick_the_ai_that": "اختاروا الذكاء الاصطناعي الذي يبني",
-  "cloud_pitch__put_your_app_online": "انشروا تطبيقكم على الإنترنت بنقرة واحدة وبسعر يناسب مشروعا أول.",
-  "cloud_pitch__see_what_cloud_costs": "اطلعوا على أسعار Pikku Studio Cloud",
-  "cloud_pitch__studio_is_all_you": "Studio كل ما تحتاجونه للبناء. أما Pikku Studio Cloud فتضيفونه حين تريدون نشر التطبيق.",
-  "cloud_pitch__switch_between_the_best": "بدلوا بين أفضل النماذج في أي وقت. لا مفاتيح للبحث عنها ولا حسابات للتنقل بينها.",
-  "cloud_pitch__take_pretend_payments_while": "اقبلوا مدفوعات تجريبية أثناء البناء، لتعمل صفحة الدفع قبل أن يدخل أي مال حقيقي.",
-  "cloud_pitch__watching_and_self_healing": "مراقبة وإصلاح ذاتي",
-  "cloud_pitch__what_cloud_adds": "ما الذي يضيفه Pikku Studio Cloud",
-  "cloud_pitch__what_cloud_is": "ما هو Pikku Studio Cloud",
   "front_doors__add_say": "أريد طريقة أخرى للدخول إلى هذا المشروع. من فضلك اسألني عن النوع: موقع إلكتروني أو أمر أو أداة لمساعد ذكاء اصطناعي أو تطبيق محادثة.",
   "front_doors__cli_caption": "يكتب الناس هذه الأوامر في الطرفية لاستخدام تطبيقكم.",
   "front_doors__copy": "نسخ الأمر الأول",
@@ -3798,7 +3783,6 @@
   "page_breadcrumb__browse_part": "تصفّح الأجزاء",
   "page_breadcrumb__menu_part": "الأجزاء",
   "page_breadcrumb__trigger_part": "الجزء: {name}. تصفّح الأجزاء",
-  "cloud_panel__title": "سحابة Pikku",
   "accounts_screen__title": "الحسابات",
   "accounts_screen__text": "الأشخاص الذين سجّلوا في تطبيقك. هؤلاء ليسوا أشخاص الاختبار، فهم في المستخدمين الافتراضيين.",
   "accounts_screen__list_label": "الأشخاص المسجّلون",
@@ -5292,8 +5276,6 @@
   "metrics_traffic__sub": "كم طلبًا وصل، وكم استغرق، خلال الفترة التي اخترتها.",
   "copy__brand_name": "Pikku Studio",
   "copy__brand_label": "Pikku Studio",
-  "copy__diff_hosted_title": "",
-  "copy__diff_hosted_text": "",
   "action_notice__fix": "أصلحه",
   "release_flags__place_live": "موقعك المنشور",
   "release_flags__tests_failed_name": "الفحوصات الفاشلة: {count}",
@@ -5343,5 +5325,69 @@
   "account_unreachable__text": "عمل هذا الفريق محفوظ على الإنترنت، ولا يمكن الوصول إلى حسابكم الآن. كل ما على هذا الحاسوب يواصل العمل.",
   "account_unreachable__retry": "حاولوا مرة أخرى",
   "builder_chat__no_credit": "أضيفوا رصيدًا إلى {org} للبناء باستخدام ذكاء Pikku Studio Cloud الاصطناعي.",
-  "builder_chat__add_credit": "إضافة رصيد"
+  "builder_chat__add_credit": "إضافة رصيد",
+  "shell__team_title": "فريقكم",
+  "shell__places_title": "أين يوجد عملكم",
+  "shell__teams_title": "الفرق",
+  "shell__local": "محلي",
+  "shell__personal": "شخصي",
+  "shell__n_projects": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "{count} مشروعا",
+        "countPlural=one": "مشروع واحد",
+        "countPlural=two": "مشروعان",
+        "countPlural=few": "{count} مشاريع",
+        "countPlural=many": "{count} مشروعا",
+        "countPlural=other": "{count} مشروعا"
+      }
+    }
+  ],
+  "shell__team_summary": [
+    {
+      "declarations": [
+        "input people",
+        "local peoplePlural = people: plural"
+      ],
+      "selectors": [
+        "peoplePlural"
+      ],
+      "match": {
+        "peoplePlural=zero": "{people} شخصا، {projects}.",
+        "peoplePlural=one": "شخص واحد، {projects}.",
+        "peoplePlural=two": "شخصان، {projects}.",
+        "peoplePlural=few": "{people} أشخاص، {projects}.",
+        "peoplePlural=many": "{people} شخصا، {projects}.",
+        "peoplePlural=other": "{people} شخصا، {projects}."
+      }
+    }
+  ],
+  "shell__team_others": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=zero": "فريقكم ({count} شخصا آخر)",
+        "countPlural=one": "فريقكم (شخص آخر)",
+        "countPlural=two": "فريقكم (شخصان آخران)",
+        "countPlural=few": "فريقكم ({count} آخرون)",
+        "countPlural=many": "فريقكم ({count} شخصا آخر)",
+        "countPlural=other": "فريقكم ({count} شخصا آخر)"
+      }
+    }
+  ],
+  "shell__team_others_note": "مشاريع الفريق، محفوظة عبر الإنترنت. ما لم تحفظه يبقى على هذا الكمبيوتر.",
+  "shell__account_title": "حسابك"
 }

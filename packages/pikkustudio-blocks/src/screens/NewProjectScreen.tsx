@@ -9,7 +9,7 @@ import { ArrowRight, ChevronRight, CircleAlert, FileSpreadsheet, FolderOpen, Glo
 import { OnbCtx } from './OnboardingLayout'
 import { ShellCtx } from '../lib/shell'
 import { NewProjectForm } from './NewProjectForm'
-import { BringProjectPanel } from '../blocks/BringProjectPanel'
+import { BringProjectPanel, type BringFrom } from '../blocks/BringProjectPanel'
 import { m } from '@/i18n/messages'
 import { type ProjectRun } from '../lib/onboarding'
 
@@ -108,7 +108,7 @@ const TILES: Tile[] = [
   { hue: 'petrol', Icon: FolderOpen, title: () => m.new_project__folder_title(), text: () => m.new_project__folder_text(), say: () => m.new_project__folder_say() },
 ]
 
-function OtherWays() {
+function OtherWays({ bring }: { bring: BringFrom }) {
   const { say } = useContext(ShellCtx)
   const [bringing, setBringing] = useState(false)
   return (
@@ -137,12 +137,12 @@ function OtherWays() {
           </button>
         ))}
       </div>
-      {bringing ? <BringProjectPanel onClose={() => setBringing(false)} /> : null}
+      {bringing ? <BringProjectPanel onClose={() => setBringing(false)} {...bring} /> : null}
     </section>
   )
 }
 
-export function NewProjectScreen() {
+export function NewProjectScreen({ bring = {} }: { bring?: BringFrom } = {}) {
   const { st, go, goInterview, interview, retry, cancel, idea, setIdea, example, run, uses, setUses, files, setFiles } = useContext(OnbCtx)
   const [picked, setPicked] = useState(-1)
   const hero = useRef<HTMLElement>(null)
@@ -252,7 +252,7 @@ export function NewProjectScreen() {
           )}
         </section>
       )}
-      {loading ? null : <OtherWays />}
+      {loading ? null : <OtherWays bring={bring} />}
     </div>
   )
 }

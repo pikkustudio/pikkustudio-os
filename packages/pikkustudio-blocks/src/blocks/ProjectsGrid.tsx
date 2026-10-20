@@ -6,6 +6,7 @@ import { Input } from '../ui/input'
 import { EmptyState } from './EmptyState'
 import { ProjectCard, type Project, type ProjectState } from './ProjectCard'
 import { ProjectRow } from './ProjectRow'
+import type { ProjectCardExtra } from './ProjectActions'
 import { Segmented } from './Segmented'
 
 const groups: Record<string, ProjectState[]> = {
@@ -15,7 +16,7 @@ const groups: Record<string, ProjectState[]> = {
   paused: ['paused'],
 }
 
-export function ProjectsGrid({ items }: { items: Project[] }) {
+export function ProjectsGrid({ items, cardExtra }: { items: Project[]; cardExtra?: ProjectCardExtra }) {
   const [filter, setFilter] = useState('all')
   const [query, setQuery] = useState('')
   const [layout, setLayout] = useState('cards')
@@ -53,13 +54,13 @@ export function ProjectsGrid({ items }: { items: Project[] }) {
       {shown.length && layout === 'rows' ? (
         <ul className="m-0 flex list-none flex-col gap-2 p-0">
           {shown.map((p) => (
-            <ProjectRow key={p.id} item={p} />
+            <ProjectRow key={p.id} item={p} extra={cardExtra} />
           ))}
         </ul>
       ) : shown.length ? (
         <div className="grid grid-cols-1 gap-5 @min-[640px]:grid-cols-2 @min-[960px]:grid-cols-3">
           {shown.map((p) => (
-            <ProjectCard key={p.id} item={p} />
+            <ProjectCard key={p.id} item={p} extra={cardExtra} />
           ))}
         </div>
       ) : (

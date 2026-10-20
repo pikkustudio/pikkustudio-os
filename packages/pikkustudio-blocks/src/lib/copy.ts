@@ -1,10 +1,9 @@
 import type { I18nNode, I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
 
-// The words a host can change without touching a screen: who hosts the work, what the brand is called,
-// what signing in means. Each entry is a function so the text follows the active language.
-// Open defaults say nothing about any hosting service; an addon rewords them by overriding these message keys
-// (its package.json `studio.overrides`, merged in by scripts/gen-addons.mjs).
+// The words the shell and onboarding use about who hosts the work, what the brand is called and what signing in
+// means. Each entry is a function so the text follows the active language. They say nothing about any hosting
+// service; an addon brings its own words on its own screens, not by changing these.
 export type Copy = {
   /** Wordmark beside the logo on the setup rail, and its accessible name. */
   brandName: () => I18nString
@@ -15,8 +14,6 @@ export type Copy = {
   railPitch: () => I18nString
   /** "Use it here" card in the difference panel. */
   diffLocal: () => I18nString
-  /** Second card in the difference panel; left out while its title is empty, as it is in the open build. */
-  diffHosted: { title: () => I18nString; text: () => I18nString }
   /** Third reason in "Why this one". */
   whyNoBillText: () => I18nString
   /** The Pikku bubble and chat line on the choose-AI step. */
@@ -51,7 +48,6 @@ export const defaultCopy: Copy = {
   stepSignInHint: m.copy__step_sign_in_hint,
   railPitch: m.copy__rail_pitch,
   diffLocal: m.copy__diff_local,
-  diffHosted: { title: m.copy__diff_hosted_title, text: m.copy__diff_hosted_text },
   whyNoBillText: m.copy__why_no_bill_text,
   chatChooseAi: m.copy__chat_choose_ai,
   bubbleAiPick: m.copy__bubble_ai_pick,

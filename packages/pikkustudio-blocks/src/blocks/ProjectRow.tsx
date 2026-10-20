@@ -3,11 +3,11 @@ import { m } from '@/i18n/messages'
 import { Lock, TriangleAlert } from 'lucide-react'
 import { Badge } from '../ui/badge'
 import { chips, type Project } from './ProjectCard'
-import { ProjectActions } from './ProjectActions'
+import { ProjectActions, type ProjectCardExtra } from './ProjectActions'
 import { ProjectFacts } from './ProjectFacts'
 import { ProjectThumb } from './ProjectThumb'
 
-export function ProjectRow({ item }: { item: Project }) {
+export function ProjectRow({ item, extra }: { item: Project; extra?: ProjectCardExtra }) {
   const chip = chips()[item.state]
   const Icon = chip.icon
   return (
@@ -40,7 +40,7 @@ export function ProjectRow({ item }: { item: Project }) {
           {item.usage ? <span>{item.usage}</span> : null}
         </span>
       </div>
-      <ProjectActions item={item} className="flex items-center gap-2" />
+      <ProjectActions item={item} extra={extra} className="flex items-center gap-2" />
     </li>
   )
 }

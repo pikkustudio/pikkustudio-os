@@ -24,3 +24,6 @@ apps/studio/injected
 # Addon screen routes scripts/gen-addons.mjs writes
 apps/studio/src/routes/_studio/
 apps/studio/src/routes/_bare/
+apps/studio/src/routes/_open/
+apps/studio/tsconfig.gen.json
+apps/studio/src/routes/_welcome/

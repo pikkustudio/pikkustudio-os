@@ -1,12 +1,11 @@
 import { m } from '@/i18n/messages'
-import { useContext } from 'react'
+import { useContext, type ComponentType } from 'react'
 import { Button } from '../ui/button'
 import { ArrowRight, Cloud, Server } from 'lucide-react'
 
 import { providers } from '../blocks/AiConnectPanels'
 import { Hero as HeroShell, heroH1 as h1, heroLead as lead } from '../blocks/OnbHero'
-import { OnbCtx } from './OnboardingLayout'
-import { useSlot, useSlotList } from '../lib/studio-slots'
+import { OnbCtx, type PanelId } from './OnboardingLayout'
 import { useNavigate } from '@tanstack/react-router'
 
 const card =
@@ -54,10 +53,13 @@ export function LitellmHero({ st, loading, open, retry }: { st: string; loading:
   )
 }
 
-export function ChooseAiScreen() {
+/** What a hero on the choose-AI step is handed. */
+export type ChooseAiHeroProps = { st: string; loading: boolean; open: (panel: PanelId | '') => void; retry: () => void; done: () => void }
+
+/** The choose-AI step. A host with its own AI gives a `hero` in place of the LiteLLM one, and `offers` above the providers. */
+export function ChooseAiScreen({ hero, offers: Offers }: { hero?: ComponentType<ChooseAiHeroProps>; offers?: ComponentType<{ open: (panel: PanelId | '') => void }> } = {}) {
   const { st, go, retry, open } = useContext(OnbCtx)
-  const Offers = useSlotList('onboarding.chooseAi.offers')
-  const Hero = useSlot('onboarding.chooseAi.hero', LitellmHero)
+  const Hero = (hero ?? LitellmHero) as ComponentType<ChooseAiHeroProps>
   const navigate = useNavigate()
   const loading = st === 'loading'
   const via = (id: string) => navigate({ to: '.', search: ((prev: object) => ({ ...prev, panel: 'provider', via: id })) as never, replace: true })
@@ -73,7 +75,7 @@ export function ChooseAiScreen() {
         <div className="grid grid-cols-1 gap-4">
           {st === 'normal' || st === 'error' ? (
             <>
-              <Offers open={open} />
+              {Offers ? <Offers open={open} /> : null}
               <div className="flex flex-col gap-4 rounded-[22px] border border-border bg-card px-7 py-6.5 shadow-card">
                 <div className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-5">
                   <span className="grid size-14 place-items-center rounded-2xl bg-accent text-accent-foreground">

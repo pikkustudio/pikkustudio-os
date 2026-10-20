@@ -10,10 +10,8 @@ import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { ProjectRpcCtx } from '../lib/projectRpc'
 import { Button } from '../ui/button'
 import { AiLitellmPanel, AiProviderPanel, providers } from '../blocks/AiConnectPanels'
-import { useHasSlot, useSlot } from '../lib/studio-slots'
 import { useCopy } from '../lib/copy'
-import { CloudPanel } from '../blocks/CloudPanel'
-import { PanelRow, ShellAccount } from '../blocks/ShellAccount'
+import { PanelRow, ShellAccount, WorkspaceAbout } from '../blocks/ShellAccount'
 import { useShellAccount } from '../lib/account'
 import { useAccount, useProjectRun, useRecentProjects, useStartProjectRun, useAttachFile, newProjectName, type ProjectRun } from '../lib/onboarding'
 import { ArrowRight, Bell, Check, CircleAlert, FolderOpen, Laptop, MessageCircle, Pin, ShieldCheck, User, X, CheckCheck } from 'lucide-react'
@@ -24,7 +22,7 @@ import { m } from '@/i18n/messages'
 // Sign in, Choose AI and New project are children of this layout. Page content lives in the route files.
 
 export type OnbState = 'empty' | 'normal' | 'loading' | 'error'
-export type PanelId = 'chat' | 'updates' | 'workspace' | 'diff' | 'why' | 'local' | 'accounts' | 'keys' | 'provider' | 'litellm' | 'pitch'
+export type PanelId = 'chat' | 'updates' | 'workspace' | 'diff' | 'why' | 'local' | 'accounts' | 'keys' | 'provider' | 'litellm'
 
 export type Uses = { audience: 'me' | 'others'; surfaces: string[]; devices: string[] }
 
@@ -94,11 +92,9 @@ type Msg = { kind: 'me' | 'pikku'; text: I18nString }
 export function OnboardingLayout() {
   const navigate = useNavigate()
   const router = useRouter()
-  const q = useSearch({ strict: false }) as { redirect?: string; look?: 'light' | 'dark'; panel?: PanelId; show?: string; pitch?: 'a' | 'b'; via?: string; run?: string }
+  const q = useSearch({ strict: false }) as { redirect?: string; look?: 'light' | 'dark'; panel?: PanelId; show?: string; via?: string; run?: string }
   const panel: PanelId | '' = q.panel ?? ''
   const hasAccount = !!useShellAccount().data?.user
-  const WorkspaceAbout = useSlot('shell.workspaceAbout')
-  const hasAbout = useHasSlot('shell.workspaceAbout')
   const copy = useCopy()
   const path = useLocation({ select: (l) => l.pathname })
   const choose = path === '/choose-ai'
@@ -235,7 +231,7 @@ export function OnboardingLayout() {
     )
   }
 
-  const panelTitle = { chat: m.parts__talk_to_pikku(), updates: m.shell_layout__updates(), workspace: m.onboarding_layout__this_workspace(), diff: m.onboarding_layout__the_difference(), why: m.onboarding_layout__why_this_one(), local: m.onboarding_layout__set_up_here(), accounts: m.onboarding_layout__connect_account(), keys: m.onboarding_layout__use_own_key(), litellm: m.onboarding_layout__connect_litellm(), provider: m.onboarding_layout__connect_provider({ provider: providers().find(([, id]) => id === q.via)?.[0] ?? m.onboarding_layout__a_provider() }), pitch: m.cloud_pitch__what_cloud_adds() }
+  const panelTitle = { chat: m.parts__talk_to_pikku(), updates: m.shell_layout__updates(), workspace: m.onboarding_layout__this_workspace(), diff: m.onboarding_layout__the_difference(), why: m.onboarding_layout__why_this_one(), local: m.onboarding_layout__set_up_here(), accounts: m.onboarding_layout__connect_account(), keys: m.onboarding_layout__use_own_key(), litellm: m.onboarding_layout__connect_litellm(), provider: m.onboarding_layout__connect_provider({ provider: providers().find(([, id]) => id === q.via)?.[0] ?? m.onboarding_layout__a_provider() }) }
   const tabs = panel === 'chat' || panel === 'updates'
   const tab =
     '-mb-px inline-flex h-11.5 items-center gap-2 rounded-t-[10px] border-b-3 px-3.5 text-[15px] font-bold transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'
@@ -420,12 +416,6 @@ export function OnboardingLayout() {
                     {copy.diffLocal()}
                   </p>
                 </div>
-                {copy.diffHosted.title() ? (
-                  <div className="flex flex-col gap-1.5 rounded-[18px] border border-border p-4.5">
-                    <h3 className="text-[19px] font-bold tracking-[-0.012em] text-balance">{copy.diffHosted.title()}</h3>
-                    <p className="text-[15px] text-ink-2 text-pretty">{copy.diffHosted.text()}</p>
-                  </div>
-                ) : null}
                 <Button variant="default" size="compact" className="self-start" type="button" onClick={() => open('')}>
                   
                   {m.onboarding_layout__got_it()}
@@ -461,8 +451,6 @@ export function OnboardingLayout() {
                 </Button>
               </div>
             ) : null}
-
-            {panel === 'pitch' ? <CloudPanel variant={q.pitch} avatar={<Avatar mood="calm" size="md" />} onClose={() => open('')} /> : null}
 
             {panel === 'provider' ? <AiProviderPanel provider={q.via ?? ''} onDone={() => { open(''); go() }} onBack={() => open('')} /> : null}
 
@@ -612,7 +600,7 @@ export function OnboardingLayout() {
               </div>
             ) : null}
 
-            {panel === 'workspace' && hasAbout ? (
+            {panel === 'workspace' && hasAccount ? (
               <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-auto px-6 pt-5 pb-7">
                 <WorkspaceAbout
                   pikku={<PanelRow icon={<Avatar mood="calm" size="xs" ring={false} />} title={m.onboarding_layout__pikku()} text={m.onboarding_layout__only_what_you_ask_it()} />}
@@ -620,7 +608,7 @@ export function OnboardingLayout() {
               </div>
             ) : null}
 
-            {panel === 'workspace' && !hasAbout ? (
+            {panel === 'workspace' && !hasAccount ? (
               <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-auto px-6 pt-5 pb-7">
                 <div className="grid grid-cols-[auto_1fr] items-start gap-3 rounded-[18px] bg-secondary p-4">
                   <Avatar mood="calm" size="md" />

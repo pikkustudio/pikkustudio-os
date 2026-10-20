@@ -1130,21 +1130,6 @@
   "explore_sample__who_ask_1": "Invite my sister to help",
   "explore_sample__who_ask_2": "Who can edit this?",
   "explore_sample__who_q": "Who is allowed in?",
-  "cloud_pitch__a_stripe_sandbox_to": "A Stripe sandbox to play with",
-  "cloud_pitch__ai_keeps_an_eye": "AI keeps an eye on your live app and fixes it when something breaks, often before anyone notices.",
-  "cloud_pitch__cheap_hosting": "Cheap hosting",
-  "cloud_pitch__everything_after_the_build": "Everything after the build, looked after for you.",
-  "cloud_pitch__cloud_is_where_your": "Pikku Studio Cloud is where your app goes live.",
-  "cloud_pitch__not_now": "Not now",
-  "cloud_pitch__pick_the_ai_that": "Pick the AI that builds",
-  "cloud_pitch__put_your_app_online": "Put your app online with one click, at a price that suits a first project.",
-  "cloud_pitch__see_what_cloud_costs": "See what Pikku Studio Cloud costs",
-  "cloud_pitch__studio_is_all_you": "Studio is all you need to build. Pikku Studio Cloud is what you add when you want it live.",
-  "cloud_pitch__switch_between_the_best": "Switch between the best models any time. No keys to find, no accounts to juggle.",
-  "cloud_pitch__take_pretend_payments_while": "Take pretend payments while you build, so checkout works before real money is involved.",
-  "cloud_pitch__watching_and_self_healing": "Watching and self-healing",
-  "cloud_pitch__what_cloud_adds": "What Pikku Studio Cloud adds",
-  "cloud_pitch__what_cloud_is": "What Pikku Studio Cloud is",
   "front_doors__add_say": "I would like another way into this project. Please ask me which one: a website, a command, an AI assistant tool or a chat app.",
   "front_doors__cli_caption": "People type these commands in a terminal to use your app.",
   "front_doors__copy": "Copy first command",
@@ -3742,7 +3727,6 @@
   "page_breadcrumb__menu_part": "Parts",
   "page_breadcrumb__trigger_part": "Part: {name}. Browse parts",
   "updates_feed__ai_hosted": "{who} chose the hosted AI",
-  "cloud_panel__title": "Pikku cloud",
   "accounts_screen__title": "Accounts",
   "accounts_screen__text": "The people who have signed up to your app. This is not your test people; those live under Virtual users.",
   "accounts_screen__list_label": "People who signed up",
@@ -5154,8 +5138,6 @@
   "metrics_traffic__sub": "How many calls came in, and how long they took, across the time you picked.",
   "copy__brand_name": "Pikku Studio",
   "copy__brand_label": "Pikku Studio",
-  "copy__diff_hosted_title": "",
-  "copy__diff_hosted_text": "",
   "action_notice__fix": "Put it right",
   "release_flags__place_live": "your live site",
   "release_flags__tests_failed_name": "Failed checks: {count}",
@@ -5205,5 +5187,57 @@
   "account_unreachable__text": "This team's work lives online, and your account can't be reached right now. Everything on this computer keeps working.",
   "account_unreachable__retry": "Try again",
   "builder_chat__no_credit": "Add credit to {org} to build with Pikku Studio Cloud AI.",
-  "builder_chat__add_credit": "Add credit"
+  "builder_chat__add_credit": "Add credit",
+  "shell__team_title": "Your team",
+  "shell__places_title": "Where your work is",
+  "shell__teams_title": "Teams",
+  "shell__local": "Local",
+  "shell__personal": "Personal",
+  "shell__n_projects": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "{count} project",
+        "countPlural=other": "{count} projects"
+      }
+    }
+  ],
+  "shell__team_summary": [
+    {
+      "declarations": [
+        "input people",
+        "local peoplePlural = people: plural"
+      ],
+      "selectors": [
+        "peoplePlural"
+      ],
+      "match": {
+        "peoplePlural=one": "{people} person, {projects}.",
+        "peoplePlural=other": "{people} people, {projects}."
+      }
+    }
+  ],
+  "shell__team_others": [
+    {
+      "declarations": [
+        "input count",
+        "local countPlural = count: plural"
+      ],
+      "selectors": [
+        "countPlural"
+      ],
+      "match": {
+        "countPlural=one": "Your team ({count} other)",
+        "countPlural=other": "Your team ({count} others)"
+      }
+    }
+  ],
+  "shell__team_others_note": "The team's projects, kept online. Work you have not kept stays on this computer.",
+  "shell__account_title": "Your account"
 }
