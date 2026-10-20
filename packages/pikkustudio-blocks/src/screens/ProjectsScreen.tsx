@@ -34,7 +34,9 @@ export const toCard = (p: ListedProject): Project => ({
   state: (p.missing || p.location === 'cloud' ? 'sketch' : p.busy ? 'progress' : p.open ? 'running' : 'paused') satisfies ProjectState,
 })
 
-const byVisit = (a: Project, b: Project) => Number(!!b.favourite) - Number(!!a.favourite) || (b.visitedAt ?? '').localeCompare(a.visitedAt ?? '')
+// Latest visit first; anything that isn't a time sorts as never visited.
+const visitTime = (v: unknown) => (typeof v === 'string' || v instanceof Date ? new Date(v).getTime() || 0 : 0)
+export const byVisit = (a: Project, b: Project) => Number(!!b.favourite) - Number(!!a.favourite) || visitTime(b.visitedAt) - visitTime(a.visitedAt)
 
 // The team's name where the signed-in account knows it, else its slug.
 const TeamName = ({ children }: { children: (name: string) => ReactNode }) => {
