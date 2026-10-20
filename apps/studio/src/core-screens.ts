@@ -38,7 +38,7 @@ export default {
     project('/versions', 'quick_find__versions', false),
     project('/versions/:id', 'quick_find__versions', false),
     project('/project-secrets', 'project_secrets__title'),
-    project('/overview', 'overview_screen__welcome_title'),
+    project('/overview', 'shell_layout__home', false),
     project('/emails', 'screen_names__emails'),
     project('/emails/:emailId', 'screen_names__emails'),
     project('/translations', 'quick_find__translations'),
