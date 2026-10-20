@@ -39,13 +39,13 @@ export const parseMocksOutput = <T>(out: string): T | null => {
   return null
 }
 
-const NONE: MockStatus = { available: false, flagged: [], unflagged: [], changed: [], dead: [], unused: [], screens: 0 }
+export const NO_MOCKS: MockStatus = { available: false, flagged: [], unflagged: [], changed: [], dead: [], unused: [], screens: 0 }
 
 export async function readMockStatus(cwd: string, runner: MockRunner = runMocks): Promise<MockStatus> {
   const [checkOut, diffOut] = await Promise.all([runner(cwd, ['mocks', 'check']), runner(cwd, ['mocks', 'diff'])])
   const check = parseMocksOutput<Check>(checkOut)
   const diff = parseMocksOutput<Diff>(diffOut)
-  if (!check || !diff || !Array.isArray(check.calls) || !Array.isArray(diff.rpcs)) return NONE
+  if (!check || !diff || !Array.isArray(check.calls) || !Array.isArray(diff.rpcs)) return NO_MOCKS
   const uses = check.calls.filter((c) => c.rpc).map((c) => ({ rpc: c.rpc!, file: c.file, flag: c.flag ?? null, problem: c.problem }))
   const isUnflagged = (u: { flag: string | null; problem?: string }) => !u.flag || u.problem === 'no-flag' || u.problem === 'flag-not-literal'
   const strip = ({ rpc, file, flag }: StubUse): StubUse => ({ rpc, file, flag })

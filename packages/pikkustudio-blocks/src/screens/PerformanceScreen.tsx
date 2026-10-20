@@ -124,7 +124,7 @@ function LocalPerformance() {
 
           <Section title={m.performance_screen__space_goes()} sub={m.performance_screen__space_goes_sub()}>
             <div className="rounded-empty border border-border bg-card p-6" data-testid="performance-disk">
-              {space && diskUsed > 0 ? <><DiskPie parts={diskParts} />{space.skipped > 0 ? <p className="mt-5 text-px14 text-muted-foreground" data-testid="performance-skipped">{m.performance_screen__skipped({ n: space.skipped })}</p> : null}</> : <p className="text-px15 text-muted-foreground">{disk.isError ? m.performance_screen__measure_failed() : m.performance_screen__measuring()}</p>}
+              {space && diskUsed > 0 ? <><DiskPie parts={diskParts} />{space.skipped > 0 ? <p className="mt-5 text-px14 text-muted-foreground" data-testid="performance-skipped">{m.performance_screen__skipped({ n: space.skipped })}</p> : null}</> : <p className="text-px15 text-muted-foreground">{disk.isError || (disk.isSuccess && !space) ? m.performance_screen__measure_failed() : m.performance_screen__measuring()}</p>}
             </div>
           </Section>
         </>

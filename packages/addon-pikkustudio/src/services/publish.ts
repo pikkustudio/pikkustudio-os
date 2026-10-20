@@ -1,7 +1,7 @@
 import { trackLargeFiles } from './lfs.js'
 import { publishBlockers, runMocks, type MockRunner } from './mock-status.js'
 import { spawn } from 'node:child_process'
-import type { StudioAccount, StudioProject, StudioProjectsService } from './projects.js'
+import { sourceKey, sourceOf, type StudioAccount, type StudioProject, type StudioProjectsService } from './projects.js'
 
 export type PromptTarget = 'standalone' | 'cloudflare' | 'serverless' | 'azure'
 
@@ -100,6 +100,14 @@ ${setup('azure')}
 Do not change the app's functions. Stop and tell me if a step fails.`
 }
 
+const prompts = (name: string) => Object.fromEntries((Object.keys(PROVIDER) as PromptTarget[]).map((t) => [t, publishPrompt(t, name)])) as Record<PromptTarget, string>
+
+export interface PublishOptions {
+  targets: Record<string, string>
+  consoleUrl: string
+  prompts: Record<PromptTarget, string>
+}
+
 export class StudioPublisher {
   private jobs = new Map<string, PublishJob>()
 
@@ -110,15 +118,20 @@ export class StudioPublisher {
     private mocks: MockRunner = runMocks
   ) {}
 
-  async options(key: string) {
+  async options(key: string): Promise<PublishOptions> {
+    const ref = sourceOf(key)
+    if (ref) {
+      // A source's project is published from its workspace; one that can't say has nowhere to publish from here.
+      const remote = await this.projects.inWorkspace<PublishOptions | null>(key, 'publishOptions', {}, null)
+      if (remote?.answer) return remote.answer
+      const listed = (await this.projects.list()).find((p) => p.key === sourceKey(ref.source, ref.id))
+      return { targets: {}, consoleUrl: (await this.projects.getAccount()).consoleUrl, prompts: prompts(listed?.name ?? ref.id) }
+    }
     const project = (await this.projects.list()).find((p) => p.key === key)
     if (!project) throw new Error('Studio does not know this project')
     const account = await this.projects.getAccount()
     const targets = Object.fromEntries(this.targets.map((t) => [t.id, t.readiness(project, account)]))
-    const prompts = Object.fromEntries(
-      (Object.keys(PROVIDER) as PromptTarget[]).map((t) => [t, publishPrompt(t, project.name)])
-    ) as Record<PromptTarget, string>
-    return { targets, consoleUrl: account.consoleUrl, prompts }
+    return { targets, consoleUrl: account.consoleUrl, prompts: prompts(project.name) }
   }
 
   status(key: string): PublishJob {

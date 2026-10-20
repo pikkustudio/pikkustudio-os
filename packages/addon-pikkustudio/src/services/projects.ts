@@ -13,7 +13,7 @@ import { generatedSource, projectSource, resolveEffective, setMany, toEnv, type 
 import { DEVELOP, MAIN, addWorktree, listWorktrees, layoutRoot, sessionKey, splitSessionKey, cloneLayout, commitPaths, createLayout, ensureWorktree, saveWorktrees, keepChanges, mainEnv, keepStatus, listVersions, listThemes, type ProjectTheme, type VersionCommit, worktreeConfinement, type KeepResult, type KeepStatus, type StudioWorktree } from './worktree.js'
 import { canConfine, confinedSpawn, type Confinement } from './confine.js'
 import { Supervisor, type ServiceSpec, type ServiceStatus } from '@pikkustudio/supervisor'
-import { diskUsage } from './disk.js'
+import { diskUsage, type DiskUsage } from './disk.js'
 import { linkDevPikku } from './dev-link.js'
 import { previewViteConfig } from './vite-preview.js'
 
@@ -119,6 +119,43 @@ const latestShot = (dir: string, slug: string): { shot: string; shotAt: number }
   } catch {
     return null
   }
+}
+
+const isLoopback = (url: string) => {
+  try {
+    return ['127.0.0.1', 'localhost', '[::1]'].includes(new URL(url).hostname)
+  } catch {
+    return true
+  }
+}
+
+const UI_SKIP = new Set(['node_modules', 'dist', 'build', '.pikku', '.git', 'paraglide', '__generated__'])
+const UI_MAX_FILES = 2000
+const UI_MAX_BYTES = 256 * 1024
+
+/** The frontend source under a project's `apps/`, relative to the project: .ts and .tsx, nothing generated or built. */
+const uiFiles = async (projectDir: string): Promise<{ path: string; content: string }[]> => {
+  const found: { path: string; content: string }[] = []
+  const walk = async (dir: string): Promise<void> => {
+    let names: string[]
+    try {
+      names = readdirSync(dir)
+    } catch {
+      return
+    }
+    for (const name of names.sort()) {
+      if (found.length >= UI_MAX_FILES) return
+      if (UI_SKIP.has(name)) continue
+      const path = join(dir, name)
+      const stat = lstatSync(path)
+      if (stat.isDirectory()) await walk(path)
+      else if (stat.isFile() && /\.tsx?$/.test(name) && !/\.(gen|stories|test|spec|d)\.tsx?$/.test(name) && stat.size <= UI_MAX_BYTES) {
+        found.push({ path: relative(projectDir, path).split(sep).join('/'), content: await readFile(path, 'utf8') })
+      }
+    }
+  }
+  await walk(join(projectDir, 'apps'))
+  return found
 }
 
 const GENERATED_SECRETS = ['BETTER_AUTH_SECRET', 'SCENARIO_ACTOR_SECRET']
@@ -1136,7 +1173,10 @@ export class StudioProjectsService {
     return { dir, files: files.filter((f) => f.run === newest) }
   }
 
-  async disk(key: string) {
+  /** Null when the project is in a workspace that can't say. */
+  async disk(key: string): Promise<DiskUsage | null> {
+    const remote = await this.inWorkspace<DiskUsage | null>(key, 'projectDisk', {}, null)
+    if (remote) return remote.answer
     return diskUsage((await this.entry(key)).path)
   }
 
@@ -1153,6 +1193,8 @@ export class StudioProjectsService {
   }
 
   async logs(key: string): Promise<{ sources: { id: string; lines: string[] }[] }> {
+    const remote = await this.inWorkspace<{ sources: { id: string; lines: string[] }[] }>(key, 'projectLogs', {}, { sources: [] })
+    if (remote) return remote.answer
     await this.entry(key)
     const { dir, files } = this.latestRun(key)
     const sources = await Promise.all(
@@ -1552,8 +1594,20 @@ export class StudioProjectsService {
     const target = await this.workspaceTarget(key)
     if (target.state !== 'ready') return null
     const res = await fetch(`${target.url}/studio/${name}`, { method: 'POST', headers: { ...target.headers, 'content-type': 'application/json' }, body: JSON.stringify({ ...data, key: target.remoteKey }) })
+    // An older Studio in the workspace has no such call: the workspace doesn't have this, so the caller answers empty.
+    if (res.status === 404) return null
     if (!res.ok) throw new Error(`The workspace answered ${res.status}`)
     return (await res.json()) as T
+  }
+
+  /**
+   * For a project a contributed source holds, the answer to a Studio call from the Studio in its workspace, the only
+   * place the project is; `none` when the workspace is not up or has no such call. Null for a project on this
+   * computer, which the caller answers itself.
+   */
+  async inWorkspace<T>(key: string, name: string, data: Record<string, unknown>, none: T): Promise<{ answer: T } | null> {
+    if (!sourceOf(key)) return null
+    return { answer: (await this.workspaceStudio<T>(key, name, data)) ?? none }
   }
 
   async open(key: string): Promise<RunningProject> {
@@ -1705,6 +1759,31 @@ export class StudioProjectsService {
       const look = latestShot(dir, slug)
       return { slug, url, state, shot: look?.shot ?? null, shotAt: look?.shotAt ?? null }
     })
+  }
+
+  /**
+   * A project's frontends wherever it runs. A workspace's frontends are served on that machine, so an address that
+   * is only reachable there (loopback) and its screenshot paths are left out rather than pointing at this computer.
+   */
+  async appsOf(key: string): Promise<ProjectApp[]> {
+    const remote = await this.inWorkspace<ProjectApp[]>(key, 'projectApps', {}, [])
+    if (!remote) return this.projectApps(key)
+    return remote.answer.map((app) => ({ ...app, url: app.url && !isLoopback(app.url) ? app.url : null, shot: null, shotAt: null }))
+  }
+
+  /** The project's generated function meta (what Review ranks), from wherever the project is; null before a build. */
+  async projectMeta(key: string): Promise<Record<string, unknown> | null> {
+    const remote = await this.inWorkspace<Record<string, unknown> | null>(key, 'projectMeta', {}, null)
+    if (remote) return remote.answer
+    const raw = await readFile(join(await this.projectDir(key), '.pikku', 'function', 'pikku-functions-meta-verbose.gen.json'), 'utf8').catch(() => null)
+    return raw ? (JSON.parse(raw) as Record<string, unknown>) : null
+  }
+
+  /** The project's frontend source files (what Review scans for screens), from wherever the project is. */
+  async projectUiFiles(key: string): Promise<{ path: string; content: string }[]> {
+    const remote = await this.inWorkspace<{ path: string; content: string }[]>(key, 'projectUiFiles', {}, [])
+    if (remote) return remote.answer
+    return uiFiles(await this.projectDir(key))
   }
 
   async waitForApps(key: string, timeoutMs = 120_000): Promise<ProjectApp[]> {

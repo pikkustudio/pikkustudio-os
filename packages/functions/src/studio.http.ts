@@ -61,6 +61,8 @@ const studioRoutes = defineHTTPRoutes({
     saveProjectStageValue: { method: 'post', route: '/studio/saveProjectStageValue', func: ref('studio:saveProjectStageValue') },
     notifications: { method: 'post', route: '/studio/notifications', func: ref('studio:notifications') },
     projectDisk: { method: 'post', route: '/studio/projectDisk', func: ref('studio:projectDisk') },
+    projectMeta: { method: 'post', route: '/studio/projectMeta', func: ref('studio:projectMeta') },
+    projectUiFiles: { method: 'post', route: '/studio/projectUiFiles', func: ref('studio:projectUiFiles') },
     keepStatus: { method: 'post', route: '/studio/keepStatus', func: ref('studio:keepStatus') },
     keepChanges: { method: 'post', route: '/studio/keepChanges', func: ref('studio:keepChanges') },
     listWorktrees: { method: 'post', route: '/studio/listWorktrees', func: ref('studio:listWorktrees') },

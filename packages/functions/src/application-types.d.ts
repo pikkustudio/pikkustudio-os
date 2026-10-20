@@ -14,7 +14,7 @@ import type { Studio } from './lib/studio.js'
 import type { VaultAdmin } from '@pikkustudio/vault/admin'
 import type { InboxStore } from '@pikkustudio/addon-inbox/types'
 import type { CommentStore, VerdictStore } from '@pikkustudio/addon-review/types'
-import type { worktreeMetaSource } from './lib/worktree-meta-source.js'
+import type { studioMetaSource, studioUiSource } from './lib/review-sources.js'
 import type { LogSources, MetricSources, StageAnalytics, StageAudit, StageDirectory, StageReleases, StageSettingsStore, AccountSource, NotificationSource, TargetSources } from '@pikkustudio/addon-studio/sources'
 import type { AccountProvider, ProjectDecoratorFactory, PublishTarget, ScopedSource, StudioPresence } from '@pikkustudio/addon-studio/services'
 
@@ -35,7 +35,8 @@ export interface SingletonServices extends CoreSingletonServices<Config> {
   inboxStore: InboxStore
   inboxSecret?: string
   commentStore: CommentStore
-  metaSource: ReturnType<typeof worktreeMetaSource>
+  metaSource: ReturnType<typeof studioMetaSource>
+  uiSource: ReturnType<typeof studioUiSource>
   kysely: Kysely<DB>
   // Lazy Better Auth factory, injected by the generated pikkuServices wrapper.
   // MUST be the factory shape `() => Promise<AuthInstance>` to satisfy

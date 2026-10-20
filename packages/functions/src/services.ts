@@ -32,7 +32,7 @@ import { KyselyCommentStore } from '@pikkustudio/addon-review/comment-store'
 import { frameSecret } from './lib/addon-frame-token.js'
 import { KyselyInboxStore } from '@pikkustudio/addon-inbox/store'
 import { KyselyVerdictStore } from '@pikkustudio/addon-review/store'
-import { worktreeMetaSource } from './lib/worktree-meta-source.js'
+import { studioMetaSource, studioUiSource } from './lib/review-sources.js'
 
 process.env.PIKKU_DATA_DIR ??= join(studioHome(), 'data')
 process.env.BETTER_AUTH_SECRET ??= studioAuthSecret(studioHome())
@@ -111,7 +111,8 @@ export const createSingletonServices = pikkuServices(async (config, existingServ
     inboxSecret: existingServices?.inboxSecret ?? frameSecret(studio.home),
     inboxAccess: existingServices?.inboxAccess ?? studioInboxAccess(studio.projects),
     commentStore: existingServices?.commentStore ?? new KyselyCommentStore(kysely as any),
-    metaSource: existingServices?.metaSource ?? worktreeMetaSource((id) => studio.projects.projectDir(id)),
+    metaSource: existingServices?.metaSource ?? studioMetaSource(studio.projects),
+    uiSource: existingServices?.uiSource ?? studioUiSource(studio.projects),
     ...(credentialService ? { credentialService } : {}),
   }
 })

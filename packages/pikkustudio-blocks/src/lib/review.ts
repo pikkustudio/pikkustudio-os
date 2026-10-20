@@ -1,5 +1,4 @@
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
-import { sourceIdOf } from './project'
 
 export type ReviewSubject = 'code' | 'ui'
 export type VerdictKind = 'keep' | 'reject'
@@ -56,8 +55,8 @@ export type Fix = {
 
 export type Fixes = { fixes: Fix[]; total: number; stale: number }
 
-/** Online projects are known to the host by the account's id; local ones by their own key. */
-export const reviewProjectId = sourceIdOf
+/** Review knows a project by its full key, so a source's project is read from the workspace its key names. */
+export const reviewProjectId = (key: string) => key
 
 export const candidateKey = (c: Pick<Candidate, 'pikkuFuncId' | 'implementationHash'>) => `${c.pikkuFuncId}\u0000${c.implementationHash ?? ''}`
 
