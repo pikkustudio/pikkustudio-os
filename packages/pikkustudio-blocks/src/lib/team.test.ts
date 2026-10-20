@@ -1,5 +1,5 @@
 import { expect, test } from 'bun:test'
-import { teamVerdict } from './team.ts'
+import { teamVerdict, unreadableVerdict } from './team.ts'
 
 const teams = ['bamboorose', 'acme']
 
@@ -26,4 +26,10 @@ test('a URL without a team takes the fallback', () => {
 
 test('an unknown team waits while the list is still refreshing, so a team just joined is not shown as missing', () => {
   expect(teamVerdict({ team: 'just-made', teams, fallback: 'bamboorose', fetching: true })).toBe('pending')
+})
+
+test("an account that can't be read: a team URL says so, this computer and a URL without a team carry on", () => {
+  expect(unreadableVerdict('phase3-demo')).toBe('unreachable')
+  expect(unreadableVerdict('local')).toBe('ok')
+  expect(unreadableVerdict(undefined)).toBe('ok')
 })

@@ -8,10 +8,12 @@ import {
   targetsOf,
   unreadOf,
   viewerOf,
+  AccountUnreachableError,
   type AccountSource,
   type TargetOption,
   type TargetSources,
 } from '../../src/services/shell-source.js'
+import { ServiceUnavailableError } from '@pikku/core/errors'
 import type { StageContext, StageReleases } from '../../src/services/stage-source.js'
 
 const ctx = { project: { key: 'p', cloudProjectId: 'c1' } } as unknown as StageContext
@@ -32,8 +34,14 @@ describe('studio:account', () => {
     const v = await viewerOf({ viewer: async () => ({ user: null, teams: [], currentTeam: null, links: [] }) }, {})
     assert.deepStrictEqual(v.scopes, ['*'])
   })
-  test('a source that fails falls back to this computer', async () => {
-    assert.deepStrictEqual(await viewerOf({ viewer: async () => Promise.reject(new Error('down')) }, {}), LOCAL_VIEWER)
+  test('a source that fails falls back to this computer when no team is asked about, or this computer is', async () => {
+    const down: AccountSource = { viewer: async () => Promise.reject(new Error('down')) }
+    assert.deepStrictEqual(await viewerOf(down, {}), LOCAL_VIEWER)
+    assert.deepStrictEqual(await viewerOf(down, { team: 'local' }), LOCAL_VIEWER)
+  })
+  test("a source that fails for a team says the account can't be reached (503), not this computer", async () => {
+    const down: AccountSource = { viewer: async () => Promise.reject(new Error('down')) }
+    await assert.rejects(viewerOf(down, { team: 'phase3-demo' }), (e: unknown) => e instanceof AccountUnreachableError && e instanceof ServiceUnavailableError)
   })
 })
 

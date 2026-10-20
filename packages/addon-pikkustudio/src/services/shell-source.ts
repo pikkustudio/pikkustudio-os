@@ -1,3 +1,4 @@
+import { ServiceUnavailableError } from '@pikku/core/errors'
 import type { SourceKind, TargetRef } from './log-source.js'
 import type { StageContext, StageReleaseStatus, StageReleases } from './stage-source.js'
 
@@ -47,10 +48,23 @@ export interface NotificationSource {
 /** The answer when no account source is contributed: this computer, no user, no teams, everything visible. */
 export const LOCAL_VIEWER: Required<ShellViewer> = { user: null, teams: [], currentTeam: null, links: [], scopes: ['*'] }
 
+/** The account host could not answer for a team: Studio says so (a retry may help) instead of showing this computer. */
+export class AccountUnreachableError extends ServiceUnavailableError {
+  constructor() {
+    super("The account can't be reached right now")
+    this.name = 'AccountUnreachableError'
+  }
+}
+
 export const viewerOf = async (source: AccountSource | undefined, ctx: { team?: string; session?: unknown }): Promise<Required<ShellViewer>> => {
   if (!source) return LOCAL_VIEWER
-  // An account host that cannot be reached must not stop Studio answering its own part (onboarding reads it).
-  const viewer = await source.viewer(ctx).catch(() => LOCAL_VIEWER)
+  // An account host that cannot be reached must not stop Studio answering its own part (onboarding reads it without a
+  // team, and this computer needs no account). A team's read fails instead: its pages can't be shown as this computer.
+  const forTeam = !!ctx.team && ctx.team !== 'local'
+  const viewer = await source.viewer(ctx).catch((e) => {
+    if (forTeam) throw new AccountUnreachableError()
+    return LOCAL_VIEWER
+  })
   return { ...viewer, scopes: viewer.scopes ?? LOCAL_VIEWER.scopes }
 }
 

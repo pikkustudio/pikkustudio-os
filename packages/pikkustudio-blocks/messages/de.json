@@ -4993,5 +4993,9 @@
   "project_target__view_only": "nur ansehen",
   "shell__scope_personal_note": "Für dich online gespeichert",
   "shell__scope_team": "Dein Team",
-  "shell__scope_team_note": "Für dein Team online gespeichert"
+  "shell__scope_team_note": "Für dein Team online gespeichert",
+  "account_unreachable__label": "Konto nicht erreichbar",
+  "account_unreachable__title": "Dein Konto ist nicht erreichbar",
+  "account_unreachable__text": "Die Arbeit dieses Teams liegt online, und dein Konto ist gerade nicht erreichbar. Alles auf diesem Computer funktioniert weiter.",
+  "account_unreachable__retry": "Noch einmal versuchen"
 }

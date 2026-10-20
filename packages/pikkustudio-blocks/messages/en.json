@@ -5199,5 +5199,9 @@
   "project_target__view_only": "view only",
   "shell__scope_personal_note": "Kept online for you",
   "shell__scope_team": "Your team",
-  "shell__scope_team_note": "Kept online for your team"
+  "shell__scope_team_note": "Kept online for your team",
+  "account_unreachable__label": "Account unreachable",
+  "account_unreachable__title": "Couldn't reach your account",
+  "account_unreachable__text": "This team's work lives online, and your account can't be reached right now. Everything on this computer keeps working.",
+  "account_unreachable__retry": "Try again"
 }
