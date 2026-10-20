@@ -20,7 +20,7 @@ import { overlayOf } from '../lib/project-overlay'
 const looks = ['bakery', 'kiln', 'garden', 'dog'] as const
 
 const workspacesOf = (p: ListedProject) =>
-  p.workspaces ?? (p.missing ? undefined : { local: p.location === 'cloud' ? 0 : 1, cloud: p.location === 'local' ? 0 : 1 })
+  p.workspaces ?? (p.missing ? undefined : { local: p.location === 'online' ? 0 : 1, online: p.location === 'local' ? 0 : 1 })
 
 export const toCard = (p: ListedProject): Project => ({
   id: p.key,
@@ -32,7 +32,7 @@ export const toCard = (p: ListedProject): Project => ({
   live: p.live,
   attention: p.attention,
   workingNow: p.workingNow,
-  state: (p.missing || p.location === 'cloud' ? 'sketch' : p.busy ? 'progress' : p.open ? 'running' : 'paused') satisfies ProjectState,
+  state: (p.missing || p.location === 'online' ? 'sketch' : p.busy ? 'progress' : p.open ? 'running' : 'paused') satisfies ProjectState,
 })
 
 // Latest visit first; anything that isn't a time sorts as never visited.

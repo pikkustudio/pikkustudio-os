@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { pikkuSessionlessFunc } from '#pikku/addon/function'
 import { toWebRequest } from '@pikku/core/http'
 import { apiPrefixOf, withApiPrefix } from '../lib/api-prefix.js'
+import { isOnlineKey } from '../services/projects.js'
 import { getArtifact, listArtifacts } from '../services/artifacts.js'
 
 const STUDIO_HEADER = 'x-pikku-studio'
@@ -17,12 +18,12 @@ export const projectProxy = pikkuSessionlessFunc({
     const incoming = toWebRequest(http!.request!, `http://127.0.0.1:${live?.port ?? 0}`)
     const url = new URL(incoming.url)
     url.pathname = url.pathname.slice(`/p/${key}`.length) || '/'
-    if (key.startsWith('cloud:')) {
+    if (isOnlineKey(key)) {
       const target = await studioProjects.workspaceTarget(key)
       if (target.state !== 'ready') {
         return target.state === 'starting'
           ? Response.json({ state: 'starting' }, { status: 503, headers: { 'retry-after': '3' } })
-          : Response.json({ state: 'off', error: 'The cloud workspace is not running' }, { status: 409 })
+          : Response.json({ state: 'off', error: 'The online workspace is not running' }, { status: 409 })
       }
       const remote = new URL(`${target.url}/p/${target.remoteKey}${url.pathname === '/' ? '' : url.pathname}`)
       remote.search = url.search

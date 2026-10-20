@@ -14,7 +14,7 @@ export const ListProjectsOutput = z.object({
         owner: z.string(),
         slug: z.string(),
         name: z.string(),
-        location: z.enum(['local', 'cloud', 'both']),
+        location: z.enum(['local', 'online', 'both']),
         path: z.string().nullable(),
         cloudProjectId: z.string().nullable(),
         gitRepoUrl: z.string().nullable(),

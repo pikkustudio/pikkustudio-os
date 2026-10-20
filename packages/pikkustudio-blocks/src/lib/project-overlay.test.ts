@@ -3,7 +3,7 @@ import { overlayOf } from './project-overlay'
 import type { ListedProject } from '../blocks/TeamProjects'
 
 const listed = (overview: Record<string, unknown>) =>
-  ({ key: 'cloud:1', slug: 'p', name: 'p', location: 'cloud', open: false, busy: false, overview }) as unknown as ListedProject
+  ({ key: 'online:1', slug: 'p', name: 'p', location: 'online', open: false, busy: false, overview }) as unknown as ListedProject
 
 describe('overlayOf', () => {
   test('a visit time revived as a Date by the fetch client comes out as an ISO string', () => {
@@ -23,9 +23,9 @@ describe('the Projects screen with devbox team phase3-demo', () => {
   // fetch client turns the ISO visit time into a Date, which broke byVisit's localeCompare.
   const wire = {
     projects: [
-      { key: 'cloud:b82e1670', slug: 'phase3-demo-2', name: 'phase3-demo-2', location: 'cloud', open: false, busy: false, overview: { state: 'progress', problem: null, livePlaces: null, attention: 0, updatedAt: '2026-10-20T13:26:34.004Z', visits: 0, image: null, repoUrl: null, favourite: false, visitedAt: null } },
-      { key: 'cloud:3f20ec1b', slug: 'phase3-demo-3', name: 'phase3-demo-3', location: 'cloud', open: false, busy: false, overview: { state: 'progress', problem: null, livePlaces: null, attention: 0, updatedAt: '2026-10-20T13:30:00.000Z', visits: 0, image: null, repoUrl: null, favourite: false, visitedAt: '2026-10-20T13:38:50.169Z' } },
-      { key: 'cloud:cdacef7a', slug: 'phase3-demo', name: 'phase3-demo', location: 'cloud', open: false, busy: false, overview: { state: 'progress', problem: null, livePlaces: null, attention: 0, updatedAt: '2026-10-20T13:10:00.000Z', visits: 0, image: null, repoUrl: null, favourite: false, visitedAt: null } },
+      { key: 'online:b82e1670', slug: 'phase3-demo-2', name: 'phase3-demo-2', location: 'online', open: false, busy: false, overview: { state: 'progress', problem: null, livePlaces: null, attention: 0, updatedAt: '2026-10-20T13:26:34.004Z', visits: 0, image: null, repoUrl: null, favourite: false, visitedAt: null } },
+      { key: 'online:3f20ec1b', slug: 'phase3-demo-3', name: 'phase3-demo-3', location: 'online', open: false, busy: false, overview: { state: 'progress', problem: null, livePlaces: null, attention: 0, updatedAt: '2026-10-20T13:30:00.000Z', visits: 0, image: null, repoUrl: null, favourite: false, visitedAt: '2026-10-20T13:38:50.169Z' } },
+      { key: 'online:cdacef7a', slug: 'phase3-demo', name: 'phase3-demo', location: 'online', open: false, busy: false, overview: { state: 'progress', problem: null, livePlaces: null, attention: 0, updatedAt: '2026-10-20T13:10:00.000Z', visits: 0, image: null, repoUrl: null, favourite: false, visitedAt: null } },
     ],
   }
 

@@ -21,7 +21,7 @@ export type Project = {
   note?: I18nString
   when?: string
   visitors?: number
-  workspaces?: { local: number; cloud: number }
+  workspaces?: { local: number; online: number }
   live?: { places: number } | null
   attention?: number
   workingNow?: string[]

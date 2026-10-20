@@ -6,10 +6,10 @@ import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, test } from 'node:test'
-import { StudioProjectsService, cloneProblem, linkedRepos, repoName, type CloudProject, type AccountProvider } from '../../src/services/projects.js'
+import { StudioProjectsService, cloneProblem, linkedRepos, repoName, type OnlineProject, type AccountProvider } from '../../src/services/projects.js'
 import { symlink } from 'node:fs/promises'
 
-const fakeAccount = (projects: CloudProject[]): AccountProvider => ({
+const fakeAccount = (projects: OnlineProject[]): AccountProvider => ({
   account: async () => ({ signedIn: projects.length > 0, apiUrl: 'http://cloud', consoleUrl: 'http://cloud' }),
   projects: async () => projects,
   startSignIn: async () => ({ code: 'ABCD', url: 'http://cloud/cli-auth', expiresAt: new Date().toISOString() }),
@@ -48,7 +48,7 @@ const repo = async (base: string, name: string, remote?: string) => {
   return path
 }
 
-const setup = async (cloud: CloudProject[] = []) => {
+const setup = async (cloud: OnlineProject[] = []) => {
   const base = await mkdtemp(join(tmpdir(), 'pikku-studio-projects-'))
   const service = new StudioProjectsService({
     account: fakeAccount(cloud),
@@ -274,8 +274,8 @@ describe('StudioProjectsService', () => {
   })
 
   test('lists local, cloud and both', async () => {
-    const shop: CloudProject = { projectId: 'p-shop', name: 'Shop', slug: 'shop', productionBranch: 'main', gitRepoUrl: 'https://github.com/acme/shop.git' }
-    const blog: CloudProject = { projectId: 'p-blog', name: 'Blog', slug: 'blog', productionBranch: 'main', gitRepoUrl: 'https://github.com/acme/blog' }
+    const shop: OnlineProject = { projectId: 'p-shop', name: 'Shop', slug: 'shop', productionBranch: 'main', gitRepoUrl: 'https://github.com/acme/shop.git' }
+    const blog: OnlineProject = { projectId: 'p-blog', name: 'Blog', slug: 'blog', productionBranch: 'main', gitRepoUrl: 'https://github.com/acme/blog' }
     const { base, service } = await setup([shop, blog])
     await service.add(await repo(base, 'notes'))
     await service.add(await repo(base, 'shop', 'git@github.com:acme/shop.git'))
@@ -284,7 +284,7 @@ describe('StudioProjectsService', () => {
     assert.equal(by.notes.location, 'local')
     assert.equal(by.Shop.location, 'both')
     assert.equal(by.Shop.cloudProjectId, 'p-shop')
-    assert.equal(by.Blog.location, 'cloud')
+    assert.equal(by.Blog.location, 'online')
     assert.equal(by.Blog.path, null)
     assert.equal(projects.length, 3)
   })

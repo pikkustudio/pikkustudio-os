@@ -8,12 +8,12 @@ export type ListedProject = {
   slug: string
   owner?: string
   name: string
-  location: 'local' | 'cloud' | 'both'
+  location: 'local' | 'online' | 'both'
   cloudProjectId: string | null
   open: boolean
   busy?: boolean
   missing: boolean
-  workspaces?: { local: number; cloud: number }
+  workspaces?: { local: number; online: number }
   live?: { places: number } | null
   attention?: number
   workingNow?: string[]

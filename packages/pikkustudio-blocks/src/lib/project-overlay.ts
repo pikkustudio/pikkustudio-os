@@ -39,7 +39,7 @@ export function overlayOf(p: ListedProject): ProjectOverlay {
   if (!o) return {}
   const seen = { visitedAt: isoOf(o.visitedAt), favourite: o.favourite }
   if (!o.state) return seen
-  const keepLocal = p.location !== 'cloud' && (p.open || p.busy)
+  const keepLocal = p.location !== 'online' && (p.open || p.busy)
   return {
     ...(keepLocal ? {} : { state: o.state }),
     note: o.problem ? PROBLEM[o.problem]() : undefined,

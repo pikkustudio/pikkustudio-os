@@ -10,11 +10,21 @@ export const useProjectSlug = () => {
   return project ?? key ?? ''
 }
 
-export const isCloudKeyOf = (p: { key: string; cloudProjectId?: string | null }, key: string) =>
-  p.key === key || (!!p.cloudProjectId && (key === `cloud:${p.cloudProjectId}` || key.startsWith(`cloud:${p.cloudProjectId}@`)))
+// A project the account host holds online is keyed `online:<id>`, or `online:<id>@<workspace>` for one of its online
+// workspaces; the id is the account's own (`cloudProjectId`). A project on this computer keeps its own key.
+const ONLINE_KEY = 'online:'
+
+export const isOnlineKey = (key: string) => key.startsWith(ONLINE_KEY)
+
+/** The account's id for an online key; a key on this computer is its own id. */
+export const hostProjectId = (key: string) => (isOnlineKey(key) ? key.slice(ONLINE_KEY.length).split('@')[0]! : key)
+
+/** Whether a key, on this computer or online (any of its workspaces), names this project. */
+export const isKeyOf = (p: { key: string; cloudProjectId?: string | null }, key: string) =>
+  p.key === key || (!!p.cloudProjectId && (key === `${ONLINE_KEY}${p.cloudProjectId}` || key.startsWith(`${ONLINE_KEY}${p.cloudProjectId}@`)))
 
 export const onlineKey = (p: { key: string; cloudProjectId?: string | null }, target: TargetRef | undefined) =>
-  target?.kind === 'workspace' && target.name !== LOCAL_WORKSPACE && p.cloudProjectId && !p.key.startsWith('cloud:') ? `cloud:${p.cloudProjectId}@${target.name}` : p.key
+  target?.kind === 'workspace' && target.name !== LOCAL_WORKSPACE && p.cloudProjectId ? `${ONLINE_KEY}${p.cloudProjectId}@${target.name}` : p.key
 
 export const useProjectKey = () => {
   const slug = useProjectSlug()

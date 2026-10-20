@@ -7,7 +7,7 @@ import { asI18n, type I18nString } from '@pikku/react'
 import type { ChatItem } from './chat'
 import { useGuideAct, useProjectChecklist, type ActivityKind, type Checklist, type StepAction } from './project-flow'
 import type { ChecklistStepId } from './interview'
-import { noCreditOf } from './no-credit'
+import { errorFixOf } from './error-fix'
 
 export const OFFER_MARKER = '[[offer:changeset]]'
 
@@ -77,7 +77,8 @@ export const modeForPath = (path: string): WorkMode | null => SCREEN_SPECIALIST.
 
 const TIMED_OUT = /timed out|took too long/i
 /** The builder had no AI to build with: not signed in to Cloud and no key of the user's own. */
-export const NO_AI = /Sign in to Pikku Studio Cloud to build with|Choose your AI before building/i
+// The builder has no AI to build with. An account host that refuses its AI to someone signed out says so with these words too.
+export const NO_AI = /Choose your AI before building/i
 
 export type BuilderItem = { kind: string; text?: string; at: number; id?: string; name?: string; summary?: string; args?: string; output?: string; status?: string; screen?: string; title?: string }
 
@@ -139,7 +140,7 @@ const toChat = (all: BuilderItem[], prefix: string, agent?: I18nString): Timed[]
       const text = stripMarkers(item.text)
       return text ? [{ at: item.at, item: { id, kind: 'pikku', text, ...(agent ? { agent } : {}) } }] : []
     }
-    if (item.kind === 'error') return [{ at: item.at, item: { id, kind: 'error', detail: item.text, retry: TIMED_OUT.test(item.text), noAi: NO_AI.test(item.text), noCredit: noCreditOf(item.text) } }]
+    if (item.kind === 'error') return [{ at: item.at, item: { id, kind: 'error', detail: item.text, retry: TIMED_OUT.test(item.text), noAi: NO_AI.test(item.text), fix: errorFixOf(item.text) } }]
     const merged = item.kind === 'loop' ? MERGED.exec(item.text) : null
     if (merged) return [{ at: item.at, item: { id, kind: 'milestone', title: merged[1]!.trim() } }]
     return []
@@ -205,7 +206,7 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
 
   const fail = useCallback((error: unknown) => {
     const detail = (error as Error)?.message ?? ''
-    setLocal((x) => [...x, { at: Date.now(), item: { id: `l${Math.random()}`, kind: 'error', detail, retry: TIMED_OUT.test(detail), noAi: NO_AI.test(detail), noCredit: noCreditOf(detail) } }])
+    setLocal((x) => [...x, { at: Date.now(), item: { id: `l${Math.random()}`, kind: 'error', detail, retry: TIMED_OUT.test(detail), noAi: NO_AI.test(detail), fix: errorFixOf(detail) } }])
   }, [])
 
   const send = useCallback(

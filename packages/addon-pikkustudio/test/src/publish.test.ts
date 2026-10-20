@@ -4,7 +4,7 @@ import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, test } from 'node:test'
-import { StudioProjectsService, type AccountProvider, type CloudProject } from '../../src/services/projects.js'
+import { StudioProjectsService, type AccountProvider, type OnlineProject } from '../../src/services/projects.js'
 
 const target: PublishTarget = {
   id: 'cloud',
@@ -13,9 +13,9 @@ const target: PublishTarget = {
 }
 import { publishPrompt, StudioPublisher, type PublishTarget, type Runner } from '../../src/services/publish.js'
 
-const shop: CloudProject = { projectId: 'p-shop', name: 'Shop', slug: 'shop', productionBranch: 'main', gitRepoUrl: 'https://github.com/acme/shop.git' }
+const shop: OnlineProject = { projectId: 'p-shop', name: 'Shop', slug: 'shop', productionBranch: 'main', gitRepoUrl: 'https://github.com/acme/shop.git' }
 
-const account = (signedIn: boolean, cloud: CloudProject[]): AccountProvider => ({
+const account = (signedIn: boolean, cloud: OnlineProject[]): AccountProvider => ({
   account: async () => ({ signedIn, apiUrl: 'http://cloud', consoleUrl: 'http://cloud/console' }),
   projects: async () => cloud,
   startSignIn: async () => ({ code: 'ABCD', url: 'http://cloud', expiresAt: new Date().toISOString() }),
@@ -40,7 +40,7 @@ const account = (signedIn: boolean, cloud: CloudProject[]): AccountProvider => (
   signOut: async () => {},
 })
 
-const setup = async (signedIn: boolean, cloud: CloudProject[], remote?: string) => {
+const setup = async (signedIn: boolean, cloud: OnlineProject[], remote?: string) => {
   const base = await mkdtemp(join(tmpdir(), 'pikku-studio-publish-'))
   const path = join(base, 'shop')
   await mkdir(path)

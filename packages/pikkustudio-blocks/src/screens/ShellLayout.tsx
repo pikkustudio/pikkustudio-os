@@ -44,7 +44,7 @@ import { ProjectRunGate } from '../blocks/ProjectRunGate'
 import { Toaster } from '../blocks/Toaster'
 import { ComposerTools } from '../blocks/ComposerTools'
 import { NoAiCard } from '../blocks/NoAiCard'
-import { NoCreditNote } from '../blocks/NoCreditNote'
+import { ErrorFixNote } from '../blocks/ErrorFixNote'
 import { BuilderActivity } from '../blocks/BuilderActivity'
 import { ChecksCard, MilestoneCard, OpenScreenCard } from '../blocks/BuilderCards'
 import { useCanEdit, useProjectTarget } from '../lib/project-target'
@@ -610,7 +610,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
                             </Button>
                           ) : null}
                         </div>
-                        {it.noCredit ? <NoCreditNote noCredit={it.noCredit} /> : null}
+                        {it.fix ? <ErrorFixNote fix={it.fix} /> : null}
                         {it.detail ? (
                           <details className="text-ink-2">
                             <summary className="cursor-pointer text-[13px]">{m.shell_layout__error_details()}</summary>

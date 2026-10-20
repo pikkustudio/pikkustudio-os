@@ -1,6 +1,7 @@
 import type { UseMutationResult, UseQueryResult } from '@tanstack/react-query'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import type { ChecklistStepId } from './interview'
+import { isOnlineKey } from './project'
 
 export type StepState = 'not-started' | 'working' | 'needs-you' | 'done' | 'skipped'
 export type StepAction = 'skip' | 'undo' | 'start' | 'retry' | 'fast-track' | 'reopen'
@@ -34,7 +35,7 @@ export type Checklist = {
 export const STEP_ORDER: ChecklistStepId[] = ['questions', 'explore', 'frontend', 'backend', 'tests', 'publish']
 
 export const useProjectChecklist = (key: string) =>
-  usePikkuQuery('studio:projectChecklist' as never, { key } as never, { enabled: !!key && !key.startsWith('cloud:'), refetchInterval: 3000 } as never) as unknown as UseQueryResult<Checklist>
+  usePikkuQuery('studio:projectChecklist' as never, { key } as never, { enabled: !!key && !isOnlineKey(key), refetchInterval: 3000 } as never) as unknown as UseQueryResult<Checklist>
 
 export const useGuideAct = () =>
   usePikkuMutation('studio:projectGuideAct' as never) as unknown as UseMutationResult<Checklist, Error, { key: string; step: ChecklistStepId; action: StepAction; language?: string }>

@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { pikkuFunc } from '#pikku/addon/function'
 import { stageContext } from '../lib/target-sources.js'
+import { isOnlineKey } from '../services/projects.js'
 import { targetsOf } from '../services/shell-source.js'
 
 export const TargetsInput = z.object({ key: z.string() })
@@ -27,8 +28,8 @@ export const targets = pikkuFunc({
   input: TargetsInput,
   output: TargetsOutput,
   func: async ({ targetSources, studioProjects }, { key }, { session }) => {
-    const project = key.startsWith('cloud:') ? null : (await studioProjects.list().catch(() => [])).find((p) => p.key === key)
-    const onComputer = !!project && project.location !== 'cloud'
+    const project = isOnlineKey(key) ? null : (await studioProjects.list().catch(() => [])).find((p) => p.key === key)
+    const onComputer = !!project && project.location !== 'online'
     const ctx = targetSources ? await stageContext(studioProjects, key, session) : null
     return { targets: await targetsOf(targetSources, onComputer, ctx) }
   },

@@ -19,7 +19,8 @@ import { previewViteConfig } from './vite-preview.js'
 
 const execFileAsync = promisify(execFile)
 
-export type ProjectLocation = 'local' | 'cloud' | 'both'
+/** Where a project is: on this computer, held by the account host (online, from the contributed AccountProvider), or both. */
+export type ProjectLocation = 'local' | 'online' | 'both'
 
 const RESERVED_SLUGS = new Set(['projects', 'secrets', 'new-project', 'sign-in', 'your-name', 'choose-ai'])
 const projectSlug = (text: string) =>
@@ -134,7 +135,7 @@ export const studioRuntimeDir = (projectDir: string): string => {
   return resolve(projectDir, config.rootDir ?? '.', config.runtimeDir ?? '.pikku-runtime', 'studio')
 }
 
-export interface CloudProject {
+export interface OnlineProject {
   projectId: string
   name: string
   gitRepoUrl: string | null
@@ -152,8 +153,8 @@ export type SignInStatus = 'pending' | 'confirmed' | 'expired' | 'rejected'
 
 export interface AccountProvider {
   account(): Promise<StudioAccount>
-  /** The projects in Pikku Studio Cloud: one team's, by its slug, or every team's. */
-  projects(team?: string): Promise<CloudProject[]>
+  /** The projects the account holds online: one team's, by its slug, or every team's. */
+  projects(team?: string): Promise<OnlineProject[]>
   startSignIn(): Promise<{ code: string; url: string; expiresAt: string }>
   pollSignIn(code: string): Promise<SignInStatus>
   signOut(): Promise<void>
@@ -161,11 +162,11 @@ export interface AccountProvider {
   /** The model account AI runs, through `modelAccess`, when PIKKU_STUDIO_MODEL does not name one. */
   model?: string
   link(projectId: string): Promise<AccountLink | null>
-  locate(path: string, cloud: CloudProject[]): Promise<{ projectId: string; project: CloudProject | null } | null>
+  locate(path: string, online: OnlineProject[]): Promise<{ projectId: string; project: OnlineProject | null } | null>
   adopt(projectId: string, path: string): Promise<void>
-  /** Opens a project's cloud workspace: creates it when there is none and wakes it when it sleeps. */
+  /** Opens a project's online workspace: creates it when there is none and wakes it when it sleeps. */
   workspaceLink?(projectId: string, workspace?: string): Promise<WorkspaceLink>
-  /** Where a project's cloud workspace stands, without creating or waking it. */
+  /** Where a project's online workspace stands, without creating or waking it. */
   workspaceStatus?(projectId: string, workspace?: string): Promise<WorkspaceStatus>
   gitCredential?(projectId: string): Promise<{ username: string; password: string }>
 }
@@ -192,11 +193,18 @@ export interface WorkspaceTarget {
 
 const WORKSPACE_TARGET_TTL = 30_000
 
-/** A cloud project key, `cloud:<projectId>`, or `cloud:<projectId>@<workspace>` for one of its online workspaces by slug. */
-export const cloudKeyParts = (key: string) => {
-  const [projectId, workspace] = key.slice('cloud:'.length).split('@')
+/**
+ * A project the account host holds that this computer does not: `online:<projectId>`, or `online:<projectId>@<workspace>`
+ * for one of its online workspaces by slug. The ids are the account's own; core only reads the shape.
+ */
+export const ONLINE_KEY = 'online:'
+export const isOnlineKey = (key: string) => key.startsWith(ONLINE_KEY)
+export const onlineKeyParts = (key: string) => {
+  const [projectId, workspace] = key.slice(ONLINE_KEY.length).split('@')
   return { projectId, workspace: workspace || undefined }
 }
+/** The account's id for an online key, or null for a project on this computer. */
+export const onlineIdOf = (key: string) => (isOnlineKey(key) ? onlineKeyParts(key).projectId || null : null)
 
 export interface AccountLink {
   apiUrl: string
@@ -253,7 +261,7 @@ export const fileProjectStore = (home: string): ProjectStore => {
   }
 }
 
-// The team of the work that is only on this computer, and the only team without Pikku Studio Cloud.
+// The team of the work that is only on this computer, and the only team the account host does not hold.
 export const LOCAL_TEAM = 'local'
 
 const DESIGN_ENV_KEYS = ['PATH', 'HOME', 'USER', 'LOGNAME', 'SHELL', 'TMPDIR', 'TMP', 'TEMP', 'LANG', 'LC_ALL', 'LC_CTYPE', 'TZ', 'TERM', 'NODE_ENV', 'NODE_OPTIONS', 'SystemRoot']
@@ -766,8 +774,8 @@ export class StudioProjectsService {
   }
 
   /**
-   * Every project, or one team's: a Pikku Studio Cloud team's projects (the copy on this computer standing in
-   * for its cloud entry), or for the `local` team the projects that are only on this computer.
+   * Every project, or one team's: an account team's online projects (the copy on this computer standing in
+   * for its online entry), or for the `local` team the projects that are only on this computer.
    */
   async list(team?: string): Promise<StudioProject[]> {
     const entries = await this.registry()
@@ -779,13 +787,13 @@ export class StudioProjectsService {
       const pinned = entries.filter((e) => resolve(e.path) === current)
       entries.splice(0, entries.length, ...pinned)
     }
-    const cloudTeam = team && team !== LOCAL_TEAM ? team : undefined
-    const cloud = this.options.pinned ? [] : await this.account.projects(cloudTeam).catch(() => [] as CloudProject[])
+    const onlineTeam = team && team !== LOCAL_TEAM ? team : undefined
+    const online = this.options.pinned ? [] : await this.account.projects(onlineTeam).catch(() => [] as OnlineProject[])
     const claimed = new Set<string>()
     const local = await Promise.all(
       entries.map(async (entry): Promise<StudioProject> => {
         const missing = !existsSync(entry.path)
-        const found = missing ? null : await this.account.locate(entry.path, cloud).catch(() => null)
+        const found = missing ? null : await this.account.locate(entry.path, online).catch(() => null)
         const linkedId = found?.projectId ?? null
         const match = found?.project ?? null
         if (match) claimed.add(match.projectId)
@@ -805,15 +813,15 @@ export class StudioProjectsService {
         }
       })
     )
-    const remote = cloud
+    const remote = online
       .filter((p) => !claimed.has(p.projectId))
       .map(
         (p): StudioProject => ({
-          key: `cloud:${p.projectId}`,
+          key: `${ONLINE_KEY}${p.projectId}`,
           owner: '',
           slug: '',
           name: p.name,
-          location: 'cloud',
+          location: 'online',
           path: null,
           cloudProjectId: p.projectId,
           gitRepoUrl: p.gitRepoUrl,
@@ -825,7 +833,7 @@ export class StudioProjectsService {
       )
     const owner = await this.owner()
     const taken = new Set(local.map((p) => `${p.owner}/${p.slug}`))
-    const here = team === undefined ? local : local.filter((p) => (cloudTeam ? p.location === 'both' : !p.cloudProjectId))
+    const here = team === undefined ? local : local.filter((p) => (onlineTeam ? p.location === 'both' : !p.cloudProjectId))
     return [
       ...here,
       ...(team === LOCAL_TEAM ? [] : remote).map((project) => {
@@ -1448,17 +1456,17 @@ export class StudioProjectsService {
   }
 
   async workspaceLink(key: string): Promise<WorkspaceLink> {
-    if (!key.startsWith('cloud:')) throw new Error('Only a cloud project has a workspace link')
-    if (!this.account.workspaceLink) throw new Error('Cloud workspaces are not part of this edition')
-    const { projectId, workspace } = cloudKeyParts(key)
+    if (!isOnlineKey(key)) throw new Error('Only an online project has a workspace link')
+    if (!this.account.workspaceLink) throw new Error('Online workspaces are not part of this edition')
+    const { projectId, workspace } = onlineKeyParts(key)
     return this.account.workspaceLink(projectId, workspace)
   }
 
-  /** Where a cloud project's workspace stands and how far its start has got, without starting it. */
+  /** Where an online project's workspace stands and how far its start has got, without starting it. */
   async workspaceStatus(key: string): Promise<WorkspaceProgress> {
-    if (!key.startsWith('cloud:')) throw new Error('Only a cloud project has a workspace')
+    if (!isOnlineKey(key)) throw new Error('Only an online project has a workspace')
     if (!this.account.workspaceStatus) return { state: 'off', phase: null, error: null }
-    const { projectId, workspace } = cloudKeyParts(key)
+    const { projectId, workspace } = onlineKeyParts(key)
     const link = await this.account.workspaceStatus(projectId, workspace)
     if (link.state === 'off') return { state: 'off', phase: null, error: null }
     if (link.state === 'failed') return { state: 'failed', phase: link.phase ?? null, error: link.error ?? null }
@@ -1469,11 +1477,11 @@ export class StudioProjectsService {
 
   private workspaceTargets = new Map<string, { at: number; target: WorkspaceTarget }>()
 
-  /** Where to send a cloud project's requests. Passing a request through never starts a workspace; that is for opening it. */
+  /** Where to send an online project's requests. Passing a request through never starts a workspace; that is for opening it. */
   async workspaceTarget(key: string): Promise<WorkspaceTarget | { state: 'starting' | 'off' }> {
     const cached = this.workspaceTargets.get(key)
     if (cached && Date.now() - cached.at < WORKSPACE_TARGET_TTL) return cached.target
-    const { projectId, workspace } = cloudKeyParts(key)
+    const { projectId, workspace } = onlineKeyParts(key)
     const link = this.account.workspaceStatus ? await this.account.workspaceStatus(projectId, workspace) : await this.workspaceLink(key)
     if (link.state === 'off' || link.state === 'failed') return { state: 'off' }
     if (link.state !== 'ready' || !link.url) return { state: 'starting' }

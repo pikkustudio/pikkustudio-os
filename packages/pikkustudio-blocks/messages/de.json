@@ -1955,7 +1955,7 @@
       }
     }
   ],
-  "project_facts__cloud": "{count} in der Cloud",
+  "project_facts__online": "{count} online",
   "project_facts__live": [
     {
       "declarations": [
@@ -1991,179 +1991,13 @@
   ],
   "project_facts__working_one": "{name} arbeitet daran",
   "project_facts__working_two": "{first} und {second} arbeiten daran",
-  "project_home__cloud_asleep_action": "Aufwecken und weitermachen",
-  "project_home__cloud_asleep_hint": "Braucht Internet.",
-  "project_home__cloud_asleep_title": "Dein Cloud-Arbeitsbereich schläft.",
-  "project_home__cloud_asleep_why": "Er ist eingeschlafen, als du aufgehört hast, damit er nichts kostet, solange du weg bist. Das Aufwecken dauert etwa eine halbe Minute, und alles ist so, wie du es verlassen hast.",
-  "project_home__cloud_awake_action": "Weitermachen",
-  "project_home__cloud_awake_title": "Mach in der Cloud weiter.",
-  "project_home__cloud_awake_why": "Dein Arbeitsbereich ist wach und wartet. Dein Team sieht dort, was du tust.",
-  "project_home__cloud_theirs_action": "{name} beitreten",
-  "project_home__cloud_theirs_hint": "Ihr seht beide dasselbe.",
-  "project_home__cloud_theirs_title": "{name} arbeitet gerade in der Cloud.",
-  "project_home__cloud_theirs_why": "Du kannst {name} beitreten und zuschauen, ohne etwas einzurichten.",
-  "project_home__cloud_theirs_why_change": "{name} ist dabei: {change}. Du kannst beitreten und zuschauen, ohne etwas einzurichten.",
-  "project_home__local_paused_action": "Weitermachen",
-  "project_home__local_paused_hint": "Öffnet sofort.",
-  "project_home__local_paused_title": "Mach dort weiter, wo du aufgehört hast.",
-  "project_home__local_paused_why": "Deine Kopie liegt auf diesem Computer, pausiert, genau so, wie du sie {when} verlassen hast.",
-  "project_home__local_working_action": "Zurück dazu",
-  "project_home__local_working_hint": "Nichts geht verloren, wenn du es schließt.",
-  "project_home__local_working_title": "Pikku arbeitet auf deinem Computer.",
-  "project_home__local_working_why": "Du kannst zuschauen oder jederzeit selbst eingreifen.",
-  "project_home__local_working_why_change": "Es ist dabei: {change}. Du kannst zuschauen oder jederzeit selbst eingreifen.",
-  "project_home__offline_action": "Erneut versuchen",
-  "project_home__offline_hint": "Alles, was schon auf diesem Computer ist, funktioniert weiter.",
-  "project_home__offline_title": "Du bist gerade offline.",
-  "project_home__offline_why": "Beim ersten Öffnen muss ein Projekt über das Internet kommen. Sobald du wieder online bist, mache ich es für dich bereit.",
-  "project_home__stage_change": "Kopie für „{name}“",
-  "project_home__stage_live": "Die Live-Seite",
-  "project_home__stage_live_inline": "die Live-Seite",
-  "project_home__stage_test": "Die Übungskopie",
-  "project_home__stage_test_inline": "die Übungskopie",
-  "project_home__start_action": "In der Cloud starten",
-  "project_home__start_hint": "Dauert etwa eine Minute.",
-  "project_home__start_title": "Starte in der Cloud.",
-  "project_home__start_why": "Das ist der einfachste Einstieg. Du musst nichts installieren, es ist in etwa einer Minute bereit, und dein Team kann es auch sehen. Später kannst du es auf deinen Computer holen.",
-  "project_landing__live_getting_ready": "Die Live-Seite wird vorbereitet",
-  "project_landing__live_needs_look": "Die Live-Seite braucht einen Blick",
-  "project_landing__live_running_well": "Die Live-Seite läuft gut",
-  "project_landing__nothing_online": "Noch ist nichts online",
-  "project_landing__offline": "Nicht mit dem Internet verbunden",
-  "project_landing__people_many_cloud": [
-    {
-      "declarations": [
-        "input count",
-        "local countPlural = count: plural"
-      ],
-      "selectors": [
-        "countPlural"
-      ],
-      "match": {
-        "countPlural=one": "{who} und {count} weitere sind auch in der Cloud",
-        "countPlural=other": "{who} und {count} weitere sind auch in der Cloud"
-      }
-    }
-  ],
-  "project_landing__people_many_project": [
-    {
-      "declarations": [
-        "input count",
-        "local countPlural = count: plural"
-      ],
-      "selectors": [
-        "countPlural"
-      ],
-      "match": {
-        "countPlural=one": "{who} und {count} weitere sind auch im Projekt",
-        "countPlural=other": "{who} und {count} weitere sind auch im Projekt"
-      }
-    }
-  ],
-  "project_landing__people_one_cloud": "{who} ist auch in der Cloud",
-  "project_landing__people_one_project": "{who} ist auch im Projekt",
-  "project_landing__things_need_look": [
-    {
-      "declarations": [
-        "input count",
-        "local countPlural = count: plural"
-      ],
-      "selectors": [
-        "countPlural"
-      ],
-      "match": {
-        "countPlural=one": "{count} Ding braucht einen Blick",
-        "countPlural=other": "{count} Dinge brauchen einen Blick"
-      }
-    }
-  ],
   "project_live__action": "Ansehen",
   "project_live__needs": "Die Live-Seite braucht einen Blick",
   "project_live__title": "Deine Seite ist online.",
   "project_live__well": "Die Live-Seite läuft gut",
   "project_live__why": "Sie ist online und Leute können sie besuchen. Schau nach, wie es ihr geht.",
-  "project_now__all_well": "Alles, was online ist, läuft gut.",
-  "project_now__asleep": "Schläft",
-  "project_now__checked": [
-    {
-      "declarations": [
-        "input count",
-        "local countPlural = count: plural"
-      ],
-      "selectors": [
-        "countPlural"
-      ],
-      "match": {
-        "countPlural=one": "{names} wurde {checked} geprüft.",
-        "countPlural=other": "{names} wurden {checked} geprüft."
-      }
-    }
-  ],
-  "project_now__else_well": "Alles andere läuft gut.",
-  "project_now__getting_ready": "Wird vorbereitet",
-  "project_now__in_cloud": "In der Cloud",
-  "project_now__last_online": "So sah es aus, als du zuletzt online warst.",
-  "project_now__live": "Online",
-  "project_now__need_look": [
-    {
-      "declarations": [
-        "input count",
-        "local countPlural = count: plural"
-      ],
-      "selectors": [
-        "countPlural"
-      ],
-      "match": {
-        "countPlural=one": "Eine Sache braucht in {stage} einen Blick",
-        "countPlural=other": "{count} Dinge brauchen in {stage} einen Blick"
-      }
-    }
-  ],
-  "project_now__nobody": "Im Moment arbeitet niemand daran.",
-  "project_now__not_online": "Nicht online",
-  "project_now__nothing_online": "Noch ist nichts online.",
-  "project_now__nothing_online_text": "Sobald du dieses Projekt ins Internet stellst, siehst du hier, wie es läuft.",
-  "project_now__on_computer": "Auf diesem Computer",
-  "project_now__pikku_working": "Pikku arbeitet",
-  "project_now__rest_quiet": "Der Rest ist ruhig.",
-  "project_now__resting": "Ruht",
-  "project_now__see_whats_wrong": "Ansehen, was nicht stimmt",
-  "project_now__stage_state": "{stage}: {state}",
-  "project_now__state_checked": "{state}, geprüft {checked}.",
-  "project_now__what_is_online": "Was online ist",
-  "project_now__working_now": "Arbeitet gerade",
-  "project_now__you": "Du",
   "project_row__last_worked_on": "Zuletzt bearbeitet {when}",
   "project_row__only_you_can_see": "Nur du kannst es sehen",
-  "project_ways__cloud_action": "In der Cloud öffnen",
-  "project_ways__cloud_asleep": "Schläft und ist in etwa einer halben Minute wieder wach.",
-  "project_ways__cloud_awake": "Wach, und dein Team kann es sehen.",
-  "project_ways__cloud_carry_on": "Dort weitermachen",
-  "project_ways__cloud_join": "Beitreten",
-  "project_ways__cloud_join_title": "{name} in der Cloud beitreten",
-  "project_ways__cloud_join_why": "Derselbe Arbeitsbereich, nichts einzurichten. Du siehst live, was die anderen sehen.",
-  "project_ways__cloud_mine_title": "Dein Cloud-Arbeitsbereich",
-  "project_ways__cloud_note": "Braucht Internet.",
-  "project_ways__cloud_title": "In der Cloud arbeiten",
-  "project_ways__cloud_wake": "Aufwecken",
-  "project_ways__cloud_creating": "Dein Studio wird in der Cloud erstellt…",
-  "project_ways__cloud_waking": "Dein Studio wird geweckt…",
-  "project_ways__cloud_opening": "Das Studio in der Cloud wird geöffnet…",
-  "project_ways__cloud_why": "Wir betreiben es für dich. Du musst nichts installieren, und dein Team kann es sehen.",
-  "project_ways__live_sub": "Öffne einen Arbeitsbereich, um daran zu arbeiten. Deine Live-Seite bleibt, wie sie ist, bis du veröffentlichst.",
-  "project_ways__live_title": "Möchtest du etwas ändern?",
-  "project_ways__local_action": "Auf meinem Computer arbeiten",
-  "project_ways__local_carry_on": "Hier weitermachen",
-  "project_ways__local_mine_title": "Deine Kopie auf diesem Computer",
-  "project_ways__local_mine_why": "Pausiert, so wie du es {when} verlassen hast. Deine Dateien sind hier; die KI braucht weiterhin Internet, außer du nutzt ein Modell auf diesem Computer.",
-  "project_ways__local_note": "Beim ersten Mal dauert es ein paar Minuten.",
-  "project_ways__local_offline": "Braucht beim ersten Mal Internet.",
-  "project_ways__local_title": "Auf diesem Computer arbeiten",
-  "project_ways__local_why": "Das Projekt wird hierher kopiert und deine Dateien bleiben bei dir. Die KI von Pikku braucht weiterhin Internet, außer du nutzt ein Modell auf diesem Computer.",
-  "project_ways__look_action": "Nur ansehen",
-  "project_ways__look_why": "Sieh, was online ist und wie es läuft, ohne etwas zu öffnen.",
-  "project_ways__sub": "Wähle eine Möglichkeit. Du kannst später wechseln, und nichts geht verloren.",
-  "project_ways__title": "Wo möchtest du arbeiten?",
   "projects_grid__all": "Alle",
   "projects_grid__cards": "Karten",
   "projects_grid__filter_all": "Alle",
@@ -2181,7 +2015,7 @@
   "projects_grid__try_a_different_word": "Versuche ein anderes Wort oder zeige wieder alles an.",
   "projects_screen__in_team": "In {team}",
   "projects_screen__lead_local": "Alles, was du machst, auf diesem Computer gespeichert. Öffne ein Projekt, um dort weiterzumachen, wo du aufgehört hast.",
-  "projects_screen__lead_team": "Alles, was {team} macht, auf deinem Computer oder in der Cloud. Öffne ein Projekt, um dort weiterzumachen, wo du aufgehört hast.",
+  "projects_screen__lead_team": "Alles, was {team} macht, auf deinem Computer oder online. Öffne ein Projekt, um dort weiterzumachen, wo du aufgehört hast.",
   "projects_screen__new_project": "Neues Projekt",
   "projects_screen__none_text": "Starte eines, dann erscheint es hier.",
   "projects_screen__none_title": "Du hast noch keine Projekte.",
@@ -2624,17 +2458,17 @@
   "shell_layout__error_details": "Details anzeigen",
   "shell_layout__to_latest": "Zur neuesten Nachricht",
   "no_ai_card__title": "Melde dich an, um loszulegen",
-  "no_ai_card__text": "Pikku braucht eine KI zum Bauen. Melde dich bei Pikku Studio Cloud an oder nutze einen eigenen KI-Schlüssel.",
+  "no_ai_card__text": "Pikku braucht eine KI zum Bauen. Melde dich an oder nutze einen eigenen KI-Schlüssel.",
   "no_ai_card__sign_in": "Anmelden",
   "no_ai_card__own_key": "Eigenen KI-Schlüssel nutzen",
   "no_ai_card__code_title": "Bestätige diesen Code, um dich anzumelden",
-  "no_ai_card__code_text": "Wir haben Pikku Studio Cloud in einem neuen Tab mit diesem Code geöffnet. Bestätige ihn dort, dann aktualisiert sich diese Karte von selbst.",
+  "no_ai_card__code_text": "Wir haben die Anmeldeseite in einem neuen Tab mit diesem Code geöffnet. Bestätige ihn dort, dann aktualisiert sich diese Karte von selbst.",
   "no_ai_card__waiting": "Warte auf deine Bestätigung",
   "no_ai_card__open_tab": "Anmelde-Tab erneut öffnen",
   "no_ai_card__cancel": "Abbrechen",
   "no_ai_card__expired": "Der Code ist abgelaufen, bevor er bestätigt wurde. Hol dir einen neuen, um es noch einmal zu versuchen.",
   "no_ai_card__rejected": "Die Anmeldung wurde abgelehnt. Hol dir einen neuen Code, um es noch einmal zu versuchen.",
-  "no_ai_card__unreachable": "Pikku Studio Cloud ist nicht erreichbar. Prüfe deine Verbindung und versuche es erneut.",
+  "no_ai_card__unreachable": "Die Anmeldeseite ist nicht erreichbar. Prüfe deine Verbindung und versuche es erneut.",
   "no_ai_card__new_code": "Neuen Code holen",
   "no_ai_card__done_title": "Du bist angemeldet",
   "no_ai_card__done_text": "Pikku kann jetzt bauen. Schick deine Nachricht noch einmal, um weiterzumachen.",
@@ -3604,9 +3438,6 @@
   "explore_setups_screen__title": "Drei Wege, es zu betreiben",
   "project_cards_mock__crumb": "Muster",
   "project_cards_mock__text": "Alle Zustände, die eine Projektkarte zeigen kann.",
-  "project_landing_mock__said_cloud": "Würde den Cloud-Arbeitsbereich öffnen, aufwecken oder ihm beitreten.",
-  "project_landing_mock__said_local": "Würde das Projekt auf diesem Computer öffnen.",
-  "project_landing_mock__said_look": "Würde zeigen, was online ist, ohne einen Arbeitsbereich zu öffnen.",
   "setups_compare__add_wishlist": "Zur Wunschliste hinzufügen",
   "setups_compare__different_here": "Hier anders",
   "setups_compare__do_this": "Mach das",
@@ -3684,9 +3515,9 @@
   "read_only_notice__open_workspace": "Arbeitsbereich öffnen, um etwas zu ändern",
   "project_launch__title": "Lass uns dein Projekt starten",
   "project_launch__why": "Wähle, wo es laufen soll. Du kannst jederzeit wechseln, und nichts von dem, was du gemacht hast, geht verloren.",
-  "project_launch__cloud": "In der Cloud",
+  "project_launch__online": "Online",
   "project_launch__local": "Auf deinem Computer",
-  "project_launch__cloud_off": "Um es in der Cloud laufen zu lassen, stell es zuerst online.",
+  "project_launch__online_off": "Um es online laufen zu lassen, stell es zuerst online.",
   "project_launch__opening_title": "Dein Arbeitsbereich öffnet sich",
   "project_launch__opening_lead": "Einen Moment, das dauert meist ein, zwei Minuten. Dein Projekt erscheint genau hier, sobald es bereit ist.",
   "project_launch__step_machine": "Einen Rechner holen",
@@ -3695,7 +3526,7 @@
   "project_launch__step_project": "Dein Projekt starten",
   "project_launch__step_connect": "Verbinden",
   "project_launch__failed_title": "Dein Arbeitsbereich hat sich nicht geöffnet",
-  "project_launch__failed_cloud": "Etwas hat deinen Arbeitsbereich in der Cloud beim Öffnen gestoppt. Ein neuer Versuch startet ihn von vorn.",
+  "project_launch__failed_online": "Etwas hat deinen Online-Arbeitsbereich beim Öffnen gestoppt. Ein neuer Versuch startet ihn von vorn.",
   "project_launch__stage_title": "{name} ist noch nicht live",
   "project_launch__stage_why": "Bei {name} läuft gerade nichts, deshalb gibt es hier noch nichts zu sehen. Veröffentliche dein Projekt dorthin oder arbeite in deinem Arbeitsbereich weiter.",
   "project_launch__stage_publish": "Zum Veröffentlichen",
@@ -3703,7 +3534,7 @@
   "project_launch__stage_outdated_title": "{name} muss neu veröffentlicht werden",
   "project_launch__stage_outdated_why": "Bei {name} läuft eine ältere Version, die Studio nicht mehr lesen kann, deshalb gibt es hier nichts zu sehen. Veröffentliche erneut, um sie zu aktualisieren, oder arbeite in deinem Arbeitsbereich weiter.",
   "project_launch__stage_publish_again": "Erneut veröffentlichen",
-  "project_launch__stalled": "Dein Arbeitsbereich hängt seit mehreren Minuten bei „{step}“, in der Cloud geht also etwas nicht weiter. Erneut versuchen startet ihn noch einmal; Pikku kann herausfinden, warum er hängen geblieben ist.",
+  "project_launch__stalled": "Dein Arbeitsbereich hängt seit mehreren Minuten bei „{step}“, online geht also etwas nicht weiter. Erneut versuchen startet ihn noch einmal; Pikku kann herausfinden, warum er hängen geblieben ist.",
   "versions_screen__version_line": "Version {version}",
   "versions_screen__intro_place": "Jede Version deiner App, die auf {place} veröffentlicht wurde, die neueste zuerst.",
   "versions_screen__none_title": "Noch nichts veröffentlicht",
@@ -4644,8 +4475,8 @@
   "connections_screen__not_running_ask": "Pikku bitten, sie zu starten",
   "connections_screen__not_running_say": "Die Seite Verbindungen sagt, meine App läuft nicht. Bitte starte sie, damit ich sehe, welche Dienste verbunden sind.",
   "quick_find__connections": "Verbindungen",
-  "cloud_offline__title": "Pikku Studio Cloud ist gerade nicht erreichbar",
-  "cloud_offline__body": "Alles auf diesem Computer funktioniert weiter. Dieser Teil liegt in Pikku Studio Cloud und ist wieder da, sobald du online bist.",
+  "cloud_offline__title": "Dieser Teil ist gerade nicht erreichbar",
+  "cloud_offline__body": "Alles auf diesem Computer funktioniert weiter. Dieser Teil liegt online und ist wieder da, sobald du online bist.",
   "cloud_offline__retry": "Erneut prüfen",
   "audit_screen__hero_loading_title": "Der Verlauf wird gelesen",
   "audit_screen__hero_error_title": "Der Verlauf konnte nicht gelesen werden",
@@ -4980,8 +4811,7 @@
   "account_unreachable__title": "Dein Konto ist nicht erreichbar",
   "account_unreachable__text": "Die Arbeit dieses Teams liegt online, und dein Konto ist gerade nicht erreichbar. Alles auf diesem Computer funktioniert weiter.",
   "account_unreachable__retry": "Noch einmal versuchen",
-  "builder_chat__no_credit": "Lade Guthaben für {org} auf, um mit der KI von Pikku Studio Cloud zu bauen.",
-  "builder_chat__add_credit": "Guthaben aufladen",
+  "builder_chat__fix_it": "Beheben",
   "shell__team_title": "Dein Team",
   "shell__places_title": "Wo deine Arbeit liegt",
   "shell__teams_title": "Teams",

@@ -2,7 +2,7 @@ import { asI18n, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { getLocale } from '@/paraglide/runtime.js'
 import { createContext, useCallback, useContext, useRef, useState } from 'react'
-import type { NoCredit } from './no-credit'
+import type { ErrorFix } from './error-fix'
 
 export type ChatEvent = { type: string; [key: string]: unknown }
 export type ChatTransport = (path: string, body: unknown) => AsyncIterable<ChatEvent>
@@ -10,7 +10,7 @@ export type ChatTransport = (path: string, body: unknown) => AsyncIterable<ChatE
 export type ChatItem =
   | { id: string; kind: 'me'; text: string }
   | { id: string; kind: 'pikku'; text: string; agent?: I18nString; quiet?: boolean }
-  | { id: string; kind: 'error'; detail: string; retry?: boolean; noAi?: boolean; noCredit?: NoCredit | null }
+  | { id: string; kind: 'error'; detail: string; retry?: boolean; noAi?: boolean; fix?: ErrorFix | null }
   | { id: string; kind: 'card'; toolCallId: string; runId: string; title: I18nString; detail: I18nString; state: 'ask' | 'working' | 'done' | 'declined'; yes?: I18nString; no?: I18nString; options?: I18nString[]; tone?: 'info' | 'attention' | 'danger'; skip?: boolean }
   | { id: string; kind: 'open'; screen: string; target?: string; title?: string }
   | { id: string; kind: 'milestone'; title: string }

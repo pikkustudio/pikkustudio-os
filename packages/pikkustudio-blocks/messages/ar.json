@@ -2103,7 +2103,7 @@
       }
     }
   ],
-  "project_facts__cloud": "{count} في السحابة",
+  "project_facts__online": "{count} عبر الإنترنت",
   "project_facts__live": [
     {
       "declarations": [
@@ -2147,199 +2147,13 @@
   ],
   "project_facts__working_one": "{name} يعمل عليه",
   "project_facts__working_two": "{first} و{second} يعملان عليه",
-  "project_home__cloud_asleep_action": "إيقاظه والمواصلة",
-  "project_home__cloud_asleep_hint": "يحتاج إلى الإنترنت.",
-  "project_home__cloud_asleep_title": "مساحة عملكم السحابية في وضع السكون.",
-  "project_home__cloud_asleep_why": "دخلت في السكون عندما توقفتم، لذا لا تكلف شيئا أثناء غيابكم. يستغرق إيقاظها نحو نصف دقيقة، وسيكون كل شيء كما تركتموه.",
-  "project_home__cloud_awake_action": "المتابعة",
-  "project_home__cloud_awake_title": "مواصلة العمل في السحابة.",
-  "project_home__cloud_awake_why": "مساحة عملكم مستيقظة وجاهزة. يستطيع فريقكم رؤية ما تفعلونه هناك.",
-  "project_home__cloud_theirs_action": "الانضمام إلى {name}",
-  "project_home__cloud_theirs_hint": "سترون الشيء نفسه معا.",
-  "project_home__cloud_theirs_title": "{name} يعمل في السحابة الآن.",
-  "project_home__cloud_theirs_why": "يمكنكم الانضمام إلى {name} والمشاهدة دون إعداد أي شيء.",
-  "project_home__cloud_theirs_why_change": "{name} يقوم الآن بما يلي: {change}. يمكنكم الانضمام والمشاهدة دون إعداد أي شيء.",
-  "project_home__local_paused_action": "المتابعة",
-  "project_home__local_paused_hint": "يفتح فورا.",
-  "project_home__local_paused_title": "المتابعة من حيث توقفتم.",
-  "project_home__local_paused_why": "نسختكم على هذا الحاسوب، متوقفة مؤقتا، تماما كما تركتموها {when}.",
-  "project_home__local_working_action": "العودة إليه",
-  "project_home__local_working_hint": "لن يضيع شيء إذا أغلقته.",
-  "project_home__local_working_title": "Pikku يعمل على حاسوبكم.",
-  "project_home__local_working_why": "يمكنكم المشاهدة أو التدخل في أي وقت تشاؤون.",
-  "project_home__local_working_why_change": "يقوم الآن بما يلي: {change}. يمكنكم المشاهدة أو التدخل في أي وقت تشاؤون.",
-  "project_home__offline_action": "حاولوا مرة أخرى",
-  "project_home__offline_hint": "كل ما هو موجود على هذا الحاسوب يعمل كالمعتاد.",
-  "project_home__offline_title": "أنتم غير متصلين بالإنترنت الآن.",
-  "project_home__offline_why": "عند فتح المشروع لأول مرة، يجب أن يصل عبر الإنترنت. وبمجرد عودة الاتصال سأجهزه لكم.",
-  "project_home__stage_change": "نسخة من أجل «{name}»",
-  "project_home__stage_live": "الموقع المنشور",
-  "project_home__stage_live_inline": "الموقع المنشور",
-  "project_home__stage_test": "النسخة التجريبية",
-  "project_home__stage_test_inline": "النسخة التجريبية",
-  "project_home__start_action": "البدء في السحابة",
-  "project_home__start_hint": "يستغرق نحو دقيقة.",
-  "project_home__start_title": "البدء في السحابة.",
-  "project_home__start_why": "هذه أسهل طريقة للبدء. لا حاجة لتثبيت أي شيء، وتكون جاهزة خلال دقيقة تقريبا، ويستطيع فريقكم رؤيتها أيضا. ويمكنكم نقلها إلى حاسوبكم لاحقا.",
-  "project_landing__live_getting_ready": "الموقع المنشور قيد التجهيز",
-  "project_landing__live_needs_look": "الموقع المنشور يحتاج إلى نظرة",
-  "project_landing__live_running_well": "الموقع المنشور يعمل جيدا",
-  "project_landing__nothing_online": "لا شيء منشور بعد",
-  "project_landing__offline": "غير متصل بالإنترنت",
-  "project_landing__people_many_cloud": [
-    {
-      "declarations": [
-        "input count",
-        "local countPlural = count: plural"
-      ],
-      "selectors": [
-        "countPlural"
-      ],
-      "match": {
-        "countPlural=zero": "{who} و{count} شخصا آخر في السحابة أيضا",
-        "countPlural=one": "{who} وشخص آخر في السحابة أيضا",
-        "countPlural=two": "{who} وشخصان آخران في السحابة أيضا",
-        "countPlural=few": "{who} و{count} أشخاص آخرون في السحابة أيضا",
-        "countPlural=many": "{who} و{count} شخصا آخر في السحابة أيضا",
-        "countPlural=other": "{who} و{count} شخصا آخر في السحابة أيضا"
-      }
-    }
-  ],
-  "project_landing__people_many_project": [
-    {
-      "declarations": [
-        "input count",
-        "local countPlural = count: plural"
-      ],
-      "selectors": [
-        "countPlural"
-      ],
-      "match": {
-        "countPlural=zero": "{who} و{count} شخصا آخر في المشروع أيضا",
-        "countPlural=one": "{who} وشخص آخر في المشروع أيضا",
-        "countPlural=two": "{who} وشخصان آخران في المشروع أيضا",
-        "countPlural=few": "{who} و{count} أشخاص آخرون في المشروع أيضا",
-        "countPlural=many": "{who} و{count} شخصا آخر في المشروع أيضا",
-        "countPlural=other": "{who} و{count} شخصا آخر في المشروع أيضا"
-      }
-    }
-  ],
-  "project_landing__people_one_cloud": "{who} في السحابة أيضا",
-  "project_landing__people_one_project": "{who} في المشروع أيضا",
-  "project_landing__things_need_look": [
-    {
-      "declarations": [
-        "input count",
-        "local countPlural = count: plural"
-      ],
-      "selectors": [
-        "countPlural"
-      ],
-      "match": {
-        "countPlural=zero": "{count} أمرا يحتاج إلى نظرة",
-        "countPlural=one": "أمر واحد يحتاج إلى نظرة",
-        "countPlural=two": "أمران يحتاجان إلى نظرة",
-        "countPlural=few": "{count} أمور تحتاج إلى نظرة",
-        "countPlural=many": "{count} أمرا يحتاج إلى نظرة",
-        "countPlural=other": "{count} أمرا يحتاج إلى نظرة"
-      }
-    }
-  ],
   "project_live__action": "إلقاء نظرة",
   "project_live__needs": "الموقع المنشور يحتاج إلى نظرة",
   "project_live__title": "موقعكم منشور.",
   "project_live__well": "الموقع المنشور يعمل جيدا",
   "project_live__why": "الموقع على الإنترنت ويمكن للناس زيارته. ألقوا نظرة لتروا كيف حاله.",
-  "project_now__all_well": "كل ما هو منشور يعمل جيدا.",
-  "project_now__asleep": "في وضع السكون",
-  "project_now__checked": [
-    {
-      "declarations": [
-        "input count",
-        "local countPlural = count: plural"
-      ],
-      "selectors": [
-        "countPlural"
-      ],
-      "match": {
-        "countPlural=zero": "تم فحص {names} {checked}.",
-        "countPlural=one": "تم فحص {names} {checked}.",
-        "countPlural=two": "تم فحص {names} {checked}.",
-        "countPlural=few": "تم فحص {names} {checked}.",
-        "countPlural=many": "تم فحص {names} {checked}.",
-        "countPlural=other": "تم فحص {names} {checked}."
-      }
-    }
-  ],
-  "project_now__else_well": "كل ما عدا ذلك يعمل جيدا.",
-  "project_now__getting_ready": "قيد التجهيز",
-  "project_now__in_cloud": "في السحابة",
-  "project_now__last_online": "هكذا بدا عندما كنتم متصلين آخر مرة.",
-  "project_now__live": "منشور",
-  "project_now__need_look": [
-    {
-      "declarations": [
-        "input count",
-        "local countPlural = count: plural"
-      ],
-      "selectors": [
-        "countPlural"
-      ],
-      "match": {
-        "countPlural=zero": "لا شيء يحتاج إلى نظرة في {stage}",
-        "countPlural=one": "شيء واحد يحتاج إلى نظرة في {stage}",
-        "countPlural=two": "شيئان يحتاجان إلى نظرة في {stage}",
-        "countPlural=few": "{count} أشياء تحتاج إلى نظرة في {stage}",
-        "countPlural=many": "{count} شيئا تحتاج إلى نظرة في {stage}",
-        "countPlural=other": "{count} شيء تحتاج إلى نظرة في {stage}"
-      }
-    }
-  ],
-  "project_now__nobody": "لا أحد يعمل على هذا الآن.",
-  "project_now__not_online": "غير منشور",
-  "project_now__nothing_online": "لا شيء منشور بعد.",
-  "project_now__nothing_online_text": "عندما تنشرون هذا المشروع على الإنترنت، سترون هنا كيف حاله.",
-  "project_now__on_computer": "على هذا الحاسوب",
-  "project_now__pikku_working": "Pikku يعمل",
-  "project_now__rest_quiet": "الباقي هادئ.",
-  "project_now__resting": "في راحة",
-  "project_now__see_whats_wrong": "معرفة ما المشكلة",
-  "project_now__stage_state": "{stage}: {state}",
-  "project_now__state_checked": "{state}، تم الفحص {checked}.",
-  "project_now__what_is_online": "ما هو منشور",
-  "project_now__working_now": "يعمل الآن",
-  "project_now__you": "أنتم",
   "project_row__last_worked_on": "آخر عمل عليه {when}",
   "project_row__only_you_can_see": "أنتم وحدكم من يراه",
-  "project_ways__cloud_action": "فتح في السحابة",
-  "project_ways__cloud_asleep": "في وضع السكون، وتستيقظ خلال نصف دقيقة تقريبا.",
-  "project_ways__cloud_awake": "مستيقظة، ويستطيع فريقكم رؤيتها.",
-  "project_ways__cloud_carry_on": "المتابعة هناك",
-  "project_ways__cloud_join": "الانضمام إليهم",
-  "project_ways__cloud_join_title": "الانضمام إلى {name} في السحابة",
-  "project_ways__cloud_join_why": "مساحة العمل نفسها ودون إعداد. سترون ما يرونه لحظة بلحظة.",
-  "project_ways__cloud_mine_title": "مساحة عملكم السحابية",
-  "project_ways__cloud_note": "يحتاج إلى الإنترنت.",
-  "project_ways__cloud_title": "العمل في السحابة",
-  "project_ways__cloud_wake": "إيقاظه",
-  "project_ways__cloud_creating": "جارٍ إنشاء الاستوديو في السحابة…",
-  "project_ways__cloud_waking": "جارٍ إيقاظ الاستوديو…",
-  "project_ways__cloud_opening": "جارٍ فتح الاستوديو في السحابة…",
-  "project_ways__cloud_why": "نحن نشغله لكم. لا حاجة لتثبيت أي شيء، ويستطيع فريقكم رؤيته.",
-  "project_ways__live_sub": "افتحوا مساحة عمل لتعملوا عليه. يبقى موقعكم المنشور كما هو حتى تنشروا.",
-  "project_ways__live_title": "هل تريدون تغيير شيء؟",
-  "project_ways__local_action": "العمل على حاسوبي",
-  "project_ways__local_carry_on": "المتابعة هنا",
-  "project_ways__local_mine_title": "نسختكم على هذا الحاسوب",
-  "project_ways__local_mine_why": "متوقفة مؤقتا كما تركتموها {when}. ملفاتكم هنا؛ ولا يزال الذكاء الاصطناعي يحتاج إلى الإنترنت ما لم تستخدموا نموذجا على هذا الحاسوب.",
-  "project_ways__local_note": "تستغرق المرة الأولى بضع دقائق.",
-  "project_ways__local_offline": "يحتاج إلى الإنترنت في المرة الأولى.",
-  "project_ways__local_title": "العمل على هذا الحاسوب",
-  "project_ways__local_why": "ينسخ المشروع إلى هنا وتبقى ملفاتكم معكم. ولا يزال الذكاء الاصطناعي في Pikku يحتاج إلى الإنترنت ما لم تستخدموا نموذجا على هذا الحاسوب.",
-  "project_ways__look_action": "إلقاء نظرة فقط",
-  "project_ways__look_why": "اطلعوا على ما هو منشور وكيف حاله دون فتح أي شيء.",
-  "project_ways__sub": "اختاروا طريقة. يمكنكم التبديل لاحقا ولن يضيع أي شيء من عملكم.",
-  "project_ways__title": "أين تريدون أن تعملوا؟",
   "projects_grid__all": "الكل",
   "projects_grid__cards": "بطاقات",
   "projects_grid__filter_all": "الكل",
@@ -2357,7 +2171,7 @@
   "projects_grid__try_a_different_word": "جربوا كلمة أخرى، أو اعرضوا كل شيء من جديد.",
   "projects_screen__in_team": "في {team}",
   "projects_screen__lead_local": "كل ما تصنعونه محفوظ على هذا الحاسوب. افتحوا مشروعا لتواصلوا من حيث توقفتم.",
-  "projects_screen__lead_team": "كل ما يصنعه {team}، على حاسوبكم أو في السحابة. افتحوا مشروعا لتواصلوا من حيث توقفتم.",
+  "projects_screen__lead_team": "كل ما يصنعه {team}، على حاسوبكم أو عبر الإنترنت. افتحوا مشروعا لتواصلوا من حيث توقفتم.",
   "projects_screen__new_project": "مشروع جديد",
   "projects_screen__none_text": "ابدؤوا مشروعا وسيظهر هنا.",
   "projects_screen__none_title": "ليس لديكم أي مشاريع بعد.",
@@ -2816,17 +2630,17 @@
   "shell_layout__error_details": "عرض التفاصيل",
   "shell_layout__to_latest": "الانتقال إلى أحدث رسالة",
   "no_ai_card__title": "سجّل الدخول لتبدأ البناء",
-  "no_ai_card__text": "يحتاج Pikku إلى ذكاء اصطناعي ليبني به. سجّل الدخول إلى Pikku Studio Cloud، أو استخدم مفتاح ذكاء اصطناعي خاصًا بك.",
+  "no_ai_card__text": "يحتاج Pikku إلى ذكاء اصطناعي ليبني به. سجّل الدخول، أو استخدم مفتاح ذكاء اصطناعي خاصًا بك.",
   "no_ai_card__sign_in": "تسجيل الدخول",
   "no_ai_card__own_key": "استخدام مفتاحي الخاص",
   "no_ai_card__code_title": "وافق على هذا الرمز لتسجيل الدخول",
-  "no_ai_card__code_text": "فتحنا Pikku Studio Cloud في علامة تبويب جديدة وأدخلنا هذا الرمز. وافق عليه هناك وستتحدّث هذه البطاقة تلقائيًا.",
+  "no_ai_card__code_text": "فتحنا صفحة تسجيل الدخول في علامة تبويب جديدة وأدخلنا هذا الرمز. وافق عليه هناك وستتحدّث هذه البطاقة تلقائيًا.",
   "no_ai_card__waiting": "بانتظار موافقتك",
   "no_ai_card__open_tab": "افتح علامة تبويب تسجيل الدخول مرة أخرى",
   "no_ai_card__cancel": "إلغاء",
   "no_ai_card__expired": "انتهت صلاحية الرمز قبل الموافقة عليه. احصل على رمز جديد لتحاول مرة أخرى.",
   "no_ai_card__rejected": "تم رفض تسجيل الدخول. احصل على رمز جديد لتحاول مرة أخرى.",
-  "no_ai_card__unreachable": "تعذّر الوصول إلى Pikku Studio Cloud. تحقّق من اتصالك وحاول مرة أخرى.",
+  "no_ai_card__unreachable": "تعذّر الوصول إلى صفحة تسجيل الدخول. تحقّق من اتصالك وحاول مرة أخرى.",
   "no_ai_card__new_code": "احصل على رمز جديد",
   "no_ai_card__done_title": "تم تسجيل دخولك",
   "no_ai_card__done_text": "يمكن لـ Pikku البناء الآن. أرسل رسالتك مرة أخرى للمتابعة.",
@@ -3872,9 +3686,6 @@
   "explore_setups_screen__title": "ثلاث طرق لتشغيله",
   "project_cards_mock__crumb": "نموذج",
   "project_cards_mock__text": "كل الحالات التي يمكن أن تظهر في بطاقة المشروع.",
-  "project_landing_mock__said_cloud": "سيفتح مساحة العمل السحابية أو يوقظها أو ينضم إليها.",
-  "project_landing_mock__said_local": "سيفتح المشروع على هذا الحاسوب.",
-  "project_landing_mock__said_look": "سيعرض ما هو منشور دون فتح مساحة عمل.",
   "setups_compare__add_wishlist": "إضافة إلى قائمة الأمنيات",
   "setups_compare__different_here": "مختلف هنا",
   "setups_compare__do_this": "تنفيذ هذا",
@@ -3952,9 +3763,9 @@
   "read_only_notice__open_workspace": "افتح مساحة عملك لإجراء التغييرات",
   "project_launch__title": "لنشغّل مشروعك",
   "project_launch__why": "اختر أين يعمل. يمكنك التبديل في أي وقت، ولن يضيع شيء مما صنعته.",
-  "project_launch__cloud": "في السحابة",
+  "project_launch__online": "عبر الإنترنت",
   "project_launch__local": "على جهازك",
-  "project_launch__cloud_off": "لتشغيله في السحابة، انشره على الإنترنت أولًا.",
+  "project_launch__online_off": "لتشغيله عبر الإنترنت، انشره على الإنترنت أولًا.",
   "project_launch__opening_title": "جارٍ فتح مساحة عملك",
   "project_launch__opening_lead": "لحظات، يستغرق هذا عادةً دقيقة أو دقيقتين. سيظهر مشروعك هنا فور أن يصبح جاهزًا.",
   "project_launch__step_machine": "تجهيز جهاز",
@@ -3963,7 +3774,7 @@
   "project_launch__step_project": "تشغيل مشروعك",
   "project_launch__step_connect": "الاتصال",
   "project_launch__failed_title": "لم تُفتح مساحة عملك",
-  "project_launch__failed_cloud": "أوقف شيء ما مساحة عملك في السحابة أثناء فتحها. المحاولة من جديد تبدأ من البداية.",
+  "project_launch__failed_online": "أوقف شيء ما مساحة عملك على الإنترنت أثناء فتحها. المحاولة من جديد تبدأ من البداية.",
   "project_launch__stage_title": "{name} ليس منشورًا بعد",
   "project_launch__stage_why": "لا شيء يعمل على {name} الآن، لذلك لا يوجد ما يُعرض هنا. انشر مشروعك هناك، أو تابع العمل في مساحة عملك.",
   "project_launch__stage_publish": "الذهاب إلى النشر",
@@ -3971,7 +3782,7 @@
   "project_launch__stage_outdated_title": "{name} يحتاج إلى نشر من جديد",
   "project_launch__stage_outdated_why": "يعمل {name} بإصدار أقدم لم يعد Studio قادرًا على قراءته، لذلك لا يوجد ما يُعرض هنا. انشر من جديد لتحديثه، أو تابع العمل في مساحة عملك.",
   "project_launch__stage_publish_again": "النشر من جديد",
-  "project_launch__stalled": "توقفت مساحة عملك عند \"{step}\" لعدة دقائق، أي أن شيئًا في السحابة لا يتقدم. إعادة المحاولة تطلب تشغيلها مرة أخرى، ويستطيع Pikku معرفة سبب توقفها.",
+  "project_launch__stalled": "توقفت مساحة عملك عند \"{step}\" لعدة دقائق، أي أن شيئًا على الإنترنت لا يتقدم. إعادة المحاولة تطلب تشغيلها مرة أخرى، ويستطيع Pikku معرفة سبب توقفها.",
   "versions_screen__version_line": "الإصدار {version}",
   "versions_screen__intro_place": "كل إصدار من تطبيقك نُشر على {place}، الأحدث أولاً.",
   "versions_screen__none_title": "لم يُنشر شيء بعد",
@@ -4988,8 +4799,8 @@
   "connections_screen__not_running_ask": "اطلب من Pikku تشغيله",
   "connections_screen__not_running_say": "تقول صفحة الاتصالات إن تطبيقي لا يعمل. أرجو تشغيله حتى أرى الخدمات المتصلة.",
   "quick_find__connections": "الاتصالات",
-  "cloud_offline__title": "لا يمكن الوصول إلى Pikku Studio Cloud الآن",
-  "cloud_offline__body": "كل ما على هذا الكمبيوتر يستمر في العمل. هذا الجزء موجود في Pikku Studio Cloud وسيعود عندما تتصل بالإنترنت مجددًا.",
+  "cloud_offline__title": "لا يمكن الوصول إلى هذا الجزء الآن",
+  "cloud_offline__body": "كل ما على هذا الكمبيوتر يستمر في العمل. هذا الجزء موجود على الإنترنت وسيعود عندما تتصل بالإنترنت مجددًا.",
   "cloud_offline__retry": "تحقق مرة أخرى",
   "audit_screen__hero_loading_title": "جارٍ قراءة السجل",
   "audit_screen__hero_error_title": "تعذّرت قراءة السجل",
@@ -5324,8 +5135,7 @@
   "account_unreachable__title": "تعذّر الوصول إلى حسابكم",
   "account_unreachable__text": "عمل هذا الفريق محفوظ على الإنترنت، ولا يمكن الوصول إلى حسابكم الآن. كل ما على هذا الحاسوب يواصل العمل.",
   "account_unreachable__retry": "حاولوا مرة أخرى",
-  "builder_chat__no_credit": "أضيفوا رصيدًا إلى {org} للبناء باستخدام ذكاء Pikku Studio Cloud الاصطناعي.",
-  "builder_chat__add_credit": "إضافة رصيد",
+  "builder_chat__fix_it": "معالجة الأمر",
   "shell__team_title": "فريقكم",
   "shell__places_title": "أين يوجد عملكم",
   "shell__teams_title": "الفرق",

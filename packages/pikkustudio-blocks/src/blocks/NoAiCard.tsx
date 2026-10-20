@@ -21,7 +21,7 @@ const approveUrl = (code: Code, team: string) => {
 }
 
 /**
- * Shown in place of a failed build when the builder has no AI. Signs in to Pikku Studio Cloud right here:
+ * Shown in place of a failed build when the builder has no AI. Signs in to the account host right here:
  * a device code, approved in a tab we open with the code filled in, polled until confirmed.
  * A key of your own goes through Choose your AI, which brings the owner back to this chat when done.
  */
