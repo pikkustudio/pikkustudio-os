@@ -15,6 +15,7 @@ import { useProjectChecklist } from '../lib/project-flow'
 import { useProjectKey, useProjectMissing, useProjectName, useProjectSlug } from '../lib/project'
 import { isTeamScoped, pageNeedsApp } from '../lib/project-url'
 import { TEAM_PAGES, navEntries, registry, type NavScreen } from '../lib/nav-registry'
+import { NavBadge } from '../blocks/NavBadge'
 import { msg, navIcon } from '../lib/nav-labels'
 import { usePikkuChat } from '../lib/chat'
 import { LocalAccountName, LocalShellAccount, LocalWorkspaceAbout, SignOutSection } from '../blocks/ShellAccount'
@@ -225,6 +226,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
       <Link {...keep} {...tip(msg(screen.title))} key={screen.path} to={screen.path as never} className={navItem} data-testid={`nav-${screen.path.slice(1).replace(/\//g, '-')}`}>
         <Icon className="size-5" />
         <span className={lbl}>{msg(screen.title)}</span>
+        <NavBadge path={screen.path} className={lbl} />
       </Link>
     )
   }
@@ -395,6 +397,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
                   <Link {...keep} {...tip(msg(s.title))} key={s.path} to={s.path as never} className={`${item} h-11.5 text-[15px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`}>
                     <Icon className="size-5.5" />
                     <span className={lbl}>{msg(s.title)}</span>
+                    <NavBadge path={s.path} className={lbl} />
                   </Link>
                 )
               })}
@@ -419,6 +422,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
                   <Link {...keep} {...tip(msg(pin.label))} key={pin.path} to={pin.path as never} className={navItem}>
                     <Icon className="size-5" />
                     <span className={lbl}>{msg(pin.label)}</span>
+                    <NavBadge path={pin.path} className={lbl} />
                   </Link>
                 )
               })}

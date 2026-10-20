@@ -32,6 +32,10 @@ export const registry = nav as unknown as NavRegistry
 
 const firstOf = (path: string) => path.split('/').filter(Boolean)[0] ?? ''
 
+const norm = (path: string) => '/' + path.split('/').filter(Boolean).join('/')
+/** The screen registered at a path (core's or the addon's that replaced it). */
+export const screenAt = (path: string): NavScreen | undefined => registry.screens.find((s) => norm(s.path) === norm(path))
+
 /** The screens with a nav entry in an area, in their order (core first on a tie). */
 export const navEntries = (area: NavArea): NavScreen[] =>
   registry.screens.filter((s) => s.nav?.area === area && !s.path.includes(':')).sort((a, b) => a.nav!.order - b.nav!.order)
