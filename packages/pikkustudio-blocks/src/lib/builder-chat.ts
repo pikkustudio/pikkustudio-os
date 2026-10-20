@@ -7,6 +7,7 @@ import { asI18n, type I18nString } from '@pikku/react'
 import type { ChatItem } from './chat'
 import { useGuideAct, useProjectChecklist, type ActivityKind, type Checklist, type StepAction } from './project-flow'
 import type { ChecklistStepId } from './interview'
+import { noCreditOf } from './no-credit'
 
 export const OFFER_MARKER = '[[offer:changeset]]'
 
@@ -138,7 +139,7 @@ const toChat = (all: BuilderItem[], prefix: string, agent?: I18nString): Timed[]
       const text = stripMarkers(item.text)
       return text ? [{ at: item.at, item: { id, kind: 'pikku', text, ...(agent ? { agent } : {}) } }] : []
     }
-    if (item.kind === 'error') return [{ at: item.at, item: { id, kind: 'error', detail: item.text, retry: TIMED_OUT.test(item.text), noAi: NO_AI.test(item.text) } }]
+    if (item.kind === 'error') return [{ at: item.at, item: { id, kind: 'error', detail: item.text, retry: TIMED_OUT.test(item.text), noAi: NO_AI.test(item.text), noCredit: noCreditOf(item.text) } }]
     const merged = item.kind === 'loop' ? MERGED.exec(item.text) : null
     if (merged) return [{ at: item.at, item: { id, kind: 'milestone', title: merged[1]!.trim() } }]
     return []
@@ -204,7 +205,7 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
 
   const fail = useCallback((error: unknown) => {
     const detail = (error as Error)?.message ?? ''
-    setLocal((x) => [...x, { at: Date.now(), item: { id: `l${Math.random()}`, kind: 'error', detail, retry: TIMED_OUT.test(detail), noAi: NO_AI.test(detail) } }])
+    setLocal((x) => [...x, { at: Date.now(), item: { id: `l${Math.random()}`, kind: 'error', detail, retry: TIMED_OUT.test(detail), noAi: NO_AI.test(detail), noCredit: noCreditOf(detail) } }])
   }, [])
 
   const send = useCallback(

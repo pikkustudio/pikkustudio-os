@@ -5341,5 +5341,7 @@
   "account_unreachable__label": "الحساب غير متاح",
   "account_unreachable__title": "تعذّر الوصول إلى حسابكم",
   "account_unreachable__text": "عمل هذا الفريق محفوظ على الإنترنت، ولا يمكن الوصول إلى حسابكم الآن. كل ما على هذا الحاسوب يواصل العمل.",
-  "account_unreachable__retry": "حاولوا مرة أخرى"
+  "account_unreachable__retry": "حاولوا مرة أخرى",
+  "builder_chat__no_credit": "أضيفوا رصيدًا إلى {org} للبناء باستخدام ذكاء Pikku Studio Cloud الاصطناعي.",
+  "builder_chat__add_credit": "إضافة رصيد"
 }

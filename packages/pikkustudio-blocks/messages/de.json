@@ -4997,5 +4997,7 @@
   "account_unreachable__label": "Konto nicht erreichbar",
   "account_unreachable__title": "Dein Konto ist nicht erreichbar",
   "account_unreachable__text": "Die Arbeit dieses Teams liegt online, und dein Konto ist gerade nicht erreichbar. Alles auf diesem Computer funktioniert weiter.",
-  "account_unreachable__retry": "Noch einmal versuchen"
+  "account_unreachable__retry": "Noch einmal versuchen",
+  "builder_chat__no_credit": "Lade Guthaben für {org} auf, um mit der KI von Pikku Studio Cloud zu bauen.",
+  "builder_chat__add_credit": "Guthaben aufladen"
 }

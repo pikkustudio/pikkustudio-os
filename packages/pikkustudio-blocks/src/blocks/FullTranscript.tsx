@@ -4,6 +4,8 @@ import { Brain, Check, ChevronDown, CircleAlert, Wrench } from 'lucide-react'
 import { m } from '@/i18n/messages'
 import { NO_AI, stripMarkers } from '../lib/builder-chat'
 import { NoAiCard } from './NoAiCard'
+import { NoCreditNote } from './NoCreditNote'
+import { noCreditOf } from '../lib/no-credit'
 import { ChatMarkdown } from './ChatMarkdown'
 
 export type FullItem = {
@@ -95,6 +97,15 @@ export function FullTranscript({ items, busy, avatar }: { items: FullItem[]; bus
           )
         }
         if (noAi) return index === lastNoAi ? <NoAiCard key={key} /> : null
+        const noCredit = it.kind === 'error' ? noCreditOf(it.text) : null
+        if (noCredit)
+          return (
+            <Fold key={key} live icon={<CircleAlert className="size-4 text-warning-foreground" aria-hidden="true" />} label={m.builder_chat__error()} summary={m.builder_chat__no_credit({ org: noCredit.org })}>
+              <div className={body}>
+                <NoCreditNote noCredit={noCredit} />
+              </div>
+            </Fold>
+          )
         if (it.kind === 'error')
           return (
             <Fold key={key} live icon={<CircleAlert className="size-4 text-warning-foreground" aria-hidden="true" />} label={m.builder_chat__error()} summary={oneLine(it.text ?? '')}>
