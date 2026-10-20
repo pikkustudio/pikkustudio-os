@@ -80,7 +80,7 @@ const iconBtn =
 
 type Mood = 'calm' | 'ask' | 'worry' | 'busy'
 const RING: Record<Mood, string> = {
-  calm: 'border-success',
+  calm: '',
   ask: 'border-warning',
   worry: 'border-destructive',
   busy: 'border-info border-dashed animate-[spin_6s_linear_infinite]',
@@ -95,7 +95,7 @@ function Avatar({ mood, size = 'lg', ring = true }: { mood: Mood; size?: 'lg' | 
   return (
     <span className={`relative grid shrink-0 place-items-center rounded-full ${box}`}>
       <Blob pose={POSE[mood]} className={mark} />
-      {ring ? <span className={`absolute rounded-full opacity-90 ${ringBox} ${RING[mood]}`} /> : null}
+      {ring && RING[mood] ? <span className={`absolute rounded-full opacity-90 ${ringBox} ${RING[mood]}`} /> : null}
     </span>
   )
 }
