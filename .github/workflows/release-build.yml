@@ -1,7 +1,7 @@
 name: Release build
 # Builds the standalone Studio tarballs (docs/building-releases.md) and checks each one boots. Build only: nothing is
 # published or released. `os` is the open edition; `cloud` adds the private addons from packages/pikkustudio-private,
-# checked out with the PIKKUSTUDIO_PRIVATE_DEPLOY_KEY secret, and is skipped when that secret is not set.
+# checked out with the CLOUD_ADDON_DEPLOY_KEY secret, and is skipped when that secret is not set.
 # release-build.sh boots every tarball on its own host; the Linux ones are booted again in a clean debian:stable-slim.
 
 on:
@@ -65,7 +65,7 @@ jobs:
     steps:
       - id: secret
         env:
-          KEY: ${{ secrets.PIKKUSTUDIO_PRIVATE_DEPLOY_KEY }}
+          KEY: ${{ secrets.CLOUD_ADDON_DEPLOY_KEY }}
         run: |
           if [ -n "$KEY" ]; then
             echo cloud=true >> "$GITHUB_OUTPUT"
@@ -73,7 +73,7 @@ jobs:
             echo cloud=false >> "$GITHUB_OUTPUT"
             {
               echo '### Cloud edition skipped'
-              echo 'The `PIKKUSTUDIO_PRIVATE_DEPLOY_KEY` secret is not set (or not available to this run, as for a pull request from a fork), so `packages/pikkustudio-private` cannot be checked out and only the OS edition was built.'
+              echo 'The `CLOUD_ADDON_DEPLOY_KEY` secret is not set (or not available to this run, as for a pull request from a fork), so `packages/pikkustudio-private` cannot be checked out and only the OS edition was built.'
               echo 'See "Release builds in CI" in docs/building-releases.md to enable it.'
             } >> "$GITHUB_STEP_SUMMARY"
           fi
@@ -103,7 +103,7 @@ jobs:
           submodules: false
       - uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-private-key: ${{ secrets.PIKKUSTUDIO_PRIVATE_DEPLOY_KEY }}
+          ssh-private-key: ${{ secrets.CLOUD_ADDON_DEPLOY_KEY }}
       - name: Private addons
         run: git -c submodule.pikkustudio-private.update=checkout submodule update --init packages/pikkustudio-private
       - uses: oven-sh/setup-bun@v2
