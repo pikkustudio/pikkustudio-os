@@ -1,0 +1,15 @@
+{
+  "lockfileVersion": 1,
+  "sdks": {
+    "@pikkustudio/addon-admin-api": {
+      "range": "^0.0.1",
+      "version": "0.0.1",
+      "integrity": "sha512-8GfP2xa52KKCWgwrWJOR6zTY++npMDWBsjiRQQEZSg+ZNypf9ZIsmtZ4rOd7QgEHjmL+BmtTjDW6zJsVYFB7Gw=="
+    },
+    "@pikkustudio/addon-cloud-api": {
+      "range": "^0.0.1",
+      "version": "0.0.1",
+      "integrity": "sha512-3u8HOQlf3eZW2FYFOl/i5uIRNLVn+UOHw9QfZr4VqF8z2gi0RwuDq4UvJhyK9lpyseIcdGvpuZGSyuI8x5JhEA=="
+    }
+  }
+}
