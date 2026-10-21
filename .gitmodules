@@ -1,6 +1,4 @@
 [submodule "pikkustudio-private"]
 	path = packages/pikkustudio-private
-	url = /Users/yasser/git/pikkustudio/pikkustudio-private
-	update = none
-[submodule "packages/pikkustudio-private"]
 	url = git@github.com:pikkustudio/pikkustudio-private.git
+	update = none
