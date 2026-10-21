@@ -27,3 +27,6 @@ apps/studio/src/routes/_bare/
 apps/studio/src/routes/_open/
 apps/studio/tsconfig.gen.json
 apps/studio/src/routes/_welcome/
+
+# Local dev runtime state pikku dev writes (dev credentials key, address, virtual users)
+.pikku-runtime
