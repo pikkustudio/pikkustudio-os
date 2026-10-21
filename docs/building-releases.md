@@ -58,4 +58,24 @@ cd - && PIKKU_DIR=../pikku node scripts/link-pikku.mjs
 
 ## Linux
 
-`release-build.sh linux/arm64` or `linux/amd64` cross-builds from a Mac but skips the boot check. Check it in `debian:stable-slim`: extract, `./os db migrate`, `PORT=4750 ./os`, then curl `/studio/health`.
+`release-build.sh linux/arm64` or `linux/x64` cross-builds from a Mac but skips the boot check. Check it in `debian:stable-slim` with `scripts/release-check.sh`, which extracts it, runs `./os db migrate` (it must report `Applied N migration(s).`), starts `PORT=4750 ./os` and requires 200 from `/studio/health` and `/`:
+
+```
+docker run --rm -v "$PWD/dist-release:/dist:ro" -v "$PWD/scripts:/scripts:ro" debian:stable-slim \
+  sh /scripts/release-check.sh /dist/studio-os-0.0.0-oss-linux-arm64.tar.gz
+```
+
+## Release builds in CI
+
+`.github/workflows/release-build.yml` runs on every push to main, every pull request and on demand. It builds both editions for darwin-arm64 (macos-15), linux-arm64 (ubuntu-24.04-arm) and linux-x64 (ubuntu-24.04), each on its own architecture so `release-build.sh` boots it, boots the Linux tarballs again with `release-check.sh` in `debian:stable-slim`, and uploads every tarball as a workflow artifact (`studio-os-<target>`, `studio-<target>`, kept 14 days). It publishes nothing. It builds from the committed `bun.lock` only, never against a linked pikku, so it fails while the repo needs an unreleased `@pikku/*`.
+
+The Cloud jobs need the `PIKKUSTUDIO_PRIVATE_DEPLOY_KEY` secret to check out `packages/pikkustudio-private`; without it they are skipped and the run summary says so. To enable them, once:
+
+```
+ssh-keygen -t ed25519 -N '' -C 'pikkustudio-os release-build' -f pikkustudio-private-deploy-key
+gh repo deploy-key add pikkustudio-private-deploy-key.pub -R pikkustudio/pikkustudio-private --title 'pikkustudio-os release-build'
+gh secret set PIKKUSTUDIO_PRIVATE_DEPLOY_KEY -R pikkustudio/pikkustudio-os < pikkustudio-private-deploy-key
+rm pikkustudio-private-deploy-key pikkustudio-private-deploy-key.pub
+```
+
+`gh repo deploy-key add` adds a read-only key unless `--allow-write` is passed; leave it read-only. The same can be done in the web UI: pikkustudio-private, Settings, Deploy keys, Add deploy key (paste the `.pub` file, leave "Allow write access" off), then pikkustudio-os, Settings, Secrets and variables, Actions, New repository secret (paste the private key file). Pull requests from forks never receive the secret, so their Cloud jobs are skipped.
