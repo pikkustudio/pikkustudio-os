@@ -25,7 +25,7 @@ for platform in "$@"; do
   echo "$version" > "$stage/$name/VERSION"
   chmod +x "$stage/$name/$unit"
   file="$out/$name-$version-$target.tar.gz"
-  tar czf "$file" -C "$stage" "$name"
+  COPYFILE_DISABLE=1 tar czf "$file" -C "$stage" "$name"
   if [ "$target" != "$host" ]; then
     rm -rf "$stage"
     echo "[release] $target cannot run on this $host host, skipping the boot check"
