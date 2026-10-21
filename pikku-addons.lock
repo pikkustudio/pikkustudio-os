@@ -4,12 +4,12 @@
     "@pikkustudio/addon-admin-api": {
       "range": "^0.0.1",
       "version": "0.0.1",
-      "integrity": "sha512-8GfP2xa52KKCWgwrWJOR6zTY++npMDWBsjiRQQEZSg+ZNypf9ZIsmtZ4rOd7QgEHjmL+BmtTjDW6zJsVYFB7Gw=="
+      "integrity": "sha512-35t40rwyXOZ4lJja+N9zNvtmy3v0ZhtLFAt/t7jNP2pPlA5CuGNawTxdKQK7KupR9T/gaPKtRaGofXmoYLyPFA=="
     },
     "@pikkustudio/addon-cloud-api": {
       "range": "^0.0.1",
       "version": "0.0.1",
-      "integrity": "sha512-3u8HOQlf3eZW2FYFOl/i5uIRNLVn+UOHw9QfZr4VqF8z2gi0RwuDq4UvJhyK9lpyseIcdGvpuZGSyuI8x5JhEA=="
+      "integrity": "sha512-eYM+RC2GFn6OwZmdH35BMvNPCqn5AC9RpWSQxHjRpHmqwIUjLjLbCMz5eSGa7MrsOs0mc06gVeaIdqOUSQN5zQ=="
     }
   }
 }
