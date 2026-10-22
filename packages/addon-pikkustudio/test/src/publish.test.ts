@@ -9,7 +9,6 @@ import { StudioProjectsService, type AccountProvider, type SourceProject } from 
 const target: PublishTarget = {
   id: 'cloud',
   readiness: (project, account) => (!account.signedIn ? 'sign-in' : !project.sourceId ? 'not-in-cloud' : 'ready'),
-  deploy: (from, run, onLine) => run('npx', ['pikku', 'cloud', 'deploy', 'apply', '-y'], from, onLine),
 }
 import { publishPrompt, StudioPublisher, type PublishTarget, type Runner } from '../../src/services/publish.js'
 
@@ -77,13 +76,12 @@ describe('StudioPublisher', () => {
     await assert.rejects(new StudioPublisher(signedIn.projects, [target]).deploy(signedIn.key, 'cloud'))
   })
 
-  test('publishes a Pikku Studio Cloud project by pushing its work and deploying it', async () => {
+  test('publishes a Pikku Studio Cloud project by committing and pushing its work, and nothing more', async () => {
     const { projects, key } = await setup(true, [shop], 'git@github.com:acme/shop.git')
     const calls: string[] = []
-    const run: Runner = async (command, args, cwd, onLine) => {
+    const run: Runner = async (command, args, cwd) => {
       calls.push(`${command} ${args.join(' ')}`)
       assert.match(cwd, /worktrees/)
-      if (command === 'npx') onLine('Live at https://shop-main.pikku.app')
     }
     const publisher = new StudioPublisher(projects, [target], run, noMocks)
     assert.equal((await publisher.options(key)).targets.cloud, 'ready')
@@ -92,10 +90,22 @@ describe('StudioPublisher', () => {
     projects.closeAll()
     const job = publisher.status(key)
     assert.equal(job.state, 'done')
-    assert.equal(job.phase, 'deploy')
+    assert.equal(job.phase, 'send')
     assert.ok(job.startedAt)
-    assert.deepEqual(calls.map((c) => c.split(' ').slice(0, 2).join(' ')), ['git add', 'git -c', 'git push', 'npx pikku'])
-    assert.equal(calls[3], 'npx pikku cloud deploy apply -y')
+    assert.deepEqual(calls.map((c) => c.split(' ').slice(0, 2).join(' ')), ['git add', 'git -c', 'git push'])
+  })
+
+  test('runs the target deploy after the push, when it has one', async () => {
+    const { projects, key } = await setup(true, [shop], 'git@github.com:acme/shop.git')
+    const calls: string[] = []
+    const run: Runner = async (command, args) => void calls.push(`${command} ${args.join(' ')}`)
+    const deploying: PublishTarget = { ...target, deploy: (from, run, onLine) => run('npx', ['pikku', 'deploy', 'apply'], from, onLine) }
+    const publisher = new StudioPublisher(projects, [deploying], run, noMocks)
+    await publisher.deploy(key, 'cloud')
+    await until(() => publisher.status(key).state !== 'running')
+    projects.closeAll()
+    assert.deepEqual([publisher.status(key).state, publisher.status(key).phase], ['done', 'deploy'])
+    assert.equal(calls.at(-1), 'npx pikku deploy apply')
   })
 
   test('reports a failed step', async () => {

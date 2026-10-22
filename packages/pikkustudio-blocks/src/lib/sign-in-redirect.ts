@@ -1,3 +1,5 @@
+import { STUDIO_LOCAL } from '@/lib/env'
+
 const AUTH_PATHS = /^\/(sign-in|login|signup)(\/|\?|#|$)/
 
 export const safeRedirect = (value: unknown): string | undefined => {
@@ -8,7 +10,8 @@ export const safeRedirect = (value: unknown): string | undefined => {
   return value
 }
 
-export const signInPath = () => (import.meta.env.VITE_HOSTED === 'true' ? '/login' : '/sign-in')
+/** Where signing in happens: this computer's device sign-in, or on the web the website's own page. */
+export const signInPath = () => (STUDIO_LOCAL ? '/sign-in' : '/login')
 
 export const isAuthPath = (pathname: string) => AUTH_PATHS.test(pathname)
 

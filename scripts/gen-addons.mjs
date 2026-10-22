@@ -235,6 +235,7 @@ async function writeNav() {
       {
         screens: screens.map(clean),
         unscoped: core.unscoped,
+        local: core.local,
         pins: core.pins.filter((p) => has.has(norm(p.path))),
         quickFind: core.quickFind.filter((q) => has.has(norm(q.path))),
         explore: core.explore.map((x) => ({ ...x, rows: x.rows.filter((r) => has.has(norm(r.path))) })),

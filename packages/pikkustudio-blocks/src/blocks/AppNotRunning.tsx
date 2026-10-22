@@ -3,6 +3,7 @@ import { useContext, useState } from 'react'
 import { Check, ChevronDown, Copy, Globe, Laptop, LoaderCircle, Play, RefreshCw } from 'lucide-react'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { m } from '@/i18n/messages'
+import { STUDIO_LOCAL } from '@/lib/env'
 import { useProjectKey } from '../lib/project'
 import { ShellCtx } from '../lib/shell'
 import { Button } from '../ui/button'
@@ -183,7 +184,9 @@ export function AppNotRunning({
   }
 
   if (choices) {
-    const order: LaunchWhere[] = choices.primary === 'source' ? ['source', 'local'] : ['local', 'source']
+    // The web build can't bring a project onto this computer, so it offers only the source's workspace.
+    const both: LaunchWhere[] = choices.primary === 'source' ? ['source', 'local'] : ['local', 'source']
+    const order = both.filter((where) => STUDIO_LOCAL || where !== 'local')
     const title = m.project_launch__title()
     return (
       <StateScreen label={title} hue="teal" page="resume" title={title} why={choices.sourceOff ? m.project_launch__source_off() : m.project_launch__why()}>

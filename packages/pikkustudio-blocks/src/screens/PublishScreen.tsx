@@ -1,4 +1,5 @@
 import { m } from '@/i18n/messages'
+import { STUDIO_LOCAL } from '@/lib/env'
 import { Fragment, useContext, type ReactNode } from 'react'
 import { Button } from '../ui/button'
 import { useProjectKey, useProjectName } from '../lib/project'
@@ -41,7 +42,8 @@ export function PublishScreen({ targets: panels = {} }: { targets?: Partial<Reco
       ) : (
         targets.map((id) => <Fragment key={id}>{panels[id] ?? null}</Fragment>)
       )}
-      <PublishHosts />
+      {/* Other hosts are set up by this computer's builder, so the web build offers only its own targets. */}
+      {STUDIO_LOCAL ? <PublishHosts /> : null}
     </div>
   )
 }

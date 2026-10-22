@@ -2,6 +2,7 @@ import { asI18n, type I18nString } from '@pikku/react'
 import { useContext, useId, useState } from 'react'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { m } from '@/i18n/messages'
+import { STUDIO_LOCAL } from '@/lib/env'
 import { ShellCtx } from '../lib/shell'
 import { useCanEdit } from '../lib/project-target'
 import { StatusLine } from '../blocks/StatusLine'
@@ -51,7 +52,8 @@ export function SaveWork({ projectKey }: { projectKey: string }) {
   ) : null
 
   const waiting = data.unsaved + data.commits.length
-  const place = data.remote ? asI18n(placeOf(data.remote)) : null
+  // Sending to a git remote, and linking one, is this computer's; on the web saving keeps the work in its workspace.
+  const place = STUDIO_LOCAL && data.remote ? asI18n(placeOf(data.remote)) : null
 
   const run = async (what: 'keep' | 'send' | 'link', work: () => Promise<Outcome>) => {
     setBusy(what)
@@ -71,7 +73,7 @@ export function SaveWork({ projectKey }: { projectKey: string }) {
     run('keep', async () => {
       const result = await keep({ key: projectKey })
       if (!result.ok) return { tone: 'bad', text: m.save_work__clash(), ask: m.save_work__ask({ what: m.save_work__ask_keep(), detail: asI18n(result.files.join(', ') || result.reason) }) }
-      if (!data.remote) return { tone: 'ok', text: m.save_work__kept_here() }
+      if (!place) return { tone: 'ok', text: m.save_work__kept_here() }
       const sent = await send({ key: projectKey })
       return sent.pushed ? { tone: 'ok', text: m.save_work__kept_and_sent({ place: place ?? '' }) } : { tone: 'ok', text: m.save_work__kept_here() }
     })
@@ -93,7 +95,7 @@ export function SaveWork({ projectKey }: { projectKey: string }) {
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <b className="text-[15px]">{waiting ? m.save_work__not_saved() : m.save_work__all_saved()}</b>
-          <span className="text-[13px] text-muted-foreground">{place ? m.save_work__copy_on({ place }) : m.save_work__only_here()}</span>
+          {STUDIO_LOCAL ? <span className="text-[13px] text-muted-foreground">{place ? m.save_work__copy_on({ place }) : m.save_work__only_here()}</span> : null}
         </div>
         {waiting ? (
           <Button variant="default" size="compact" type="button" disabled={!!busy} aria-busy={busy === 'keep'} onClick={() => void saveNow()} data-testid="save-work-keep">
@@ -105,7 +107,7 @@ export function SaveWork({ projectKey }: { projectKey: string }) {
           </Button>
         ) : null}
       </div>
-      {!place && !connecting ? (
+      {STUDIO_LOCAL && !place && !connecting ? (
         <div>
           <Button variant="bordered" size="chipSm" type="button" disabled={!!busy} onClick={() => setConnecting(true)} data-testid="save-work-connect">
             {m.save_work__connect()}

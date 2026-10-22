@@ -42,3 +42,11 @@ export function basePath(): string {
 export function appHref(path: string): string {
   return `${basePath()}${path}`
 }
+
+/**
+ * Whether this build runs beside a Studio backend on the person's own computer: the open and cloud desktop builds do
+ * (the default), the web build (VITE_STUDIO_LOCAL=false) does not. A build-time constant, so what the web build leaves
+ * out is dropped from its bundle. Only what needs this computer is gated by it: its folders, processes, vault, git
+ * remotes, device sign-in and own AI keys.
+ */
+export const STUDIO_LOCAL = import.meta.env.VITE_STUDIO_LOCAL !== 'false'

@@ -8,7 +8,8 @@ export type PromptTarget = 'standalone' | 'cloudflare' | 'serverless' | 'azure'
 export interface PublishTarget {
   id: string
   readiness(project: StudioProject, account: StudioAccount): string
-  deploy(from: string, run: Runner, onLine: (line: string) => void): Promise<void>
+  /** Run after the push. A target that releases from the push itself, as Pikku Studio Cloud does, leaves it out. */
+  deploy?(from: string, run: Runner, onLine: (line: string) => void): Promise<void>
 }
 
 export type PublishPhase = 'checks' | 'save' | 'send' | 'deploy'
@@ -166,8 +167,10 @@ export class StudioPublisher {
         const from = main?.dir ?? worktree
         job.phase = 'send'
         await this.run('git', ['push', '-u', 'origin', 'HEAD'], from, onLine)
-        job.phase = 'deploy'
-        await target.deploy(from, this.run, onLine)
+        if (target.deploy) {
+          job.phase = 'deploy'
+          await target.deploy(from, this.run, onLine)
+        }
         job.state = 'done'
       } catch (error) {
         job.state = 'failed'

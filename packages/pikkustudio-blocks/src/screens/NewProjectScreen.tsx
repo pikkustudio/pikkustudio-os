@@ -12,6 +12,7 @@ import { NewProjectForm } from './NewProjectForm'
 import { BringProjectPanel, type BringFrom } from '../blocks/BringProjectPanel'
 import { m } from '@/i18n/messages'
 import { type ProjectRun } from '../lib/onboarding'
+import { isLocalOnly } from '../lib/nav-registry'
 
 
 const sample = () => ({
@@ -198,7 +199,7 @@ export function NewProjectScreen({ bring = {} }: { bring?: BringFrom } = {}) {
               ) : null}
             </div>
             <div className="col-span-full flex flex-wrap gap-2">
-              {needsAi ? (
+              {needsAi && !isLocalOnly('/choose-ai') ? (
                 <Button variant="default" size="compact" type="button" onClick={() => navigate({ to: '/choose-ai', search: ((prev: object) => ({ ...prev, run: undefined })) as never })}>
                   
                   {m.new_project_screen__choose_your_ai()}

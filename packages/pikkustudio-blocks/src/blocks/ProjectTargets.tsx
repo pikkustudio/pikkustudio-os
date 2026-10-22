@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useMemo, type ReactNode } from 'r
 import { Eye, Laptop, Pencil } from 'lucide-react'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { m } from '@/i18n/messages'
+import { STUDIO_LOCAL } from '@/lib/env'
 import { useTeamProjects } from './TeamProjects'
 import { sourceKey, useProjectSlug } from '../lib/project'
 import { ProjectRpcCtx, type ProjectInvoke } from '../lib/projectRpc'
@@ -61,7 +62,11 @@ export function ProjectTargetsProvider({ children }: { children: ReactNode }) {
   const projectKey = project?.key ?? ''
   const listed = usePikkuQuery('studio:targets', { key: projectKey }, { enabled: !!projectKey, staleTime: TARGETS_STALE_MS } as never) as { data?: { targets: Listed[] }; isFetched: boolean; isError: boolean }
 
-  const options = useMemo<Option[]>(() => (listed.data?.targets ?? []).map((t) => ({ ...t, label: labelOf(t) })), [listed.data])
+  // The web build has no "this computer" to read from, whatever the host lists.
+  const options = useMemo<Option[]>(
+    () => (listed.data?.targets ?? []).filter((t) => STUDIO_LOCAL || !(t.kind === 'workspace' && t.name === LOCAL_WORKSPACE)).map((t) => ({ ...t, label: labelOf(t) })),
+    [listed.data],
+  )
 
   const loaded = !!project && projects.isFetched && (listed.isFetched || listed.isError)
   const fromUrl = useUrlTarget()

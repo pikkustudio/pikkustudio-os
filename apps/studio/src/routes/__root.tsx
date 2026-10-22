@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react'
-import { createRootRoute, HeadContent, Outlet, Scripts, useRouter, type ErrorComponentProps } from '@tanstack/react-router'
+import { createRootRoute, HeadContent, Outlet, Scripts, redirect, useRouter, type ErrorComponentProps } from '@tanstack/react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { PikkuProvider, createPikku } from '@pikku/react'
 import { DirectionProvider } from '@radix-ui/react-direction'
@@ -19,11 +19,16 @@ import { TeamGuard } from '@pikkustudio/blocks/blocks/TeamGuard'
 import { useAccount } from '@pikkustudio/blocks/lib/onboarding'
 import { StudioLoading } from '@pikkustudio/blocks/blocks/StudioLoading'
 import { validateStudioSearch } from '@pikkustudio/blocks/lib/search'
+import { isLocalOnly } from '@pikkustudio/blocks/lib/nav-registry'
 import { paletteScript, schemeScript } from '@pikkustudio/theme'
 import globals from '@/styles/globals.css?url'
 
 export const Route = createRootRoute({
   validateSearch: validateStudioSearch,
+  // The web build has no local-only page (core-screens.ts `local`), whichever screen would serve it: its URL goes home.
+  beforeLoad: ({ location }) => {
+    if (isLocalOnly(location.pathname)) throw redirect({ to: '/', replace: true })
+  },
   head: () => ({ meta: appMeta, links: [{ rel: 'stylesheet', href: globals }] }),
   notFoundComponent: DefaultNotFoundPage,
   errorComponent: (props: ErrorComponentProps) => (

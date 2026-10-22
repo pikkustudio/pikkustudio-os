@@ -1,5 +1,6 @@
 import { asI18n } from '@pikku/react'
 import { m } from '@/i18n/messages'
+import { STUDIO_LOCAL } from '@/lib/env'
 import { useNavigate } from '@tanstack/react-router'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { Segmented } from './Segmented'
@@ -17,7 +18,7 @@ export function TargetSwitch() {
   const stages = ((targets.data as { stages?: Stage[] } | undefined)?.stages ?? []).filter((s) => s.live)
   const site = (stages.find((s) => s.production) ?? stages[0])?.name ?? null
   if (!site && target.kind !== 'stage') return null
-  const here = target.kind === 'workspace' && target.name !== LOCAL_WORKSPACE ? m.metrics_live__your_copy() : m.metrics_live__your_computer()
+  const here = !STUDIO_LOCAL || (target.kind === 'workspace' && target.name !== LOCAL_WORKSPACE) ? m.metrics_live__your_copy() : m.metrics_live__your_computer()
   const there = target.kind === 'stage' && target.name !== site ? asI18n(target.name) : m.metrics_live__live_site()
   const pick = (v: string) => {
     if (v === target.kind) return

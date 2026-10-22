@@ -13,7 +13,7 @@ import { PageHead } from './PageHead'
 import { Section } from './Section'
 import { questions, type Question } from './exploreSample'
 import { usePins } from '../lib/pins'
-import { registry } from '../lib/nav-registry'
+import { isLocalOnly, registry } from '../lib/nav-registry'
 import { msg, navIcon } from '../lib/nav-labels'
 
 const icons: Record<string, LucideIcon> = { away: ScrollText, secrets: KeyRound, cost: Wallet, who: KeyRound, own: Clock, mem: Database, well: HeartPulse, ai: Bot, plug: Plug }
@@ -50,7 +50,7 @@ function HubRow({ hue, Icon, title, text, aside, to, onPick }: { hue: Hue; Icon:
 
 function Row({ q }: { q: Question }) {
   const { say } = useContext(ShellCtx)
-  return <HubRow hue={q.hue} Icon={icons[q.id]} title={q.q} text={q.ask[0]} to={pages[q.id]} onPick={() => say(q.q)} />
+  return <HubRow hue={q.hue} Icon={icons[q.id]} title={q.q} text={q.ask[0]} to={pages[q.id] && !isLocalOnly(pages[q.id]) ? pages[q.id] : undefined} onPick={() => say(q.q)} />
 }
 
 export function ExploreHub() {

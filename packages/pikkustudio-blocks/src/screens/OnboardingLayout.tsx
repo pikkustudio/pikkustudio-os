@@ -16,6 +16,7 @@ import { useShellAccount } from '../lib/account'
 import { useAccount, useProjectRun, useRecentProjects, useStartProjectRun, useAttachFile, newProjectName, type ProjectRun } from '../lib/onboarding'
 import { ArrowRight, Bell, Check, CircleAlert, FolderOpen, Laptop, MessageCircle, Pin, ShieldCheck, User, X, CheckCheck } from 'lucide-react'
 import { safeRedirect } from '../lib/sign-in-redirect'
+import { isLocalOnly } from '../lib/nav-registry'
 import { m } from '@/i18n/messages'
 
 // The onboarding layout: setup rail (Getting set up), Pikku button + bubble, side panels.
@@ -78,12 +79,16 @@ function Avatar({ mood, size = 'lg', ring = true }: { mood: Mood; size?: 'lg' | 
   )
 }
 
-const STEPS: readonly (readonly [string, () => I18nString, () => I18nString])[] = [
-  ['/sign-in', m.onboarding_layout__step_sign_in, m.copy__step_sign_in_hint],
-  ['/your-name', m.onboarding_layout__step_about_you, m.onboarding_layout__step_about_you_hint],
-  ['/choose-ai', m.onboarding_layout__step_choose_ai, m.onboarding_layout__step_choose_ai_hint],
-  ['/new-project', m.onboarding_layout__step_start, m.onboarding_layout__step_start_hint],
-]
+// The web build signs in on the website and uses the cloud account's AI, so it skips the steps that are this computer's.
+const STEPS: readonly (readonly [string, () => I18nString, () => I18nString])[] = (
+  [
+    ['/sign-in', m.onboarding_layout__step_sign_in, m.copy__step_sign_in_hint],
+    ['/your-name', m.onboarding_layout__step_about_you, m.onboarding_layout__step_about_you_hint],
+    ['/choose-ai', m.onboarding_layout__step_choose_ai, m.onboarding_layout__step_choose_ai_hint],
+    ['/new-project', m.onboarding_layout__step_start, m.onboarding_layout__step_start_hint],
+  ] as const
+).filter(([to]) => !isLocalOnly(to))
+const AFTER_NAME = isLocalOnly('/choose-ai') ? '/new-project' : '/choose-ai'
 
 const MOODS: Record<OnbState, Mood> = { empty: 'calm', normal: 'calm', loading: 'busy', error: 'worry' }
 
@@ -180,7 +185,7 @@ export function OnboardingLayout() {
     setSt('loading')
     window.clearTimeout(timer.current)
     timer.current = window.setTimeout(
-      () => back && (choose || (path === '/sign-in' && account.data?.name)) ? router.history.push(back) : navigate({ to: proj ? '/home' : choose ? '/new-project' : yourName || account.data?.name ? '/choose-ai' : '/your-name', search: ((prev: object) => prev) as never }),
+      () => back && (choose || (path === '/sign-in' && account.data?.name)) ? router.history.push(back) : navigate({ to: proj ? '/home' : choose ? '/new-project' : yourName || account.data?.name ? AFTER_NAME : '/your-name', search: ((prev: object) => prev) as never }),
       proj ? 2600 : 1500,
     )
   }

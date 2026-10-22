@@ -5,6 +5,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { Check, ExternalLink, KeyRound, LogIn, Sparkles } from 'lucide-react'
 import { usePikkuMutation } from '@project/functions-sdk/pikku/api.gen'
 import { m } from '@/i18n/messages'
+import { STUDIO_LOCAL } from '@/lib/env'
 import { Button } from '../ui/button'
 import { Spinner } from './Spinner'
 import { LOCAL_TEAM, useTeamSlug } from '../lib/team'
@@ -24,8 +25,13 @@ const approveUrl = (code: Code, team: string) => {
  * Shown in place of a failed build when the builder has no AI. Signs in to the account host right here:
  * a device code, approved in a tab we open with the code filled in, polled until confirmed.
  * A key of your own goes through Choose your AI, which brings the owner back to this chat when done.
+ * Both are this computer's, so the web build, whose AI is the cloud account's, shows none.
  */
 export function NoAiCard({ onRetry }: { onRetry?: () => void }) {
+  return STUDIO_LOCAL ? <SignInForAi onRetry={onRetry} /> : null
+}
+
+function SignInForAi({ onRetry }: { onRetry?: () => void }) {
   const navigate = useNavigate()
   const here = useLocation({ select: (l) => l.href })
   const client = useQueryClient()
