@@ -50,3 +50,11 @@ export function appHref(path: string): string {
  * remotes, device sign-in and own AI keys.
  */
 export const STUDIO_LOCAL = import.meta.env.VITE_STUDIO_LOCAL !== 'false'
+
+/**
+ * The backend's own origin, for what it serves outside the API prefix (a project's server under /p/<key>): the API base
+ * without a trailing /api. On the desktop that is this page's origin.
+ */
+export function backendBase(): string {
+  return apiUrl().replace(/\/api\/?$/, '')
+}

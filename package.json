@@ -18,7 +18,8 @@
     "lint": "oxlint apps packages",
     "check:cloud-boundary": "node scripts/check-cloud-boundary.mjs",
     "check:independence": "node scripts/check-independence.mjs",
-    "build:desktop": "bash scripts/build-desktop.sh"
+    "build:desktop": "bash scripts/build-desktop.sh",
+    "build:hosted": "bash scripts/build-hosted.sh"
   },
   "devDependencies": {
     "@pikku/cli": "^0.12.197",

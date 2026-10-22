@@ -13,6 +13,7 @@ function afterAuth(search: AuthSearch) {
 
 type Where = { pathname: string; searchStr: string }
 
+/** Fails closed: an account call that fails or does not answer OK is no session. */
 async function hasSession() {
   const res = await localeFetch(`${apiUrl()}/studio/account`, {
     method: 'POST',
@@ -20,14 +21,14 @@ async function hasSession() {
     headers: { 'content-type': 'application/json' },
     body: '{}',
   })
-  if (!res.ok) return true
+  if (!res.ok) return false
   const account = (await res.json().catch(() => null)) as { signIn?: string | null } | null
   return !!account?.signIn
 }
 
 export async function requireStudioSession({ location }: { location: Where }) {
   if (typeof window === 'undefined') return
-  if (await hasSession().catch(() => true)) return
+  if (await hasSession().catch(() => false)) return
   throw redirect({ to: signInPath() as never, search: signInSearch(location.pathname + location.searchStr) as never, replace: true })
 }
 

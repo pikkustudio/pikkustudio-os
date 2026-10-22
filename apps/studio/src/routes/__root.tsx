@@ -10,7 +10,9 @@ import { PikkuFetch } from '@project/functions-sdk/pikku/pikku-fetch.gen'
 import { PikkuRPC } from '@project/functions-sdk/pikku/pikku-rpc.gen'
 import { LOCALE_KEY, defaultLocale, localeDir, supportedLocales, setActiveLocale, useLocale } from '@/i18n/config'
 import { appMeta } from '@/app-meta'
-import { apiUrl } from '@/lib/env'
+import { STUDIO_LOCAL, apiUrl } from '@/lib/env'
+import { workspaces } from '@/lib/workspace'
+import { isWorkspaceCall } from '@pikkustudio/blocks/lib/workspace-route'
 import { localeFetch } from '@/lib/locale-fetch'
 import { PreferencesContext } from '@/contexts/preferences'
 import { DefaultErrorPage } from '@/components/DefaultErrorPage'
@@ -62,8 +64,11 @@ function RootDocument({ children }: { children: ReactNode }) {
   const [pikku] = useState(() => {
     const client = createPikku(PikkuFetch, PikkuRPC, { serverUrl: apiUrl(), credentials: 'include', fetch: localeFetch })
     const invoke = client.rpc.invoke.bind(client.rpc) as (name: string, data?: unknown) => Promise<unknown>
-    client.rpc.invoke = ((name: string, data: unknown) =>
-      name.startsWith('studio:') ? client.fetch.post(`/studio/${name.slice(7)}` as never, data as never) : invoke(name, data)) as typeof client.rpc.invoke
+    // studio:* goes to the backend's /studio/<name>; on the web a cloud project's own calls go to its workspace instead.
+    client.rpc.invoke = ((name: string, data: unknown) => {
+      if (!STUDIO_LOCAL && isWorkspaceCall(name, data)) return workspaces.studio(name, data)
+      return name.startsWith('studio:') ? client.fetch.post(`/studio/${name.slice(7)}` as never, data as never) : invoke(name, data)
+    }) as typeof client.rpc.invoke
     return client
   })
   const [chatTransport] = useState(() => fetchTransport(apiUrl()))

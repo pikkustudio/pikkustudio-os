@@ -1,0 +1,15 @@
+// The web edition of Studio at cloud.pikkustudio.app: the static build `bun run build:hosted` writes to dist/client,
+// nothing else. Any path that is not a file gets index.html (the app routes it); the API is controlplane's own origin,
+// never proxied here. Same Worker name and custom domain as the old pikkustudio-cloud app, so a deploy replaces it.
+//
+//   cd apps/studio && bunx wrangler deploy -c wrangler.hosted.jsonc
+{
+  "name": "pikkustudio-cloud",
+  "routes": [{ "pattern": "cloud.pikkustudio.app", "custom_domain": true }],
+  "compatibility_date": "2025-06-01",
+  "assets": {
+    "directory": "dist/client",
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "single-page-application"
+  }
+}

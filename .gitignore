@@ -30,3 +30,4 @@ apps/studio/src/routes/_welcome/
 
 # Local dev runtime state pikku dev writes (dev credentials key, address, virtual users)
 .pikku-runtime
+.wrangler

@@ -12,6 +12,9 @@
 //   node scripts/link-addon.mjs --test      only the local test addons (packages/addons/spindle and diffui), to try the
 //                                          addon screens and nav across more than one addon; never part of the app
 //   node scripts/link-addon.mjs --unlink    back to the open build
+//   node scripts/link-addon.mjs --restore <addons.json>
+//                                          back to a link state saved earlier (a copy of .studio-addons/addons.json),
+//                                          as scripts/build-hosted.sh does after building the web edition
 //
 // Each addon's wire/*.ts is copied to .studio-addons/wire/, which pikku.cloud.json lists as a source directory: the
 // pikku inspector skips any file under a directory holding its own pikku.config.json, so the addon's own copy is
@@ -60,6 +63,30 @@ const copyWire = (dir) => {
   if (!existsSync(wire)) return
   mkdirSync(join(linked, 'wire'), { recursive: true })
   for (const file of readdirSync(wire).filter((f) => f.endsWith('.ts'))) copyFileSync(join(wire, file), join(linked, 'wire', file))
+}
+
+if (args.has('--restore')) {
+  const saved = process.argv[process.argv.indexOf('--restore') + 1]
+  if (!saved || !existsSync(saved)) {
+    console.error('--restore needs the path of a saved addons.json')
+    process.exit(1)
+  }
+  const state = JSON.parse(readFileSync(saved, 'utf8'))
+  unlinkAll()
+  for (const { name, dir, test } of state.addons ?? []) {
+    const abs = join(root, dir)
+    if (!test) {
+      const target = join(root, 'node_modules', name)
+      mkdirSync(dirname(target), { recursive: true })
+      rmSync(target, { recursive: true, force: true })
+      symlinkSync(relative(dirname(target), abs), target)
+    }
+    copyWire(abs)
+  }
+  mkdirSync(linked, { recursive: true })
+  writeFileSync(stateFile, JSON.stringify(state, null, 2) + '\n')
+  console.log(`Restored ${(state.addons ?? []).map((a) => a.name).join(', ') || 'no addon'}; builds now use ${state.config}`)
+  process.exit(0)
 }
 
 if (args.has('--test')) {

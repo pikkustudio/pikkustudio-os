@@ -31,6 +31,19 @@ Output: `dist-release/studio-0.0.0-cloud-darwin-arm64.tar.gz`. `link-addon.mjs -
 
 `prebuild` may rewrite `pikku-addons.lock` when the linked config wires fewer remote addons; `git checkout -- pikku-addons.lock` afterwards.
 
+## Web edition
+
+The web Studio at cloud.pikkustudio.app is the frontend only: the cloud and web addons linked, `VITE_STUDIO_LOCAL=false`, and the API at controlplane.
+
+```
+bun run build:hosted
+cd apps/studio && bunx wrangler deploy -c wrangler.hosted.jsonc
+```
+
+`build:hosted` (`scripts/build-hosted.sh`) links the addons, runs `prebuild`, builds into `apps/studio/dist/client` and then puts the link state and `pikku-addons.lock` back as they were; `PIKKUSTUDIO_API_URL` overrides `https://api.pikkustudio.app`. `wrangler.hosted.jsonc` is the `pikkustudio-cloud` Worker on the `cloud.pikkustudio.app` custom domain: static assets with SPA fallback, hashed `/assets/*` cached for a year. It never proxies the API. `bunx wrangler dev -c wrangler.hosted.jsonc` serves the same build locally.
+
+On the web a cloud project's (`cloud:<projectId>`) own `studio:*` calls and its `/p/<key>/rpc/*` calls go to `{api}/workspace/<projectId>/…` (the URL `cloud:workspaceLink` returns), waiting out the gateway's 503 while the workspace starts (`packages/pikkustudio-blocks/src/lib/workspace-route.ts`).
+
 ## Launching a tarball
 
 ```
