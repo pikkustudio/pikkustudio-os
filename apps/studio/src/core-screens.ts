@@ -7,7 +7,7 @@
 //   unscoped   first path segments outside every team that are not shell screens: onboarding, connect, and the pages
 //              the server answers itself. Nothing else may claim them.
 //   local      first path segments that only work with Studio on this computer (its vault, processes, addon dev
-//              servers, device sign-in, own AI, CLI connect). The web build (VITE_STUDIO_LOCAL=false) leaves them out
+//              servers, device sign-in, own AI, CLI connect, the inbox addon's store). The web build (VITE_STUDIO_LOCAL=false) leaves them out
 //              of the nav and sends their URLs home, whichever screen, core's or an addon's, serves them.
 //   pins, quickFind, explore
 //              core-only extras: what the rail's pins, QuickFind and the Explore page list, by path. An entry whose
@@ -84,7 +84,7 @@ export default {
     project('/add-ons/:name/*', 'addons__frame_title'),
   ],
   unscoped: ['sign-in', 'your-name', 'choose-ai', 'connect', 'p', 'app', 'login', 'signup', 'cli-auth', 'oauth'],
-  local: ['secrets', 'studio-metrics', 'resume', 'addons', 'add-ons', 'sign-in', 'choose-ai', 'connect'],
+  local: ['secrets', 'studio-metrics', 'resume', 'addons', 'add-ons', 'sign-in', 'choose-ai', 'connect', 'inbox'],
   pins: [
     { path: '/virtual-users', label: 'quick_find__virtual_users', icon: 'user-round-check', on: false },
     { path: '/translations', label: 'quick_find__translations', icon: 'globe', on: false },

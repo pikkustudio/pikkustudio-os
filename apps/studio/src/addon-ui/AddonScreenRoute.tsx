@@ -5,6 +5,7 @@ import { installedAddons } from './registry'
 import { hasScopes, useViewerScopes } from '@pikkustudio/blocks/lib/scopes'
 import { StudioLoading } from '@pikkustudio/blocks/blocks/StudioLoading'
 import { NotFoundPage } from '@pikkustudio/blocks/blocks/NotFoundPage'
+import { isLocalOnly } from '@pikkustudio/blocks/lib/nav-registry'
 
 // What a generated route (scripts/gen-addons.mjs) renders: one addon screen, at its real path.
 export function AddonScreenRoute({ addon, path }: { addon: string; path: string }) {
@@ -13,6 +14,9 @@ export function AddonScreenRoute({ addon, path }: { addon: string; path: string 
   const screen = found?.screens.find((candidate) => candidate.path === path)
   const held = useViewerScopes()
   if (!found || !screen) throw notFound()
+  // The web build serves no local-only screen (core-screens.ts `local`), at a project's URL either: the root only turns
+  // away a local-only first segment.
+  if (isLocalOnly(path)) return <NotFoundPage />
   // A screen that asks for scopes waits for the viewer's, and is not there for a viewer without them.
   if (screen.scopes?.length && !held) return <StudioLoading />
   if (!hasScopes(screen.scopes, held)) return <NotFoundPage />

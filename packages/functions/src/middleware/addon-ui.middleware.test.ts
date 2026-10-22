@@ -1,7 +1,8 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { addonRoles } from '#pikku/screens/pikku-addon-roles.gen.js'
-import { addonMayCall, addonUiCall } from './addon-ui.middleware.js'
+import { pikkuState } from '@pikku/core/state'
+import { addonMayCall, addonRoleOf, addonUiCall } from './addon-ui.middleware.js'
 
 const run = async (headers: Record<string, string>, session: { userId: string; scopes?: string[] } | undefined, path = '/rpc/invoices:list') => {
   let current = session
@@ -59,4 +60,21 @@ test("an addon's call goes only through the rpc route, to an addon function; Pik
   assert.equal(addonMayCall(undefined), false)
   addonRoles.invoices = ['invoices:read']
   await assert.rejects(run({ 'x-pikku-addon': 'invoices' }, { userId: 'u', scopes: [] }, '/workflow/x/status/1'), /only call addon functions/)
+})
+
+test('a remote addon is a known caller with an empty role; an addon that is not wired stays unknown', async () => {
+  const packages = pikkuState(null, 'addons', 'packages')
+  packages.set('remotebilling', { package: '@acme/billing-api', remote: true } as never)
+  packages.set('localbilling', { package: '@acme/billing' } as never)
+  try {
+    assert.deepEqual(addonRoleOf('remotebilling'), [])
+    assert.equal(addonRoleOf('localbilling'), undefined)
+    assert.equal(addonRoleOf('ghost'), undefined)
+    const session = await run({ 'x-pikku-addon': 'remotebilling', host: 'studio.example.com' }, { userId: 'u', scopes: ['admin'] }, '/rpc/remotebilling:listPlans')
+    assert.deepEqual(session?.scopes, [])
+    await assert.rejects(run({ 'x-pikku-addon': 'localbilling', host: 'localhost' }, { userId: 'owner', scopes: [] }), /Unknown addon/)
+  } finally {
+    packages.delete('remotebilling')
+    packages.delete('localbilling')
+  }
 })

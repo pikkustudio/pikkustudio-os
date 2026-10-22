@@ -2,9 +2,22 @@ import { ForbiddenError } from '@pikku/core/errors'
 import { ADDON_HEADER, addonScopeCap } from '@pikku/core/middleware'
 import { pikkuMiddleware, addHTTPMiddleware } from '#pikku/middleware'
 import { addonRoles } from '#pikku/screens/pikku-addon-roles.gen.js'
+import { pikkuState } from '@pikku/core/state'
 import { isLocalRequest } from '../lib/local-sign-in.js'
 
-const cap = addonScopeCap({ resolve: (name) => addonRoles[name] })
+/**
+ * The role a call naming an addon is capped to. An addon with screens has the one generated from its functions'
+ * scopes. A remote addon (wireRemoteAddon, e.g. `cloud`) has no functions here, only a contract it forwards to its own
+ * host, which checks the caller itself: its role here is empty, as for an addon whose functions need no scope. Any
+ * other name is unknown and refused.
+ */
+export const addonRoleOf = (name: string): readonly string[] | undefined => {
+  if (Object.hasOwn(addonRoles, name)) return addonRoles[name]
+  const wired = pikkuState(null, 'addons', 'packages').get(name) as { remote?: boolean } | undefined
+  return wired?.remote ? [] : undefined
+}
+
+const cap = addonScopeCap({ resolve: addonRoleOf })
 
 /**
  * A call made for an addon goes only through the rpc route, to an addon's function. Which addons it may reach (its

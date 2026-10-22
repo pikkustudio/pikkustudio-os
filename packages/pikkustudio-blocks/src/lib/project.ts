@@ -2,7 +2,9 @@ import { useParams, useSearch } from '@tanstack/react-router'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { asI18n, type I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
+import { STUDIO_LOCAL } from '@/lib/env'
 import { LOCAL_WORKSPACE, useUrlTarget, type TargetRef } from './project-target'
+import { createAddonRpc } from './addon-rpc'
 
 export const useProjectSlug = () => {
   const { project } = useSearch({ strict: false })
@@ -36,34 +38,49 @@ export const isKeyOf = (p: Sourced, key: string) => {
 export const sourceKey = (p: Sourced, target: TargetRef | undefined) =>
   target?.kind === 'workspace' && target.name !== LOCAL_WORKSPACE && p.source && p.sourceId ? `${p.source}:${p.sourceId}@${target.name}` : p.key
 
+type ListedProject = { key: string; slug: string; owner?: string; name: string; source?: string | null; sourceId?: string | null }
+type ProjectList = { projects: ListedProject[] }
+
+// The web build has no Studio on this computer: the projects are the caller's cloud ones, which the controlplane lists
+// in Studio's shape (cloud:teamProjects, every team's when no team is given). Asked as `cloud`, whatever screen asks.
+type CloudProjectsMap = {
+  teamProjects: { input: { team?: string }; output: { projects: (Omit<ListedProject, 'source' | 'sourceId'> & { cloudProjectId: string | null })[] } }
+}
+const cloudProjects = createAddonRpc<CloudProjectsMap>('cloud')
+const fromCloud = (d: CloudProjectsMap['teamProjects']['output']): ProjectList => ({
+  projects: d.projects.map(({ cloudProjectId, ...p }) => ({ ...p, source: cloudProjectId ? 'cloud' : null, sourceId: cloudProjectId })),
+})
+
+/** The projects this Studio lists, through `select`: studio:listProjects, or on the web the caller's cloud projects. */
+const useProjectList = <T,>(enabled: boolean, select: (d: ProjectList) => T) =>
+  STUDIO_LOCAL
+    ? (usePikkuQuery('studio:listProjects', {}, { enabled, select } as never) as unknown as { data?: T; isSuccess: boolean })
+    : (cloudProjects.useQuery('teamProjects', {}, { enabled, select: ((d: CloudProjectsMap['teamProjects']['output']) => select(fromCloud(d))) as never }) as unknown as {
+        data?: T
+        isSuccess: boolean
+      })
+
+const matches = (p: ListedProject, slug: string) => `${p.owner}/${p.slug}` === slug || p.slug === slug || p.key === slug
+
 export const useProjectKey = () => {
   const slug = useProjectSlug()
   const target = useUrlTarget()
-  const found = usePikkuQuery('studio:listProjects', {}, {
-    enabled: !!slug,
-    select: (d: { projects: { key: string; slug: string; owner?: string; source?: string | null; sourceId?: string | null }[] }) => {
-      const p = d.projects.find((p) => `${p.owner}/${p.slug}` === slug || p.slug === slug || p.key === slug)
-      return p ? sourceKey(p, target) : ''
-    },
-  } as never)
-  return (found.data as string | undefined) ?? ''
+  const found = useProjectList(!!slug, (d) => {
+    const p = d.projects.find((p) => matches(p, slug))
+    return p ? sourceKey(p, target) : ''
+  })
+  return found.data ?? ''
 }
 
 export const useProjectName = (): I18nString => {
   const slug = useProjectSlug()
-  const found = usePikkuQuery('studio:listProjects', {}, {
-    enabled: !!slug,
-    select: (d: { projects: { key: string; slug: string; owner?: string; name: string }[] }) => d.projects.find((p) => `${p.owner}/${p.slug}` === slug || p.slug === slug || p.key === slug)?.name ?? '',
-  } as never)
-  const name = found.data as string | undefined
+  const found = useProjectList(!!slug, (d) => d.projects.find((p) => matches(p, slug))?.name ?? '')
+  const name = found.data
   return name ? asI18n(name) : m.project__name_fallback()
 }
 
 export const useProjectMissing = () => {
   const slug = useProjectSlug()
-  const found = usePikkuQuery('studio:listProjects', {}, {
-    enabled: !!slug,
-    select: (d: { projects: { key: string; slug: string; owner?: string }[] }) => d.projects.some((p) => `${p.owner}/${p.slug}` === slug || p.slug === slug || p.key === slug),
-  } as never)
-  return !!slug && found.isSuccess && (found.data as unknown) === false
+  const found = useProjectList(!!slug, (d) => d.projects.some((p) => matches(p, slug)))
+  return !!slug && found.isSuccess && found.data === false
 }
