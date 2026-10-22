@@ -90,6 +90,7 @@ const studioRoutes = defineHTTPRoutes({
     builderChat: { method: 'post', route: '/studio/builderChat', func: ref('studio:builderChat') },
     publishOptions: { method: 'post', route: '/studio/publishOptions', func: ref('studio:publishOptions') },
     publishStatus: { method: 'post', route: '/studio/publishStatus', func: ref('studio:publishStatus') },
+    publish: { method: 'post', route: '/studio/publish', func: ref('studio:publish') },
     projectNameTaken: { method: 'head', route: '/studio/projectName', func: ref('studio:projectNameTaken') },
     startProjectRun: { method: 'post', route: '/studio/startProjectRun', func: startProjectRun },
     projectRun: { method: 'post', route: '/studio/projectRun', func: projectRun },
