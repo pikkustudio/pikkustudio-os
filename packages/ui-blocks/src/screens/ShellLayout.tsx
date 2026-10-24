@@ -11,6 +11,7 @@ import { m } from '@/i18n/messages'
 import { getLocale } from '@/paraglide/runtime.js'
 import { languageName } from '../lib/i18n'
 import { useProjectChecklist } from '../lib/project-flow'
+import { useReleases } from '../lib/releases'
 import { useProjectKey, useProjectMissing, useProjectName, useProjectSlug } from '../lib/project'
 import { isTeamScoped, pageNeedsApp } from '../lib/project-url'
 import { TEAM_PAGES, registry, type NavScreen } from '../lib/nav-registry'
@@ -210,7 +211,9 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
   const slashIdx = Math.min(slashAt, Math.max(slash.length - 1, 0))
   const [bubbleDraft, setBubbleDraft] = useState('')
   const projectKey = useProjectKey()
-  const journey = useProjectChecklist(projectKey).data?.started !== false
+  const releases = useReleases()
+  const everDeployed = releases.releases.some((v) => v.status === 'live' || v.status === 'was-live' || v.status === 'rolled-back')
+  const journey = useProjectChecklist(projectKey).data?.started !== false && releases.state !== 'loading' && !everDeployed
   const railNav = useNavEntries('rail')
   const teamNav = useNavEntries('team')
   const projectNav = useNavEntries('project')
@@ -373,17 +376,6 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
               <PikkuMark label={m.shell_layout__studio()} />
               <span className={lbl}>{m.shell_layout__studio()}</span>
             </Link>
-            <button
-              type="button"
-              onClick={() => setFind(true)}
-              aria-keyshortcuts="Meta+K Control+K"
-              {...tip(m.shell_layout__find_a_page())}
-              className={`${item} h-8 shrink-0 gap-2 text-[13px] text-muted-foreground`}
-            >
-              <Search className="size-4 shrink-0" />
-              <span className={`flex-1 truncate ${lbl}`}>{m.shell_layout__find_a_page()}</span>
-              <kbd className={`rounded border border-border px-1 text-[11px] leading-4 ${lbl}`}>{m.shell_layout__find_shortcut()}</kbd>
-            </button>
             <nav className="flex flex-col gap-0.5" aria-label={m.shell_layout__main()}>
               {railNav.map((s) => {
                 const Icon = navIcon(s.nav!.icon)

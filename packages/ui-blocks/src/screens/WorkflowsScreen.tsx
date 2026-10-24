@@ -12,7 +12,7 @@ import { Page } from '../blocks/Page'
 import { keep } from '../lib/links'
 import { ShellCtx } from '../lib/shell'
 import { asI18n } from '@pikku/react'
-import { EmptyState } from '../blocks/EmptyState'
+import { PikkuDot } from '../blocks/PikkuDot'
 import { useProjectKey, useProjectName } from '../lib/project'
 
 
@@ -51,11 +51,14 @@ export function WorkflowsScreen() {
       ) : null}
 
       {!isPending && workflows.length === 0 ? (
-        <EmptyState layout="row" icon={WorkflowIcon} title={m.workflows_screen__empty()} text={m.workflows_screen__empty_text()}>
-          <Button type="button" size="page" onClick={() => say(m.workflows_screen__add_say())}>
-            {m.assistants_screen__ask_new()}
-          </Button>
-        </EmptyState>
+        <NextCard label={m.workflows_screen__title()} hue="teal" page="workflows" title={m.workflows_screen__empty()} why={m.workflows_screen__empty_text()}>
+          <div className="flex flex-wrap gap-3">
+            <Button variant="hero" size="page" onClick={() => say(m.workflows_screen__add_say())}>
+              <PikkuDot />
+              {m.assistants_screen__ask_new()}
+            </Button>
+          </div>
+        </NextCard>
       ) : (
       <Section title={m.workflows_screen__your_workflows()} sub={m.workflows_screen__your_workflows_sub()}>
         <RowStack>

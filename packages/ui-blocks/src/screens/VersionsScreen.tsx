@@ -1,7 +1,7 @@
 import { m } from '@/i18n/messages'
 import { useContext, useMemo, useState } from 'react'
 import { Link } from '../blocks/Link'
-import { Pencil, RefreshCw, Search, Undo2 } from 'lucide-react'
+import { Flag, Pencil, RefreshCw, Search, Undo2 } from 'lucide-react'
 import { Button, buttonVariants } from '../ui/button'
 import { Input } from '../ui/input'
 import { Switch } from '../ui/switch'
@@ -12,7 +12,6 @@ import { Section } from '../blocks/Section'
 import { Segmented } from '../blocks/Segmented'
 import { Dot, RowCard, RowStack } from '../blocks/RowCard'
 import { SidePanel } from '../blocks/SidePanel'
-import { ShelfTile } from '../blocks/ShelfTile'
 import { ErrorState, detailsOf, faultOf } from '../blocks/ErrorState'
 import { StatusLine } from '../blocks/StatusLine'
 import { PikkuDot } from '../blocks/PikkuDot'
@@ -67,20 +66,15 @@ export type VersionsExtraRows = Partial<Record<string, { mode?: I18nNode; sent?:
 export function VersionsScreen({ extraRows = {} }: { extraRows?: VersionsExtraRows } = {}) {
   const view = useReleases()
   const projectName = useProjectName()
-  const [mode, setMode] = useState('cards')
   return (
     <Page gap="snug">
-      <PageHead crumb={projectName} title={m.versions_screen__title()} text={view.place ? m.versions_screen__intro_place({ place: asI18n(view.place) }) : m.versions_screen__intro()} size="lead">
-        {view.state === 'ready' && view.releases.length > 0 ? (
-          <Segmented label={m.versions_screen__how_show()} value={mode} options={[['cards', m.versions_screen__view_cards()], ['rows', m.versions_screen__view_rows()]]} onChange={setMode} />
-        ) : null}
-      </PageHead>
-      <Body view={view} mode={mode} extraRows={extraRows} />
+      <PageHead crumb={projectName} title={m.versions_screen__title()} text={view.place ? m.versions_screen__intro_place({ place: asI18n(view.place) }) : m.versions_screen__intro()} size="lead" />
+      <Body view={view} extraRows={extraRows} />
     </Page>
   )
 }
 
-function Body({ view, mode, extraRows }: { view: ReleasesView; mode: string; extraRows: VersionsExtraRows }) {
+function Body({ view, extraRows }: { view: ReleasesView; extraRows: VersionsExtraRows }) {
   const { say } = useContext(ShellCtx)
   if (view.state === 'loading')
     return (
@@ -104,7 +98,7 @@ function Body({ view, mode, extraRows }: { view: ReleasesView; mode: string; ext
       </>
     )
   if (view.state === 'off' || view.releases.length === 0) return <NothingYet view={view} />
-  return <History view={view} mode={mode} extraRows={extraRows} />
+  return <History view={view} extraRows={extraRows} />
 }
 
 function NothingYet({ view }: { view: ReleasesView }) {
@@ -145,7 +139,9 @@ function Pending({ view }: { view: ReleasesView }) {
 
 type Fault = { text: I18nString; ask: I18nString }
 
-function History({ view, mode, extraRows }: { view: ReleasesView; mode: string; extraRows: VersionsExtraRows }) {
+const LiveIcon = Flag
+
+function History({ view, extraRows }: { view: ReleasesView; extraRows: VersionsExtraRows }) {
   const { say } = useContext(ShellCtx)
   const { kind } = useProjectTarget()
   const extra = extraRows[kind]
@@ -193,20 +189,14 @@ function History({ view, mode, extraRows }: { view: ReleasesView; mode: string; 
 
   const tile = (v: Release, action: I18nNode) => {
     const p = shelfPart(v)
-    if (mode === 'rows')
-      return (
-        <RowCard key={v.id} flag={v.status === 'waiting'} tile={<p.icon className="size-5" />} title={openLink(v.id, titleOf(v))} caption={blurb(v)} note={m.versions_screen__by_when({ by: who(v), when: when(v) })}>
-          <Dot tone={shelfTone[v.status]}>{shelfWords[v.status]()}</Dot>
-          {action}
-        </RowCard>
-      )
     return (
-      <ShelfTile key={v.id} hue={p.hue} icon={p.icon} flag={v.status === 'waiting'} safe={canGoBack(v.status)} title={openLink(v.id, titleOf(v))} text={blurb(v)} status={shelfWords[v.status]()} tone={shelfTone[v.status]} meta={m.version_screen__meta({ who: who(v), when: when(v) })}>
+      <RowCard key={v.id} flag={v.status === 'waiting'} tile={<p.icon className="size-5" />} title={openLink(v.id, titleOf(v))} caption={blurb(v)} note={m.versions_screen__by_when({ by: who(v), when: when(v) })}>
+        <Dot tone={shelfTone[v.status]}>{shelfWords[v.status]()}</Dot>
         {action}
-      </ShelfTile>
+      </RowCard>
     )
   }
-  const grid = (items: I18nNode[]) => (mode === 'rows' ? <RowStack>{items}</RowStack> : <div className="grid grid-cols-1 gap-3.5 @min-[760px]/app:grid-cols-2 @min-[1100px]/app:grid-cols-3">{items}</div>)
+  const grid = (items: I18nNode[]) => <RowStack>{items}</RowStack>
 
   return (
     <>
@@ -233,9 +223,10 @@ function History({ view, mode, extraRows }: { view: ReleasesView; mode: string; 
 
       <Section title={m.versions_screen__what_people_see()}>
         {live ? (
-          <ShelfTile wide hue="sea" icon={shelfPart(live).icon} title={openLink(live.id, titleOf(live))} text={versionLine(live)} status={m.shelf_meta__live()} tone="ok" meta={m.versions_screen__live_since_by({ since: dayTime(live.liveAt ?? live.at), who: who(live) })}>
+          <RowCard on tile={<LiveIcon className="size-5" />} title={openLink(live.id, titleOf(live))} caption={versionLine(live)} note={m.versions_screen__live_since_by({ since: dayTime(live.liveAt ?? live.at), who: who(live) })}>
+            <Dot>{m.shelf_meta__live()}</Dot>
             {openButton(live.id, m.versions_screen__whats_in_it())}
-          </ShelfTile>
+          </RowCard>
         ) : (
           <RowCard tile={<RefreshCw className="size-5" />} title={m.versions_screen__nothing_live_title()} caption={m.versions_screen__nothing_live_why()} />
         )}
