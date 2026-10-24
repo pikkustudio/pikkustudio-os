@@ -5067,5 +5067,9 @@
     }
   ],
   "shell__team_others_note": "The team's projects, kept online. Work you have not kept stays on this computer.",
-  "shell__account_title": "Your account"
+  "shell__account_title": "Your account",
+  "version_screen__read_all": "Mark all as read",
+  "version_screen__read_count": "{read} of {total} read",
+  "version_screen__show_fewer": "Show fewer",
+  "version_screen__show_more_changes": "Show {count} more"
 }

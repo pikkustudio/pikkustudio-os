@@ -16,7 +16,7 @@ import { ErrorState } from '../blocks/ErrorState'
 import { StatusLine } from '../blocks/StatusLine'
 import { ShelfStrip } from '../blocks/ShelfStrip'
 import { canGoBack, dayTime, failWords, shelfWords, numbered, titleOf, when, who } from '../blocks/ShelfMeta'
-import { useReleaseDetail, useReleases, type Release, type ReleaseDetail, type ReleaseGroup, type ReleaseGroupId, type ReleaseMissing, type ReleasesView } from '../lib/releases'
+import { useReleaseDetail, useReleases, type Release, type ReleaseDetail, type ReleaseGroup, type ReleaseFlag, type ReleaseGroupId, type ReleaseMissing, type ReleasesView } from '../lib/releases'
 import { keep } from '../lib/links'
 import { ShellCtx } from '../lib/shell'
 import { asI18n, type I18nString } from '@pikku/react'
@@ -68,36 +68,97 @@ export function VersionScreen({ id }: { id: string }) {
 const changeWord = { added: m.version_screen__line_new, changed: m.version_screen__line_changed, removed: m.version_screen__line_removed }
 const changeTone = { added: 'ok', changed: 'quiet', removed: 'bad' } as const
 
+const FOLD = 10
+
+function ChangeNames({ items }: { items: ReleaseGroup['items'] }) {
+  const [all, setAll] = useState(false)
+  const shown = all ? items : items.slice(0, FOLD)
+  const same = items.every((x) => x.change === items[0].change)
+  return (
+    <div className="flex flex-col gap-2.5 ps-14.5">
+      <ul className="flex flex-wrap gap-1.5">
+        {shown.map((x) => (
+          <li key={x.change + x.name} dir="ltr" className="inline-flex items-center gap-2 rounded-md bg-secondary px-2.5 py-1 font-mono text-[13px] break-all">
+            {same ? null : <i className={`size-2 shrink-0 rounded-full ${x.change === 'added' ? 'bg-success' : x.change === 'removed' ? 'bg-destructive' : 'bg-muted-foreground'}`} aria-label={changeWord[x.change]()} />}
+            {asI18n(x.name)}
+          </li>
+        ))}
+      </ul>
+      {items.length > FOLD ? (
+        <Button variant="quietMuted" className="self-start" onClick={() => setAll((v) => !v)}>
+          {all ? m.version_screen__show_fewer() : m.version_screen__show_more_changes({ count: items.length - FOLD })}
+        </Button>
+      ) : null}
+    </div>
+  )
+}
+
 export function GroupRows({ groups }: { groups: ReleaseGroup[] }) {
   if (!groups.length) return <p className="text-[14px] text-ink-2">{m.version_screen__no_changes()}</p>
   return (
     <RowStack>
       {groups.map((g) => {
         const look = groupLook[g.id]
+        const same = g.items.every((x) => x.change === g.items[0].change)
         return (
-          <RowCard
-            key={g.id}
-            tile={<look.icon className="size-5" />}
-            title={look.label()}
-            caption={m.version_screen__change({ count: g.items.length })}
-            below={
-              <ul className="flex flex-col gap-1.5 ps-14.5 text-[16px]">
-                {g.items.map((x) => (
-                  <li key={x.change + x.name} className="flex flex-wrap items-center gap-3">
-                    <span className="w-24 shrink-0">
-                      <Dot tone={changeTone[x.change]}>{changeWord[x.change]()}</Dot>
-                    </span>
-                    <span dir="ltr" className="font-mono text-[14px] break-all">
-                      {asI18n(x.name)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            }
-          />
+          <RowCard key={g.id} tile={<look.icon className="size-5" />} title={look.label()} caption={m.version_screen__change({ count: g.items.length })} below={<ChangeNames items={g.items} />}>
+            {same ? <Dot tone={changeTone[g.items[0].change]}>{changeWord[g.items[0].change]()}</Dot> : null}
+          </RowCard>
         )
       })}
     </RowStack>
+  )
+}
+
+function FlagList({ flags, read, setRead, edit }: { flags: ReleaseFlag[]; read: string[]; setRead: (f: (r: string[]) => string[]) => void; edit: boolean }) {
+  if (!flags.length) return null
+  const done = flags.filter((f) => read.includes(f.id)).length
+  const title = (f: ReleaseFlag) => (f.level === 'breaking' ? m.version_screen__flag_breaking() : f.level === 'security' ? m.version_screen__flag_security() : m.version_screen__flag_failed())
+  return (
+    <div className={`overflow-hidden rounded-card border bg-card shadow-card ${done < flags.length ? 'border-warning' : 'border-border'}`}>
+      <div className="flex flex-wrap items-center gap-3 border-b border-border px-3.5 py-3">
+        <span className="grid size-11 shrink-0 place-items-center rounded-lg bg-secondary text-ink-2" aria-hidden="true">
+          <TriangleAlert className="size-5" />
+        </span>
+        <span className="min-w-0 flex-1 basis-56">
+          <b className="block text-[17px] leading-[1.3]">{m.version_screen__things({ count: flags.length })}</b>
+          <small className="block text-[14px] text-ink-2 tabular-nums">{m.version_screen__read_count({ read: done, total: flags.length })}</small>
+        </span>
+        {edit && done < flags.length ? (
+          <Button variant="bordered" size="compact" onClick={() => setRead(() => flags.map((f) => f.id))}>
+            {m.version_screen__read_all()}
+          </Button>
+        ) : null}
+      </div>
+      <ul className="flex flex-col divide-y divide-border">
+        {flags.map((f) => {
+          const isRead = read.includes(f.id)
+          return (
+            <li key={f.id} className="flex flex-wrap items-center gap-x-4 gap-y-2 px-3.5 py-3">
+              <span className="min-w-0 flex-1 basis-64">
+                <span className={`block text-[15px] leading-[1.4] ${isRead ? 'text-ink-2' : ''}`}>{asI18n(f.why)}</span>
+                <span className="mt-1 flex flex-wrap items-center gap-2 text-[13px] text-muted-foreground">
+                  <span>{title(f)}</span>
+                  <span dir="ltr" className="rounded bg-secondary px-1.5 py-0.5 font-mono text-[12px] text-ink-2 break-all">
+                    {asI18n(f.name)}
+                  </span>
+                </span>
+              </span>
+              {isRead ? (
+                <Button variant="quietMuted" onClick={() => edit && setRead((r) => r.filter((x) => x !== f.id))}>
+                  <Check className="size-4" aria-hidden="true" />
+                  {m.version_screen__read()}
+                </Button>
+              ) : edit ? (
+                <Button variant="bordered" size="compact" onClick={() => setRead((r) => [...r, f.id])}>
+                  {m.version_screen__have_read()}
+                </Button>
+              ) : null}
+            </li>
+          )
+        })}
+      </ul>
+    </div>
   )
 }
 
@@ -254,22 +315,7 @@ function Detail({ v, view }: { v: Release; view: ReleasesView }) {
                 ) : null}
               </RowCard>
             ) : null}
-            {detail.flags.map((f) => {
-              const done = read.includes(f.id)
-              return (
-                <RowCard key={f.id} flag={!done} tile={<TriangleAlert className="size-5" />} title={f.level === 'breaking' ? m.version_screen__flag_breaking() : f.level === 'security' ? m.version_screen__flag_security() : m.version_screen__flag_failed()} caption={asI18n(f.why)} note={asI18n(f.name)}>
-                  {done ? (
-                    <Button variant="quietMuted" onClick={() => setRead((r) => r.filter((x) => x !== f.id))}>
-                      {m.version_screen__read()}
-                    </Button>
-                  ) : edit ? (
-                    <Button variant="bordered" size="compact" onClick={() => setRead((r) => [...r, f.id])}>
-                      {m.version_screen__have_read()}
-                    </Button>
-                  ) : null}
-                </RowCard>
-              )
-            })}
+            <FlagList flags={detail.flags} read={read} setRead={setRead} edit={edit} />
             {v.wait === 'builder' ? <RowCard tile={<History className="size-5" />} title={m.version_screen__hero_builder_title()} caption={m.version_screen__hero_builder_why()} /> : null}
             {!v.missing.length && !detail.flags.length && !stale && v.wait !== 'builder' ? <RowCard on tile={<Check className="size-5" />} title={m.version_screen__nothing_to_do()} caption={m.version_screen__hero_ready_why()} /> : null}
           </RowStack>
@@ -396,9 +442,9 @@ function Checks({ v, detail }: { v: Release; detail: ReleaseDetail }) {
         >
           <Dot tone={t ? (t.failed ? 'bad' : 'ok') : 'quiet'}>{t ? (t.failed ? m.version_screen__needs_look() : m.version_screen__all_passed()) : m.version_screen__did_not_run()}</Dot>
         </RowCard>
-        <RowCard tile={<ShieldCheck className="size-5" />} title={m.version_screen__check_safe()} caption={flags ? m.version_screen__things({ count: flags }) : m.version_screen__nothing_risky()}>
+        {flags && v.status === 'waiting' ? null : <RowCard tile={<ShieldCheck className="size-5" />} title={m.version_screen__check_safe()} caption={flags ? m.version_screen__things({ count: flags }) : m.version_screen__nothing_risky()}>
           <Dot tone={flags ? 'warn' : 'ok'}>{flags ? m.version_screen__read_it() : m.version_screen__nothing_found()}</Dot>
-        </RowCard>
+        </RowCard>}
       </RowStack>
     </Section>
   )
