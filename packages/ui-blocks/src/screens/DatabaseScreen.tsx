@@ -65,7 +65,7 @@ export function DatabaseScreen() {
   const { say } = useContext(ShellCtx)
   const [technical] = useDeveloperDetails()
   const q = useProjectQuery<Schema>(key, 'console:getDbSchema', {})
-  const head = <PageHead crumb={projectName} title={m.database__title()} text={m.database__text()} size="lead" developerDetails />
+  const head = <PageHead crumb={projectName} title={m.database__title()} text={m.database__text()} size="lead" />
 
   if (q.isError)
     return (

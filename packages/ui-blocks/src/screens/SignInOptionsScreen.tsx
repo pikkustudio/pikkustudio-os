@@ -25,7 +25,7 @@ export function SignInOptionsScreen() {
   const { say } = useContext(ShellCtx)
   const [technical] = useDeveloperDetails()
   const q = useProjectQuery<Providers>(key, 'console:getAuthProviders', {})
-  const head = <PageHead crumb={projectName} title={m.signin_options__title()} text={m.signin_options__text()} size="lead" developerDetails />
+  const head = <PageHead crumb={projectName} title={m.signin_options__title()} text={m.signin_options__text()} size="lead" />
 
   if (q.isError)
     return (

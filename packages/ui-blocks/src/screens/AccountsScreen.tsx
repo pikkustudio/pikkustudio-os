@@ -38,7 +38,7 @@ export function AccountsScreen() {
 
   return (
     <Page gap="snug">
-      <PageHead crumb={projectName} title={m.accounts_screen__title()} text={m.accounts_screen__text()} size="lead" developerDetails />
+      <PageHead crumb={projectName} title={m.accounts_screen__title()} text={m.accounts_screen__text()} size="lead" />
       <AccountsHero count={search ? undefined : people.data?.total} onInvite={() => { setOpen(null); setInviting(true) }} />
 
       {problem === 'not-running' ? (

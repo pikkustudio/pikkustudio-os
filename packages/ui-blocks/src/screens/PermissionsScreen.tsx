@@ -45,7 +45,7 @@ export function PermissionsScreen() {
 
   return (
     <Page gap="snug">
-      <PageHead crumb={projectName} title={m.permissions_screen__title()} text={m.permissions_screen__text()} size="lead" developerDetails />
+      <PageHead crumb={projectName} title={m.permissions_screen__title()} text={m.permissions_screen__text()} size="lead" />
       <PermissionsHero count={roles.data?.roles.length} onCreate={create} />
 
       {problem === 'not-running' ? (

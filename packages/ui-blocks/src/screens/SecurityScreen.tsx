@@ -157,7 +157,7 @@ export function SecurityScreen() {
   const [dev] = useDeveloperDetails()
   const [showTools, setShowTools] = useState(false)
 
-  const head = <PageHead crumb={projectName} title={m.security_screen__title()} text={m.security_screen__text()} size="lead" developerDetails />
+  const head = <PageHead crumb={projectName} title={m.security_screen__title()} text={m.security_screen__text()} size="lead" />
 
   if (q.isError)
     return (

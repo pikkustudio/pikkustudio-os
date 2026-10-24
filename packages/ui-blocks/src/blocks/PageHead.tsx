@@ -1,7 +1,6 @@
 import type { I18nNode, I18nString } from '@pikku/react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { PinButton } from './PinButton'
-import { DeveloperDetailsButton } from './DeveloperDetailsButton'
 import { usePublishPageTitle } from '../lib/page-title'
 
 const head = cva('flex flex-wrap justify-between gap-5', {
@@ -19,7 +18,7 @@ const lead = cva('text-pretty text-ink-2', {
   defaultVariants: { size: 'default' },
 })
 
-export function PageHead({ crumb, title, text, children, developerDetails, size, width, ...v }: { crumb?: I18nNode; title: I18nString; text?: I18nNode; children?: I18nNode; developerDetails?: boolean } & VariantProps<typeof head> & VariantProps<typeof lead> & VariantProps<typeof body>) {
+export function PageHead({ crumb, title, text, children, size, width, ...v }: { crumb?: I18nNode; title: I18nString; text?: I18nNode; children?: I18nNode } & VariantProps<typeof head> & VariantProps<typeof lead> & VariantProps<typeof body>) {
   usePublishPageTitle(title)
   return (
     <div data-testid="page-head" className={head(v)}>
@@ -30,7 +29,6 @@ export function PageHead({ crumb, title, text, children, developerDetails, size,
       </div>
       <div className="flex items-start gap-2.5">
         {children}
-        {developerDetails ? <DeveloperDetailsButton /> : null}
         <PinButton />
       </div>
     </div>

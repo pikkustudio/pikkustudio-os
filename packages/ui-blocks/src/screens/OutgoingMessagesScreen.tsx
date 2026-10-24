@@ -17,7 +17,7 @@ export function OutgoingMessagesScreen() {
   const projectName = useProjectName()
   const { say } = useContext(ShellCtx)
   const q = useWorkMeta(key)
-  const head = <PageHead crumb={projectName} title={m.outgoing__title()} text={m.outgoing__text()} size="lead" developerDetails />
+  const head = <PageHead crumb={projectName} title={m.outgoing__title()} text={m.outgoing__text()} size="lead" />
 
   if (q.isError)
     return (

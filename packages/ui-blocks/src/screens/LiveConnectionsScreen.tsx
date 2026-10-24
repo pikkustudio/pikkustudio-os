@@ -48,7 +48,7 @@ export function LiveConnectionsScreen() {
   }
   const openOne = (id: string | undefined) => void navigate({ to: '.', search: ((prev: object) => ({ ...prev, ch: id })) as never, replace: true })
 
-  const head = <PageHead crumb={projectName} title={m.live_screen__title()} text={m.live_screen__text()} size="lead" developerDetails />
+  const head = <PageHead crumb={projectName} title={m.live_screen__title()} text={m.live_screen__text()} size="lead" />
 
   if (q.isError)
     return (

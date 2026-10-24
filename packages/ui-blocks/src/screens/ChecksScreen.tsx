@@ -121,7 +121,7 @@ export function ChecksScreen() {
   return (
     <div className="@container/vu">
       <Page gap="snug">
-        <PageHead crumb={projectName} title={m.checks_screen__title()} text={m.checks_screen__text()} size="lead" developerDetails />
+        <PageHead crumb={projectName} title={m.checks_screen__title()} text={m.checks_screen__text()} size="lead" />
 
         <NextCard label={m.checks_screen__title()} hue={problems > 0 ? 'teal' : 'sea'} page="checks" title={title} why={why}>
           <div className="flex flex-wrap gap-3">

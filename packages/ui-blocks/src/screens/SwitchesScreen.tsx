@@ -56,7 +56,7 @@ export function SwitchesScreen() {
 
   return (
     <Page gap="snug">
-      <PageHead crumb={projectName} title={m.switches_screen__title()} text={m.switches_screen__text()} size="lead" developerDetails />
+      <PageHead crumb={projectName} title={m.switches_screen__title()} text={m.switches_screen__text()} size="lead" />
       <SwitchesHero
         total={list.data ? flags.length : undefined}
         on={flags.filter((f) => f.enabled).length}

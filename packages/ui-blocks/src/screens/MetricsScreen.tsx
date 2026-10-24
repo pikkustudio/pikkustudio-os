@@ -37,7 +37,7 @@ export function MetricsScreen({ scope = 'app' }: { scope?: 'app' | 'studio' }) {
 
   return (
     <Page gap="snug">
-      <PageHead crumb={scope === 'studio' ? m.metrics_screen__crumb_studio() : m.metrics_screen__crumb_app()} title={scope === 'studio' ? m.metrics_screen__title_studio() : m.metrics_screen__title_app()} text={scope === 'studio' ? m.metrics_screen__text_studio() : m.metrics_screen__text_app()} size="lead" developerDetails>
+      <PageHead crumb={scope === 'studio' ? m.metrics_screen__crumb_studio() : m.metrics_screen__crumb_app()} title={scope === 'studio' ? m.metrics_screen__title_studio() : m.metrics_screen__title_app()} text={scope === 'studio' ? m.metrics_screen__text_studio() : m.metrics_screen__text_app()} size="lead">
         {scope === 'app' ? <TargetSwitch /> : null}
         <Segmented label={m.metrics_screen__time_range()} value={range} options={options} onChange={setRange} />
       </PageHead>

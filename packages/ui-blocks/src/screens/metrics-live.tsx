@@ -115,7 +115,7 @@ export function LivePerformanceScreen({ name }: { name: string }) {
   const from = to - Number(hours) * HOUR
   const s = useLive(name, Number(hours), to)
   const head = (
-    <PageHead crumb={m.performance_screen__crumb()} title={m.performance_screen__title()} text={m.metrics_live__perf_text()} size="lead" developerDetails>
+    <PageHead crumb={m.performance_screen__crumb()} title={m.performance_screen__title()} text={m.metrics_live__perf_text()} size="lead">
       <TargetSwitch />
       <Segmented label={m.performance_screen__time_range()} value={hours} options={liveRanges()} onChange={setHours} />
     </PageHead>

@@ -183,7 +183,7 @@ export function ProjectSecretsScreen() {
 
   return (
     <Page gap="snug">
-      <PageHead crumb={app} title={m.project_secrets__title()} text={m.project_secrets__text()} size="lead" developerDetails />
+      <PageHead crumb={app} title={m.project_secrets__title()} text={m.project_secrets__text()} size="lead" />
       {hero}
       <QueryState
         query={meta.query}

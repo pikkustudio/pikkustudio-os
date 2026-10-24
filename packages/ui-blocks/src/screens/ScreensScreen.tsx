@@ -27,7 +27,7 @@ export function ScreensScreen() {
   const [technical] = useDeveloperDetails()
   const [term, setTerm] = useState('')
   const q = useProjectQuery<{ pages?: AppPage[] }>(key, 'console:getPages', {})
-  const head = <PageHead crumb={projectName} title={m.screens_page__title()} text={m.screens_page__text()} size="lead" developerDetails />
+  const head = <PageHead crumb={projectName} title={m.screens_page__title()} text={m.screens_page__text()} size="lead" />
 
   if (q.isError)
     return (

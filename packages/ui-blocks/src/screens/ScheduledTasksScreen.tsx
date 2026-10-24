@@ -29,7 +29,7 @@ export function ScheduledTasksScreen() {
   const q = useWorkMeta(key)
   const history = useTimedHistory(key)
 
-  const head = <PageHead crumb={projectName} title={m.scheduled_tasks__title()} text={m.scheduled_tasks__text()} size="lead" developerDetails />
+  const head = <PageHead crumb={projectName} title={m.scheduled_tasks__title()} text={m.scheduled_tasks__text()} size="lead" />
 
   if (q.isError)
     return (

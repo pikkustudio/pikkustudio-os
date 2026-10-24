@@ -84,7 +84,7 @@ export function FunctionsScreen() {
   }
   const openFn = (id: string | undefined) => void navigate({ to: '.', search: ((prev: object) => ({ ...prev, fn: id })) as never, replace: true })
 
-  const head = <PageHead crumb={projectName} title={m.functions_screen__title()} text={m.functions_screen__text()} size="lead" developerDetails />
+  const head = <PageHead crumb={projectName} title={m.functions_screen__title()} text={m.functions_screen__text()} size="lead" />
 
   if (q.isError)
     return (

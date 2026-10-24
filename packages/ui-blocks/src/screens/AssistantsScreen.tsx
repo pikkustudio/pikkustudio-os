@@ -34,7 +34,7 @@ export function AssistantsScreen() {
 
   return (
     <Page gap="snug">
-      <PageHead crumb={app} title={m.assistants_screen__title()} text={m.assistants_screen__text()} size="lead" developerDetails />
+      <PageHead crumb={app} title={m.assistants_screen__title()} text={m.assistants_screen__text()} size="lead" />
 
       {list.length > 0 ? (
         <NextCard

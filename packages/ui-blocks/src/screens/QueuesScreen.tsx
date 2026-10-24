@@ -30,7 +30,7 @@ export function QueuesScreen() {
   const q = useWorkMeta(key)
   const history = useJobHistory(key)
 
-  const head = <PageHead crumb={projectName} title={m.queues__title()} text={m.queues__text()} size="lead" developerDetails />
+  const head = <PageHead crumb={projectName} title={m.queues__title()} text={m.queues__text()} size="lead" />
 
   if (q.isError)
     return (

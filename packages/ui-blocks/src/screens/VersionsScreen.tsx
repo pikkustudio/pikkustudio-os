@@ -70,7 +70,7 @@ export function VersionsScreen({ extraRows = {} }: { extraRows?: VersionsExtraRo
   const [mode, setMode] = useState('cards')
   return (
     <Page gap="snug">
-      <PageHead crumb={projectName} title={m.versions_screen__title()} text={view.place ? m.versions_screen__intro_place({ place: asI18n(view.place) }) : m.versions_screen__intro()} size="lead" developerDetails>
+      <PageHead crumb={projectName} title={m.versions_screen__title()} text={view.place ? m.versions_screen__intro_place({ place: asI18n(view.place) }) : m.versions_screen__intro()} size="lead">
         {view.state === 'ready' && view.releases.length > 0 ? (
           <Segmented label={m.versions_screen__how_show()} value={mode} options={[['cards', m.versions_screen__view_cards()], ['rows', m.versions_screen__view_rows()]]} onChange={setMode} />
         ) : null}
