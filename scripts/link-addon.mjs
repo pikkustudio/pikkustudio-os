@@ -5,7 +5,7 @@
 // from this repo's node_modules. When the submodule is not checked out (an empty folder) no addon is found, which is
 // what keeps the open build working without it.
 //
-//   node scripts/link-addon.mjs             wire every addon present but the operator ones, with pikku.cloud.json (the
+//   node scripts/link-addon.mjs             wire every addon present but the operator ones, with pikku.config.json (the
 //                                          online build: cloud and web)
 //   node scripts/link-addon.mjs --app       the app's build: as above, without the website's own pages (addon-web)
 //   node scripts/link-addon.mjs --operator  also wire the operator addons
@@ -16,7 +16,7 @@
 //                                          back to a link state saved earlier (a copy of .studio-addons/addons.json),
 //                                          as scripts/build-hosted.sh does after building the web edition
 //
-// Each addon's src/wire/*.ts is copied to .studio-addons/wire/, which pikku.cloud.json lists as a source directory: the
+// Each addon's src/wire/*.ts is copied to .studio-addons/wire/, which pikku.config.json lists as a source directory: the
 // pikku inspector skips any file under a directory holding its own pikku.config.json, so the addon's own copy is
 // never read. The choice is written to .studio-addons/addons.json, which scripts/pikku-config.mjs reads.
 import { execSync } from 'node:child_process'
@@ -96,8 +96,8 @@ if (args.has('--test')) {
     return { name: JSON.parse(readFileSync(join(root, dir, 'package.json'), 'utf8')).name, dir, test: true }
   })
   mkdirSync(linked, { recursive: true })
-  writeFileSync(stateFile, JSON.stringify({ config: 'pikku.cloud.json', addons }, null, 2) + '\n')
-  console.log(`Linked the test addons ${addons.map((a) => a.name).join(', ')}; builds now use pikku.cloud.json`)
+  writeFileSync(stateFile, JSON.stringify({ config: 'pikku.config.json', addons }, null, 2) + '\n')
+  console.log(`Linked the test addons ${addons.map((a) => a.name).join(', ')}; builds now use pikku.config.json`)
   process.exit(0)
 }
 
@@ -130,7 +130,7 @@ for (const dir of present) {
   addons.push({ name: manifest.name, dir: relative(root, dir) })
 }
 
-const config = 'pikku.cloud.json'
+const config = 'pikku.config.json'
 mkdirSync(linked, { recursive: true })
 writeFileSync(stateFile, JSON.stringify({ config, addons }, null, 2) + '\n')
 console.log(`Linked ${addons.map((a) => a.name).join(', ')}; builds now use ${config}`)
