@@ -2,6 +2,7 @@ name: Release build
 # Builds the standalone Studio tarballs (docs/building-releases.md) and checks each one boots. Build only: nothing is
 # published or released. `os` is the open edition; `cloud` adds the private addons from packages/pikkustudio-private,
 # checked out with the CLOUD_ADDON_DEPLOY_KEY secret, and is skipped when that secret is not set.
+# The cloud tarballs are never uploaded as artifacts: this repo is public, so they would be downloadable.
 # release-build.sh boots every tarball on its own host; the Linux ones are booted again in a clean debian:stable-slim.
 
 on:
@@ -121,9 +122,3 @@ jobs:
         run: |
           docker run --rm -v "$PWD/dist-release:/dist:ro" -v "$PWD/scripts:/scripts:ro" debian:stable-slim \
             sh /scripts/release-check.sh "/dist/$(cd dist-release && ls studio-*-${{ matrix.target }}.tar.gz)"
-      - uses: actions/upload-artifact@v4
-        with:
-          name: studio-${{ matrix.target }}
-          path: dist-release/studio-*-${{ matrix.target }}.tar.gz
-          if-no-files-found: error
-          retention-days: 14
