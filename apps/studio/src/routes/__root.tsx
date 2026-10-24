@@ -21,7 +21,6 @@ import { useAccount } from '@pikkustudio/blocks/lib/onboarding'
 import { StudioLoading } from '@pikkustudio/blocks/blocks/StudioLoading'
 import { validateStudioSearch } from '@pikkustudio/blocks/lib/search'
 import { isLocalOnly } from '@pikkustudio/blocks/lib/nav-registry'
-import { paletteScript, schemeScript } from '@pikkustudio/theme'
 import globals from '@/styles/globals.css?url'
 
 export const Route = createRootRoute({
@@ -49,6 +48,7 @@ export const Route = createRootRoute({
 // never flashes left-to-right. The server cannot know the saved choice (it lives in this browser), so it renders the
 // project's default locale and this script, then the effect in RootDocument, take over on the client.
 const RTL_LOCALES = supportedLocales.filter((l) => localeDir(l) === 'rtl')
+const schemeScript = `try{var s=localStorage.getItem('app-color-scheme');if(s==='dark'||(s!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark')}catch(e){}`
 const localeScript = `try{var l=localStorage.getItem('${LOCALE_KEY}')||localStorage.getItem('app-locale');if(l&&${JSON.stringify(supportedLocales)}.indexOf(l)>-1){var d=document.documentElement;d.lang=l;d.dir=${JSON.stringify(RTL_LOCALES)}.indexOf(l)>-1?'rtl':'ltr'}}catch(e){}`
 
 function SessionGate({ children }: { children: ReactNode }) {
@@ -119,13 +119,12 @@ function RootDocument({ children }: { children: ReactNode }) {
   }
 
   return (
-    <html lang={active} dir={dir} suppressHydrationWarning>
+    <html lang={active} dir={dir} data-palette="studio" suppressHydrationWarning>
       <head>
         <HeadContent />
         <script dangerouslySetInnerHTML={{ __html: schemeScript }} />
         <script dangerouslySetInnerHTML={{ __html: localeScript }} />
-        <script dangerouslySetInnerHTML={{ __html: paletteScript }} />
-      </head>
+              </head>
       <body>
         <DirectionProvider dir={dir}>
         <PreferencesContext.Provider value={{ locale, themeId: 'default', setLocale, setThemeId: () => {} }}>

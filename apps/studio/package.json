@@ -23,7 +23,6 @@
     "@pikku/assistant-ui": "^0.12.14",
     "@pikku/react": "^0.12.17",
     "@pikkustudio/blocks": "workspace:*",
-    "@pikkustudio/theme": "workspace:*",
     "@project/functions-sdk": "workspace:*",
     "@project/theme": "workspace:*",
     "@radix-ui/react-avatar": "^1.1.10",
