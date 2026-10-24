@@ -80,9 +80,9 @@ docker run --rm -v "$PWD/dist-release:/dist:ro" -v "$PWD/scripts:/scripts:ro" de
 
 ## Release builds in CI
 
-`.github/workflows/release-build.yml` runs on every push to main, every pull request and on demand. It builds both editions for darwin-arm64 (macos-15), linux-arm64 (ubuntu-24.04-arm) and linux-x64 (ubuntu-24.04), each on its own architecture so `release-build.sh` boots it, boots the Linux tarballs again with `release-check.sh` in `debian:stable-slim`, and uploads every tarball as a workflow artifact (`studio-os-<target>`, `studio-<target>`, kept 14 days). It publishes nothing. It builds from the committed `bun.lock` only, never against a linked pikku, so it fails while the repo needs an unreleased `@pikku/*`.
+`.github/workflows/build.yml` is the one build workflow: it runs on every push to main, every `v*` tag, every pull request and on demand, and its jobs branch from there (open server and desktop builds, the Cloud builds, and the web deploy to cloud.pikkustudio.app). It builds both editions for darwin-arm64 (macos-15), linux-arm64 (ubuntu-24.04-arm) and linux-x64 (ubuntu-24.04), each on its own architecture so `release-build.sh` boots it, boots the Linux tarballs again with `release-check.sh` in `debian:stable-slim`, and uploads every tarball as a workflow artifact (`studio-os-<target>`, `studio-<target>`, kept 14 days). It publishes nothing. It builds from the committed `bun.lock` only, never against a linked pikku, so it fails while the repo needs an unreleased `@pikku/*`.
 
-The Cloud jobs need the `CLOUD_ADDON_DEPLOY_KEY` secret, which `desktop.yml` also uses, to check out `packages/pikkustudio-private`; without it they are skipped and the run summary says so. To enable them, once:
+The Cloud jobs need the `CLOUD_ADDON_DEPLOY_KEY` secret, which every Cloud job in that workflow uses, to check out `packages/pikkustudio-private`; without it they are skipped and the run summary says so. To enable them, once:
 
 ```
 ssh-keygen -t ed25519 -N '' -C 'pikkustudio-os ci' -f pikkustudio-private-deploy-key

@@ -1,0 +1,287 @@
+name: Build
+# The one build workflow. A push to main, a v* tag, a pull request or a manual run fans out from here:
+#   server   the open standalone tarballs (studio-os-*), three targets, each booted before it is packed
+#   desktop  the open desktop apps
+#   gate     whether the private addons can be checked out (CLOUD_ADDON_DEPLOY_KEY set, not a pull request)
+#   cloud-*  the same builds with packages/pikkustudio-private linked in
+#   web      builds the web edition and deploys it to cloud.pikkustudio.app; main and manual runs only, and it needs
+#            CLOUDFLARE_API_TOKEN as well
+# A tag run uploads the desktop installers and cloud tarballs to the downloads bucket.
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_type != 'tag' }}
+
+jobs:
+  server:
+    name: server-${{ matrix.target }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            platform: darwin/arm64
+            target: darwin-arm64
+          - runner: ubuntu-24.04-arm
+            platform: linux/arm64
+            target: linux-arm64
+          - runner: ubuntu-24.04
+            platform: linux/x64
+            target: linux-x64
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+          submodules: false
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.1
+      - run: bun install --frozen-lockfile
+      - run: node scripts/link-addon.mjs --unlink
+      - name: Build (boots before it is packed)
+        env:
+          RELEASE_NAME: studio-os
+          RELEASE_OUT: dist-release
+        run: RELEASE_VERSION="0.0.0-${GITHUB_SHA::7}" sh scripts/release-build.sh ${{ matrix.platform }}
+      - name: Boot in debian:stable-slim
+        if: runner.os == 'Linux'
+        run: |
+          docker run --rm -v "$PWD/dist-release:/dist:ro" -v "$PWD/scripts:/scripts:ro" debian:stable-slim \
+            sh /scripts/release-check.sh "/dist/$(cd dist-release && ls studio-os-*-${{ matrix.target }}.tar.gz)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: studio-os-${{ matrix.target }}
+          path: dist-release/studio-os-*-${{ matrix.target }}.tar.gz
+          if-no-files-found: error
+          retention-days: 14
+
+  desktop:
+    name: desktop-${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            target: linux
+            bundles: appimage,deb
+            paths: |
+              apps/studio/src-tauri/target/release/bundle/appimage/*.AppImage
+              apps/studio/src-tauri/target/release/bundle/deb/*.deb
+          - os: macos-latest
+            target: macos
+            bundles: app,dmg
+            paths: |
+              apps/studio/src-tauri/target/release/bundle/dmg/*.dmg
+              apps/studio/src-tauri/target/release/bundle/macos/*.app
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.1
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Linux packages
+        if: matrix.target == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libssl-dev
+      - run: bun install --frozen-lockfile
+      - run: bun run check:cloud-boundary
+      - run: bun run check:independence
+      - name: Build
+        shell: bash
+        env:
+          TAURI_BUNDLES: ${{ matrix.bundles }}
+        run: bun run build:desktop
+      - uses: actions/upload-artifact@v4
+        with:
+          name: studio-${{ matrix.target }}-${{ github.sha }}
+          path: ${{ matrix.paths }}
+          if-no-files-found: error
+      - name: Upload to R2
+        if: github.ref_type == 'tag' && matrix.target == 'macos'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_DOWNLOADS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_DOWNLOADS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          DOWNLOADS_BUCKET: ${{ vars.R2_DOWNLOADS_BUCKET }}
+          AWS_ENDPOINT_URL: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+        run: |
+          v="${GITHUB_REF_NAME#v}"
+          dmg=$(ls apps/studio/src-tauri/target/release/bundle/dmg/*.dmg)
+          aws s3 cp "$dmg" "s3://$DOWNLOADS_BUCKET/studio-os/$v/Pikku-Studio-OS-$v-arm64.dmg"
+          echo "{\"version\":\"$v\"}" > latest.json
+          aws s3 cp latest.json s3://$DOWNLOADS_BUCKET/studio-os/latest.json --content-type application/json
+
+  gate:
+    runs-on: ubuntu-24.04
+    outputs:
+      cloud: ${{ steps.secret.outputs.cloud }}
+      deploy: ${{ steps.secret.outputs.deploy }}
+    steps:
+      - id: secret
+        env:
+          KEY: ${{ secrets.CLOUD_ADDON_DEPLOY_KEY }}
+          TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          EVENT: ${{ github.event_name }}
+          REF_TYPE: ${{ github.ref_type }}
+        run: |
+          cloud=false
+          deploy=false
+          if [ -n "$KEY" ] && [ "$EVENT" != pull_request ]; then cloud=true; fi
+          if [ "$cloud" = true ] && [ -n "$TOKEN" ] && [ "$REF_TYPE" = branch ]; then deploy=true; fi
+          echo "cloud=$cloud" >> "$GITHUB_OUTPUT"
+          echo "deploy=$deploy" >> "$GITHUB_OUTPUT"
+          if [ "$cloud" = false ]; then
+            {
+              echo '### Cloud edition skipped'
+              echo 'The `CLOUD_ADDON_DEPLOY_KEY` secret is not set (or not available to this run, as for a pull request), so `packages/pikkustudio-private` cannot be checked out and only the open builds ran.'
+              echo 'See "Release builds in CI" in docs/building-releases.md to enable it.'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  cloud-server:
+    name: cloud-server-${{ matrix.target }}
+    needs: gate
+    if: needs.gate.outputs.cloud == 'true'
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            platform: darwin/arm64
+            target: darwin-arm64
+          - runner: ubuntu-24.04-arm
+            platform: linux/arm64
+            target: linux-arm64
+          - runner: ubuntu-24.04
+            platform: linux/x64
+            target: linux-x64
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+          submodules: false
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.CLOUD_ADDON_DEPLOY_KEY }}
+      - name: Private addons
+        run: git -c submodule.pikkustudio-private.update=checkout submodule update --init packages/pikkustudio-private
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.1
+      - run: bun install --frozen-lockfile
+      - run: node scripts/link-addon.mjs
+      - id: version
+        run: |
+          if [ "${GITHUB_REF_TYPE}" = tag ]; then v="${GITHUB_REF_NAME#v}"; else v="0.0.0-${GITHUB_SHA::7}"; fi
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+      - name: Build (boots before it is packed)
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+          RELEASE_NAME: studio
+          RELEASE_OUT: dist-release
+        run: sh scripts/release-build.sh ${{ matrix.platform }}
+      - name: Boot in debian:stable-slim
+        if: runner.os == 'Linux'
+        run: |
+          docker run --rm -v "$PWD/dist-release:/dist:ro" -v "$PWD/scripts:/scripts:ro" debian:stable-slim \
+            sh /scripts/release-check.sh "/dist/$(cd dist-release && ls studio-*-${{ matrix.target }}.tar.gz)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: studio-${{ matrix.target }}
+          path: dist-release/studio-*-${{ matrix.target }}.tar.gz
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload to R2
+        if: github.ref_type == 'tag'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_DOWNLOADS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_DOWNLOADS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          DOWNLOADS_BUCKET: ${{ vars.R2_DOWNLOADS_BUCKET }}
+          AWS_ENDPOINT_URL: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+        run: |
+          v="${{ steps.version.outputs.version }}"
+          aws s3 cp dist-release "s3://$DOWNLOADS_BUCKET/studio/$v/" --recursive --exclude '*' --include 'studio-*-${{ matrix.target }}.tar.gz'
+          echo "{\"version\":\"$v\"}" > latest.json
+          aws s3 cp latest.json s3://$DOWNLOADS_BUCKET/studio/latest.json --content-type application/json
+
+  cloud-desktop:
+    needs: gate
+    if: needs.gate.outputs.cloud == 'true'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+          submodules: false
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.CLOUD_ADDON_DEPLOY_KEY }}
+      - name: Private addons
+        run: git -c submodule.pikkustudio-private.update=checkout submodule update --init packages/pikkustudio-private
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.1
+      - uses: dtolnay/rust-toolchain@stable
+      - run: bun install --frozen-lockfile
+      - run: bun run check:cloud-boundary
+      - run: bun run check:independence
+      - run: node scripts/link-addon.mjs
+      - name: Desktop app
+        env:
+          TAURI_BUNDLES: app,dmg
+        run: bun run build:desktop
+      - name: Upload to R2
+        if: github.ref_type == 'tag'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_DOWNLOADS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_DOWNLOADS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          DOWNLOADS_BUCKET: ${{ vars.R2_DOWNLOADS_BUCKET }}
+          AWS_ENDPOINT_URL: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+        run: |
+          v="${GITHUB_REF_NAME#v}"
+          dmg=$(ls apps/studio/src-tauri/target/release/bundle/dmg/*.dmg)
+          aws s3 cp "$dmg" "s3://$DOWNLOADS_BUCKET/studio/$v/Pikku-Studio-$v-arm64.dmg"
+
+  web:
+    needs: gate
+    if: needs.gate.outputs.deploy == 'true'
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: web-deploy
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+          submodules: false
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.CLOUD_ADDON_DEPLOY_KEY }}
+      - name: Private addons
+        run: git -c submodule.pikkustudio-private.update=checkout submodule update --init packages/pikkustudio-private
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.1
+      - run: bun install --frozen-lockfile
+      - run: bun run build:hosted
+      - name: Deploy
+        working-directory: apps/studio
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+        run: bunx wrangler deploy -c wrangler.hosted.jsonc

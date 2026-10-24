@@ -7,5 +7,5 @@ if git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null 2>&1; the
   exit 0
 fi
 gh api "repos/$GITHUB_REPOSITORY/git/refs" -f ref="refs/tags/$tag" -f sha="$GITHUB_SHA" >/dev/null
-gh workflow run desktop.yml --ref "$tag"
+gh workflow run build.yml --ref "$tag"
 echo "tagged $tag"
