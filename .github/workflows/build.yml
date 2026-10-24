@@ -157,6 +157,55 @@ jobs:
           dmg=$(ls apps/studio/src-tauri/target/release/bundle/dmg/*.dmg)
           aws s3 cp "$dmg" "s3://$DOWNLOADS_BUCKET/studio/$v/Pikku-Studio-$v-arm64.dmg"
 
+  release:
+    needs: [cloud-desktop, cloud-server-darwin-arm64, cloud-server-linux-arm64, cloud-server-linux-x64]
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: assets
+      - name: GitHub release and Homebrew cask
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+        run: |
+          v="${GITHUB_REF_NAME#v}"
+          dmg=$(ls assets/studio-desktop-darwin-arm64/*.dmg)
+          cp "$dmg" "Pikku-Studio-$v-arm64.dmg"
+          gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --title "Pikku Studio $v" --generate-notes \
+            "Pikku-Studio-$v-arm64.dmg" assets/studio-darwin-arm64/* assets/studio-linux-arm64/* assets/studio-linux-x64/*
+          if [ -z "$HOMEBREW_TAP_TOKEN" ]; then
+            echo "HOMEBREW_TAP_TOKEN is not set, so the cask is not updated"
+            exit 0
+          fi
+          sha=$(sha256sum "Pikku-Studio-$v-arm64.dmg" | cut -d' ' -f1)
+          git clone "https://x-access-token:${HOMEBREW_TAP_TOKEN}@github.com/pikkujs/homebrew-pikku.git" tap
+          cd tap
+          mkdir -p Casks
+          cat > Casks/pikkustudio.rb << CASK
+          cask "pikkustudio" do
+            version "${v}"
+            sha256 "${sha}"
+
+            url "https://github.com/${GITHUB_REPOSITORY}/releases/download/${GITHUB_REF_NAME}/Pikku-Studio-${v}-arm64.dmg"
+            name "Pikku Studio"
+            desc "Build, run and ship Pikku apps"
+            homepage "https://pikkustudio.app"
+
+            depends_on arch: :arm64
+
+            app "Studio.app"
+          end
+          CASK
+          git config user.email "ci@pikkustudio.app"
+          git config user.name "Pikku Studio CI"
+          git add Casks/pikkustudio.rb
+          git commit -m "pikkustudio ${v}"
+          git push
+
   web:
     needs: gate
     if: needs.gate.outputs.deploy == 'true'
