@@ -44,6 +44,23 @@ const remoteProxy = remoteApi
     }
   : { changeOrigin: false }
 
+// Web-edition dev (scripts/dev-hosted.sh): the bundle calls its own origin (VITE_API_URL=http://localhost:4741), because the
+// real API's CORS does not allow a localhost origin and its session cookie is for .pikkustudio.app. Every API path is
+// forwarded unrewritten to the remote API instead, with the cookie made host-only so it sticks to localhost. Browser
+// navigations (Accept: text/html) stay with Vite, since the frontend has pages under some of these prefixes.
+const hostedDev = remoteApi && process.env.VITE_STUDIO_LOCAL === 'false'
+const hostedProxy = hostedDev
+  ? {
+      '^/(rpc|auth|api|studio|workspace|p|upload|content)(/|$)': {
+        target: apiTarget,
+        ...remoteProxy,
+        cookieDomainRewrite: '',
+        ws: true,
+        bypass: (req: any) => (req.headers.accept?.includes('text/html') ? req.url : undefined),
+      },
+    }
+  : undefined
+
 export default defineConfig(() => {
   return {
   base,
@@ -75,7 +92,7 @@ export default defineConfig(() => {
     // before Vite, so this proxy never fires there.
     // changeOrigin stays false so the backend sees Host = the app origin —
     // Better Auth trusts the request origin only when it matches Host.
-    proxy: {
+    proxy: hostedProxy ?? {
       '/api/auth': {
         target: apiTarget,
         ...remoteProxy,

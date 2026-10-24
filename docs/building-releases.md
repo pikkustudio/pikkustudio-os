@@ -42,6 +42,8 @@ cd apps/studio && bunx wrangler deploy -c wrangler.hosted.jsonc
 
 `build:hosted` (`scripts/build-hosted.sh`) links the addons, runs `prebuild`, builds into `apps/studio/dist/client` and then puts the link state and `pikku-addons.lock` back as they were; `PIKKUSTUDIO_API_URL` overrides `https://api.pikkustudio.app`. `wrangler.hosted.jsonc` is the `pikkustudio-cloud` Worker on the `cloud.pikkustudio.app` custom domain: static assets with SPA fallback, hashed `/assets/*` cached for a year. It never proxies the API. `bunx wrangler dev -c wrangler.hosted.jsonc` serves the same build locally.
 
+`bun run dev:hosted` (`scripts/dev-hosted.sh`) is the fast loop for it: the same linked web edition under Vite dev/HMR at `http://localhost:4741`, restoring the link state on exit. The real API's CORS rejects a localhost origin and its session cookie belongs to `.pikkustudio.app`, so the bundle calls the dev server's own origin and Vite forwards `/rpc`, `/auth`, `/api`, `/studio`, `/workspace`, `/p`, `/upload` and `/content` to `PIKKUSTUDIO_API_URL` (default `https://api.pikkustudio.app`) with the cookie made host-only (`hostedProxy` in `apps/studio/vite.config.ts`). Sign in on localhost yourself; the cookie is separate from cloud.pikkustudio.app's. The script also points TanStack Start at the app's copy of vite (two installed copies make its dev middleware skip itself and every page 404).
+
 On the web a cloud project's (`cloud:<projectId>`) own `studio:*` calls and its `/p/<key>/rpc/*` calls go to `{api}/workspace/<projectId>/…` (the URL `cloud:workspaceLink` returns), waiting out the gateway's 503 while the workspace starts (`packages/ui-blocks/src/lib/workspace-route.ts`).
 
 ## Launching a tarball
