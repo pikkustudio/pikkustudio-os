@@ -94,7 +94,7 @@
         "vite": "^8.3.4",
       },
     },
-    "packages/addon-pikkustudio": {
+    "packages/addon-studio": {
       "name": "@pikkustudio/addon-studio",
       "version": "0.0.1",
       "dependencies": {
@@ -329,7 +329,7 @@
         "@tanstack/react-query": "^5.66.0",
       },
     },
-    "packages/pikkustudio-blocks": {
+    "packages/ui-blocks": {
       "name": "@pikkustudio/blocks",
       "version": "0.0.1",
       "dependencies": {
@@ -932,13 +932,13 @@
 
     "@pikkustudio/addon-spindle": ["@pikkustudio/addon-spindle@workspace:packages/addons/spindle"],
 
-    "@pikkustudio/addon-studio": ["@pikkustudio/addon-studio@workspace:packages/addon-pikkustudio"],
+    "@pikkustudio/addon-studio": ["@pikkustudio/addon-studio@workspace:packages/addon-studio"],
 
     "@pikkustudio/app-studio": ["@pikkustudio/app-studio@workspace:apps/studio"],
 
     "@pikkustudio/blob": ["@pikkustudio/blob@workspace:packages/blob"],
 
-    "@pikkustudio/blocks": ["@pikkustudio/blocks@workspace:packages/pikkustudio-blocks"],
+    "@pikkustudio/blocks": ["@pikkustudio/blocks@workspace:packages/ui-blocks"],
 
     "@pikkustudio/builder": ["@pikkustudio/builder@workspace:packages/builder"],
 

@@ -1,6 +1,6 @@
 # OS SDK contract
 
-`packages/pikkustudio-blocks` (`@pikkustudio/blocks`) does not own an API client. It imports the generated client of whichever workspace composes it.
+`packages/ui-blocks` (`@pikkustudio/blocks`) does not own an API client. It imports the generated client of whichever workspace composes it.
 
 ## What the consumer provides
 
@@ -26,30 +26,30 @@ Optional slot `useStageAudit(projectKey, refetchInterval)`: the host supplies th
 
 ## The 27 importing files
 
-- `packages/pikkustudio-blocks/src/blocks/AppNotRunning.tsx`
-- `packages/pikkustudio-blocks/src/blocks/ContentTree.tsx`
-- `packages/pikkustudio-blocks/src/blocks/MockBackendPanel.tsx`
-- `packages/pikkustudio-blocks/src/blocks/MockBackendStatusBar.tsx`
-- `packages/pikkustudio-blocks/src/blocks/ProjectRunGate.tsx`
-- `packages/pikkustudio-blocks/src/blocks/TeamProjects.tsx`
-- `packages/pikkustudio-blocks/src/changes-panel/ChangesPanel.tsx`
-- `packages/pikkustudio-blocks/src/lib/builder-chat.ts`
-- `packages/pikkustudio-blocks/src/lib/frontDoors.ts`
-- `packages/pikkustudio-blocks/src/lib/onboarding.ts`
-- `packages/pikkustudio-blocks/src/lib/project-flow.ts`
-- `packages/pikkustudio-blocks/src/lib/project.ts`
-- `packages/pikkustudio-blocks/src/lib/review.ts`
-- `packages/pikkustudio-blocks/src/lib/themes.ts`
-- `packages/pikkustudio-blocks/src/lib/updates.ts`
-- `packages/pikkustudio-blocks/src/lib/useChooseDirection.ts`
-- `packages/pikkustudio-blocks/src/lib/versions.ts`
-- `packages/pikkustudio-blocks/src/screens/ContentScreen.tsx`
-- `packages/pikkustudio-blocks/src/screens/DesignScreen.tsx`
-- `packages/pikkustudio-blocks/src/screens/LogsScreen.tsx`
-- `packages/pikkustudio-blocks/src/screens/MetricsScreen.tsx`
-- `packages/pikkustudio-blocks/src/screens/NewProjectRoute.tsx`
-- `packages/pikkustudio-blocks/src/screens/OnboardingLayout.tsx`
-- `packages/pikkustudio-blocks/src/screens/PerformanceScreen.tsx`
-- `packages/pikkustudio-blocks/src/screens/ProjectHomeGate.tsx`
-- `packages/pikkustudio-blocks/src/screens/ResumeScreen.tsx`
-- `packages/pikkustudio-blocks/src/screens/SecretsScreen.tsx`
+- `packages/ui-blocks/src/blocks/AppNotRunning.tsx`
+- `packages/ui-blocks/src/blocks/ContentTree.tsx`
+- `packages/ui-blocks/src/blocks/MockBackendPanel.tsx`
+- `packages/ui-blocks/src/blocks/MockBackendStatusBar.tsx`
+- `packages/ui-blocks/src/blocks/ProjectRunGate.tsx`
+- `packages/ui-blocks/src/blocks/TeamProjects.tsx`
+- `packages/ui-blocks/src/changes-panel/ChangesPanel.tsx`
+- `packages/ui-blocks/src/lib/builder-chat.ts`
+- `packages/ui-blocks/src/lib/frontDoors.ts`
+- `packages/ui-blocks/src/lib/onboarding.ts`
+- `packages/ui-blocks/src/lib/project-flow.ts`
+- `packages/ui-blocks/src/lib/project.ts`
+- `packages/ui-blocks/src/lib/review.ts`
+- `packages/ui-blocks/src/lib/themes.ts`
+- `packages/ui-blocks/src/lib/updates.ts`
+- `packages/ui-blocks/src/lib/useChooseDirection.ts`
+- `packages/ui-blocks/src/lib/versions.ts`
+- `packages/ui-blocks/src/screens/ContentScreen.tsx`
+- `packages/ui-blocks/src/screens/DesignScreen.tsx`
+- `packages/ui-blocks/src/screens/LogsScreen.tsx`
+- `packages/ui-blocks/src/screens/MetricsScreen.tsx`
+- `packages/ui-blocks/src/screens/NewProjectRoute.tsx`
+- `packages/ui-blocks/src/screens/OnboardingLayout.tsx`
+- `packages/ui-blocks/src/screens/PerformanceScreen.tsx`
+- `packages/ui-blocks/src/screens/ProjectHomeGate.tsx`
+- `packages/ui-blocks/src/screens/ResumeScreen.tsx`
+- `packages/ui-blocks/src/screens/SecretsScreen.tsx`

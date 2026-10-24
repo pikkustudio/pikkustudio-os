@@ -8,7 +8,7 @@
 //   node scripts/link-addon.mjs             wire every addon present but the operator ones, with pikku.cloud.json (the
 //                                          online build: cloud and web)
 //   node scripts/link-addon.mjs --app       the app's build: as above, without the website's own pages (addon-web)
-//   node scripts/link-addon.mjs --operator  also wire the operator addons, with pikku.operator.json
+//   node scripts/link-addon.mjs --operator  also wire the operator addons
 //   node scripts/link-addon.mjs --test      only the local test addons (packages/addons/spindle and diffui), to try the
 //                                          addon screens and nav across more than one addon; never part of the app
 //   node scripts/link-addon.mjs --unlink    back to the open build
@@ -16,7 +16,7 @@
 //                                          back to a link state saved earlier (a copy of .studio-addons/addons.json),
 //                                          as scripts/build-hosted.sh does after building the web edition
 //
-// Each addon's wire/*.ts is copied to .studio-addons/wire/, which pikku.cloud.json lists as a source directory: the
+// Each addon's src/wire/*.ts is copied to .studio-addons/wire/, which pikku.cloud.json lists as a source directory: the
 // pikku inspector skips any file under a directory holding its own pikku.config.json, so the addon's own copy is
 // never read. The choice is written to .studio-addons/addons.json, which scripts/pikku-config.mjs reads.
 import { execSync } from 'node:child_process'
@@ -35,7 +35,7 @@ const PRIVATE = join(root, 'packages/pikkustudio-private/packages')
 const OPERATOR_ONLY = new Set(['@pikkustudio/addon-controlpanel'])
 // The website's own pages (sign-in, sign-up, CLI and OAuth approval); the online builds have them, the app does not.
 const WEB_ONLY = new Set(['@pikkustudio/addon-web'])
-// Workspace packages already in node_modules: linking them only copies their wire/ files, and unlinking leaves them be.
+// Workspace packages already in node_modules: linking them only copies their src/wire/ files, and unlinking leaves them be.
 const TEST_ADDONS = ['packages/addons/spindle', 'packages/addons/diffui']
 
 const unlinkAll = () => {
@@ -59,7 +59,7 @@ if (args.has('--unlink')) {
 }
 
 const copyWire = (dir) => {
-  const wire = join(dir, 'wire')
+  const wire = join(dir, 'src', 'wire')
   if (!existsSync(wire)) return
   mkdirSync(join(linked, 'wire'), { recursive: true })
   for (const file of readdirSync(wire).filter((f) => f.endsWith('.ts'))) copyFileSync(join(wire, file), join(linked, 'wire', file))
@@ -130,8 +130,7 @@ for (const dir of present) {
   addons.push({ name: manifest.name, dir: relative(root, dir) })
 }
 
-const operator = args.has('--operator') && existsSync(join(root, 'pikku.operator.json'))
-const config = operator ? 'pikku.operator.json' : 'pikku.cloud.json'
+const config = 'pikku.cloud.json'
 mkdirSync(linked, { recursive: true })
 writeFileSync(stateFile, JSON.stringify({ config, addons }, null, 2) + '\n')
 console.log(`Linked ${addons.map((a) => a.name).join(', ')}; builds now use ${config}`)

@@ -11,7 +11,7 @@ const libs = [
   'packages/addons/spindle',
   'packages/addons/review',
   'packages/addons/inbox',
-  'packages/addon-pikkustudio',
+  'packages/addon-studio',
   // The private addons scripts/link-addon.mjs linked, which nothing else builds; none in the open build.
   ...(existsSync(join(root, '.studio-addons/addons.json')) ? JSON.parse(readFileSync(join(root, '.studio-addons/addons.json'), 'utf8')).addons.map((a) => a.dir) : []),
 ]

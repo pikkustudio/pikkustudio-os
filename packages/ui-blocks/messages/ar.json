@@ -1155,7 +1155,7 @@
   "impersonate__empty": "لا يوجد في هذا التطبيق أشخاص للتجربة بعد.",
   "impersonate__failed": "لم ينجح ذلك. تأكدوا من أن التطبيق يعمل ثم أعيدوا المحاولة.",
   "injected_panel__tab": "جرّبوا بصفة شخص آخر",
-  "injected_panel__open": "فتح لوحة Pikku Studio",
+  "injected_panel__open": "فتح لوحة Studio",
   "impersonate__loading": "جارٍ البحث عن أشخاص للتجربة…",
   "impersonate__nobody": "لم يتم تسجيل الدخول إلى التطبيق بعد.",
   "impersonate__sign_out": "العودة إلى شاشة تسجيل الدخول",
@@ -1320,7 +1320,7 @@
   "machine_opening__our_recommendation": "توصيتنا",
   "metrics_screen__assistant_note": "سيبحث المساعد في الأمر ويخبركم بما فعله.",
   "metrics_screen__crumb_app": "أثناء التشغيل",
-  "metrics_screen__crumb_studio": "Pikku Studio",
+  "metrics_screen__crumb_studio": "Studio",
   "metrics_screen__detail_failed": "فشل {howMany} خلال هذه المدة.",
   "metrics_screen__detail_failed_why": "فشل {howMany} خلال هذه المدة. {why}",
   "metrics_screen__detail_ok": "لم يفشل شيء، والإجابات تصل بسرعة.",
@@ -1369,7 +1369,7 @@
   "metrics_screen__fix_prompt": "هناك خطأ يحدث {where}. فشل {howMany} مؤخرا. {problems} من فضلك اكتشف السبب وأصلحه، ثم أخبرني بكلمات بسيطة بما غيرته.",
   "metrics_screen__fix_this": "إصلاح هذا",
   "metrics_screen__fix_where_project": "في مشروعي",
-  "metrics_screen__fix_where_studio": "في Pikku Studio",
+  "metrics_screen__fix_where_studio": "في Studio",
   "metrics_screen__happened": [
     {
       "declarations": [
@@ -1433,18 +1433,18 @@
         "countPlural"
       ],
       "match": {
-        "countPlural=zero": "فشل {name} {count} مرة في Pikku Studio بالرسالة: {why}",
-        "countPlural=one": "فشل {name} مرة واحدة في Pikku Studio بالرسالة: {why}",
-        "countPlural=two": "فشل {name} مرتين في Pikku Studio بالرسالة: {why}",
-        "countPlural=few": "فشل {name} {count} مرات في Pikku Studio بالرسالة: {why}",
-        "countPlural=many": "فشل {name} {count} مرة في Pikku Studio بالرسالة: {why}",
-        "countPlural=other": "فشل {name} {count} مرة في Pikku Studio بالرسالة: {why}"
+        "countPlural=zero": "فشل {name} {count} مرة في Studio بالرسالة: {why}",
+        "countPlural=one": "فشل {name} مرة واحدة في Studio بالرسالة: {why}",
+        "countPlural=two": "فشل {name} مرتين في Studio بالرسالة: {why}",
+        "countPlural=few": "فشل {name} {count} مرات في Studio بالرسالة: {why}",
+        "countPlural=many": "فشل {name} {count} مرة في Studio بالرسالة: {why}",
+        "countPlural=other": "فشل {name} {count} مرة في Studio بالرسالة: {why}"
       }
     }
   ],
   "metrics_screen__studio_note": "يتعلق هذا بتطبيق Studio نفسه، لا بمشروعكم. انسخوا هذا لمشاركته مع فريق Pikku.",
   "metrics_screen__text_app": "ما طلب من تطبيقكم، ومدى سرعة إجابته، وما حدث بشكل خاطئ.",
-  "metrics_screen__text_studio": "كيف يعمل Pikku Studio نفسه. يتعلق هذا بالأداة، لا بمشروع بعينه.",
+  "metrics_screen__text_studio": "كيف يعمل Studio نفسه. يتعلق هذا بالأداة، لا بمشروع بعينه.",
   "metrics_screen__the_longest_it_took": "أطول مدة استغرقها",
   "metrics_screen__things_asked": "الطلبات الموجهة إليه",
   "metrics_screen__time_range": "النطاق الزمني",
@@ -2659,7 +2659,7 @@
   "shell_layout__say_what_to_change": "قولوا ما الذي يجب تغييره",
   "shell_layout__picked_in_preview": "تم اختياره في المعاينة: {items}",
   "shell_layout__settings": "الإعدادات",
-  "shell_layout__studio": "Pikku Studio",
+  "shell_layout__studio": "Studio",
   "shell_layout__studio_metrics": "مقاييس Studio",
   "shell_layout__tell_me_more": "أخبروني المزيد",
   "shell_layout__tell_me_when": "أخبروني عندما",
@@ -4807,7 +4807,7 @@
   "audit_screen__hero_error_text": "طلب Studio سجل مشروعك فعاد بخطأ. لم يتغير شيء. يستطيع Pikku معرفة السبب.",
   "audit_screen__not_running_ask": "اطلب من Pikku تشغيله",
   "audit_screen__not_running_say": "تقول صفحة السجل إن مشروعي لا يعمل. أرجو تشغيله حتى أرى ما حدث.",
-  "studio_loading__label": "جارٍ فتح Pikku Studio",
+  "studio_loading__label": "جارٍ فتح Studio",
   "not_found__label": "الصفحة غير موجودة",
   "not_found__teams": "الذهاب إلى فرقكم",
   "not_found__ask": "اسألوا Pikku",
@@ -5085,8 +5085,8 @@
   "logs_screen__tenant_user": "المستخدم",
   "metrics_traffic__calls": "{n} طلبات",
   "metrics_traffic__sub": "كم طلبًا وصل، وكم استغرق، خلال الفترة التي اخترتها.",
-  "copy__brand_name": "Pikku Studio",
-  "copy__brand_label": "Pikku Studio",
+  "copy__brand_name": "Studio",
+  "copy__brand_label": "Studio",
   "action_notice__fix": "أصلحه",
   "release_flags__place_live": "موقعك المنشور",
   "release_flags__tests_failed_name": "الفحوصات الفاشلة: {count}",

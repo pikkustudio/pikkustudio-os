@@ -11,7 +11,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pikkujs/studio.git",
-    "directory": "packages/pikkustudio-blocks"
+    "directory": "packages/ui-blocks"
   },
   "exports": {
     ".": "./src/index.ts",

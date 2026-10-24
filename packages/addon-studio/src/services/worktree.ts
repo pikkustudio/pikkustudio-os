@@ -12,7 +12,7 @@ const exec = promisify(execFile)
 const git = async (cwd: string, ...args: string[]) =>
   (await exec('git', args, { cwd })).stdout.trim()
 
-const IDENTITY = ['-c', 'user.name=Pikku Studio', '-c', 'user.email=studio@pikku.dev', '-c', 'gc.auto=0', '-c', 'maintenance.auto=false']
+const IDENTITY = ['-c', 'user.name=Studio', '-c', 'user.email=studio@pikku.dev', '-c', 'gc.auto=0', '-c', 'maintenance.auto=false']
 
 export interface StudioWorktree {
   path: string
@@ -213,7 +213,7 @@ token_file=${JSON.stringify(mainTokenFile(studioHome))}
 if [ -r "$token_file" ] && [ "$PIKKU_STUDIO_MAIN" = "$(cat "$token_file")" ]; then allowed=1; fi
 while read -r old new ref; do
   if [ "$state" = "prepared" ] && [ "$ref" = "${mainRef}" ] && [ "$allowed" != "1" ]; then
-    echo "main can only be changed by Pikku Studio. Make your change on develop and keep it." >&2
+    echo "main can only be changed by Studio. Make your change on develop and keep it." >&2
     exit 1
   fi
 done

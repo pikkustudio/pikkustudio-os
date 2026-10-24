@@ -10,7 +10,7 @@
 //                                            a route file per addon screen, at its real path (see writeNav)
 //
 // An addon says what it brings in its package.json:
-//   "studio": { "addon": "cloud", "ui": "./src", "messages": "./messages/{locale}.json" }
+//   "studio": { "addon": "cloud", "ui": "./studio", "messages": "./messages/{locale}.json" }
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
@@ -76,7 +76,7 @@ async function writeNav() {
 
   // Message keys: the core's own files, plus each addon's (its studio.messages, else messages/en.json).
   const readKeys = (file) => (existsSync(file) ? Object.keys(JSON.parse(readFileSync(file, 'utf8'))) : [])
-  const coreKeys = new Set([...readKeys(join(app, 'messages/en.json')), ...readKeys(join(root, 'packages/pikkustudio-blocks/messages/en.json'))])
+  const coreKeys = new Set([...readKeys(join(app, 'messages/en.json')), ...readKeys(join(root, 'packages/ui-blocks/messages/en.json'))])
   const packageDir = (pkg) => join(root, 'node_modules', pkg)
   const addonKeys = (pkg) => {
     const manifest = readJson(join(packageDir(pkg), 'package.json'))

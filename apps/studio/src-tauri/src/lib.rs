@@ -32,7 +32,7 @@ use tauri_plugin_shell::ShellExt;
 const READY_PREFIX: &str = "pikku: ready on http://";
 
 /// Title of the window the ready line opens — the app's own name, once you set it.
-const WINDOW_TITLE: &str = "Pikku Studio";
+const WINDOW_TITLE: &str = "Studio";
 
 /// How long to wait for the ready line before giving up. A sidecar that starts
 /// and then hangs prints nothing, so no window is ever built — and a Tauri

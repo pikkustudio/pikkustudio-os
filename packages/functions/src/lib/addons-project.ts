@@ -13,16 +13,18 @@ export const ADDONS_APP = 'addons-ui'
 
 const studioRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..')
 
+const templateRoot = join(studioRoot, 'templates', 'addons-project')
+
 const skipped = (source: string) => /(^|\/)(node_modules|\.pikku|\.vite)(\/|$)|\.gen\./.test(source)
 
 const git = (cwd: string, ...args: string[]) =>
-  run('git', ['-c', 'user.name=Pikku Studio', '-c', 'user.email=studio@localhost', ...args], { cwd })
+  run('git', ['-c', 'user.name=Studio', '-c', 'user.email=studio@localhost', ...args], { cwd })
 
 const FRAMEWORK_PATHS = ['src/lib', 'src/middleware', 'src/services.ts', 'src/config.ts', 'src/auth.ts', 'apps/addons-ui/src']
 
 async function syncFramework(dir: string): Promise<boolean> {
   for (const path of FRAMEWORK_PATHS) {
-    await cp(join(studioRoot, 'addons-project', path), join(dir, path), { recursive: true, force: true, filter: (source) => !skipped(source) })
+    await cp(join(templateRoot, path), join(dir, path), { recursive: true, force: true, filter: (source) => !skipped(source) })
   }
   const { stdout } = await git(dir, 'status', '--porcelain', '--', ...FRAMEWORK_PATHS)
   if (stdout.trim().length === 0) return false
@@ -40,7 +42,7 @@ export async function ensureAddonsProject(studio: Studio): Promise<void> {
     return
   }
   await mkdir(dir, { recursive: true })
-  await cp(join(studioRoot, 'addons-project'), dir, { recursive: true, filter: (source) => !skipped(source) })
+  await cp(templateRoot, dir, { recursive: true, filter: (source) => !skipped(source) })
   await symlink(join(studioRoot, 'node_modules'), join(dir, 'node_modules'))
   await mkdir(join(dir, 'apps', ADDONS_APP, 'node_modules'), { recursive: true })
   await writeFile(join(dir, 'apps', ADDONS_APP, 'node_modules', '.gitkeep'), '')

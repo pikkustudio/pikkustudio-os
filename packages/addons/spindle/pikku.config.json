@@ -8,7 +8,7 @@
   "outDir": "./.pikku",
   "addon": {
     "displayName": "Spindle",
-    "description": "Spindle for Pikku Studio"
+    "description": "Spindle for Studio"
   },
   "forceRequiredServices": [
     "kysely",

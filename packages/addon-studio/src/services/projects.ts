@@ -1020,7 +1020,7 @@ export class StudioProjectsService {
         JSON.stringify({ name, idea: idea ?? null, ...(surfaces ? { surfaces } : {}), ...(devices ? { devices } : {}) }, null, 2) + '\n'
       )
       if (!existsSync(join(scaffold, '.git'))) await run('git', ['init', '-q', '-b', 'main'], scaffold)
-      await commitPaths(scaffold, ['.'], 'Start with Pikku Studio')
+      await commitPaths(scaffold, ['.'], 'Start with Studio')
       await createLayout(root, scaffold, this.home)
     } catch (error) {
       await rm(root, { recursive: true, force: true })
