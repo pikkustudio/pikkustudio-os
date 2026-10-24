@@ -64,6 +64,25 @@ test('an addon call goes to <api>/workspace/<id>/rpc/<name>, made as its addon, 
   expect(calls[1].init.credentials).toBe('include')
 })
 
+test('the apps and design preview a workspace names by loopback are opened at its public origin', async () => {
+  const ORIGIN = 'https://ws-p1.sandbox.example.test'
+  const { fetch } = mockFetch({
+    [`${WS}/studio/listProjects`]: [projects],
+    [`${WS}/studio/projectApps`]: [Response.json([{ slug: 'app', url: 'http://127.0.0.1:5173', state: 'ready' }, { slug: 'admin', url: 'http://127.0.0.1:5174', state: 'ready' }, { slug: 'site', url: 'https://x.test/', state: 'ready' }])],
+    [`${WS}/studio/getDesignPreview`]: [Response.json({ state: 'ready', url: 'http://127.0.0.1:7110/' })],
+  })
+  const router = createWorkspaceRouter({ fetch, link: async () => ({ state: 'ready', url: WS, origin: `${ORIGIN}/` }) })
+  const apps = (await router.studio('studio:projectApps', { key: 'cloud:p1' })) as { url: string }[]
+  expect(apps.map((a) => a.url)).toEqual([`${ORIGIN}/`, `${ORIGIN}/_frontend/admin/`, 'https://x.test/'])
+  expect(await router.studio('studio:getDesignPreview', { key: 'cloud:p1' })).toEqual({ state: 'ready', url: `${ORIGIN}/_frontend/design/` })
+})
+
+test('without an origin the workspace\'s answers are passed on as they are', async () => {
+  const { fetch } = mockFetch({ [`${WS}/studio/listProjects`]: [projects], [`${WS}/studio/getDesignPreview`]: [Response.json({ state: 'ready', url: 'http://127.0.0.1:7110/' })] })
+  const router = createWorkspaceRouter({ fetch, link: async () => ({ state: 'ready', url: WS }) })
+  expect(await router.studio('studio:getDesignPreview', { key: 'cloud:p1' })).toEqual({ state: 'ready', url: 'http://127.0.0.1:7110/' })
+})
+
 test('a studio call goes to <api>/workspace/<id>/studio/<name> with the cookie, under the key the workspace holds', async () => {
   const links: string[] = []
   const { fetch, calls } = mockFetch({ [`${WS}/studio/listProjects`]: [projects], [`${WS}/studio/projectLogs`]: [Response.json({ sources: [] })] })

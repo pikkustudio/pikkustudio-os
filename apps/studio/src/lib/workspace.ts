@@ -18,7 +18,7 @@ export const workspaces = createWorkspaceRouter({
     })
     const body = await res.json().catch(() => null)
     if (!res.ok) throw Object.assign(new Error(body?.message ?? body?.error ?? res.statusText), { status: res.status, ...(typeof body?.name === 'string' ? { name: body.name } : {}) })
-    return body as { state: string; url: string }
+    return body as { state: string; url: string; origin?: string }
   },
 })
 

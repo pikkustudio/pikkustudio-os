@@ -74,7 +74,7 @@ export const isWorkspaceAddonCall = (name: string, data: unknown): data is { pro
   return input.stage === undefined || input.stage === null
 }
 
-export type WorkspaceLink = { state: string; url: string }
+export type WorkspaceLink = { state: string; url: string; origin?: string }
 
 /** Thrown when a workspace is still starting after the wait: status 503, as the gateway answers it. */
 export class WorkspaceStartingError extends Error {
@@ -106,6 +106,22 @@ const retryAfterMs = (res: Response) => {
   return Math.min(Math.max(Number.isFinite(s) && s > 0 ? s : DEFAULT_RETRY_S, 1), MAX_RETRY_S) * 1000
 }
 
+const LOOPBACK = /^https?:\/\/(127\.0\.0\.1|localhost|\[::1\])(:|\/|$)/
+
+/**
+ * A workspace names its apps and design preview by the address they have inside it (127.0.0.1:<port>), which a browser
+ * cannot open. Its public origin serves the same pages: the first app at `/`, the others and the design preview under
+ * `/_frontend/<slug>/`.
+ */
+const reachable = (name: string, body: any, origin: string | undefined) => {
+  if (!origin) return body
+  if (name === 'studio:getDesignPreview' && body && LOOPBACK.test(body.url ?? '')) return { ...body, url: `${origin}/_frontend/design/` }
+  if (name === 'studio:projectApps' && Array.isArray(body)) {
+    return body.map((app, i) => (LOOPBACK.test(app?.url ?? '') ? { ...app, url: i === 0 ? `${origin}/` : `${origin}/_frontend/${app.slug}/` } : app))
+  }
+  return body
+}
+
 const failure = async (res: Response) => {
   const body = (await res.json().catch(() => null)) as { message?: string; error?: string; name?: string } | null
   const error = Object.assign(new Error(body?.message ?? body?.error ?? res.statusText ?? `The workspace answered ${res.status}`), { status: res.status })
@@ -119,7 +135,7 @@ export function createWorkspaceRouter(options: Options) {
   const maxWaitMs = options.maxWaitMs ?? 2 * 60_000
   const ttlMs = options.ttlMs ?? 30_000
   const now = options.now ?? Date.now
-  const targets = new Map<string, { at: number; target: Promise<{ url: string; remoteKey: string }> }>()
+  const targets = new Map<string, { at: number; target: Promise<{ url: string; remoteKey: string; origin?: string }> }>()
 
   /** A POST that waits out a workspace's 503 {state:'starting'}, per its Retry-After, up to maxWaitMs. */
   const post = async (url: string, body: unknown, started = now(), headers: Record<string, string> = {}): Promise<Response> => {
@@ -146,7 +162,7 @@ export function createWorkspaceRouter(options: Options) {
     if (!res.ok) throw await failure(res)
     const remoteKey = ((await res.json()) as { projects?: { key: string }[] }).projects?.[0]?.key
     if (!remoteKey) throw new Error('The workspace has no project yet')
-    return { url, remoteKey }
+    return { url, remoteKey, origin: link.origin?.replace(/\/+$/, '') || undefined }
   }
 
   /** Where a source project's calls go, resolved once per ttlMs; a failed resolve is not kept. */
@@ -163,12 +179,12 @@ export function createWorkspaceRouter(options: Options) {
     target,
     /** A workspace call (isWorkspaceCall) to the Studio in the project's workspace, under the key it holds it by. */
     async studio<T>(name: string, data: { key: string; target?: unknown }): Promise<T> {
-      const { url, remoteKey } = await target(data.key)
+      const { url, remoteKey, origin } = await target(data.key)
       const input: Record<string, unknown> = { ...data, key: remoteKey }
       if (data.target !== undefined) input.target = { kind: 'workspace', name: 'local' }
       const res = await post(`${url}/studio/${name.slice(7)}`, input)
       if (!res.ok) throw await failure(res)
-      return (await res.json().catch(() => null)) as T
+      return reachable(name, await res.json().catch(() => null), origin) as T
     },
     /**
      * An addon's call (isWorkspaceAddonCall) to the Studio in the project's workspace, through its rpc route, under the

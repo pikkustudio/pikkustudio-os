@@ -14,7 +14,7 @@ export function TargetSwitch() {
   const key = useProjectKey()
   const target = useProjectTarget()
   const navigate = useNavigate()
-  const targets = usePikkuQuery('studio:projectTargets', { key }, { enabled: !!key })
+  const targets = usePikkuQuery('studio:projectTargets', { key }, { enabled: !!key && STUDIO_LOCAL })
   const stages = ((targets.data as { stages?: Stage[] } | undefined)?.stages ?? []).filter((s) => s.live)
   const site = (stages.find((s) => s.production) ?? stages[0])?.name ?? null
   if (!site && target.kind !== 'stage') return null
