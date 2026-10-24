@@ -438,14 +438,10 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
 
           {/* Page area */}
           <div className="flex min-h-0 min-w-0 flex-1 flex-col pe-0 transition-all duration-420 ease-[cubic-bezier(.16,1,.3,1)] group-data-open/shell:pe-102 @min-[1700px]/app:group-data-open/shell:pe-120 [:root:has([data-side-panel])_&]:pe-102 @min-[1700px]/app:[:root:has([data-side-panel])_&]:pe-120 @max-[640px]/app:pe-0">
-            <div className="hidden items-center gap-2 border-b border-border bg-muted px-3 py-2 @max-[640px]/app:flex">
+            <div className="hidden px-3 pt-2 @max-[640px]/app:flex">
               <button type="button" onClick={() => setNavOpen(true)} aria-label={m.shell_layout__open_nav()} aria-expanded={navOpen} aria-controls="studio-rail" className={iconBtn}>
                 <Menu className="size-5.5" />
               </button>
-              <Link {...keep} to="/home" className="flex items-center gap-2 font-heading text-[20px] font-extrabold tracking-[-0.02em] no-underline">
-                <PikkuMark label={m.shell_layout__studio()} />
-                <span>{m.shell_layout__studio()}</span>
-              </Link>
             </div>
             <div className={`min-h-0 flex-1 ${fill ? 'overflow-hidden pt-4 pe-6.5 pb-3.5 ps-6' : 'overflow-auto scroll-smooth [scrollbar-width:thin] px-12 pt-9 pb-7 @max-[640px]/app:px-4 @max-[640px]/app:pt-5 @min-[1700px]/app:px-16 @min-[1700px]/app:pt-11 @min-[1700px]/app:pb-8'}`}>
               {projectMissing || needsProject || targetMissing ? (
