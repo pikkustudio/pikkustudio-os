@@ -14,7 +14,7 @@ export function ChatSelectPanel({ attached }: { attached: Attachment[] }) {
             {attached.map((a) => (
               <li key={a.label} className="flex items-start gap-2">
                 <span className="mt-2.5 size-2.5 shrink-0 rounded-full" style={{ background: a.color }} />
-                {a.label}
+                {a.text}
               </li>
             ))}
           </ul>

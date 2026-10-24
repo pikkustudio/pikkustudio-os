@@ -8,12 +8,12 @@ export function AttachedChips({ attached, onRemove }: { attached: Attachment[]; 
   return (
     <ul className="flex max-h-36 flex-col gap-1.5 overflow-y-auto bg-card px-5 pt-3">
       {attached.map((a) => (
-        <li key={a.label} title={a.where} className="relative flex min-w-0 items-center gap-2.5 overflow-hidden rounded-xl border border-border bg-secondary py-1.5 ps-4 pe-1.5">
+        <li key={a.label} className="relative flex min-w-0 items-center gap-2.5 overflow-hidden rounded-xl border border-border bg-secondary py-1.5 ps-4 pe-1.5">
           <span className="absolute inset-y-0 start-0 w-[3px]" style={{ background: a.color }} aria-hidden="true" />
           <MousePointer2 className="size-4 shrink-0" style={{ color: a.color }} aria-hidden="true" />
           <span className="flex min-w-0 flex-1 flex-col">
             <span className="truncate text-[14px] leading-[1.35] font-medium text-foreground">{a.text}</span>
-            <span dir="ltr" className="truncate text-start font-mono text-[12px] leading-[1.35] text-muted-foreground">{a.meta}</span>
+            {a.meta ? <span className="truncate text-start text-[12px] leading-[1.35] text-muted-foreground">{a.meta}</span> : null}
           </span>
           <button
             type="button"

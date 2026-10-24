@@ -35,9 +35,8 @@ const label = (slug: string): I18nString => {
 const pickedRef = ({ omId, omIndex, component, text: shown }: PickedElement): AttachRef => {
   const [file, line] = omId.split(':')
   const where = `${file}${line ? `:${line}` : ''}`
-  const base = `${file.split('/').pop()}${line ? `:${line}` : ''}`
   const text = shown || component
-  const meta = `${component} · ${base}`
+  const meta = shown ? component : ''
   return { omId, omIndex, text: asI18n(text), meta: asI18n(meta), where: asI18n(where) }
 }
 
