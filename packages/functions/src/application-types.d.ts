@@ -12,7 +12,7 @@ import type { TypedVariablesService } from '../.pikku/variables/pikku-variables.
 import type { auth } from './auth.js'
 import type { Studio } from './lib/studio.js'
 import type { VaultAdmin } from '@pikkustudio/vault/admin'
-import type { InboxStore } from '@pikkustudio/addon-inbox/types'
+import type { InboxAccess, InboxStore } from '@pikkustudio/addon-inbox/types'
 import type { CommentStore, VerdictStore } from '@pikkustudio/addon-review/types'
 import type { studioMetaSource, studioUiSource } from './lib/review-sources.js'
 import type { LogSources, MetricSources, StageAnalytics, StageAudit, StageDirectory, StageReleases, StageSettingsStore, AccountSource, NotificationSource, TargetSources } from '@pikkustudio/addon-studio/sources'
@@ -34,6 +34,7 @@ export interface SingletonServices extends CoreSingletonServices<Config> {
   verdictStore: VerdictStore
   inboxStore: InboxStore
   inboxSecret?: string
+  inboxAccess?: InboxAccess
   commentStore: CommentStore
   metaSource: ReturnType<typeof studioMetaSource>
   uiSource: ReturnType<typeof studioUiSource>
