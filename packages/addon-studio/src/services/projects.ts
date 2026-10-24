@@ -97,18 +97,30 @@ export interface ProjectDesign {
 
 type RunningApp = ProjectApp & { child: ChildProcess | null; dir: string }
 
-const manifestApps = (manifestPath: string, dir: string): RunningApp[] => {
+type AppsManifest = { sandboxHostname?: string | null; frontends?: Array<{ slug: string; primary?: boolean; system?: boolean }> }
+
+const readManifest = (manifestPath: string): { origin: string; manifest: AppsManifest } | null => {
   try {
-    const manifest = JSON.parse(readFileSync(manifestPath, 'utf8')) as { sandboxHostname?: string | null; frontends?: Array<{ slug: string; primary?: boolean; system?: boolean }> }
-    if (!manifest.sandboxHostname) return []
-    const origin = `${manifest.sandboxHostname.includes(':') ? 'http' : 'https'}://${manifest.sandboxHostname}`
-    return (manifest.frontends ?? [])
-      .filter((app) => !app.system)
-      .map((app) => ({ slug: app.slug, url: app.primary ? `${origin}/` : `${origin}/_frontend/${app.slug}/`, state: 'ready', child: null, dir }))
+    const manifest = JSON.parse(readFileSync(manifestPath, 'utf8')) as AppsManifest
+    if (!manifest.sandboxHostname) return null
+    return { origin: `${manifest.sandboxHostname.includes(':') ? 'http' : 'https'}://${manifest.sandboxHostname}`, manifest }
   } catch {
-    return []
+    return null
   }
 }
+
+const DESIGN_BASE = '/_frontend/design/'
+
+const manifestApps = (manifestPath: string, dir: string): RunningApp[] => {
+  const read = readManifest(manifestPath)
+  if (!read) return []
+  const { origin, manifest } = read
+  return (manifest.frontends ?? [])
+    .filter((app) => !app.system)
+    .map((app) => ({ slug: app.slug, url: app.primary ? `${origin}/` : `${origin}/_frontend/${app.slug}/`, state: 'ready', child: null, dir }))
+}
+
+const manifestDesignOrigin = (manifestPath: string | undefined): string | null => (manifestPath ? (readManifest(manifestPath)?.origin ?? null) : null)
 
 const latestShot = (dir: string, slug: string): { shot: string; shotAt: number } | null => {
   const folder = join(dir, '.pikku', 'builder', 'looks', slug, 'desktop')
@@ -343,8 +355,8 @@ export const LOCAL_TEAM = 'local'
 
 const DESIGN_ENV_KEYS = ['PATH', 'HOME', 'USER', 'LOGNAME', 'SHELL', 'TMPDIR', 'TMP', 'TEMP', 'LANG', 'LC_ALL', 'LC_CTYPE', 'TZ', 'TERM', 'NODE_ENV', 'NODE_OPTIONS', 'SystemRoot']
 
-const designEnv = (): Record<string, string> => {
-  const env: Record<string, string> = {}
+const designEnv = (origin: string | null): Record<string, string> => {
+  const env: Record<string, string> = origin ? { PIKKU_DESIGN_BASE: DESIGN_BASE, PIKKU_DESIGN_ORIGIN: origin } : {}
   for (const key of DESIGN_ENV_KEYS) {
     const value = process.env[key]
     if (value !== undefined) env[key] = value
@@ -700,9 +712,11 @@ export class StudioProjectsService {
     if (!spec) return null
     const status = this.supervisor.status(key, 'design')
     const failure = this.designFailures.get(key)
-    if (failure !== undefined) return { state: 'failed', url: designUrl(spec.port), restarts: 0, lastExit: null, logTail: failure }
-    if (!status) return { state: 'starting', url: designUrl(spec.port), restarts: 0, lastExit: null, logTail: '' }
-    return { state: status.state, url: designUrl(spec.port), restarts: status.restarts, lastExit: status.lastExit, logTail: status.logTail }
+    const origin = manifestDesignOrigin(this.options.appsManifest)
+    const url = origin ? `${origin}${DESIGN_BASE}` : designUrl(spec.port)
+    if (failure !== undefined) return { state: 'failed', url, restarts: 0, lastExit: null, logTail: failure }
+    if (!status) return { state: 'starting', url, restarts: 0, lastExit: null, logTail: '' }
+    return { state: status.state, url, restarts: status.restarts, lastExit: status.lastExit, logTail: status.logTail }
   }
 
   async restartDesign(key: string): Promise<ProjectDesign | null> {
@@ -1744,7 +1758,7 @@ export class StudioProjectsService {
         command: process.execPath,
         args: [design, '--root', worktree.projectDir, '--port', String(designPort)],
         cwd: worktree.projectDir,
-        env: designEnv(),
+        env: designEnv(manifestDesignOrigin(this.options.appsManifest)),
         port: designPort,
         logPath: join(this.home, 'logs', `${key}-design.log`),
         restart: 'on-crash',

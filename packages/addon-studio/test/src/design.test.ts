@@ -37,7 +37,7 @@ const alive = (pid: number) => {
   }
 }
 
-const setup = async (entrySource: string, env?: () => Record<string, string>, paraglideCommand?: (appDir: string) => { command: string; args: string[] } | null, withMessages = false) => {
+const setup = async (entrySource: string, env?: () => Record<string, string>, paraglideCommand?: (appDir: string) => { command: string; args: string[] } | null, withMessages = false, appsManifest?: (base: string) => Promise<string>) => {
   const base = await mkdtemp(join(tmpdir(), 'pikku-studio-design-'))
   const source = join(base, 'design-src')
   await mkdir(source, { recursive: true })
@@ -59,6 +59,7 @@ const setup = async (entrySource: string, env?: () => Record<string, string>, pa
     home: join(base, 'studio'),
     projectsDir: join(base, 'studio', 'local'),
     designEntry: join(source, 'design.mjs'),
+    appsManifest: appsManifest ? await appsManifest(base) : undefined,
     paraglideCommand,
     devCommand: () => ({ command: 'sh', args: ['-c', 'echo "$PIKKU_DESIGN_SERVER_URL" > url.txt; env > project-env.txt; env | grep -c PIKKU_STUDIO_DESIGN > legacy.txt; sleep 30'] }),
     installCommand: () => null,
@@ -116,6 +117,26 @@ describe('design server', () => {
       Object.assign(process.env, saved)
     }
   })
+
+  for (const [hostname, origin] of [['abc.sandbox.example', 'https://abc.sandbox.example'], ['localhost:8080', 'http://localhost:8080']]) {
+    test(`reports the sandbox address of the design server for ${hostname}`, async () => {
+      const manifest = async (base: string) => {
+        const file = join(base, 'apps.json')
+        await writeFile(file, JSON.stringify({ sandboxHostname: hostname, frontends: [] }))
+        return file
+      }
+      const { service, key } = await setup(listening, undefined, undefined, false, manifest)
+      try {
+        const opened = await service.open(key)
+        await until(() => service.designStatus(key)?.state === 'ready')
+        assert.equal(service.designStatus(key)!.url, `${origin}/_frontend/design/`)
+        await until(() => existsSync(join(opened.worktree, 'url.txt')))
+        assert.match(readFileSync(join(opened.worktree, 'url.txt'), 'utf8').trim(), /^http:\/\/127\.0\.0\.1:\d+\/$/)
+      } finally {
+        service.killAll()
+      }
+    })
+  }
 
   test('starts beside the dev server and the dev server is told where it is', async () => {
     const { service, key } = await setup(listening)

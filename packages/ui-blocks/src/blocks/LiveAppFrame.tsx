@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import type { I18nString } from '@pikku/react'
 import { m } from '@/i18n/messages'
+import { STUDIO_LOCAL } from '@/lib/env'
 import type { Device } from '../types/designTypes'
 
 export const liveAppUrl = (url: string) => {
   const parsed = new URL(url)
-  if (!['127.0.0.1', 'localhost'].includes(parsed.hostname)) return url
+  if (!STUDIO_LOCAL || !['127.0.0.1', 'localhost'].includes(parsed.hostname)) return url
   return `${window.location.protocol}//${window.location.hostname}:${parsed.port}/`
 }
 
