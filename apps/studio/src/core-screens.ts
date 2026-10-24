@@ -1,4 +1,4 @@
-// Core's own screens, in the same shape an addon declares its screens with pikkuStudio(), so the nav comes from one
+// Core's own screens, in the same shape an addon declares its screens with definePlugin(), so the nav comes from one
 // registry. scripts/gen-addons.mjs reads this file (plain data, no imports, so node can load it as it is), adds each
 // wired addon's screens and writes the registry to src/nav.gen.json. Core's route files stay hand-written, so a core
 // screen has no `component`.

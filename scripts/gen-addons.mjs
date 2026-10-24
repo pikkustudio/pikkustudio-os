@@ -10,7 +10,7 @@
 //                                            a route file per addon screen, at its real path (see writeNav)
 //
 // An addon says what it brings in its package.json:
-//   "studio": { "addon": "cloud", "ui": "./studio", "messages": "./messages/{locale}.json" }
+//   "studio": { "addon": "cloud", "ui": "./plugin", "messages": "./messages/{locale}.json" }
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import { dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
