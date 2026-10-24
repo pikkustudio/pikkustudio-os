@@ -158,7 +158,7 @@ jobs:
           aws s3 cp "$dmg" "s3://$DOWNLOADS_BUCKET/studio/$v/Pikku-Studio-$v-arm64.dmg"
 
   release:
-    needs: [cloud-desktop, cloud-server-darwin-arm64, cloud-server-linux-arm64, cloud-server-linux-x64]
+    needs: [cloud-desktop, cloud-server]
     if: github.ref_type == 'tag'
     runs-on: ubuntu-24.04
     permissions:
