@@ -14,7 +14,7 @@ function afterAuth(search: AuthSearch) {
 type Where = { pathname: string; searchStr: string }
 
 /** Fails closed: an account call that fails or does not answer OK is no session. */
-async function hasSession() {
+export async function hasSession() {
   const res = await localeFetch(`${apiUrl()}/studio/account`, {
     method: 'POST',
     credentials: 'include',
