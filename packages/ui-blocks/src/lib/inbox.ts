@@ -1,5 +1,6 @@
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import type { UseQueryResult } from '@tanstack/react-query'
+import { STUDIO_LOCAL } from '@/lib/env'
 import { sourceIdOf, useProjectKey } from './project'
 import { useProjectTarget } from './project-target'
 
@@ -37,7 +38,9 @@ export const inboxProjectKey = (key: string) => sourceIdOf(key).replace(/@.*$/, 
 export const useInboxScope = () => {
   const key = useProjectKey()
   const target = useProjectTarget()
-  return { projectKey: key ? inboxProjectKey(key) : '', stage: target.kind === 'stage' ? target.name : null }
+  // On the web a cloud project's inbox is its workspace's: the call keeps the source key, which routes it there and is
+  // swapped for the key that Studio holds the project by (lib/workspace-route.ts).
+  return { projectKey: key ? (STUDIO_LOCAL ? inboxProjectKey(key) : key) : '', stage: target.kind === 'stage' ? target.name : null }
 }
 
 const POLL_MS = 4000

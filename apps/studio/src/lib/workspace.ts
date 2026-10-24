@@ -1,5 +1,5 @@
-import { createWorkspaceRouter } from '@pikkustudio/blocks/lib/workspace-route'
-import { apiUrl } from '@/lib/env'
+import { createWorkspaceRouter, isWorkspaceAddonCall, isWorkspaceCall } from '@pikkustudio/blocks/lib/workspace-route'
+import { STUDIO_LOCAL, apiUrl } from '@/lib/env'
 import { localeFetch } from '@/lib/locale-fetch'
 
 /**
@@ -21,3 +21,15 @@ export const workspaces = createWorkspaceRouter({
     return body as { state: string; url: string }
   },
 })
+
+/**
+ * On the web, a call that a cloud project's workspace answers goes there: a studio call about the project
+ * (isWorkspaceCall) or an addon's that keeps its data with the project's Studio (isWorkspaceAddonCall), made as
+ * `caller`. Anything else, and every call on the desktop, gives undefined and goes the usual way.
+ */
+export const workspaceCall = (name: string, data: unknown, caller: string): Promise<unknown> | undefined => {
+  if (STUDIO_LOCAL) return undefined
+  if (isWorkspaceCall(name, data)) return workspaces.studio(name, data)
+  if (isWorkspaceAddonCall(name, data)) return workspaces.addon(name, data, caller)
+  return undefined
+}

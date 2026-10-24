@@ -1,5 +1,5 @@
 import { expect, test } from 'bun:test'
-import { WorkspaceStartingError, createWorkspaceRouter, isWorkspaceCall, sourceKeyOf } from './workspace-route.ts'
+import { WorkspaceStartingError, createWorkspaceRouter, isWorkspaceAddonCall, isWorkspaceCall, sourceKeyOf } from './workspace-route.ts'
 
 const API = 'https://api.pikkustudio.app'
 const WS = `${API}/workspace/p1`
@@ -38,11 +38,30 @@ test('source keys and which studio calls belong to the workspace', () => {
   expect(isWorkspaceCall('studio:projectLogEntries', { key: 'cloud:p1', target: { kind: 'workspace', name: 'local' } })).toBe(true)
   // a project on this computer, a host call, a published stage, a call with no key
   expect(isWorkspaceCall('studio:projectLogs', { key: 'acme/shop' })).toBe(false)
-  for (const host of ['workspaceLink', 'workspaceStatus', 'targets', 'projectTargets', 'targetCall', 'cloneProject']) expect(isWorkspaceCall(`studio:${host}`, { key: 'cloud:p1' })).toBe(false)
+  const hosts = ['workspaceLink', 'workspaceStatus', 'targets', 'projectTargets', 'targetCall', 'cloneProject', 'projectReleases', 'projectReleaseDetail', 'projectReleasePreview', 'projectReleaseAction', 'publishState', 'projectStageSettings', 'saveProjectStageValue', 'projectAnalyticsCounts']
+  for (const host of hosts) expect(isWorkspaceCall(`studio:${host}`, { key: 'cloud:p1' })).toBe(false)
   expect(isWorkspaceCall('studio:projectReleases', { key: 'cloud:p1', stage: 'prod' })).toBe(false)
   expect(isWorkspaceCall('studio:projectLogEntries', { key: 'cloud:p1', target: { kind: 'stage', name: 'prod' } })).toBe(false)
   expect(isWorkspaceCall('studio:listProjects', {})).toBe(false)
   expect(isWorkspaceCall('console:getAllMeta', { key: 'cloud:p1' })).toBe(false)
+})
+
+test('which addon calls belong to the workspace: the inbox\'s, for a source project, not a published stage', () => {
+  expect(isWorkspaceAddonCall('inbox:listInbox', { projectKey: 'cloud:p1', stage: null })).toBe(true)
+  expect(isWorkspaceAddonCall('inbox:getInboxMessage', { projectKey: 'cloud:p1@dev', id: 'm1' })).toBe(true)
+  expect(isWorkspaceAddonCall('inbox:listInbox', { projectKey: 'acme/shop', stage: null })).toBe(false)
+  expect(isWorkspaceAddonCall('inbox:listInbox', { projectKey: 'cloud:p1', stage: 'prod' })).toBe(false)
+  expect(isWorkspaceAddonCall('billing:listInvoices', { projectKey: 'cloud:p1' })).toBe(false)
+  expect(isWorkspaceAddonCall('inbox:listInbox', { key: 'cloud:p1' })).toBe(false)
+})
+
+test('an addon call goes to <api>/workspace/<id>/rpc/<name>, made as its addon, under the key the workspace holds', async () => {
+  const { fetch, calls } = mockFetch({ [`${WS}/studio/listProjects`]: [projects], [`${WS}/rpc/inbox%3AlistInbox`]: [Response.json({ messages: [] })] })
+  const router = createWorkspaceRouter({ fetch, link: async () => ({ state: 'ready', url: WS }) })
+  expect(await router.addon('inbox:listInbox', { projectKey: 'cloud:p1', stage: null, limit: 100 } as never, 'inbox')).toEqual({ messages: [] })
+  expect(calls[1].body).toEqual({ rpcName: 'inbox:listInbox', data: { projectKey: 'local-key', stage: null, limit: 100 } })
+  expect((calls[1].init.headers as Record<string, string>)['x-pikku-addon']).toBe('inbox')
+  expect(calls[1].init.credentials).toBe('include')
 })
 
 test('a studio call goes to <api>/workspace/<id>/studio/<name> with the cookie, under the key the workspace holds', async () => {
