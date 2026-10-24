@@ -4,8 +4,8 @@
   "srcDirectories": ["src", "types"],
   "outDir": "./.pikku",
   "addon": {
-    "displayName": "Pikku Studio",
-    "description": "The local backend of Pikku Studio: projects, worktrees, one dev server per project, the builder and publishing",
+    "displayName": "Studio",
+    "description": "The local backend of Studio: projects, worktrees, one dev server per project, the builder and publishing",
     "categories": ["General"],
     "icon": "./pikku-studio.svg"
   }

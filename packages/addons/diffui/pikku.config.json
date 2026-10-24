@@ -8,6 +8,6 @@
   "outDir": "./.pikku",
   "addon": {
     "displayName": "Diffui",
-    "description": "Diffui for Pikku Studio"
+    "description": "Diffui for Studio"
   }
 }

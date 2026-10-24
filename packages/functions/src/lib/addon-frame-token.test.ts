@@ -14,7 +14,7 @@ import {
   FrameTokenError,
   sessionFromFrameToken,
   verifyFrameToken,
-} from '../../../../addons-project/src/lib/frame-token.js'
+} from '../../../../templates/addons-project/src/lib/frame-token.js'
 import { OpenAddonsOutput } from '../functions/studio/addons/open-addons.function.js'
 import { MintAddonTokenOutput } from '../functions/studio/addons/mint-addon-token.function.js'
 

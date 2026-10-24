@@ -1,8 +1,40 @@
 {
-  "name": "Neutral",
+  "name": "Studio",
+  "description": "Studio teal.",
   "brand": {
-    "colors": { "primary": "#3b3f5c" },
-    "fonts": { "heading": "Inter", "body": "Inter" }
+    "colors": {
+      "primary": "#00767e",
+      "secondary": "#ddf4f4",
+      "accent": "#ff6f61"
+    },
+    "fonts": {
+      "heading": "Nunito",
+      "body": "Nunito"
+    }
   },
-  "structure": { "radius": "md", "density": "comfortable", "defaultColorScheme": "light" }
+  "structure": {
+    "radius": "lg",
+    "defaultColorScheme": "light",
+    "darkSurface": [
+      "#ece9ff",
+      "#cdc7e8",
+      "#a79fc4",
+      "#7d76a0",
+      "#565073",
+      "#3e3958",
+      "#2a2640",
+      "#1e1b30",
+      "#161327",
+      "#0d0b1a"
+    ],
+    "shadows": {
+      "xs": "0 1px 3px rgba(0,0,0,0.10)",
+      "sm": "0 6px 18px -6px rgba(80,60,200,0.30)",
+      "md": "0 14px 40px -10px rgba(80,60,200,0.38)",
+      "lg": "0 28px 64px -14px rgba(80,60,200,0.45)",
+      "xl": "0 40px 90px -18px rgba(80,60,200,0.5)"
+    },
+    "page": "#f6fafb",
+    "ink": "#0e1f24"
+  }
 }

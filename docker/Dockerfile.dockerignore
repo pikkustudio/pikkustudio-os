@@ -1,2 +1,4 @@
 *
 !.deploy/standalone/*-dist
+!docker/Caddyfile
+!docker/entrypoint.sh

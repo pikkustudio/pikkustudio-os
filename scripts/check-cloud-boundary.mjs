@@ -1,4 +1,4 @@
-// Open/OSS boundary: packages/pikkustudio-blocks may not name Pikku Studio Cloud. Allowed: the field name `cloudProjectId`
+// Open/OSS boundary: packages/ui-blocks may not name Pikku Studio Cloud. Allowed: the field name `cloudProjectId`
 // and the listed wire constants. Everything that speaks of Pikku Studio Cloud comes from the private cloud addon: its
 // screens (some replace core ones, handing in their parts as props), its nav entries and its backend sources.
 // Run: bun run check:cloud-boundary
@@ -7,7 +7,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const pkg = path.join(root, 'packages/pikkustudio-blocks')
+const pkg = path.join(root, 'packages/ui-blocks')
 const ALLOWED_IDENTIFIERS = [/cloudProjectId/g]
 // Wire constants shared with a server; changing them would break existing data. Each needs a reason.
 const WIRE = [

@@ -1,5 +1,5 @@
 // Build-time link check: every literal path core links to (`to="/..."`, `to: '/...'`, `navigate({ to: '/...' })`) in
-// apps/studio/src and packages/pikkustudio-blocks/src, and every path in the nav registry (src/nav.gen.json), must be a
+// apps/studio/src and packages/ui-blocks/src, and every path in the nav registry (src/nav.gen.json), must be a
 // route in the generated route tree. Runs after gen-routes.mjs; a dead link fails the build, naming file and line.
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
 import { join, relative, resolve } from 'node:path'
@@ -33,7 +33,7 @@ const walk = (dir) => {
   }
 }
 walk(join(app, 'src'))
-walk(join(root, 'packages/pikkustudio-blocks/src'))
+walk(join(root, 'packages/ui-blocks/src'))
 
 const dead = []
 let checked = 0

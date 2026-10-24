@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 // The app calls every studio:<name> RPC as POST /studio/<name> (see the invoke override in apps/studio __root.tsx),
 // so a studio function the app calls without a route in studio.http.ts is a 404 in the browser. This keeps them matched.
 const root = join(dirname(fileURLToPath(import.meta.url)), '../../..')
-const SOURCES = ['apps/studio/src', 'packages/pikkustudio-blocks/src', 'packages/pikkustudio-private/packages']
+const SOURCES = ['apps/studio/src', 'packages/ui-blocks/src', 'packages/pikkustudio-private/packages']
 // Calls that reach the backend: query/mutation hooks and invoke. Stubs read mocks, so they need no route.
 const CALL = /\b(?:usePikkuQuery|usePikkuMutation|usePikkuInfiniteQuery|invoke)\(\s*['"]studio:(\w+)['"]/g
 

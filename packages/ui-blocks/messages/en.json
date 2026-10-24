@@ -1361,7 +1361,7 @@
   "machine_opening__our_recommendation": "Our recommendation",
   "metrics_screen__assistant_note": "The assistant will look into it and tell you what it did.",
   "metrics_screen__crumb_app": "While it runs",
-  "metrics_screen__crumb_studio": "Pikku Studio",
+  "metrics_screen__crumb_studio": "Studio",
   "metrics_screen__detail_failed": "{howMany} failed in this time.",
   "metrics_screen__detail_failed_why": "{howMany} failed in this time. {why}",
   "metrics_screen__detail_ok": "Nothing has failed and answers are coming back quickly.",
@@ -1402,7 +1402,7 @@
   "metrics_screen__fix_prompt": "Something is going wrong {where}. {howMany} failed recently. {problems} Please find out why and fix it, then tell me in plain words what you changed.",
   "metrics_screen__fix_this": "Fix this",
   "metrics_screen__fix_where_project": "in my project",
-  "metrics_screen__fix_where_studio": "in Pikku Studio",
+  "metrics_screen__fix_where_studio": "in Studio",
   "metrics_screen__happened": [
     {
       "declarations": [
@@ -1458,14 +1458,14 @@
         "countPlural"
       ],
       "match": {
-        "countPlural=one": "{name} failed once in Pikku Studio with: {why}",
-        "countPlural=other": "{name} failed {count} times in Pikku Studio with: {why}"
+        "countPlural=one": "{name} failed once in Studio with: {why}",
+        "countPlural=other": "{name} failed {count} times in Studio with: {why}"
       }
     }
   ],
   "metrics_screen__studio_note": "This is about Studio itself, not your project. Copy this to share it with the Pikku team.",
   "metrics_screen__text_app": "What your app has been asked to do, how quickly it answered, and what went wrong.",
-  "metrics_screen__text_studio": "How Pikku Studio itself is doing. This is about the tool, not any one project.",
+  "metrics_screen__text_studio": "How Studio itself is doing. This is about the tool, not any one project.",
   "metrics_screen__the_longest_it_took": "The longest it took",
   "metrics_screen__things_asked": "Things asked of it",
   "metrics_screen__time_range": "Time range",
@@ -2609,7 +2609,7 @@
   "shell_layout__say_what_to_change": "Say what to change",
   "shell_layout__picked_in_preview": "Picked in the preview: {items}",
   "shell_layout__settings": "Settings",
-  "shell_layout__studio": "Pikku Studio",
+  "shell_layout__studio": "Studio",
   "shell_layout__studio_metrics": "Studio metrics",
   "shell_layout__tell_me_more": "Tell me more",
   "shell_layout__tell_me_when": "Tell me when",
@@ -3433,7 +3433,7 @@
   "impersonate__sign_out": "Back to the sign-in screen",
   "impersonate__failed": "That did not work. Check that the app is running, then try again.",
   "injected_panel__tab": "Try as someone else",
-  "injected_panel__open": "Open the Pikku Studio panel",
+  "injected_panel__open": "Open the Studio panel",
   "preview_bar__impersonate": "Impersonate",
   "slash_menu__label": "Commands",
   "slash_menu__experiment": "Experiment",
@@ -4690,7 +4690,7 @@
   "cloud_offline__title": "This part can't be reached right now",
   "cloud_offline__body": "Everything on this computer keeps working. This part lives online and comes back once you are online again.",
   "cloud_offline__retry": "Check again",
-  "studio_loading__label": "Opening Pikku Studio",
+  "studio_loading__label": "Opening Studio",
   "not_found__label": "Page not found",
   "not_found__teams": "Go to your teams",
   "not_found__ask": "Ask Pikku",
@@ -4967,8 +4967,8 @@
   "logs_screen__tenant_user": "User",
   "metrics_traffic__calls": "{n} calls",
   "metrics_traffic__sub": "How many calls came in, and how long they took, across the time you picked.",
-  "copy__brand_name": "Pikku Studio",
-  "copy__brand_label": "Pikku Studio",
+  "copy__brand_name": "Studio",
+  "copy__brand_label": "Studio",
   "action_notice__fix": "Put it right",
   "release_flags__place_live": "your live site",
   "release_flags__tests_failed_name": "Failed checks: {count}",

@@ -4,5 +4,5 @@
 @import '@pikkustudio/blocks/styles/domain.css';
 @import '@pikkustudio/theme/palettes.css';
 @import '@pikkustudio/blocks/styles/customize-map.css';
-@source '../../../../packages/pikkustudio-blocks/src';
+@source '../../../../packages/ui-blocks/src';
 @source './';

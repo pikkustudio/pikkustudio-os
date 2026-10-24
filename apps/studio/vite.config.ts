@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import { paraglideVitePlugin } from '@inlang/paraglide-js'
 import { fileURLToPath, URL } from 'node:url'
-import { testIds } from './build/testids.plugin.ts'
+import { testIds } from './tools/testids.plugin.ts'
 import { inlangProject } from '../../scripts/inlang-project.mjs'
 import { routeIgnorePattern } from '../../scripts/route-ignore.mjs'
 

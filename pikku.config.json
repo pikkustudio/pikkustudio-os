@@ -97,7 +97,7 @@
       },
       "native": {
         "identifier": "dev.pikku.studio",
-        "productName": "Pikku Studio",
+        "productName": "Studio",
         "platforms": [
           "desktop"
         ],

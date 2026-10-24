@@ -1240,7 +1240,7 @@
   "machine_opening__our_recommendation": "Unsere Empfehlung",
   "metrics_screen__assistant_note": "Der Assistent sieht sich das an und sagt dir, was er getan hat.",
   "metrics_screen__crumb_app": "Im Betrieb",
-  "metrics_screen__crumb_studio": "Pikku Studio",
+  "metrics_screen__crumb_studio": "Studio",
   "metrics_screen__detail_failed": "{howMany} sind in diesem Zeitraum fehlgeschlagen.",
   "metrics_screen__detail_failed_why": "{howMany} sind in diesem Zeitraum fehlgeschlagen. {why}",
   "metrics_screen__detail_ok": "Nichts ist fehlgeschlagen und die Antworten kommen schnell zurück.",
@@ -1281,7 +1281,7 @@
   "metrics_screen__fix_prompt": "Etwas läuft schief {where}. {howMany} sind zuletzt fehlgeschlagen. {problems} Bitte finde heraus, warum, und behebe es. Sag mir dann in einfachen Worten, was du geändert hast.",
   "metrics_screen__fix_this": "Beheben",
   "metrics_screen__fix_where_project": "in meinem Projekt",
-  "metrics_screen__fix_where_studio": "in Pikku Studio",
+  "metrics_screen__fix_where_studio": "in Studio",
   "metrics_screen__happened": [
     {
       "declarations": [
@@ -1337,14 +1337,14 @@
         "countPlural"
       ],
       "match": {
-        "countPlural=one": "{name} ist einmal in Pikku Studio fehlgeschlagen mit: {why}",
-        "countPlural=other": "{name} ist {count}-mal in Pikku Studio fehlgeschlagen mit: {why}"
+        "countPlural=one": "{name} ist einmal in Studio fehlgeschlagen mit: {why}",
+        "countPlural=other": "{name} ist {count}-mal in Studio fehlgeschlagen mit: {why}"
       }
     }
   ],
   "metrics_screen__studio_note": "Hier geht es um Studio selbst, nicht um dein Projekt. Kopiere das, um es mit dem Pikku-Team zu teilen.",
   "metrics_screen__text_app": "Was von deiner App verlangt wurde, wie schnell sie geantwortet hat und was schiefgelaufen ist.",
-  "metrics_screen__text_studio": "Wie es Pikku Studio selbst geht. Es geht um das Werkzeug, nicht um ein bestimmtes Projekt.",
+  "metrics_screen__text_studio": "Wie es Studio selbst geht. Es geht um das Werkzeug, nicht um ein bestimmtes Projekt.",
   "metrics_screen__the_longest_it_took": "Die längste Dauer",
   "metrics_screen__things_asked": "Anfragen an die App",
   "metrics_screen__time_range": "Zeitraum",
@@ -2487,7 +2487,7 @@
   "shell_layout__say_what_to_change": "Sag, was sich ändern soll",
   "shell_layout__picked_in_preview": "In der Vorschau ausgewählt: {items}",
   "shell_layout__settings": "Einstellungen",
-  "shell_layout__studio": "Pikku Studio",
+  "shell_layout__studio": "Studio",
   "shell_layout__studio_metrics": "Studio-Kennzahlen",
   "shell_layout__tell_me_more": "Erzähl mir mehr",
   "shell_layout__tell_me_when": "Sag mir Bescheid, wenn",
@@ -4483,7 +4483,7 @@
   "audit_screen__hero_error_text": "Studio hat dein Projekt nach seinem Verlauf gefragt und einen Fehler zurückbekommen. Es wurde nichts geändert. Pikku kann herausfinden, warum.",
   "audit_screen__not_running_ask": "Pikku bitten, es zu starten",
   "audit_screen__not_running_say": "Die Seite Verlauf sagt, mein Projekt läuft nicht. Bitte starte es, damit ich sehe, was passiert ist.",
-  "studio_loading__label": "Pikku Studio wird geöffnet",
+  "studio_loading__label": "Studio wird geöffnet",
   "not_found__label": "Seite nicht gefunden",
   "not_found__teams": "Zu deinen Teams",
   "not_found__ask": "Pikku fragen",
@@ -4761,8 +4761,8 @@
   "logs_screen__tenant_user": "Nutzer",
   "metrics_traffic__calls": "{n} Aufrufe",
   "metrics_traffic__sub": "Wie viele Aufrufe ankamen und wie lange sie dauerten, über den gewählten Zeitraum.",
-  "copy__brand_name": "Pikku Studio",
-  "copy__brand_label": "Pikku Studio",
+  "copy__brand_name": "Studio",
+  "copy__brand_label": "Studio",
   "action_notice__fix": "Beheben",
   "release_flags__place_live": "deine Live-Seite",
   "release_flags__tests_failed_name": "Fehlgeschlagene Prüfungen: {count}",

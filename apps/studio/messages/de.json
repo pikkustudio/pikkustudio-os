@@ -221,7 +221,7 @@
   "error__hint": "Wenn gerade ein Agent diese App baut, warte einfach. Vermutlich ist er mitten in einer Änderung und behebt das gleich, und die Seite lädt sich von selbst neu.",
   "error__retry": "Erneut versuchen",
   "error__title": "Diese Seite läuft nicht richtig",
-  "error__unreachable_title": "Pikku Studio ist gerade nicht erreichbar",
+  "error__unreachable_title": "Studio ist gerade nicht erreichbar",
   "error__unreachable_hint": "Wir erreichen den Pikku-Studio-Dienst unter {host} nicht. Deine Arbeit ist sicher. Prüfe deine Verbindung und versuche es gleich noch einmal.",
   "error__unreachable_login": "Zur Anmeldung",
   "guide__accounts_i0_a": "Erstelle ein eingeschränktes Hilfskonto für eine Workflow und zeige, worauf es zugreifen darf.",
@@ -859,7 +859,7 @@
   "setup__title": "Einrichtung",
   "shell__bell": "Neuigkeiten",
   "shell__bell_ask": "Braucht mich gerade etwas?",
-  "shell__brand": "Pikku Studio",
+  "shell__brand": "Studio",
   "shell__chat": "Mit Pikku chatten",
   "shell__hide": "Seitenleiste ausblenden",
   "shell__home": "Start",
@@ -996,11 +996,11 @@
   "working__title": "Arbeiten gerade daran",
   "working__you": "Du",
   "sandbox_wait__title": "Du hast noch keine Sandbox",
-  "sandbox_wait__body": "Sandboxes gibt es vorerst nur auf Einladung. Alles andere in deinem Konto funktioniert wie gewohnt, und Pikku Studio auf deinem Computer funktioniert sofort.",
+  "sandbox_wait__body": "Sandboxes gibt es vorerst nur auf Einladung. Alles andere in deinem Konto funktioniert wie gewohnt, und Studio auf deinem Computer funktioniert sofort.",
   "sandbox_wait__join": "Auf die Warteliste",
   "sandbox_wait__joining": "Einen Moment",
   "sandbox_wait__listed": "Du stehst auf der Warteliste. Wir schreiben dir an {email}, sobald Platz ist.",
   "sandbox_wait__failed": "Wir konnten dich gerade nicht auf die Warteliste setzen. Prüfe deine Verbindung und versuche es noch einmal.",
   "sandbox_wait__retry": "Noch einmal versuchen",
-  "sandbox_wait__download": "Pikku Studio herunterladen"
+  "sandbox_wait__download": "Studio herunterladen"
 }

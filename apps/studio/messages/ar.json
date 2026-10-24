@@ -241,8 +241,8 @@
   "error__hint": "إذا كان وكيل يبني هذا التطبيق الآن، فانتظروا قليلا. على الأرجح أنه في منتصف تغيير وسيصلح هذا قريبا، وستتحدث الصفحة من تلقاء نفسها.",
   "error__retry": "حاولوا مرة أخرى",
   "error__title": "هذه الصفحة لا تعمل بشكل صحيح",
-  "error__unreachable_title": "تعذر الوصول إلى Pikku Studio حاليا",
-  "error__unreachable_hint": "لا نستطيع الوصول إلى خدمة Pikku Studio على {host}. عملكم في أمان. تحققوا من اتصالكم وحاولوا مرة أخرى بعد قليل.",
+  "error__unreachable_title": "تعذر الوصول إلى Studio حاليا",
+  "error__unreachable_hint": "لا نستطيع الوصول إلى خدمة Studio على {host}. عملكم في أمان. تحققوا من اتصالكم وحاولوا مرة أخرى بعد قليل.",
   "error__unreachable_login": "الانتقال إلى تسجيل الدخول",
   "guide__accounts_i0_a": "أنشئ حساب مساعد محدود الصلاحيات لمسار عمل ما، وأرني إلى ماذا يمكنه الوصول.",
   "guide__accounts_i0_d": "هوية محدودة الصلاحيات لمسار عمل ما.",
@@ -907,7 +907,7 @@
   "setup__title": "جار الإعداد",
   "shell__bell": "التحديثات",
   "shell__bell_ask": "هل هناك ما يحتاج إلي؟",
-  "shell__brand": "Pikku Studio",
+  "shell__brand": "Studio",
   "shell__chat": "تحدثوا مع Pikku",
   "shell__hide": "أخفوا الشريط الجانبي",
   "shell__home": "الرئيسية",
@@ -1056,11 +1056,11 @@
   "working__title": "يعملون على هذا الآن",
   "working__you": "أنتم",
   "sandbox_wait__title": "ليس لديك بيئة تجريبية بعد",
-  "sandbox_wait__body": "البيئات التجريبية بالدعوة فقط حاليا. كل شيء آخر في حسابك يعمل كالمعتاد، وPikku Studio على حاسوبك يعمل فورا.",
+  "sandbox_wait__body": "البيئات التجريبية بالدعوة فقط حاليا. كل شيء آخر في حسابك يعمل كالمعتاد، وStudio على حاسوبك يعمل فورا.",
   "sandbox_wait__join": "انضم إلى قائمة الانتظار",
   "sandbox_wait__joining": "لحظة من فضلك",
   "sandbox_wait__listed": "أنت على قائمة الانتظار. سنراسلك على {email} فور توفر مكان.",
   "sandbox_wait__failed": "تعذرت إضافتك إلى قائمة الانتظار الآن. تحقق من اتصالك وحاول مرة أخرى.",
   "sandbox_wait__retry": "حاول مرة أخرى",
-  "sandbox_wait__download": "تنزيل Pikku Studio"
+  "sandbox_wait__download": "تنزيل Studio"
 }

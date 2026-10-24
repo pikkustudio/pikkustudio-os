@@ -6,7 +6,7 @@
 @import '@pikkustudio/theme/palettes.css';
 @import '@pikkustudio/blocks/styles/customize-map.css';
 @import './addons.gen.css';
-@source '../../../../packages/pikkustudio-blocks/src';
+@source '../../../../packages/ui-blocks/src';
 @source '../../../../packages/theme-studio/src';
 
 @layer base {

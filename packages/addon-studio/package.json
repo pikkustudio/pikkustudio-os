@@ -1,7 +1,7 @@
 {
   "name": "@pikkustudio/addon-studio",
   "version": "0.0.1",
-  "description": "Studio addon for Pikku — the local backend behind Pikku Studio",
+  "description": "Studio addon for Pikku — the local backend behind Studio",
   "type": "module",
   "imports": {
     "#pikku/*.js": "./dist/.pikku/*.js",

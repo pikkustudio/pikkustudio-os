@@ -12,7 +12,7 @@
   "scripts": {
     "prebuild": "node scripts/build-libs.mjs && cd packages/functions && bunx --bun pikku all $(node ../../scripts/pikku-config.mjs) && cd ../../apps/studio && node ../../scripts/gen-addons.mjs && node ../../scripts/gen-routes.mjs && node ../../scripts/check-links.mjs && bunx --bun paraglide-js compile --project $(node ../../scripts/inlang-project.mjs) --outdir ./src/paraglide",
     "build": "bun run --filter '*' --if-present build",
-    "dev": "bun scripts/dev.mjs",
+    "dev": "bun run --filter @pikkustudio/app-studio dev",
     "tsc": "bun run --filter '*' --if-present tsc",
     "test": "bun run --filter '*' --if-present test",
     "lint": "oxlint apps packages",

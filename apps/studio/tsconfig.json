@@ -47,5 +47,5 @@
       "react/*": ["../../node_modules/@types/react/*"]
     }
   },
-  "include": ["src", "build", "vite.config.ts"]
+  "include": ["src", "tools", "vite.config.ts"]
 }

@@ -154,7 +154,7 @@ export class StudioPublisher {
     }
     const steps: [string, string[]][] = [
       ['git', ['add', '-A']],
-      ['git', ['-c', 'user.name=Pikku Studio', '-c', 'user.email=studio@pikku.dev', 'commit', '-q', '--allow-empty', '-m', 'Publish from Pikku Studio']],
+      ['git', ['-c', 'user.name=Studio', '-c', 'user.email=studio@pikku.dev', 'commit', '-q', '--allow-empty', '-m', 'Publish from Studio']],
     ]
     void (async () => {
       try {
