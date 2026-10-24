@@ -6,7 +6,8 @@
   ],
   "tsconfig": "tsconfig.json",
   "srcDirectories": [
-    "packages/functions/src"
+    "packages/functions/src",
+    ".studio-addons/wire"
   ],
   "outDir": "packages/functions/.pikku",
   "emailTemplatesDir": "emails",
