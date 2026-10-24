@@ -16,10 +16,29 @@ export const sourceKeyOf = (key: unknown): { source: string; id: string; workspa
 
 /**
  * Studio calls that take a source key but are the host's, not the workspace's: about the workspace itself (where it is,
- * whether it is up, cloning it here) or the targets and published stages a host's sources add. They stay with the
- * backend, as on the desktop.
+ * whether it is up, cloning it here), the targets a host's sources add, and the published stages' releases, settings and
+ * analytics. They stay with the backend (on the web, `<api>/studio/<name>`), as on the desktop. Logs and metrics follow
+ * their target instead: the workspace's own go to it, a published stage's to the backend.
  */
-const HOST_CALLS = new Set(['workspaceLink', 'workspaceStatus', 'targets', 'projectTargets', 'targetCall', 'cloneProject'])
+const HOST_CALLS = new Set([
+  'workspaceLink',
+  'workspaceStatus',
+  'targets',
+  'projectTargets',
+  'targetCall',
+  'cloneProject',
+  'projectReleases',
+  'projectReleaseDetail',
+  'projectReleasePreview',
+  'projectReleaseAction',
+  'publishState',
+  'projectStageSettings',
+  'saveProjectStageValue',
+  'projectAnalyticsCounts',
+])
+
+/** Addons whose calls name a project by `projectKey` and are answered by the Studio that runs it: on the web, its workspace. */
+const WORKSPACE_ADDONS = new Set(['inbox'])
 
 type Target = { kind?: unknown; name?: unknown }
 
@@ -41,6 +60,18 @@ export const isWorkspaceCall = (name: string, data: unknown): data is { key: str
   if (!input || typeof input !== 'object' || !sourceKeyOf(input.key)) return false
   if (input.stage !== undefined) return false
   return ownWorkspace(input.key as string, input.target)
+}
+
+/**
+ * Whether an addon's call (`<addon>:<name>`) belongs to a cloud project's workspace: the addon keeps its data with the
+ * Studio that runs the project (WORKSPACE_ADDONS), the call names a project a source holds, and not a published stage.
+ */
+export const isWorkspaceAddonCall = (name: string, data: unknown): data is { projectKey: string } => {
+  const at = name.indexOf(':')
+  if (at <= 0 || !WORKSPACE_ADDONS.has(name.slice(0, at))) return false
+  const input = data as { projectKey?: unknown; stage?: unknown } | null
+  if (!input || typeof input !== 'object' || !sourceKeyOf(input.projectKey)) return false
+  return input.stage === undefined || input.stage === null
 }
 
 export type WorkspaceLink = { state: string; url: string }
@@ -91,9 +122,9 @@ export function createWorkspaceRouter(options: Options) {
   const targets = new Map<string, { at: number; target: Promise<{ url: string; remoteKey: string }> }>()
 
   /** A POST that waits out a workspace's 503 {state:'starting'}, per its Retry-After, up to maxWaitMs. */
-  const post = async (url: string, body: unknown, started = now()): Promise<Response> => {
+  const post = async (url: string, body: unknown, started = now(), headers: Record<string, string> = {}): Promise<Response> => {
     for (;;) {
-      const res = await doFetch(url, { method: 'POST', credentials: 'include', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) })
+      const res = await doFetch(url, { method: 'POST', credentials: 'include', headers: { 'content-type': 'application/json', ...headers }, body: JSON.stringify(body) })
       if (res.status !== 503) return res
       const wait = retryAfterMs(res)
       if (now() - started + wait > maxWaitMs) throw new WorkspaceStartingError()
@@ -136,6 +167,17 @@ export function createWorkspaceRouter(options: Options) {
       const input: Record<string, unknown> = { ...data, key: remoteKey }
       if (data.target !== undefined) input.target = { kind: 'workspace', name: 'local' }
       const res = await post(`${url}/studio/${name.slice(7)}`, input)
+      if (!res.ok) throw await failure(res)
+      return (await res.json().catch(() => null)) as T
+    },
+    /**
+     * An addon's call (isWorkspaceAddonCall) to the Studio in the project's workspace, through its rpc route, under the
+     * key it holds the project by and made as `caller` (the addon whose screen asks).
+     */
+    async addon<T>(name: string, data: { projectKey: string }, caller: string): Promise<T> {
+      const { url, remoteKey } = await target(data.projectKey)
+      const input = { ...data, projectKey: remoteKey }
+      const res = await post(`${url}/rpc/${encodeURIComponent(name)}`, { rpcName: name, data: input }, now(), { 'x-pikku-addon': caller })
       if (!res.ok) throw await failure(res)
       return (await res.json().catch(() => null)) as T
     },
