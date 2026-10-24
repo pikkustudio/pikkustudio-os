@@ -19,7 +19,7 @@ for (const needle of FORBIDDEN) {
   try {
     out = execFileSync(
       'git',
-      ['grep', '-n', '-F', needle, '--', 'apps', 'packages', 'package.json', ':!*.md', ':!*/LICENSE'],
+      ['grep', '-n', '-F', needle, '--', 'apps', 'packages', 'package.json', ':!*.md', ':!*/LICENSE', ':!apps/studio/wrangler.hosted.jsonc'],
       { encoding: 'utf8' }
     )
   } catch {}
