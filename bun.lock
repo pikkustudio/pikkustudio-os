@@ -46,7 +46,6 @@
         "@pikkustudio/addon-review": "workspace:*",
         "@pikkustudio/addon-spindle": "workspace:*",
         "@pikkustudio/blocks": "workspace:*",
-        "@pikkustudio/theme": "workspace:*",
         "@project/functions-sdk": "workspace:*",
         "@project/theme": "workspace:*",
         "@radix-ui/react-avatar": "^1.1.10",
@@ -337,7 +336,6 @@
         "@headless-tree/react": "^1.7.0",
         "@monaco-editor/react": "^4.7.0",
         "@pikkustudio/blob": "workspace:*",
-        "@pikkustudio/theme": "workspace:*",
         "@pikkustudio/workflow-graph": "workspace:*",
         "@tanstack/react-table": "^9.2.5",
         "monaco-editor": "^0.57.0",
@@ -365,13 +363,6 @@
     "packages/theme": {
       "name": "@project/theme",
       "version": "0.0.1",
-    },
-    "packages/theme-studio": {
-      "name": "@pikkustudio/theme",
-      "version": "0.0.1",
-      "peerDependencies": {
-        "react": "^19.0.0",
-      },
     },
     "packages/vault": {
       "name": "@pikkustudio/vault",
@@ -948,7 +939,6 @@
 
     "@pikkustudio/supervisor": ["@pikkustudio/supervisor@workspace:packages/supervisor"],
 
-    "@pikkustudio/theme": ["@pikkustudio/theme@workspace:packages/theme-studio"],
 
     "@pikkustudio/vault": ["@pikkustudio/vault@workspace:packages/vault"],
 

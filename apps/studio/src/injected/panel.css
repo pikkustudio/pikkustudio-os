@@ -2,7 +2,7 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import '@pikkustudio/blocks/styles/domain.css';
-@import '@pikkustudio/theme/palettes.css';
+@import '@pikkustudio/blocks/styles/palette-studio.css';
 @import '@pikkustudio/blocks/styles/customize-map.css';
 @source '../../../../packages/ui-blocks/src';
 @source './';
