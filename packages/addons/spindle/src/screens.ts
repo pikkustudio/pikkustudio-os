@@ -1,6 +1,6 @@
-import { pikkuStudio } from '@pikku/core/addon'
+import { definePlugin } from '@pikku/core/addon'
 
-export default pikkuStudio({
+export default definePlugin({
   title: 'spindle__title',
   screens: [
     { path: '/spindle', title: 'spindle_library__title', scope: 'project', nav: { area: 'project', icon: 'library', order: 10 }, scopes: ['spindle:read'], component: () => import('./screens/Library.js') },
