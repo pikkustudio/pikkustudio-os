@@ -55,8 +55,8 @@ export type Fix = {
 
 export type Fixes = { fixes: Fix[]; total: number; stale: number }
 
-/** Review knows a project by its full key, so a source's project is read from the workspace its key names. */
-export const reviewProjectId = (key: string) => key
+/** Review stores key projects by uuid, so a cloud key `cloud:<uuid>@<slug>` is reduced to its bare uuid. */
+export const reviewProjectId = (key: string) => (key.startsWith('cloud:') ? key.slice(6).split('@')[0] : key)
 
 export const candidateKey = (c: Pick<Candidate, 'pikkuFuncId' | 'implementationHash'>) => `${c.pikkuFuncId}\u0000${c.implementationHash ?? ''}`
 
