@@ -14,6 +14,6 @@
     "test": "bun test test"
   },
   "dependencies": {
-    "@pikku/core": "^0.12.147"
+    "@pikku/core": "^0.12.148"
   }
 }

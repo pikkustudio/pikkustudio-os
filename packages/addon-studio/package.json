@@ -48,20 +48,20 @@
     "test": "cd test && node --import tsx --test $(grep -L 'bun:' $(find src -name '*.test.ts')) && bun test $(grep -l 'bun:' $(find src -name '*.test.ts'))"
   },
   "peerDependencies": {
-    "@pikku/core": "^0.12.147",
+    "@pikku/core": "^0.12.148",
     "@pikku/better-auth": "^0.12.59",
     "kysely": "^0.29.0"
   },
   "dependencies": {
     "@pikkustudio/builder": "workspace:*",
-    "@pikku/cli": "^0.12.197",
+    "@pikku/cli": "^0.12.198",
     "@pikku/kysely": "^0.13.40",
     "vite": "^7.0.0",
     "@pikkustudio/supervisor": "workspace:*",
     "@pikkustudio/design-server": "workspace:*"
   },
   "devDependencies": {
-    "@pikku/core": "^0.12.147",
+    "@pikku/core": "^0.12.148",
     "@pikku/modelcontextprotocol": "^0.12.19",
     "@types/node": "^24",
     "tsx": "^4.21.0",
