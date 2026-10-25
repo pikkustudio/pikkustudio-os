@@ -28,21 +28,18 @@
       "types": "./dist/src/contributors.d.ts",
       "import": "./dist/src/contributors.js",
       "default": "./dist/src/contributors.js"
+    },
+    "./src/contributors/*.js": {
+      "types": "./dist/src/contributors/*.d.ts",
+      "import": "./dist/src/contributors/*.js",
+      "default": "./dist/src/contributors/*.js"
     }
-  },
-  "pikku": {
-    "contributors": [
-      {
-        "module": "@pikkustudio/addon-studio/contributors",
-        "export": "studioSources"
-      }
-    ]
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "rm -rf dist && pikku all && tsc && (cp .pikku/addon/rpc/*.d.ts dist/.pikku/addon/rpc/ 2>/dev/null || true) && mkdir -p dist/.pikku/addon/db && cp .pikku/addon/db/pikku-db-meta.gen.json dist/.pikku/addon/db/ && (mkdir -p dist/types && cp types/*.d.ts dist/types/)",
+    "build": "rm -rf dist && pikku all && tsc && (cp .pikku/addon/rpc/*.d.ts dist/.pikku/addon/rpc/ 2>/dev/null || true) && mkdir -p dist/.pikku/addon/db && cp .pikku/addon/db/pikku-db-meta.gen.json dist/.pikku/addon/db/ && mkdir -p dist/.pikku/addon/contributors && cp .pikku/addon/contributors/pikku-contributors-meta.gen.json dist/.pikku/addon/contributors/ && (mkdir -p dist/types && cp types/*.d.ts dist/types/)",
     "pikku": "pikku all",
     "tsc": "tsc --noEmit",
     "test": "cd test && node --import tsx --test $(grep -L 'bun:' $(find src -name '*.test.ts')) && bun test $(grep -l 'bun:' $(find src -name '*.test.ts'))"

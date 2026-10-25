@@ -1,14 +1,7 @@
-import type { PlatformServiceContributor } from '@pikku/deploy'
+import { defineContributors } from '@pikku/core/contributors'
+import { studioSources } from './contributors/studio-sources.js'
 
-/** Workspace logs and metrics, read from the tables this computer's collector writes. Other hosts add their own kinds (stage, sandbox) next to it. */
-export const studioSources: PlatformServiceContributor = {
-  name: 'studio-sources',
-  needs: ['kysely'],
-  provides: ['logSources', 'logSources.workspace', 'metricSources', 'metricSources.workspace'],
-  imports: [`import { kyselyLogSource as studioWorkspaceSource } from '@pikkustudio/addon-studio/sources'`],
-  emit: () => [
-    `  const studioWorkspace = studioWorkspaceSource(runtime.kysely)`,
-    `  services.logSources = { workspace: studioWorkspace }`,
-    `  services.metricSources = { workspace: studioWorkspace }`,
-  ],
-}
+/** What this addon contributes to a host's services. A host takes it with `wireAddon({ contributors: ['studio-sources'] })`. */
+export const contributors = defineContributors({
+  'studio-sources': { dev: studioSources, deploy: studioSources },
+})

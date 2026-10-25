@@ -6,4 +6,5 @@ wireAddon({
   expose: true,
   secretGrants: ['BETTER_AUTH_SECRET'],
   mcp: true,
+  contributors: ['studio-sources'],
 })
