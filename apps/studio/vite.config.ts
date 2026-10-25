@@ -48,7 +48,7 @@ const remoteProxy = remoteApi
 // real API's CORS does not allow a localhost origin and its session cookie is for .pikkustudio.app. Every API path is
 // forwarded unrewritten to the remote API instead, with the cookie made host-only so it sticks to localhost. Browser
 // navigations (Accept: text/html) stay with Vite, since the frontend has pages under some of these prefixes.
-const hostedDev = remoteApi && process.env.VITE_STUDIO_LOCAL === 'false'
+const hostedDev = process.env.VITE_STUDIO_LOCAL === 'false'
 const hostedProxy = hostedDev
   ? {
       '^/(rpc|auth|api|studio|workspace|p|upload|content)(/|$)': {
