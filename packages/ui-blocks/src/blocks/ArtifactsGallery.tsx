@@ -9,6 +9,7 @@ import { EmptyState } from './EmptyState'
 import { ArtifactRow } from './ArtifactRow'
 import { ExplorationList } from './ExplorationList'
 import { PikkuDot } from './PikkuDot'
+import { withoutExplorationMembers } from '../lib/explorations'
 import type { Artifact } from '../types/artifacts'
 
 const kinds = (): Array<[Artifact['kind'], I18nString]> => [
@@ -58,7 +59,7 @@ export function ArtifactsGallery({ view, items, onAsk }: { items: Artifact[]; vi
       {term ? <p className="px-2 text-px14 text-muted-foreground">{found.length ? m.artifacts_gallery__found({ count: found.length }) : m.artifacts_gallery__nothing_matches_try_another()}</p> : null}
       {term ? (
         <ul className="@container/row m-0 flex list-none flex-col gap-2 p-0">
-          {found.map((a) => (
+          {withoutExplorationMembers(found).map((a) => (
             <ArtifactRow key={a.id} item={a} />
           ))}
         </ul>
@@ -66,7 +67,7 @@ export function ArtifactsGallery({ view, items, onAsk }: { items: Artifact[]; vi
         <>
           <ExplorationList items={found} />
           {kinds().map(([id, text]) => {
-          const list = found.filter((a) => a.kind === id)
+          const list = withoutExplorationMembers(found).filter((a) => a.kind === id)
           return list.length ? (
             <section key={id} className="flex flex-col gap-2">
               <h2 className="px-1 pt-2 text-px14 font-bold text-muted-foreground">{text}</h2>
