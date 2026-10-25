@@ -12,6 +12,7 @@ import { ExploreDirection, ExploreDirections, moreIdeasMessage } from '../blocks
 import { useProjectKey } from '../lib/project'
 import { useProjectQuery } from '../lib/projectRpc'
 import { keep } from '../lib/links'
+import { newExplorationId } from '../lib/explorations'
 import { ShellCtx } from '../lib/shell'
 import type { Artifact } from '../types/artifacts'
 import type { Device } from '../types/designTypes'
@@ -26,6 +27,11 @@ function Directions({ directions, exploration, dirId }: { directions: Artifact[]
   const all = dirId === 'all' || !directions.some((d) => d.id === dirId)
   const dir = directions.find((d) => d.id === dirId) ?? directions[0]!
   const setDirId = (id: string) => navigate(id === 'all' ? { ...keep, to: '/artifacts/explore/$uid', params: { uid: exploration } } : { ...keep, to: '/artifacts/explore/$uid/$id', params: { uid: exploration, id } })
+  const askMore = (mode: 'controlled' | 'extreme') => {
+    const id = newExplorationId()
+    say(moreIdeasMessage(mode, exploration, id))
+    navigate({ ...keep, to: '/artifacts/explore/$uid', params: { uid: id } })
+  }
   const set = (patch: Record<string, unknown>) => navigate({ to: '.', search: ((prev: object) => ({ ...prev, ...patch })) as never, replace: true })
   const step = (by: number) => {
     const at = directions.indexOf(dir)
@@ -58,10 +64,10 @@ function Directions({ directions, exploration, dirId }: { directions: Artifact[]
         actions={
           all ? (
             <>
-              <Button variant="bordered" size="compact" type="button" onClick={() => say(moreIdeasMessage('controlled', exploration))}>
+              <Button variant="bordered" size="compact" type="button" onClick={() => askMore('controlled')}>
                 <Sparkles />{m.artifacts_explore__more_like_these()}
               </Button>
-              <Button variant="bordered" size="compact" type="button" onClick={() => say(moreIdeasMessage('extreme', exploration))}>
+              <Button variant="bordered" size="compact" type="button" onClick={() => askMore('extreme')}>
                 <Shuffle />{m.artifacts_explore__something_different()}
               </Button>
             </>

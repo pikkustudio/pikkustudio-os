@@ -28,8 +28,8 @@ function Shot({ d, onOpen }: { d: Artifact; onOpen: (id: string) => void }) {
   )
 }
 
-export const moreIdeasMessage = (mode: 'controlled' | 'extreme', exploration: string): I18nString =>
-  mode === 'controlled' ? m.explore_directions__more_controlled({ exploration }) : m.explore_directions__more_extreme({ exploration })
+export const moreIdeasMessage = (mode: 'controlled' | 'extreme', exploration: string, newId: string): I18nString =>
+  mode === 'controlled' ? m.explore_directions__more_controlled({ exploration, newId }) : m.explore_directions__more_extreme({ exploration, newId })
 
 export function ExploreDirections({ directions, onOpen }: { directions: Artifact[]; onOpen: (id: string) => void }) {
   const choose = useChooseDirection()
