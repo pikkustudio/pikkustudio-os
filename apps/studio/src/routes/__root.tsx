@@ -21,13 +21,14 @@ import { useAccount } from '@pikkustudio/blocks/lib/onboarding'
 import { StudioLoading } from '@pikkustudio/blocks/blocks/StudioLoading'
 import { validateStudioSearch } from '@pikkustudio/blocks/lib/search'
 import { isLocalOnly } from '@pikkustudio/blocks/lib/nav-registry'
+import { webUnavailableRoute } from '@pikkustudio/blocks/lib/web-edition'
 import globals from '@/styles/globals.css?url'
 
 export const Route = createRootRoute({
   validateSearch: validateStudioSearch,
   // The web build has no local-only page (core-screens.ts `local`), whichever screen would serve it: its URL goes home.
   beforeLoad: ({ location }) => {
-    if (isLocalOnly(location.pathname)) throw redirect({ to: '/', replace: true })
+    if (isLocalOnly(location.pathname) && !webUnavailableRoute(location.pathname)) throw redirect({ to: '/', replace: true })
   },
   head: () => ({ meta: appMeta, links: [{ rel: 'stylesheet', href: globals }] }),
   notFoundComponent: DefaultNotFoundPage,

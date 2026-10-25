@@ -5071,5 +5071,9 @@
   "version_screen__read_all": "Mark all as read",
   "version_screen__read_count": "{read} of {total} read",
   "version_screen__show_fewer": "Show fewer",
-  "version_screen__show_more_changes": "Show {count} more"
+  "version_screen__show_more_changes": "Show {count} more",
+  "web_edition__title": "Not available in the web edition",
+  "web_edition__text": "This screen needs Studio on your computer, so it is not available in the web edition.",
+  "web_edition__projects": "Back to Projects",
+  "web_edition__label": "Not available"
 }

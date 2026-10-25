@@ -4865,5 +4865,9 @@
   "version_screen__read_all": "Alle als gelesen markieren",
   "version_screen__read_count": "{read} von {total} gelesen",
   "version_screen__show_fewer": "Weniger anzeigen",
-  "version_screen__show_more_changes": "{count} weitere anzeigen"
+  "version_screen__show_more_changes": "{count} weitere anzeigen",
+  "web_edition__title": "In der Web-Edition nicht verfügbar",
+  "web_edition__text": "Dieser Bildschirm braucht Studio auf deinem Computer und ist in der Web-Edition nicht verfügbar.",
+  "web_edition__projects": "Zurück zu den Projekten",
+  "web_edition__label": "Nicht verfügbar"
 }

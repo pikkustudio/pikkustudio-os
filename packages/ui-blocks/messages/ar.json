@@ -5201,5 +5201,9 @@
   "version_screen__read_all": "تعليم الكل كمقروء",
   "version_screen__read_count": "قُرئ {read} من {total}",
   "version_screen__show_fewer": "عرض أقل",
-  "version_screen__show_more_changes": "عرض {count} أخرى"
+  "version_screen__show_more_changes": "عرض {count} أخرى",
+  "web_edition__title": "غير متاح في إصدار الويب",
+  "web_edition__text": "تحتاج هذه الشاشة إلى Studio على جهازكم، لذا فهي غير متاحة في إصدار الويب.",
+  "web_edition__projects": "العودة إلى المشاريع",
+  "web_edition__label": "غير متاح"
 }
