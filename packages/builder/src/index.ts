@@ -1,6 +1,7 @@
 export { BuilderSession } from './session.js'
 export type { BuilderConversation, BuilderItem, BuilderState, BuilderLaunch, Launcher } from './session.js'
-export { piArgs, piEnv, resolvePi, piPackageRoot, packageRoot, extensionPaths, SYSTEM_PROMPT } from './pi.js'
+export { loadAgent, parseAgent, agentsDir, type Agent } from './agents.js'
+export { piArgs, piEnv, resolvePi, piPackageRoot, packageRoot, extensionPaths, systemPrompt } from './pi.js'
 export type { BuilderAi, BuilderMode, Specialist } from './pi.js'
 export { SPECIALISTS, slotKey, projectKey, DO_MARKER, ASK_MARKER, APP_MARKER, QUESTION_LIMIT } from './pi.js'
 export { MODE_PROMPTS } from './pi.js'

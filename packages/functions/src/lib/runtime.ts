@@ -99,5 +99,6 @@ export async function installEmbeddedRuntime(home: string): Promise<string | nul
   process.env.BUN_BE_BUN = '1'
   process.env.PIKKU_PI_ROOT = join(dir, 'pi')
   process.env.PIKKU_BUILDER_EXTENSIONS = join(dir, 'extensions')
+  process.env.PIKKU_BUILDER_AGENTS = join(dir, 'agents')
   return dir
 }

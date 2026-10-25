@@ -22,7 +22,8 @@
   },
   "files": [
     "dist",
-    "extensions"
+    "extensions",
+    "agents"
   ],
   "scripts": {
     "build": "tsc",

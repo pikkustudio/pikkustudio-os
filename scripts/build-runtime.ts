@@ -52,6 +52,9 @@ files['resvg/index_bg.wasm'] = readFileSync(join(root, 'node_modules', '@resvg',
 const extensions = join(builder, 'extensions')
 add('extensions', extensions, walk(extensions).filter((path) => !path.endsWith('.test.mjs')))
 
+const agents = join(builder, 'agents')
+add('agents', agents, walk(agents))
+
 const git = checkGit(root, target)
 add('git', git, walk(git))
 
