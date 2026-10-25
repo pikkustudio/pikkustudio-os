@@ -9,6 +9,10 @@ const page = cva('mx-auto flex flex-col', {
   defaultVariants: { gap: 'default', width: 'default' },
 })
 
-export function Page({ children, ...v }: { children: I18nNode } & VariantProps<typeof page>) {
-  return <div className={page(v)}>{children}</div>
+export function Page({ children, testId, ...v }: { children: I18nNode; testId?: string } & VariantProps<typeof page>) {
+  return (
+    <div className={page(v)} data-testid={testId}>
+      {children}
+    </div>
+  )
 }

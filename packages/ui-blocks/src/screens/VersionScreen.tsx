@@ -32,7 +32,7 @@ const groupLook: Record<ReleaseGroupId, { icon: LucideIcon; label: () => I18nStr
 }
 
 const BackLink = () => (
-  <Link {...keep} to={'/versions' as never} className={buttonVariants({ variant: 'ghost', size: 'compact' }) + ' self-start'}>
+  <Link {...keep} to={'/versions' as never} className={buttonVariants({ variant: 'ghost', size: 'compact' }) + ' self-start'} data-testid="version-back">
     <ArrowLeft className="rtl:-scale-x-100 size-4" aria-hidden="true" />
     {m.version_screen__all_versions()}
   </Link>
@@ -57,7 +57,7 @@ export function VersionScreen({ id }: { id: string }) {
     )
   if (!v)
     return (
-      <Page gap="snug">
+      <Page gap="snug" testId="version-not-found">
         <PageHead crumb={m.versions_screen__title()} title={m.version_screen__not_found_title()} text={m.version_screen__not_found_text()} size="lead" />
         <BackLink />
       </Page>
