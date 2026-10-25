@@ -33,7 +33,7 @@ if [ -d "$tss" ] && [ ! -L "$tss" ] && [ -d apps/studio/node_modules/vite ]; the
   rm -rf "$tss" && ln -s ../../../../apps/studio/node_modules/vite "$tss"
 fi
 
-node scripts/link-addon.mjs
+node scripts/link-addon.mjs ${STUDIO_OPERATOR:+--operator}
 bun run prebuild
 cd apps/studio
 VITE_STUDIO_LOCAL=false VITE_API_URL="http://localhost:$port" VITE_API_PROXY="$api" bunx vite dev --port "$port" --strictPort
