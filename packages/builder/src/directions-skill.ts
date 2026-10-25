@@ -13,7 +13,7 @@ description: Use when making one design direction for a new app: one self-contai
 You make one design direction. The whole deliverable is two files, and you write them first:
 
 1. artifacts/direction-N/index.html: one self-contained page, inline CSS, no scripts, no external files.
-2. artifacts/direction-N/artifact.json: {"kind":"Design","title":"...","summary":"...","exploration":"first","mode":"extreme"}.
+2. artifacts/direction-N/artifact.json: {"kind":"Design","title":"...","summary":"...","exploration":"<the exploration id your brief gives, or first>","mode":"extreme"}.
 
 Write both files before anything else. After that you may read the page once to check it, and then you stop.
 

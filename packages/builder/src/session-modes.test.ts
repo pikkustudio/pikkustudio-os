@@ -97,6 +97,18 @@ describe('builder modes', () => {
   })
 })
 
+describe('new app card', () => {
+  test('the build and frontend agents are told to confirm a new app in a card before scaffolding it', () => {
+    for (const scope of ['build', 'frontend'] as const) {
+      const prompt = piArgs({ skills: '/skills', scope }).at(piArgs({ skills: '/skills', scope }).indexOf('--append-system-prompt') + 1) ?? ''
+      assert.ok(prompt.includes('[[app:'), scope)
+      assert.ok(prompt.includes('never run `pikku app new` yourself first'), scope)
+      assert.ok(prompt.includes('lowercase-kebab'), scope)
+      assert.ok(prompt.includes('never --template'), scope)
+    }
+  })
+})
+
 describe('specialist slots', () => {
   test('each specialist has its own state, busy flag and transcript, and build keeps the bare key', async () => {
     const home = await mkdtemp(join(tmpdir(), 'slots-'))

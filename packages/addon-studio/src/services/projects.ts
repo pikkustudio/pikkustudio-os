@@ -1,7 +1,7 @@
 import { execFile, execFileSync, spawn, type ChildProcess } from 'node:child_process'
 import { promisify } from 'node:util'
 import { closeSync, existsSync, lstatSync, mkdirSync, openSync, readFileSync, readdirSync, realpathSync, statSync, unlinkSync, writeFileSync } from 'node:fs'
-import { cp, mkdir, readFile, rm, symlink, writeFile } from 'node:fs/promises'
+import { cp, mkdir, readFile, readlink, rename, rm, symlink, writeFile } from 'node:fs/promises'
 import { connect, createServer } from 'node:net'
 import { homedir, userInfo } from 'node:os'
 import { builderHome, packageRoot, piPackageRoot, type BuilderMode, type Launcher } from '@pikkustudio/builder'
@@ -9,6 +9,7 @@ import { modeScope } from './builder-scope.js'
 import { basename, dirname, join, relative, resolve, sep } from 'node:path'
 import { randomBytes, randomUUID } from 'node:crypto'
 import { ConflictError } from '@pikku/core/errors'
+import { toolsRoot } from '../lib/tools/install.js'
 import { generatedSource, projectSource, resolveEffective, setMany, toEnv, type ScopedSource } from '../lib/sources/index.js'
 import { DEVELOP, MAIN, addWorktree, listWorktrees, layoutRoot, sessionKey, splitSessionKey, cloneLayout, commitPaths, createLayout, ensureWorktree, saveWorktrees, keepChanges, mainEnv, keepStatus, listVersions, listThemes, type ProjectTheme, type VersionCommit, worktreeConfinement, type KeepResult, type KeepStatus, type StudioWorktree } from './worktree.js'
 import { canConfine, confinedSpawn, type Confinement } from './confine.js'
@@ -53,6 +54,9 @@ export interface Intake {
   jobs: Partial<Record<'frontend' | 'backend' | 'tests' | 'prep', number>>
   samples: boolean
 }
+
+/** What flow.json keeps: the guided flow's progress, plus the brief only for a project whose repo has no project file. */
+export type Flow = Omit<Intake, 'idea' | 'surfaces' | 'devices'> & { brief?: { idea: string | null; surfaces: string[]; devices: string[] } }
 
 export const EMPTY_INTAKE: Intake = { path: null as never, done: false, idea: null, surfaces: [], devices: [], answers: [], skipped: [], run: null, jobs: {}, samples: false }
 
@@ -1041,13 +1045,13 @@ export class StudioProjectsService {
       throw error
     }
     await rm(staging, { recursive: true, force: true })
-    await this.beginIntake(id, { idea, surfaces, devices, path })
+    await this.beginIntake(id, { path })
     return this.register(root, id, name)
   }
 
   async beginIntake(key: string, { idea, surfaces, devices, path }: { idea?: string; surfaces?: string[]; devices?: string[]; path?: StartPath }): Promise<void> {
-    await mkdir(dirname(this.intakeFile(key)), { recursive: true })
-    await writeFile(this.intakeFile(key), JSON.stringify({ path: path ?? 'design', done: false, idea: idea ?? null, surfaces: surfaces ?? [], devices: devices ?? [], answers: [], skipped: path === 'interview' ? [] : ['questions'], run: null, jobs: {}, samples: false }) + '\n')
+    const brief = idea || surfaces?.length || devices?.length ? { idea: idea ?? null, surfaces: surfaces ?? [], devices: devices ?? [] } : undefined
+    await this.writeFlow(key, { path: path ?? 'design', done: false, answers: [], skipped: path === 'interview' ? [] : ['questions'], run: null, jobs: {}, samples: false, ...(brief ? { brief } : {}) })
   }
 
   /** Brings a source's project (`<source>:<id>`) onto this computer, linked back to the source. */
@@ -1131,36 +1135,93 @@ export class StudioProjectsService {
     return { pushed: true, remote, branches: [readFileSync(join(bare, 'HEAD'), 'utf8').trim().replace(/^ref: refs\/heads\//, ''), ...(await listWorktrees(root))] }
   }
 
-  private intakeFile(key: string) {
+  /** What the project is about lives in its repo (`.studio/project.json`); this file holds only the guided flow's progress. */
+  private flowFile(key: string) {
+    return join(this.projectsDir, splitSessionKey(key).id, 'flow.json')
+  }
+
+  private legacyIntakeFile(key: string) {
     return join(this.projectsDir, splitSessionKey(key).id, 'intake.json')
   }
 
-  async intake(key: string): Promise<Intake | null> {
+  private async writeFlow(key: string, flow: Flow): Promise<void> {
+    const file = this.flowFile(key)
+    await mkdir(dirname(file), { recursive: true })
+    const temporary = `${file}.${process.pid}.tmp`
+    await writeFile(temporary, JSON.stringify(flow) + '\n')
+    await rename(temporary, file)
+  }
+
+  private async readFlow(key: string): Promise<Flow | null> {
     try {
-      const raw = JSON.parse(await readFile(this.intakeFile(key), 'utf8')) as Partial<Intake> & { path: StartPath }
-      return {
-        path: raw.path,
-        done: raw.done ?? false,
-        idea: raw.idea ?? null,
-        surfaces: raw.surfaces ?? [],
-        devices: raw.devices ?? [],
-        answers: raw.answers ?? [],
-        skipped: raw.skipped ?? [],
-        run: raw.run ?? null,
-        jobs: raw.jobs ?? {},
-        samples: raw.samples ?? false,
-      }
+      return JSON.parse(await readFile(this.flowFile(key), 'utf8')) as Flow
     } catch {
-      return null
+      // A project from before flow.json: its intake.json carried the brief too, so keep that as the fallback and drop the file.
+      try {
+        const old = JSON.parse(await readFile(this.legacyIntakeFile(key), 'utf8')) as Partial<Intake> & { path: StartPath }
+        const flow: Flow = {
+          path: old.path,
+          done: old.done ?? false,
+          answers: old.answers ?? [],
+          skipped: old.skipped ?? [],
+          run: old.run ?? null,
+          jobs: old.jobs ?? {},
+          samples: old.samples ?? false,
+          brief: { idea: old.idea ?? null, surfaces: old.surfaces ?? [], devices: old.devices ?? [] },
+        }
+        await this.writeFlow(key, flow)
+        await rm(this.legacyIntakeFile(key), { force: true })
+        return flow
+      } catch {
+        return null
+      }
     }
   }
 
+  private async readBrief(key: string, fallback?: Flow['brief']): Promise<NonNullable<Flow['brief']>> {
+    try {
+      const entry = await this.entry(key)
+      const file = JSON.parse(await readFile(join(entry.path, '.studio', 'project.json'), 'utf8')) as { idea?: string | null; surfaces?: string[]; devices?: string[] }
+      if (file.idea || file.surfaces?.length || file.devices?.length) return { idea: file.idea ?? null, surfaces: file.surfaces ?? [], devices: file.devices ?? [] }
+    } catch {
+      // No project file: the brief given when the interview began is all there is.
+    }
+    return fallback ?? { idea: null, surfaces: [], devices: [] }
+  }
+
+  async intake(key: string): Promise<Intake | null> {
+    const flow = await this.readFlow(key)
+    if (!flow) return null
+    const brief = await this.readBrief(key, flow.brief)
+    return {
+      path: flow.path,
+      done: flow.done ?? false,
+      idea: brief.idea,
+      surfaces: brief.surfaces,
+      devices: brief.devices,
+      answers: flow.answers ?? [],
+      skipped: flow.skipped ?? [],
+      run: flow.run ?? null,
+      jobs: flow.jobs ?? {},
+      samples: flow.samples ?? false,
+    }
+  }
+
+  /** One change at a time per project: each change reads what the one before it wrote. */
+  private flowQueue = new Map<string, Promise<unknown>>()
+
   async updateIntake(key: string, change: (found: Intake) => Intake): Promise<Intake | null> {
-    const found = (await this.intake(key)) ?? (existsSync(dirname(this.intakeFile(key))) ? EMPTY_INTAKE : null)
-    if (!found) return null
-    const next = change(found)
-    await writeFile(this.intakeFile(key), JSON.stringify(next) + '\n')
-    return next
+    const id = splitSessionKey(key).id
+    const turn = (this.flowQueue.get(id) ?? Promise.resolve()).catch(() => undefined).then(async () => {
+      const found = (await this.intake(key)) ?? (existsSync(dirname(this.flowFile(key))) ? EMPTY_INTAKE : null)
+      if (!found) return null
+      const next = change(found)
+      const flow = await this.readFlow(key)
+      await this.writeFlow(key, { path: next.path, done: next.done, answers: next.answers, skipped: next.skipped, run: next.run, jobs: next.jobs, samples: next.samples, ...(flow?.brief ? { brief: flow.brief } : {}) })
+      return next
+    })
+    this.flowQueue.set(id, turn)
+    return turn
   }
 
   async finishIntake(key: string): Promise<void> {
@@ -1173,7 +1234,29 @@ export class StudioProjectsService {
       const answers = [...found.answers, { question, answer, skipped }]
       return { ...found, answers, done: answers.length >= QUESTIONS ? true : found.done }
     })
+    if (next) await this.writeBrief(key, next)
     return next?.answers.length ?? 0
+  }
+
+  /** The owner's idea and answers as plain notes in knowledge/, for every agent to read; written out from the flow, never read back. */
+  private async writeBrief(key: string, found: Intake): Promise<void> {
+    try {
+      const dir = join(await this.projectDir(key), 'knowledge')
+      await mkdir(dir, { recursive: true })
+      const answered = found.answers.filter((a) => !a.skipped && a.answer.trim())
+      const lines = [
+        '# What the owner wants',
+        '',
+        found.idea ?? '',
+        '',
+        ...(found.surfaces.length ? [`It has: ${found.surfaces.join(', ')}.`] : []),
+        ...(found.devices.length ? [`Used on: ${found.devices.join(', ')}.`] : []),
+        ...(answered.length ? ['', '## Their answers', ...answered.flatMap((a) => ['', `**${a.question}**`, a.answer])] : []),
+      ]
+      await writeFile(join(dir, 'brief.md'), lines.join('\n').trim() + '\n')
+    } catch {
+      // The notes are a convenience: a project that cannot take them still keeps its answers.
+    }
   }
 
   async setSkipped(key: string, step: ChecklistStepId, skipped: boolean): Promise<void> {
@@ -1458,6 +1541,7 @@ export class StudioProjectsService {
         outermostNodeModules(piPackageRoot()),
         packageRoot,
         builderHome(),
+        join(this.home, 'builder'),
         join(this.home, 'logs'),
         dirname(process.execPath),
       ],
@@ -1482,8 +1566,11 @@ export class StudioProjectsService {
     const modules = hoistedNodeModules(source)
     if (modules) {
       const link = join(dirname(copy), 'node_modules')
-      await rm(link, { force: true })
-      await symlink(modules, link, 'dir').catch(() => {})
+      const current = await readlink(link).catch(() => null)
+      if (current !== modules) {
+        await rm(link, { force: true })
+        await symlink(modules, link, 'dir').catch(() => {})
+      }
     }
     return join(copy, basename(entry))
   }
@@ -1492,7 +1579,8 @@ export class StudioProjectsService {
     if (this.options.confine === false || !canConfine()) return null
     if (this.options.confine) return this.options.confine(worktree)
     const base = worktreeConfinement(worktree)
-    const readable = [join(homedir(), '.pikkustudio', 'auth.json')]
+    // Every managed tool (impeccable's skill files, chromium, ...) installs under one root; agents and project processes read and run from it.
+    const readable = [join(homedir(), '.pikkustudio', 'auth.json'), toolsRoot(this.home)]
     if (this.options.designEntry) {
       readable.push(resolve(this.options.designEntry, '..', '..'))
       const modules = hoistedNodeModules(dirname(this.options.designEntry))

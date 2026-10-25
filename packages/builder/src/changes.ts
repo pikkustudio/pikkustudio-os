@@ -86,7 +86,8 @@ export const offerMessage = (request: string) =>
     '',
     request,
     '',
-    'First decide how big it is. A small job (a word, a colour, one or two files, a few minutes): just do it now.',
+    'If the request is to create a new app (a new frontend under apps/), it is not a big job to offer or queue: do not explore the project first. Follow the new-app rule in your instructions: ask who the app is for if the owner did not say, then end the reply with the app card line, and do nothing else until it is confirmed.',
+    'Otherwise decide how big it is. A small job (a word, a colour, one or two files, a few minutes): just do it now.',
     `A big job (new screens, new data, several features, or more than about ten minutes): do not start. Say in plain words what you would do in a sentence or two, say it is a bigger job, and end that reply with exactly this line on its own: ${OFFER_MARKER}`,
     'Then wait. If the owner is answering an offer you made earlier: when they want it queued, file it with `pikku changes file --title "<the requirement in one line>" --body "<the detail>"` and say it is queued; when they want it now, build it in this session.',
   ].join('\n')

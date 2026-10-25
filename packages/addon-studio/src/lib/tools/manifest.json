@@ -6,41 +6,41 @@
       "find": { "command": ["chrome-headless-shell", "--version"], "version": "(\\d+\\.\\d+\\.\\d+\\.\\d+)" },
       "versions": [
         {
-          "version": "154.0.8037.92",
+          "version": "156.0.8078.4",
           "default": true,
           "artifacts": {
             "darwin-arm64": {
-              "url": "https://storage.googleapis.com/chrome-for-testing-public/154.0.8037.92/mac-arm64/chrome-headless-shell-mac-arm64.zip",
-              "sha256": "77da14e75d7f2568e6f7898d3df7cdc6faac74b15e903b2c9d486ebb6ca9b929",
-              "size": 99221129,
+              "url": "https://storage.googleapis.com/chrome-for-testing-public/156.0.8078.4/mac-arm64/chrome-headless-shell-mac-arm64.zip",
+              "sha256": "94e4337b70cbc5638f0935fbc46b9f242bc7416f657e3fbe924baf348404b53d",
+              "size": 103778487,
               "format": "zip",
               "bin": ["chrome-headless-shell-mac-arm64/chrome-headless-shell"]
             },
             "darwin-x64": {
-              "url": "https://storage.googleapis.com/chrome-for-testing-public/154.0.8037.92/mac-x64/chrome-headless-shell-mac-x64.zip",
-              "sha256": "a54292aaacbb77f76f6ef47558e7c51ab884044e0adacca315567f83c060bcc4",
-              "size": 104748425,
+              "url": "https://storage.googleapis.com/chrome-for-testing-public/156.0.8078.4/mac-x64/chrome-headless-shell-mac-x64.zip",
+              "sha256": "8a9e4a32ba5b1a796f8b16d01896e355cf6662544d9743296394fd999d782331",
+              "size": 109130614,
               "format": "zip",
               "bin": ["chrome-headless-shell-mac-x64/chrome-headless-shell"]
             },
             "linux-arm64": {
-              "url": "https://storage.googleapis.com/chrome-for-testing-public/154.0.8037.92/linux-arm64/chrome-headless-shell-linux-arm64.zip",
-              "sha256": "0ed0e47d9e9f639197f508d62ada09e5c6b4c4c60edab3160a9312a733091df6",
-              "size": 121182296,
+              "url": "https://storage.googleapis.com/chrome-for-testing-public/156.0.8078.4/linux-arm64/chrome-headless-shell-linux-arm64.zip",
+              "sha256": "81ab9d4d3c301dc5fdfb6c541b9e6632b16fc819a6a854460f40a76fe2b2c476",
+              "size": 125711061,
               "format": "zip",
               "bin": ["chrome-headless-shell-linux-arm64/chrome-headless-shell"]
             },
             "linux-x64": {
-              "url": "https://storage.googleapis.com/chrome-for-testing-public/154.0.8037.92/linux64/chrome-headless-shell-linux64.zip",
-              "sha256": "636aa5c79f2693632e9921b8bbb050038ba11672e02346c06c20f991aed096f9",
-              "size": 120477194,
+              "url": "https://storage.googleapis.com/chrome-for-testing-public/156.0.8078.4/linux64/chrome-headless-shell-linux64.zip",
+              "sha256": "c3e50596aef52c58f8fda3c6b3411c33d34c88b177b3ed1c2243359fd3b8ba20",
+              "size": 125797539,
               "format": "zip",
               "bin": ["chrome-headless-shell-linux64/chrome-headless-shell"]
             }
           }
         }
       ],
-      "env": { "PIKKU_CHROMIUM": "${bin}" },
+      "env": { "PIKKU_CHROMIUM": "${bin}", "PLAYWRIGHT_CHROMIUM_PATH": "${bin}", "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1" },
       "get": {
         "command": "npx @puppeteer/browsers install chrome-headless-shell@stable",
         "link": "https://googlechromelabs.github.io/chrome-for-testing/"
@@ -255,6 +255,70 @@
       "get": {
         "link": "https://github.com/morluto/rea",
         "note": "npm i -g rea-agents (needs Node >= 22.19)."
+      }
+    },
+    {
+      "id": "impeccable",
+      "name": "Impeccable (design skill)",
+      "find": {
+        "roots": [
+          "$PIKKU_IMPECCABLE_SKILL"
+        ],
+        "files": {
+          "*": [
+            "SKILL.md",
+            "reference/document.md"
+          ]
+        },
+        "versionFile": "SKILL.md",
+        "version": "(?m)^version: (\\S+)"
+      },
+      "versions": [
+        {
+          "version": "4.7.0",
+          "default": true,
+          "artifacts": {
+            "darwin-arm64": {
+              "url": "https://github.com/pbakaus/impeccable/releases/download/skill-v4.7.0/universal.zip",
+              "sha256": "358c8b6bbc2113e9910bf4adbdba4523612453ec58d56a5c1b14654416a13fe3",
+              "size": 16814857,
+              "format": "zip",
+              "bin": [],
+              "root": ".pi/skills/impeccable"
+            },
+            "darwin-x64": {
+              "url": "https://github.com/pbakaus/impeccable/releases/download/skill-v4.7.0/universal.zip",
+              "sha256": "358c8b6bbc2113e9910bf4adbdba4523612453ec58d56a5c1b14654416a13fe3",
+              "size": 16814857,
+              "format": "zip",
+              "bin": [],
+              "root": ".pi/skills/impeccable"
+            },
+            "linux-arm64": {
+              "url": "https://github.com/pbakaus/impeccable/releases/download/skill-v4.7.0/universal.zip",
+              "sha256": "358c8b6bbc2113e9910bf4adbdba4523612453ec58d56a5c1b14654416a13fe3",
+              "size": 16814857,
+              "format": "zip",
+              "bin": [],
+              "root": ".pi/skills/impeccable"
+            },
+            "linux-x64": {
+              "url": "https://github.com/pbakaus/impeccable/releases/download/skill-v4.7.0/universal.zip",
+              "sha256": "358c8b6bbc2113e9910bf4adbdba4523612453ec58d56a5c1b14654416a13fe3",
+              "size": 16814857,
+              "format": "zip",
+              "bin": [],
+              "root": ".pi/skills/impeccable"
+            }
+          }
+        }
+      ],
+      "env": {
+        "PIKKU_IMPECCABLE_SKILL": "${root}"
+      },
+      "get": {
+        "link": "https://github.com/pbakaus/impeccable/releases",
+        "note": "Download universal.zip and point PIKKU_IMPECCABLE_SKILL at its .pi/skills/impeccable folder."
       }
     }
   ]

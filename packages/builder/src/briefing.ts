@@ -56,7 +56,7 @@ export async function frontendBriefing(cwd: string): Promise<string> {
     await themes(cwd),
     [
       'Rules that save turns:',
-      '- Apply the theme once with `pikku theme apply --preset <name> --primary "#hex" --secondary "#hex" --accent "#hex"`. If it ends with an error about emails/theme.json, ignore it: the app theme is already applied and emails/ is not yours.',
+      '- Settle the theme before any screen, and check it. Decide from DESIGN.md if the ground is light or dark. `pikku theme apply --preset <name> --primary "#hex" --secondary "#hex" --accent "#hex" --font-heading "<family>" --font-body "<family>"` builds a LIGHT theme: its --page and --ink are light-mode colours and the muted text, borders and inputs are derived by darkening from the page, so a dark page gives black muted text and near-black borders. For a dark design do not pass the dark ground as --page; apply it with the brand colours and fonts, put class="dark" on <html> in apps/app/src/routes/__root.tsx, and set the design\'s exact ground, ink, muted, border and input values under `.dark` in apps/app/src/styles/domain.css (never in theme.css). Then read the resulting tokens and fix any pair under 4.5:1 for text (3:1 for borders and inputs): body, muted text, the label on primary/secondary/accent, links. If it ends with an error about emails/theme.json, ignore it: emails/ is not yours.',
       '- Do not edit *.stories.tsx files and do not fix Storybook; stories are done in a later step. Run `bun run lint` once, at the end, and ignore findings in stories files.',
       '- Components own their colour and spacing: add a variant to the ui component rather than passing colour or spacing classes from a page.',
     ].join('\n'),

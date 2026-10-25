@@ -3,6 +3,7 @@ import { existsSync } from 'node:fs'
 import { appendFile, mkdir, mkdtemp, readFile, readdir, rename, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { randomBytes } from 'node:crypto'
 import { createInterface } from 'node:readline'
 import { offerMessage, pikkuNext, routeMessage, writePikkuShim, type CommandRunner } from './changes.js'
 import { frontendBriefing } from './briefing.js'
@@ -105,8 +106,8 @@ const FALLBACK_BRIEFS = [
 const PLAN_PROMPT = (count: number, idea: string) =>
   `Plan ${count} design directions for the app below. Reply with only a JSON array of ${count} strings and nothing else. Each string is a brief of two or three plain sentences for one designer: the layout idea, the colour world, and the tone. The directions must differ from each other as much as possible in all three. No two may share a layout idea or a main colour. Do not write any files.\n\n${idea}`
 
-const DIRECTION_PROMPT = (n: number, count: number, idea: string, brief: string) =>
-  `${idea}\n\nYou are making direction ${n} of ${count}. Other designers are making the other directions at the same time, so stay strictly with your own brief and do not echo theirs:\n${brief}\n\nWrite only artifacts/direction-${n}/index.html, one self-contained page (inline CSS, no scripts, no external files), and artifacts/direction-${n}/artifact.json as {"kind":"Design","title":"a short name for the direction","summary":"one plain sentence an owner would use about what makes it different","exploration":"first","mode":"extreme"}. Write both files straight away, before reading or checking anything. Do not take screenshots or run review commands. Do not change the app.`
+const DIRECTION_PROMPT = (n: number, count: number, idea: string, brief: string, exploration: string) =>
+  `${idea}\n\nYou are making direction ${n} of ${count}. Other designers are making the other directions at the same time, so stay strictly with your own brief and do not echo theirs:\n${brief}\n\nWrite only artifacts/direction-${n}/index.html, one self-contained page (inline CSS, no scripts, no external files), and artifacts/direction-${n}/artifact.json as {"kind":"Design","title":"a short name for the direction","summary":"one plain sentence an owner would use about what makes it different","exploration":"${exploration}","mode":"extreme"}. Write both files straight away, before reading or checking anything. Do not take screenshots or run review commands. Do not change the app.`
 
 const parseBriefs = (output: string, count: number): string[] | null => {
   const match = output.match(/\[[\s\S]*\]/)
@@ -377,7 +378,7 @@ export class BuilderSession {
         if (planned.timedOut) console.warn(`[builder] plan for ${key} timed out again, using the fallback briefs`)
       }
       const briefs = (planned.ok ? parseBriefs(planned.output, count) : null) ?? FALLBACK_BRIEFS.slice(0, count)
-      const made = await this.makeDirections(key, briefs, count, full)
+      const made = await this.makeDirections(key, briefs, count, full, randomBytes(3).toString('hex'))
       const ok = made.filter((r) => r.ok).length
       if (!ok) throw new Error(made[0]?.output.trim().split('\n').slice(-4).join('\n') || 'The builder could not make any directions.')
       return ok
@@ -390,10 +391,10 @@ export class BuilderSession {
     }
   }
 
-  private async makeDirections(key: string, briefs: string[], count: number, full: string) {
+  private async makeDirections(key: string, briefs: string[], count: number, full: string, exploration: string) {
     const modeFile = process.env.PIKKU_DIRECTIONS_MODE_FILE
     const how = (modeFile && existsSync(modeFile) ? (await readFile(modeFile, 'utf8')).trim() : process.env.PIKKU_DIRECTIONS_MODE) || 'parallel'
-    const one = (i: number) => this.runOnce(key, DIRECTION_PROMPT(i + 1, count, full, briefs[i]), 10 * 60_000, 'explore', `direction-${i + 1}`)
+    const one = (i: number) => this.runOnce(key, DIRECTION_PROMPT(i + 1, count, full, briefs[i], exploration), 10 * 60_000, 'explore', `direction-${i + 1}`)
     if (how === 'sequential') {
       const made: { ok: boolean; output: string }[] = []
       for (let i = 0; i < briefs.length; i++) made.push(await one(i))
@@ -402,7 +403,7 @@ export class BuilderSession {
     if (how === 'staggered') return Promise.all(briefs.map(async (_, i) => (await new Promise((r) => setTimeout(r, i * 10_000)), one(i))))
     if (how === 'single') {
       const list = briefs.map((brief, i) => `Direction ${i + 1}: ${brief}`).join('\n')
-      const prompt = `${full}\n\nMake ${count} design directions, one after the other, each strictly with its own brief:\n${list}\n\nFor each direction n write only artifacts/direction-n/index.html, one self-contained page (inline CSS, no scripts, no external files), and artifacts/direction-n/artifact.json as {"kind":"Design","title":"a short name for the direction","summary":"one plain sentence an owner would use about what makes it different","exploration":"first","mode":"extreme"}. Write the files straight away. Do not change the app.`
+      const prompt = `${full}\n\nMake ${count} design directions, one after the other, each strictly with its own brief:\n${list}\n\nFor each direction n write only artifacts/direction-n/index.html, one self-contained page (inline CSS, no scripts, no external files), and artifacts/direction-n/artifact.json as {"kind":"Design","title":"a short name for the direction","summary":"one plain sentence an owner would use about what makes it different","exploration":"${exploration}","mode":"extreme"}. Write the files straight away. Do not change the app.`
       return [await this.runOnce(key, prompt, 20 * 60_000, 'explore', 'single')]
     }
     return Promise.all(briefs.map((_, i) => one(i)))

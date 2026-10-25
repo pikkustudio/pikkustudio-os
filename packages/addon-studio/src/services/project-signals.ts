@@ -16,7 +16,7 @@ export async function readSignals(
 ): Promise<Signals> {
   const intake = (await services.projects.intake(key)) ?? EMPTY_INTAKE
   const cwd = await services.projects.projectDir(key)
-  const artifacts = (await listArtifacts(cwd)).filter((a) => a.exploration === 'first')
+  const artifacts = (await listArtifacts(cwd)).filter((a) => a.kind === 'Design')
   const mocks = join(cwd, '.mocks')
   const front = await services.builder.state(slotKey(key, 'frontend'))
   const build = await services.builder.state(slotKey(key))

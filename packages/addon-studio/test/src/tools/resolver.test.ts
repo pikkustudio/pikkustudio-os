@@ -153,10 +153,13 @@ describe('baked manifest', () => {
           expect(artifact!.sha256).toMatch(/^[0-9a-f]{64}$/)
           expect(['zip', 'tar.gz']).toContain(artifact!.format)
           expect(artifact!.url).toStartWith('https://')
-          expect(artifact!.bin.length).toBeGreaterThan(0)
+          if (Object.values(tool.env).some((value) => value.includes('${bin}'))) expect(artifact!.bin.length).toBeGreaterThan(0)
         }
       }
     }
+    const chromium = bakedManifest.tools.find((tool) => tool.id === 'chromium')!
+    expect(chromium.env).toMatchObject({ PLAYWRIGHT_CHROMIUM_PATH: '${bin}', PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1' })
+    expect(Object.keys(chromium.versions[0]!.artifacts).sort()).toEqual(['darwin-arm64', 'darwin-x64', 'linux-arm64', 'linux-x64'])
     expect(bakedManifest.tools.map((tool) => tool.id)).not.toContain('git')
     expect(bakedManifest.tools.map((tool) => tool.id)).not.toContain('uv')
   })

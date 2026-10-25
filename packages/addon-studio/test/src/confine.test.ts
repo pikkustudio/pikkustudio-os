@@ -4,6 +4,7 @@ import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { describe, test } from 'node:test'
+import { toolsRoot } from '../../src/lib/tools/install.js'
 import { confinedSpawn } from '../../src/services/confine.js'
 
 const run = (script: string, root: string, home: string) =>
@@ -127,5 +128,31 @@ describe('confinedSpawn runtime dir', { skip: !supported }, () => {
       })
     assert.notStrictEqual(await spawnWith([]), 0)
     assert.strictEqual(await spawnWith([runtime]), 0)
+  })
+})
+
+describe('confinedSpawn managed tools root', { skip: !supported }, () => {
+  test('reads a skill file and runs a binary under the tools root only when it is readable', async () => {
+    const base = await mkdtemp(join(tmpdir(), 'pikku-confine-'))
+    const home = join(base, 'home')
+    const root = join(home, 'worktree')
+    const tools = toolsRoot(join(home, '.pikkustudio'))
+    const skill = join(tools, 'impeccable', '4.7.0', '.pi', 'skills', 'impeccable')
+    const bin = join(tools, 'chromium', '156.0.8078.4', 'chrome-headless-shell')
+    await mkdir(root, { recursive: true })
+    await mkdir(join(skill, 'reference'), { recursive: true })
+    await mkdir(join(tools, 'chromium', '156.0.8078.4'), { recursive: true })
+    await writeFile(join(skill, 'reference', 'document.md'), 'impeccable document\n')
+    await writeFile(bin, '#!/bin/sh\nexit 0\n', { mode: 0o755 })
+    const run = (script: string, readable: string[]) =>
+      new Promise<number | null>((resolve) => {
+        const child = confinedSpawn('/bin/sh', ['-c', script], { root, home, readable }, { stdio: 'ignore' })
+        child.on('close', resolve)
+      })
+    const read = `cat ${join(skill, 'reference', 'document.md')} > /dev/null`
+    assert.notStrictEqual(await run(read, []), 0)
+    assert.strictEqual(await run(read, [tools]), 0)
+    assert.notStrictEqual(await run(bin, []), 0)
+    assert.strictEqual(await run(bin, [tools]), 0)
   })
 })
