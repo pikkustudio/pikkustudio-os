@@ -30,6 +30,7 @@ export const ChecklistOutput = z.object({
   chosenId: z.string().nullable(),
   publishUrl: z.string().nullable(),
   started: z.boolean(),
+  answers: z.array(z.object({ question: z.string(), answer: z.string(), skipped: z.boolean() })),
 })
 
 type Workflows = { getRun(id: string): Promise<{ error?: { message?: string } } | undefined | null>; getRunStatus(id: string): Promise<{ status: string; steps: { name: string; status: string }[] } | undefined | null> }
@@ -44,14 +45,14 @@ const runOf = async (workflows: Workflows | undefined, id: string | undefined): 
 
 type Studio = Parameters<typeof readSignals>[0] & { projects: { list(): Promise<{ key: string; name: string }[]> } }
 
-const view = async (studio: Studio, workflows: Workflows | undefined, key: string): Promise<{ list: Checklist; chosenId: string | null; publishUrl: string | null; started: boolean; idea: string }> => {
+const view = async (studio: Studio, workflows: Workflows | undefined, key: string): Promise<{ list: Checklist; chosenId: string | null; publishUrl: string | null; started: boolean; idea: string; answers: { question: string; answer: string; skipped: boolean }[] }> => {
   const intake = await studio.projects.intake(key)
   const run = await runOf(workflows, intake?.run?.id)
   const signals = await readSignals(studio, key, run)
-  return { list: deriveChecklist(signals), started: intake !== null, chosenId: signals.directions.chosenId ?? null, publishUrl: signals.publish.url ?? null, idea: signals.intake.idea ?? '' }
+  return { list: deriveChecklist(signals), started: intake !== null, chosenId: signals.directions.chosenId ?? null, publishUrl: signals.publish.url ?? null, idea: signals.intake.idea ?? '', answers: intake?.answers ?? [] }
 }
 
-const out = (v: Awaited<ReturnType<typeof view>>) => ({ ...v.list, chosenId: v.chosenId, publishUrl: v.publishUrl, started: v.started })
+const out = (v: Awaited<ReturnType<typeof view>>) => ({ ...v.list, chosenId: v.chosenId, publishUrl: v.publishUrl, started: v.started, answers: v.answers })
 
 export const ProjectChecklistInput = z.object({ key: z.string() })
 
@@ -87,7 +88,7 @@ export const ProjectGuideSayInput = z.object({
   language: z.string().optional(),
 })
 
-const KICKOFF = '[[kickoff]] I have just created this project. Welcome me in one short sentence, then ask question 1 of 5.'
+const KICKOFF = '[[kickoff]] I have just created this project. Welcome me in one short sentence that shows you understood what I want to build, then ask question 1 of 5, tailored to it.'
 const GREET = '[[greet]] I have just arrived on the project page. In ONE short line tell me where the project stands and which shortcuts I can use right now; ask no question and add no card.'
 const changedText = (step: string, state: string) => `[[changed:${step}:${state}]] The step ${step} has just changed to ${state}. In ONE short line say what changed and what comes next; ask no question and add no card unless a shortcut clearly helps.`
 const SKIPPED = '[[skip]] I would rather skip this question.'
@@ -115,7 +116,11 @@ export const projectGuideSay = pikkuSessionlessFunc({
     const locale = language ?? http?.request?.header('x-studio-locale') ?? undefined
     const spoken = languageRule(locale)
     s.builder.setLocale(key, locale)
-    const context = [spoken, guideContext(after.list, Date.now(), note ? [note] : [])].filter(Boolean).join('\n\n')
+    const intake = await s.projects.intake(key)
+    const about = intake?.idea
+      ? [`What the owner said they want to build, in their words: "${intake.idea}".${intake.surfaces.length ? ` It has: ${intake.surfaces.join(', ')}.` : ''}${intake.devices.length ? ` Used on: ${intake.devices.join(', ')}.` : ''} Every question must be about this product, never generic. Do not ask what the app is: you already know.`]
+      : []
+    const context = [spoken, guideContext(after.list, Date.now(), [...about, ...(note ? [note] : [])])].filter(Boolean).join('\n\n')
     const text = kickoff ? KICKOFF : greet ? GREET : changed ? changedText(changed.step, changed.state) : skip && !message?.trim() ? SKIPPED : (message ?? '')
     return s.builder.prompt(key, text, context, 'project')
   },

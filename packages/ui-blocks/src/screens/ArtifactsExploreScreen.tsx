@@ -1,7 +1,7 @@
 import { asI18n } from '@pikku/react'
 import { m } from '@/i18n/messages'
 import { useContext, useEffect, useState } from 'react'
-import { useNavigate, useSearch } from '@tanstack/react-router'
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { Check, ChevronLeft, ChevronRight, Shuffle, SlidersHorizontal, Sparkles } from 'lucide-react'
 import { Button } from '../ui/button'
 import { PreviewBar } from '../blocks/PreviewBar'
@@ -11,20 +11,21 @@ import { useChooseDirection } from '../lib/useChooseDirection'
 import { ExploreDirection, ExploreDirections, moreIdeasMessage } from '../blocks/ExploreDirections'
 import { useProjectKey } from '../lib/project'
 import { useProjectQuery } from '../lib/projectRpc'
+import { keep } from '../lib/links'
 import { ShellCtx } from '../lib/shell'
 import type { Artifact } from '../types/artifacts'
 import type { Device } from '../types/designTypes'
 
-function Directions({ directions, exploration }: { directions: Artifact[]; exploration: string }) {
+function Directions({ directions, exploration, dirId }: { directions: Artifact[]; exploration: string; dirId: string }) {
   const q = useSearch({ strict: false }) as { screen?: 'tablet' | 'phone' }
   const navigate = useNavigate()
   const { say } = useContext(ShellCtx)
   const choose = useChooseDirection()
-  const [dirId, setDirId] = useState('all')
   const [reloadKey, setReloadKey] = useState(0)
   const device: Device = q.screen ?? 'computer'
-  const all = dirId === 'all'
+  const all = dirId === 'all' || !directions.some((d) => d.id === dirId)
   const dir = directions.find((d) => d.id === dirId) ?? directions[0]!
+  const setDirId = (id: string) => navigate(id === 'all' ? { ...keep, to: '/artifacts/explore/$uid', params: { uid: exploration } } : { ...keep, to: '/artifacts/explore/$uid/$id', params: { uid: exploration, id } })
   const set = (patch: Record<string, unknown>) => navigate({ to: '.', search: ((prev: object) => ({ ...prev, ...patch })) as never, replace: true })
   const step = (by: number) => {
     const at = directions.indexOf(dir)
@@ -87,48 +88,23 @@ function Directions({ directions, exploration }: { directions: Artifact[]; explo
   )
 }
 
-const latest = (list: Artifact[]) => {
-  const groups = new Map<string, Artifact[]>()
-  for (const a of list) groups.set(a.exploration ?? 'first', [...(groups.get(a.exploration ?? 'first') ?? []), a])
-  return [...groups.entries()].sort((a, b) => Math.max(...b[1].map((x) => x.at)) - Math.max(...a[1].map((x) => x.at)))
-}
-
-function Explorations({ designs }: { designs: Artifact[] }) {
-  const rounds = latest(designs)
-  const [picked, setPicked] = useState<string>()
-  const [id, items] = rounds.find(([k]) => k === picked) ?? rounds[0]!
-  return (
-    <div className="flex h-full flex-col gap-3">
-      {rounds.length > 1 ? (
-        <div className="flex flex-wrap gap-2">
-          {rounds.map(([k, list], i) => (
-            <Button key={k} variant={k === id ? 'default' : 'bordered'} size="compact" type="button" onClick={() => setPicked(k)}>
-              {m.artifacts_explore__round_mode({ round: i === 0 ? m.artifacts_explore__latest() : m.artifacts_explore__round({ n: rounds.length - i }), mode: list[0]?.mode === 'controlled' ? m.artifacts_explore__similar() : m.artifacts_explore__different() })}
-            </Button>
-          ))}
-        </div>
-      ) : null}
-      <div className="min-h-0 flex-1">
-        <Directions key={id} exploration={id} directions={items.sort((a, b) => a.id.localeCompare(b.id))} />
-      </div>
-    </div>
-  )
-}
+export const explorationOf = (a: Artifact) => a.exploration ?? 'first'
 
 export function ArtifactsExploreScreen() {
   const key = useProjectKey()
+  const { uid = 'first', id = 'all' } = useParams({ strict: false }) as { uid?: string; id?: string }
   const artifacts = useProjectQuery<{ artifacts: Artifact[] }>(key, 'console:listArtifacts', null, { refetchInterval: 4000 })
   return (
     <QueryState
       query={artifacts}
       skeleton={<CardsSkeleton count={3} />}
       empty={(data) =>
-        data.artifacts.some((a) => a.kind === 'Design') ? null : (
+        data.artifacts.some((a) => a.kind === 'Design' && explorationOf(a) === uid) ? null : (
           <EmptyState layout="row" icon={Sparkles} title={m.artifacts_explore__no_ideas_title()} text={m.artifacts_explore__no_ideas_text()} />
         )
       }
     >
-      {(data) => <Explorations designs={data.artifacts.filter((a) => a.kind === 'Design')} />}
+      {(data) => <Directions key={uid} exploration={uid} dirId={id} directions={data.artifacts.filter((a) => a.kind === 'Design' && explorationOf(a) === uid).sort((a, b) => a.id.localeCompare(b.id))} />}
     </QueryState>
   )
 }

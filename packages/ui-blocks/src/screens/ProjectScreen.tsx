@@ -8,7 +8,9 @@ import { Page } from '../blocks/Page'
 import { Dot, RowCard, RowStack } from '../blocks/RowCard'
 import { CardsSkeleton, QueryState } from '../blocks/QueryState'
 import { Link } from '../blocks/Link'
+import { QuestionCard } from '../blocks/QuestionCard'
 import { Button } from '../ui/button'
+import { Input } from '../ui/input'
 import type { ChecklistStepId } from '../lib/interview'
 import { keep } from '../lib/links'
 import { useProjectKey } from '../lib/project'
@@ -26,6 +28,9 @@ const NAME: Record<ChecklistStepId, () => I18nString> = {
   tests: m.project_flow__step_tests,
   publish: m.project_flow__step_publish,
 }
+
+/** Where each step lives, so every row can take you there. */
+const GOTO: Partial<Record<ChecklistStepId, string>> = { explore: '/artifacts', frontend: '/design', backend: '/explore', tests: '/explore', publish: '/publish' }
 
 const STATE: Record<ChecklistStep['state'], () => I18nString> = {
   'not-started': m.project_flow__state_not_started,
@@ -162,6 +167,14 @@ function StepRow({ step, now, busy, onAct, ask }: { step: ChecklistStep; now: nu
           </span>
         ) : null}
         <Dot tone={tone}>{failed ? m.project_flow__state_problem() : STATE[step.state]()}</Dot>
+        {GOTO[step.id] ? (
+          <Link {...keep} to={GOTO[step.id] as never} data-testid={`project-goto-${step.id}`}>
+            <Button variant={step.state === 'needs-you' ? 'default' : 'bordered'} size="compact" type="button" tabIndex={-1}>
+              {m.project_flow__go_to({ name: NAME[step.id]() })}
+              <ArrowRight className="rtl:-scale-x-100" />
+            </Button>
+          </Link>
+        ) : null}
         {step.actions.map((a) => (
           <Button key={a} variant={a === primary ? 'default' : 'bordered'} size="compact" type="button" disabled={busy} onClick={() => onAct(step.id, a)} data-testid={`project-action-${step.id}-${a}`}>
             {label(step.id, a)}
@@ -172,9 +185,51 @@ function StepRow({ step, now, busy, onAct, ask }: { step: ChecklistStep; now: nu
   )
 }
 
+/** What they told Pikku, kept on the page; changing one is just a new message saying so. */
+function Answers({ answers, say }: { answers: Checklist['answers']; say: (text: I18nString) => void }) {
+  const [editing, setEditing] = useState<number | null>(null)
+  const [text, setText] = useState('')
+  if (!answers.length) return null
+  const save = (question: string) => {
+    const answer = text.trim()
+    if (!answer) return
+    say(m.project_flow__answer_changed({ question, answer }))
+    setEditing(null)
+    setText('')
+  }
+  return (
+    <section className="flex flex-col gap-2" data-testid="project-answers">
+      <h2 className="text-[16px] font-bold">{m.project_flow__answers_title()}</h2>
+      <ul className="flex flex-col gap-2">
+        {answers.map((a, n) => (
+          <li key={n} className="flex flex-col gap-2 rounded-card border-[1.5px] border-border bg-card px-5 py-3.5" data-testid={`project-answer-${n}`}>
+            <div className="flex items-start gap-3">
+              <div className="min-w-0 flex-1">
+                <p className="text-[14px] text-muted-foreground">{asI18n(a.question)}</p>
+                <p className="text-[15px] font-semibold">{a.skipped || !a.answer.trim() ? m.project_flow__answer_skipped() : asI18n(a.answer)}</p>
+              </div>
+              <Button variant="bordered" size="chip" type="button" onClick={() => { setEditing(editing === n ? null : n); setText('') }} data-testid={`project-answer-edit-${n}`}>
+                {editing === n ? m.project_flow__answer_cancel() : m.project_flow__answer_edit()}
+              </Button>
+            </div>
+            {editing === n ? (
+              <form className="flex items-center gap-2" onSubmit={(e) => { e.preventDefault(); save(a.question) }}>
+                <Input shape="field" autoFocus value={text} onChange={(e) => setText(e.target.value)} aria-label={m.project_flow__answer_label()} placeholder={m.project_flow__answer_placeholder()} data-testid={`project-answer-input-${n}`} />
+                <Button type="submit" variant="default" size="compact" disabled={!text.trim()} data-testid={`project-answer-save-${n}`}>
+                  {m.project_flow__answer_send()}
+                </Button>
+              </form>
+            ) : null}
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
 function Steps({ list, projectKey, refetch }: { list: Checklist; projectKey: string; refetch: () => unknown }) {
   const act = useGuideAct()
-  const { say } = useContext(ShellCtx)
+  const { say, question } = useContext(ShellCtx)
   const now = useNow(15000)
   const onAct = (step: ChecklistStepId, action: StepAction) => act.mutate({ key: projectKey, step, action }, { onSuccess: () => void refetch() })
   const publish = list.steps.find((s) => s.id === 'publish')
@@ -206,11 +261,13 @@ function Steps({ list, projectKey, refetch }: { list: Checklist; projectKey: str
           </Button>
         </div>
       ) : null}
+      {question ? <QuestionCard question={question} /> : null}
       <RowStack>
         {list.steps.map((s) => (
           <StepRow key={s.id} step={s} now={now} busy={act.isPending} onAct={onAct} ask={say} />
         ))}
       </RowStack>
+      <Answers answers={list.answers ?? []} say={say} />
       {publish?.state === 'done' && list.publishUrl ? (
         <a className="text-[15px] font-semibold text-accent-foreground underline" href={list.publishUrl} target="_blank" rel="noreferrer" data-testid="project-live-link">
           {asI18n(list.publishUrl)}

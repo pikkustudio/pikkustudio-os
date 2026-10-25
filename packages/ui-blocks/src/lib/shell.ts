@@ -10,6 +10,9 @@ export type Attachment = { label: I18nString; text: I18nString; meta: I18nString
 
 export type PublishNote = { state: 'signin' | 'error' | 'live'; url: string; act: (a: 'publish' | 'signin') => void; ask: I18nString }
 
+/** The project guide's open question, answered on the project page. */
+export type QuestionNote = { question: I18nString; options: I18nString[]; tone: 'info' | 'attention' | 'danger'; busy: boolean; answer: (text: I18nString) => void; skip: () => void }
+
 export const ShellCtx = createContext<{
   view: View
   pending: { changeId: string; title: I18nString; body: I18nString | null; status: string }[]
@@ -23,4 +26,5 @@ export const ShellCtx = createContext<{
   detach: (label: I18nString) => void
   setPublish: (p: PublishNote | null) => void
   openFind: () => void
+  question: QuestionNote | null
 }>(null as never)

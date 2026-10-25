@@ -25,6 +25,7 @@ export function ShellBridge({ children }: { children: ReactNode }) {
         detach: () => {},
         setPublish: () => {},
         openFind: () => {},
+        question: null,
       }}
     >
       {children}

@@ -166,17 +166,17 @@ export function OnboardingLayout() {
     made.refetch().then((r) => {
       const made = (r.data as { projects: { key: string; slug: string; owner?: string }[] } | undefined)?.projects.find((p) => p.key === run.data?.key)
       const slug = made?.slug
-      const land = (to: '/home' | '/projects' | '/artifacts' | '/artifacts/$id', params?: { id: string }) =>
+      const land = (to: '/home' | '/projects' | '/artifacts' | '/artifacts/$id' | '/artifacts/explore/$uid', params?: { id: string } | { uid: string }) =>
         navigate({ to, ...(params ? { params } : {}), search: ((prev: object) => ({ ...prev, run: undefined, project: slug })) as never })
       if (!slug) return land('/projects')
       const first = async () => {
         for (let i = 0; i < 90; i++) {
           const found = await invoke(run.data!.key!, 'console:listArtifacts').catch(() => null)
-          if (found?.artifacts?.length) return found.artifacts[0].id as string
+          if (found?.artifacts?.length) return (found.artifacts[0].exploration ?? 'first') as string
           await new Promise((r) => setTimeout(r, 2000))
         }
       }
-      first().then(() => land('/artifacts/explore' as never))
+      first().then((uid) => (uid ? land('/artifacts/explore/$uid', { uid }) : land('/artifacts')))
     })
   }, [done])
   const back = safeRedirect(q.redirect)

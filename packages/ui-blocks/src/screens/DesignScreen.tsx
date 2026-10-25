@@ -1,5 +1,5 @@
 import { asI18n, type I18nString } from '@pikku/react'
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { AppWindow, LayoutTemplate, Shapes, UserRound } from 'lucide-react'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
@@ -19,7 +19,6 @@ import { ChatSelectPanel } from '../blocks/ChatSelectPanel'
 import { ShellCtx, type AttachRef } from '../lib/shell'
 import { DesignPartsFrame, type PartsCatalog, type PartsLens } from '../blocks/DesignPartsFrame'
 import { StatusLine } from '../blocks/StatusLine'
-import { MockBackendStatusBar } from '../blocks/MockBackendStatusBar'
 import { useProjectKey } from '../lib/project'
 import { keepSearch } from '../lib/project-url'
 import type { Device, Mode, Styles } from '../types/designTypes'
@@ -70,6 +69,16 @@ export function DesignScreen() {
   const list = ((apps.data as LiveApp[] | undefined) ?? [])
   const current = list.find((a) => a.slug === q.app) ?? list[0]
   const parts: PartsLens | null = route.lens === 'library' || route.lens === 'app' ? route.lens : null
+  // Nothing is running yet (a fresh start of Studio, say): start the project once before calling it empty.
+  const opened = useRef('')
+  const openApps = usePikkuMutation('studio:openProject', { onSuccess: () => apps.refetch() })
+  const idle = apps.isSuccess && list.length === 0
+  useEffect(() => {
+    if (!parts && key && idle && opened.current !== key && !openApps.isPending) {
+      opened.current = key
+      openApps.mutate({ key })
+    }
+  }, [parts, key, idle, openApps])
   const [catalog, setCatalog] = useState<PartsCatalog>({ library: [], app: [] })
   const onCatalog = useCallback((next: PartsCatalog) => setCatalog(next), [])
   const preview = usePikkuQuery('studio:getDesignPreview', { key }, {
@@ -102,7 +111,9 @@ export function DesignScreen() {
     } else {
       stage = <PartsWaiting text={design?.state === 'restarting' ? m.design_parts__restarting() : m.design_parts__starting()} />
     }
-  } else if (apps.isSuccess && list.length === 0) {
+  } else if (idle && !parts && (openApps.isPending || opened.current !== key)) {
+    stage = <PartsWaiting text={m.design_parts__starting()} />
+  } else if (idle) {
     stage = (
       <EmptyState icon={AppWindow} title={m.design_live__no_app()} text={m.design_live__no_app_text()}>
         <Button type="button" size="page" onClick={() => say(m.design_live__no_app_say())}>
@@ -148,7 +159,6 @@ export function DesignScreen() {
 
   return (
     <div className="flex h-full flex-col gap-3">
-      <MockBackendStatusBar />
       <div className="flex min-h-0 flex-1 flex-col gap-3">
         <PreviewBar
           app="live"

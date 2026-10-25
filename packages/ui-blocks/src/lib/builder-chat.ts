@@ -13,8 +13,9 @@ export const OFFER_MARKER = '[[offer:changeset]]'
 
 const ASK_PATTERN = /\[\[ask:(\{.*\})\]\]/s
 const DO_PATTERN = /\[\[do:(\{.*\})\]\]/s
+const APP_PATTERN = /\[\[app:(\{.*\})\]\]/s
 
-export const stripMarkers = (text: string) => text.split(OFFER_MARKER).join('').replace(ASK_PATTERN, '').replace(DO_PATTERN, '').trim()
+export const stripMarkers = (text: string) => text.split(OFFER_MARKER).join('').replace(ASK_PATTERN, '').replace(DO_PATTERN, '').replace(APP_PATTERN, '').trim()
 
 const ACTIONS: StepAction[] = ['skip', 'undo', 'start', 'retry', 'fast-track', 'reopen']
 const STEPS: ChecklistStepId[] = ['questions', 'explore', 'frontend', 'backend', 'tests', 'publish']
@@ -28,6 +29,21 @@ const parseDo = (text: string): { action: StepAction; step: ChecklistStepId; lab
     const step = STEPS.find((x) => x === v.step)
     if (!action || !step || typeof v.label !== 'string' || !v.label.trim()) return null
     return { action, step, label: v.label.trim(), why: typeof v.why === 'string' ? v.why.trim() : '' }
+  } catch {
+    return null
+  }
+}
+
+const SLUG = /^[a-z][a-z0-9]*(-[a-z0-9]+)*$/
+
+/** A new app the agent wants to add and the owner has to confirm first. */
+export const parseApp = (text: string): { slug: string; serves: string; label: string; why: string } | null => {
+  const raw = APP_PATTERN.exec(text)?.[1]
+  if (!raw) return null
+  try {
+    const v = JSON.parse(raw) as { slug?: unknown; serves?: unknown; label?: unknown; why?: unknown }
+    if (typeof v.slug !== 'string' || !SLUG.test(v.slug) || typeof v.serves !== 'string' || !v.serves.trim()) return null
+    return { slug: v.slug, serves: v.serves.trim(), label: typeof v.label === 'string' ? v.label.trim() : '', why: typeof v.why === 'string' ? v.why.trim() : '' }
   } catch {
     return null
   }
@@ -81,6 +97,16 @@ const TIMED_OUT = /timed out|took too long/i
 export const NO_AI = /Choose your AI before building/i
 
 export type BuilderItem = { kind: string; text?: string; at: number; id?: string; name?: string; summary?: string; args?: string; output?: string; status?: string; screen?: string; title?: string }
+
+/** The whole conversation as plain text, tool calls and their output included, for pasting somewhere else. */
+export const transcriptText = (items: BuilderItem[]): string =>
+  items
+    .map((i) => {
+      const who = i.kind === 'me' ? 'You' : i.kind === 'assistant' ? 'Pikku' : i.kind === 'thinking' ? 'Pikku (thinking)' : i.kind === 'tool' ? `Tool: ${i.name ?? ''}${i.status ? ` [${i.status}]` : ''}` : i.kind
+      const body = [i.text, i.summary, i.args ? `args: ${i.args}` : '', i.output ? `output: ${i.output}` : ''].filter(Boolean).join('\n')
+      return `${new Date(i.at).toISOString()} ${who}\n${body}`.trimEnd()
+    })
+    .join('\n\n')
 
 export type Doing = 'thinking' | 'reading' | 'writing' | 'checking' | 'answering' | 'working'
 
@@ -177,9 +203,14 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
 
   const last = (data?.items ?? []).at(-1)
   const lastText = last?.kind === 'assistant' ? last.text : undefined
+  // The guide's questions are answered on the project page, not in the chat.
+  const question = guideMode && lastText && list?.questionsOpen ? parseAsk(lastText) : null
   const doing = guideMode && lastText ? parseDo(lastText) : null
   const doStamp = last ? String(last.at) : ''
   const doOffer = doing && doStamp !== dismissed && !!list?.steps.find((s) => s.id === doing.step)?.actions.includes(doing.action) ? doing : null
+
+  const appAsk = !guideMode && lastText ? parseApp(lastText) : null
+  const appOffer = appAsk && doStamp !== dismissed ? appAsk : null
 
   const items = useMemo<ChatItem[]>(() => {
     const mine = toChat(data?.items ?? [], 'b', handoff ? m.screen_names__agent_project() : undefined)
@@ -187,18 +218,20 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
     const theirs = handoff ? toChat((designData?.items ?? []).filter((i) => i.at >= began), 'd', m.screen_names__agent_frontend()) : []
     const said = [...mine, ...theirs, ...local].sort((a, b) => a.at - b.at).map((t) => t.item)
     const offered = !!lastText && lastText.includes(OFFER_MARKER)
-    const asked = lastText && (!guideMode || list?.questionsOpen) ? parseAsk(lastText) : null
+    const asked = lastText && !guideMode ? parseAsk(lastText) : null
     const card: ChatItem[] = asked
       ? [{ id: 'ask', kind: 'card', toolCallId: 'ask', runId: 'ask', title: asI18n(asked.question), detail: asI18n(asked.question), state: 'ask', options: asked.options.map((o) => asI18n(o)), tone: asked.tone, ...(guideMode ? { skip: true } : {}) }]
       : doOffer
         ? [{ id: 'do', kind: 'card', toolCallId: 'do', runId: 'do', title: asI18n(doOffer.label), detail: asI18n(doOffer.why), state: 'ask', yes: m.project_flow__do_yes(), no: m.project_flow__do_no() }]
+        : appOffer
+          ? [{ id: 'app', kind: 'card', toolCallId: 'app', runId: 'app', title: m.builder_chat__app_title({ slug: appOffer.slug, serves: appOffer.serves }), detail: asI18n(appOffer.why), state: 'ask', yes: m.builder_chat__app_yes(), no: m.builder_chat__app_no() }]
         : offered
           ? [{ id: 'offer', kind: 'card', toolCallId: 'offer', runId: 'offer', title: m.builder_chat__bigger_title(), detail: m.builder_chat__bigger_detail(), state: 'ask', yes: m.builder_chat__add_to_queue(), no: m.builder_chat__do_it_now() }]
           : []
     const failed = data && !data.busy ? failedChecks(data.items) : null
     const checks: ChatItem[] = failed ? [{ id: `checks${data?.items.length}`, kind: 'checks', output: failed }] : []
     return [...said, ...checks, ...card]
-  }, [data, designData, local, handoff, guideMode, list?.questionsOpen, lastText, doOffer])
+  }, [data, designData, local, handoff, guideMode, list?.questionsOpen, lastText, doOffer, appOffer])
 
   const push = useCallback((item: { kind: 'me' | 'pikku'; text: string }) => {
     setLocal((x) => [...x, { at: Date.now(), item: { id: `l${Math.random()}`, ...item } }])
@@ -336,6 +369,11 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
   const decide = useCallback(
     async (id: string, yes: boolean) => {
       if (id === 'offer') await send(yes ? m.builder_chat__say_add_to_queue() : m.builder_chat__say_do_it_now())
+      if (id === 'app' && appOffer) {
+        setDismissed(doStamp)
+        await send(yes ? m.builder_chat__say_app_yes({ slug: appOffer.slug, serves: appOffer.serves }) : m.builder_chat__say_app_no({ slug: appOffer.slug }))
+        return
+      }
       if (id === 'do' && doOffer) {
         setDismissed(doStamp)
         if (!yes) return
@@ -347,21 +385,49 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
         }
       }
     },
-    [send, doOffer, doStamp, guideAct.mutateAsync, key, state.refetch, checklist.refetch, fail],
+    [send, doOffer, appOffer, doStamp, guideAct.mutateAsync, key, state.refetch, checklist.refetch, fail],
   )
 
   const working = !!data?.busy || designBusy
   const activity = activityOf(designBusy && !data?.busy ? designData?.items ?? [] : data?.items ?? [], working)
-  return { items, raw: data?.items ?? [], busy: sending || !!data?.busy, activity, stop, stopping, canStop: !!mode && working && !stopping, send, decide, push, archive, skipQuestion, archiving: archiveChat.isPending, canArchive: !!mode && !sending && !data?.busy && !archiveChat.isPending && (data?.items ?? []).some((i) => !!i.text && (i.kind === 'user' || i.kind === 'assistant')) }
+  return { items, question, raw: data?.items ?? [], busy: sending || !!data?.busy, activity, stop, stopping, canStop: !!mode && working && !stopping, send, decide, push, archive, skipQuestion, archiving: archiveChat.isPending, canArchive: !!mode && !sending && !data?.busy && !archiveChat.isPending && (data?.items ?? []).some((i) => !!i.text && (i.kind === 'user' || i.kind === 'assistant')) }
 }
 
 export type SavedChat = { id: string; title: string; at: number }
 export type SavedChatFull = SavedChat & { items: BuilderItem[] }
 
-export const useSavedChats = (key: string, enabled: boolean) => {
-  const specialist = useLocation({ select: (l) => modeForPath(l.pathname) ?? undefined })
+export const useSavedChats = (key: string, enabled: boolean, mode?: WorkMode | null) => {
+  const onPath = useLocation({ select: (l) => modeForPath(l.pathname) ?? undefined })
+  const specialist = mode ?? onPath
   return usePikkuQuery('studio:builderChats', { key, specialist }, { enabled: enabled && !!key } as never) as unknown as { data?: { chats: SavedChat[] }; isPending: boolean; isError: boolean; error: unknown; isFetching: boolean; refetch: () => unknown }
 }
 
 export const useSavedChat = (key: string, id: string | null) =>
   usePikkuQuery('studio:builderChat', { key, id: id ?? '' }, { enabled: !!id && !!key } as never) as unknown as { data?: SavedChatFull; isPending: boolean; isError: boolean; error: unknown; isFetching: boolean; refetch: () => unknown }
+
+export type DesignSide = 'frontend' | 'build'
+
+const sideKey = (key: string) => `studio.chat.side.${key}`
+
+/** Which agent the Design page's chat talks to, remembered per project: the design agent on sample data, or the build agent. */
+export const useDesignSide = (key: string): [DesignSide, (side: DesignSide) => void] => {
+  const read = (): DesignSide => {
+    try {
+      return localStorage.getItem(sideKey(key)) === 'build' ? 'build' : 'frontend'
+    } catch {
+      return 'frontend'
+    }
+  }
+  const [side, set] = useState<DesignSide>(read)
+  useEffect(() => set(read()), [key])
+  const pick = useCallback(
+    (next: DesignSide) => {
+      set(next)
+      try {
+        localStorage.setItem(sideKey(key), next)
+      } catch {}
+    },
+    [key],
+  )
+  return [side, pick]
+}

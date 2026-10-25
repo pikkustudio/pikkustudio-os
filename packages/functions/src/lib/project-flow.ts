@@ -6,7 +6,7 @@ export const ideaWithAnswers = (idea: string, answers: Answer[]) => {
   const given = answers.filter((a) => !a.skipped && a.answer.trim())
   if (!given.length) return idea
   const notes = given.map((a, i) => `${i + 1}. ${a.question}\n${a.answer.trim()}`).join('\n\n')
-  return `${idea}\n\nThe owner was asked a few questions about this product before these designs. What follows are the questions and their answers. They may be brief or imprecise, so treat them as hints that shape each direction, and let the idea above decide anything they leave open.\n\n${notes}`
+  return `${idea}\n\nThe owner was asked a few questions about this product before these designs. What follows are the questions and their answers. They may be brief or imprecise, so treat them as hints that shape each direction, and let the idea above decide anything they leave open. Together the answers name the app's pillars, its main areas: build every direction around those pillars as the main structure of its screens, and let the directions differ in how they present them, not in which pillars exist.\n\n${notes}`
 }
 
 export const lastAskedQuestion = (items: { kind: string; text?: string }[]): string | null => {

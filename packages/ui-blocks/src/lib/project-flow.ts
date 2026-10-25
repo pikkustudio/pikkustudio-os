@@ -30,6 +30,7 @@ export type Checklist = {
   chosenId: string | null
   publishUrl: string | null
   started: boolean
+  answers: { question: string; answer: string; skipped: boolean }[]
 }
 
 export const STEP_ORDER: ChecklistStepId[] = ['questions', 'explore', 'frontend', 'backend', 'tests', 'publish']

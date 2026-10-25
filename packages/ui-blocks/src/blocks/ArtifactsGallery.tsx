@@ -7,6 +7,7 @@ import { Input } from '../ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { EmptyState } from './EmptyState'
 import { ArtifactRow } from './ArtifactRow'
+import { ExplorationList } from './ExplorationList'
 import { PikkuDot } from './PikkuDot'
 import type { Artifact } from '../types/artifacts'
 
@@ -62,7 +63,9 @@ export function ArtifactsGallery({ view, items, onAsk }: { items: Artifact[]; vi
           ))}
         </ul>
       ) : (
-        kinds().map(([id, text]) => {
+        <>
+          <ExplorationList items={found} />
+          {kinds().map(([id, text]) => {
           const list = found.filter((a) => a.kind === id)
           return list.length ? (
             <section key={id} className="flex flex-col gap-2">
@@ -74,7 +77,8 @@ export function ArtifactsGallery({ view, items, onAsk }: { items: Artifact[]; vi
               </ul>
             </section>
           ) : null
-        })
+          })}
+        </>
       )}
     </div>
   )

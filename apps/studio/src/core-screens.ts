@@ -46,7 +46,8 @@ export default {
     project('/emails/:emailId', 'screen_names__emails'),
     project('/translations', 'quick_find__translations'),
     project('/artifacts', 'screen_names__artifacts'),
-    project('/artifacts/explore', 'screen_names__artifacts'),
+    project('/artifacts/explore/:uid', 'screen_names__artifacts'),
+    project('/artifacts/explore/:uid/:id', 'screen_names__artifacts'),
     project('/artifacts/:id', 'screen_names__artifacts'),
     project('/knowledge', 'screen_names__knowledge'),
     project('/knowledge/*', 'screen_names__knowledge'),
@@ -88,7 +89,7 @@ export default {
   pins: [
     { path: '/virtual-users', label: 'quick_find__virtual_users', icon: 'user-round-check', on: false },
     { path: '/translations', label: 'quick_find__translations', icon: 'globe', on: false },
-    { path: '/artifacts', label: 'screen_names__artifacts', icon: 'file-text', on: false },
+    { path: '/artifacts', label: 'screen_names__artifacts', icon: 'file-text', on: true },
     { path: '/content', label: 'content__title', icon: 'folder-open', on: false },
     { path: '/front-doors', label: 'front_doors__title', icon: 'smartphone', on: false },
     { path: '/audit', label: 'quick_find__audit', icon: 'history', on: false },

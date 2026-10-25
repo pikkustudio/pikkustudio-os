@@ -10,6 +10,7 @@ import { useEffect, useMemo, useRef, useState, type ComponentType, type ReactNod
 import { m } from '@/i18n/messages'
 import { getLocale } from '@/paraglide/runtime.js'
 import { languageName } from '../lib/i18n'
+import { ASK_TONE } from '../lib/ask-tone'
 import { useProjectChecklist } from '../lib/project-flow'
 import { useReleases } from '../lib/releases'
 import { useProjectKey, useProjectMissing, useProjectName, useProjectSlug } from '../lib/project'
@@ -25,7 +26,9 @@ import { ChatPublishStatus } from '../blocks/ChatPublishStatus'
 import { useNavEntries } from '../lib/nav-visibility'
 import { useCopy } from '../lib/copy'
 import { SCREEN_NAME, agentName } from '../lib/screen-names'
-import { modeForPath, useBuilderChat } from '../lib/builder-chat'
+import { modeForPath, transcriptText, useBuilderChat, useDesignSide } from '../lib/builder-chat'
+import { usePikkuMutation } from '@project/functions-sdk/pikku/api.gen'
+import { MockBackendStatusBar, useMockCount } from '../blocks/MockBackendStatusBar'
 import { usePageTitle } from '../lib/page-title'
 import { useProjectQuery } from '../lib/projectRpc'
 import { pinId, usePins } from '../lib/pins'
@@ -51,7 +54,7 @@ import { ChecksCard, MilestoneCard, OpenScreenCard } from '../blocks/BuilderCard
 import { useCanEdit, useProjectTarget } from '../lib/project-target'
 import { useStickToBottom } from '../lib/stick-to-bottom'
 import { useComposerExtras } from '../lib/composer-extras'
-import { GitPullRequest, Archive, type LucideIcon, ArrowDown, ArrowRight, Bell, Check, CircleAlert, FolderOpen, Globe, History, Info, Search, MessageCircle, MessageCircleQuestion, Palette, PanelLeftClose, PanelLeftOpen, Menu, User, X, CheckCheck, ScrollText, KeyRound, Laptop, MousePointer2, ShieldCheck, Wrench } from 'lucide-react'
+import { GitPullRequest, Archive, Copy, type LucideIcon, ArrowDown, ArrowRight, Bell, Check, CircleAlert, FolderOpen, Globe, History, Info, Search, MessageCircle, MessageCircleQuestion, Palette, PanelLeftClose, PanelLeftOpen, Menu, User, X, CheckCheck, ScrollText, KeyRound, Laptop, MousePointer2, ShieldCheck, Wrench } from 'lucide-react'
 
 // The app shell: rail, preview drawer (right edge), Pikku button + bubble, side panels.
 // Every screen route is a child of this layout. Page content lives in the route files.
@@ -97,12 +100,6 @@ function Avatar({ mood, size = 'lg', ring = true }: { mood: Mood; size?: 'lg' | 
       {ring && RING[mood] ? <span className={`absolute rounded-full opacity-90 ${ringBox} ${RING[mood]}`} /> : null}
     </span>
   )
-}
-
-const ASK_TONE = {
-  info: { box: 'border-info', ic: 'bg-info text-white', label: 'text-info-foreground', hover: 'hover:border-info', badge: 'group-hover:bg-info group-hover:text-white', title: m.shell_layout__question_for_you },
-  attention: { box: 'border-warning', ic: 'bg-warning text-on-warning', label: 'text-warning-foreground', hover: 'hover:border-warning', badge: 'group-hover:bg-warning group-hover:text-on-warning', title: m.shell_layout__question_needs_you },
-  danger: { box: 'border-destructive', ic: 'bg-destructive text-white', label: 'text-destructive-foreground', hover: 'hover:border-destructive', badge: 'group-hover:bg-destructive group-hover:text-white', title: m.shell_layout__question_careful },
 }
 
 const KIND = {
@@ -243,8 +240,14 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
       field?.setSelectionRange(caret, caret)
     })
   }
-  const workMode = useLocation({ select: (l) => modeForPath(l.pathname) })
+  const pathMode = useLocation({ select: (l) => modeForPath(l.pathname) })
+  const [designSide, setDesignSide] = useDesignSide(projectKey)
+  const onDesign = pathMode === 'frontend'
+  const workMode = onDesign ? designSide : pathMode
+  const makeReal = usePikkuMutation('studio:builderPrompt')
+  const mockCount = useMockCount()
   const [saved, setSaved] = useState<{ open: string | null } | null>(null)
+  const [copiedChat, setCopiedChat] = useState(false)
   const [full, setFull] = useState(() => {
     try {
       return localStorage.getItem('studio.chat.full') === '1'
@@ -328,6 +331,10 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
     chat.push({ kind: 'pikku', text })
   }
 
+  const question = workMode === 'project' && builder.question
+    ? { question: asI18n(builder.question.question), options: builder.question.options.map((o) => asI18n(o)), tone: builder.question.tone, busy: builder.busy || !canEdit, answer: (text: I18nString) => void builder.send(text), skip: () => void builder.skipQuestion() }
+    : null
+
   const needsCount = pending.length + (pub && pub.state !== 'live' ? 1 : 0)
   const mood: Mood = pending.length ? 'ask' : 'calm'
   const needsPerson = pending.length > 0
@@ -350,11 +357,11 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
       ]
   const tabs = panel === 'chat' || panel === 'updates' || panel === 'changes'
   const tab =
-    '-mb-px inline-flex h-11.5 items-center gap-2 rounded-t-[10px] border-b-3 px-3.5 text-[15px] font-bold transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3'
+    `-mb-px inline-flex h-11.5 items-center ${onDesign ? 'gap-1.5 px-2.5' : 'gap-2 px-3.5'} rounded-t-[10px] border-b-3 text-[15px] font-bold transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3`
 
 
   return (
-    <ShellCtx.Provider value={{ view, pending, paid: paidNow, approve, say, open: setPanel, pikkuSays, attached, attach, detach, setPublish, openFind: () => setFind(true) }}>
+    <ShellCtx.Provider value={{ view, pending, paid: paidNow, approve, say, open: setPanel, pikkuSays, attached, attach, detach, setPublish, openFind: () => setFind(true), question }}>
       <div
         className="@container/app fixed inset-0 z-0 overflow-hidden bg-background font-sans text-[16px] leading-[1.5] text-foreground antialiased"
       >
@@ -465,7 +472,44 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
             </div>
 
             {tabs ? (
-              <div className="flex gap-1 border-b border-border px-5" role="tablist">
+              <div className={`flex border-b border-border ${onDesign ? 'gap-0 px-3' : 'gap-1 px-5'}`} role="tablist">
+                {onDesign ? (
+                  <>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={panel === 'chat' && designSide === 'frontend'}
+                  onClick={() => {
+                    setDesignSide('frontend')
+                    setPanel('chat')
+                  }}
+                  data-testid="chat-tab-design"
+                  className={`${tab} ${panel === 'chat' && designSide === 'frontend' ? 'border-primary text-accent-foreground' : 'border-transparent text-ink-2'}`}
+                >
+                  <Palette className="size-4.5" />
+                  {m.design_build__design()}
+                  {mockCount ? (
+                    <span className="grid min-w-5 place-items-center rounded-full bg-primary px-1.5 text-[12px] font-bold text-primary-foreground" title={m.mock_status__sample_data({ count: mockCount })} aria-label={m.mock_status__sample_data({ count: mockCount })} data-testid="design-tab-mocks">
+                      {asI18n(String(mockCount))}
+                    </span>
+                  ) : null}
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={panel === 'chat' && designSide === 'build'}
+                  onClick={() => {
+                    setDesignSide('build')
+                    setPanel('chat')
+                  }}
+                  data-testid="chat-tab-build"
+                  className={`${tab} ${panel === 'chat' && designSide === 'build' ? 'border-primary text-accent-foreground' : 'border-transparent text-ink-2'}`}
+                >
+                  <Wrench className="size-4.5" />
+                  {m.design_build__build()}
+                </button>
+                  </>
+                ) : (
                 <button
                   type="button"
                   role="tab"
@@ -476,6 +520,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
                   <MessageCircle className="size-4.5" />
                   {m.shell_layout__chat()}
                 </button>
+                )}
                 <button
                   type="button"
                   role="tab"
@@ -550,29 +595,38 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
 
             {panel === 'chat' ? (
               <div className="flex min-h-0 flex-1 flex-col">
-                <div className="flex items-center gap-2 border-b border-border bg-secondary px-6 py-3 text-[14px] text-ink-2">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 border-b border-border bg-secondary px-6 py-3 text-[14px] text-ink-2">
                   <FolderOpen className="size-4.5 text-accent-foreground" />
-                  <span className="font-semibold text-muted-foreground">{m.shell_layout__about()}</span>
+                  <span className="sr-only">{m.shell_layout__about()}</span>
                   <b className="min-w-0 flex-1 truncate text-foreground">{projectName}{aboutScreen ? <>{sep(', ')}{aboutScreen}</> : null}</b>
                   {workMode ? (
                     <>
-                      <Button variant={full ? 'bordered' : 'ghost'} size="textTight" type="button" aria-pressed={full} title={m.builder_chat__full_hint()} onClick={toggleFull} data-testid="chat-full-toggle">
+                      <Button variant={full ? 'bordered' : 'ghost'} size="icon" type="button" aria-pressed={full} aria-label={m.builder_chat__full()} title={m.builder_chat__full_hint()} onClick={toggleFull} data-testid="chat-full-toggle">
                         <ScrollText className="size-4" />
-                        {m.builder_chat__full()}
                       </Button>
-                      <Button variant="ghost" size="textTight" type="button" onClick={() => setSaved({ open: null })}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        type="button"
+                        aria-label={copiedChat ? m.builder_chat__copied() : m.builder_chat__copy_transcript()}
+                        title={copiedChat ? m.builder_chat__copied() : m.builder_chat__copy_transcript()}
+                        disabled={!builder.raw.length}
+                        onClick={() => void navigator.clipboard?.writeText(transcriptText(builder.raw)).then(() => { setCopiedChat(true); setTimeout(() => setCopiedChat(false), 2000) })}
+                        data-testid="chat-copy-transcript"
+                      >
+                        {copiedChat ? <Check className="size-4" /> : <Copy className="size-4" />}
+                      </Button>
+                      <Button variant="ghost" size="icon" type="button" aria-label={m.builder_chat__saved_chats()} title={m.builder_chat__saved_chats()} onClick={() => setSaved({ open: null })}>
                         <History className="size-4" />
-                        {m.builder_chat__saved_chats()}
                       </Button>
-                      <Button variant="ghost" size="textTight" type="button" disabled={!builder.canArchive} title={builder.busy ? m.builder_chat__busy_hint() : m.builder_chat__archive_hint()} onClick={() => void builder.archive()}>
+                      <Button variant="ghost" size="icon" type="button" aria-label={m.builder_chat__archive()} disabled={!builder.canArchive} title={builder.busy ? m.builder_chat__busy_hint() : m.builder_chat__archive_hint()} onClick={() => void builder.archive()}>
                         <Archive className="size-4" />
-                        {m.builder_chat__archive()}
                       </Button>
                     </>
                   ) : null}
                 </div>
                 {saved && workMode ? (
-                  <SavedChats projectKey={projectKey} openId={saved.open} onOpen={(open) => setSaved({ open })} onClose={() => setSaved(null)} avatar={<Avatar mood="calm" size="sm" />} />
+                  <SavedChats mode={workMode} projectKey={projectKey} openId={saved.open} onOpen={(open) => setSaved({ open })} onClose={() => setSaved(null)} avatar={<Avatar mood="calm" size="sm" />} />
                 ) : (
                 <>
                 <div className="relative flex min-h-0 flex-1 flex-col">
@@ -705,6 +759,15 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
                   </div>
                 ) : (
                 <>
+                {onDesign && designSide === 'frontend' && canEdit ? (
+                  <MockBackendStatusBar
+                    busy={makeReal.isPending}
+                    onMakeReal={() => {
+                      setDesignSide('build')
+                      void (makeReal.mutateAsync as (input: unknown) => Promise<unknown>)({ key: projectKey, message: m.mock_status__make_real_request(), mode: 'build' }).catch(() => {})
+                    }}
+                  />
+                ) : null}
                 <AttachedChips attached={attached} onRemove={detach} />
                 <form
                   className="relative flex items-end gap-2 border-t border-border bg-card px-5 py-3.5"

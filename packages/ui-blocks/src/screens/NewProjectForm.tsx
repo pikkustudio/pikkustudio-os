@@ -123,20 +123,18 @@ export function NewProjectForm({
         {tooBig ? <span role="alert" className="text-[14.5px] font-semibold">{m.new_project_form__too_big()}</span> : null}
         <div className="flex flex-col gap-4">
           {goInterview ? (
-            <>
-              <Button variant="hero" size="pageLg" type="button" data-testid="start-interview" disabled={!ready} onClick={goInterview}>
-                <MessageCircle className="size-5.5" />
-                <span>{m.new_project_form__start()}</span>
-                <ArrowRight className="rtl:-scale-x-100 size-5.5" />
-              </Button>
-              <p className="text-[14.5px] text-hero-ink-2">{m.new_project_form__or()}</p>
-            </>
-          ) : null}
-          <Button variant={goInterview ? 'heroGhost' : 'hero'} size="pageLg" type="button" data-testid="start-designing" disabled={!ready} onClick={go}>
-            <Sparkles className="size-5.5" />
-            <span>{goInterview ? m.new_project_form__lucky() : m.new_project_form__start()}</span>
-            <ArrowRight className="rtl:-scale-x-100 size-5.5" />
-          </Button>
+            <Button variant="hero" size="pageLg" type="button" data-testid="start-interview" disabled={!ready} onClick={goInterview}>
+              <MessageCircle className="size-5.5" />
+              <span>{m.new_project_form__start()}</span>
+              <ArrowRight className="rtl:-scale-x-100 size-5.5" />
+            </Button>
+          ) : (
+            <Button variant="hero" size="pageLg" type="button" data-testid="start-designing" disabled={!ready} onClick={go}>
+              <Sparkles className="size-5.5" />
+              <span>{m.new_project_form__start()}</span>
+              <ArrowRight className="rtl:-scale-x-100 size-5.5" />
+            </Button>
+          )}
         </div>
         {uses.devices.length === 0 || uses.devices.includes('phones') ? (
           <p className="text-[14.5px] text-hero-ink-2">{uses.devices.length === 0 ? m.new_project_form__pick_one() : m.new_project_form__mobile_note()}</p>
