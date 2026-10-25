@@ -118,6 +118,9 @@ async function writeNav() {
         errors.push(`${who} claims the reserved path /${first(screen.path)}, which only a first-party addon can take, with replaces`)
         continue
       }
+      for (const field of ['agentTitle', 'agentDescription']) {
+        if (screen[field] !== undefined && !keys.has(screen[field])) errors.push(`${who} sets ${field} to the message "${screen[field]}", which neither the core nor ${pkg} has`)
+      }
       if (screen.needsApp && screen.scope !== 'project') errors.push(`${who} sets needsApp, which only a project screen may`)
       addonScreens.push({ ...screen, needsApp: screen.scope === 'project' ? !!screen.needsApp : undefined, addon: addon.name, package: pkg, component: undefined, app: screen.app })
     }
@@ -227,7 +230,7 @@ async function writeNav() {
     )
   }
 
-  const clean = (s) => Object.fromEntries(Object.entries({ path: s.path, title: s.title, scope: s.scope, nav: s.nav, needsApp: s.needsApp, layout: s.layout, scopes: s.scopes, replaces: s.replaces, addon: s.addon }).filter(([, v]) => v !== undefined))
+  const clean = (s) => Object.fromEntries(Object.entries({ path: s.path, title: s.title, scope: s.scope, nav: s.nav, needsApp: s.needsApp, layout: s.layout, scopes: s.scopes, replaces: s.replaces, agent: s.agent, agentTitle: s.agentTitle, agentDescription: s.agentDescription, addon: s.addon }).filter(([, v]) => v !== undefined))
   const has = new Set(screens.map((s) => norm(s.path)))
   write(
     join(app, 'src/nav.gen.json'),

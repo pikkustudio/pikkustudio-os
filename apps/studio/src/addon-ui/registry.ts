@@ -10,6 +10,10 @@ export type AddonScreenDef = {
   replaces?: boolean
   /** 'bare' (the only one definePlugin allows) renders without the shell. */
   layout?: string
+  /** The agent the screen opens (see NavScreen); agentTitle and agentDescription are message keys. */
+  agent?: string
+  agentTitle?: string
+  agentDescription?: string
   component?: () => Promise<{ default: ComponentType<{ params: Record<string, string>; navigate: (path: string) => void }> }>
   app?: string
 }

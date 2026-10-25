@@ -15,6 +15,10 @@ export type NavScreen = {
   layout?: 'bare'
   scopes?: readonly string[]
   replaces?: boolean
+  /** The agent this screen opens beside it: an addon's own (agents/<name>.md) or `studio:<name>`; the title and description message keys are only set for an addon's. */
+  agent?: string
+  agentTitle?: string
+  agentDescription?: string
   addon: string | null
 }
 export type NavPin = { path: string; label: string; icon: string; on: boolean }
