@@ -619,7 +619,6 @@ export interface StudioProjectsOptions {
   designEntry?: string
   paraglideCommand?: (appDir: string) => { command: string; args: string[] } | null
   env?: (key: string, generated: Record<string, string>) => Promise<Record<string, string>>
-  devContributors?: string[]
   personalSource?: (projectId: string) => ScopedSource | undefined
   /** Where values Studio generates for a project are kept (the vault locally). Without one they live in memory for the run. */
   generatedStore?: (projectId: string) => GeneratedStore
@@ -1589,7 +1588,6 @@ export class StudioProjectsService {
       if (modules) readable.push(modules)
     }
     readable.push(...linkedRepos(worktree.path))
-    for (const contributor of this.options.devContributors ?? []) readable.push(contributor)
     const runtime = process.env.PIKKU_STUDIO_RUNTIME_DIR
     if (runtime) readable.push(runtime, dirname(process.execPath))
     const writable = design ? [dirname(design)] : []
@@ -1777,24 +1775,6 @@ export class StudioProjectsService {
     return starting
   }
 
-  private async devConfigOverlay(projectDir: string): Promise<string | null> {
-    const added = this.options.devContributors ?? []
-    const configPath = join(projectDir, 'pikku.config.json')
-    if (added.length === 0 || !existsSync(configPath)) return null
-    let own: Array<{ module: string; export?: string }> = []
-    try {
-      own = JSON.parse(await readFile(configPath, 'utf8')).dev?.contributors ?? []
-    } catch {
-      return null
-    }
-    const contributors = [...own, ...added.filter((module) => !own.some((c) => c.module === module)).map((module) => ({ module }))]
-    const dir = studioRuntimeDir(projectDir)
-    const overlay = join(dir, 'pikku.config.json')
-    await mkdir(dir, { recursive: true })
-    await writeFile(overlay, JSON.stringify({ extends: relative(dir, configPath), dev: { contributors } }, null, 2))
-    return overlay
-  }
-
   private async start(key: string): Promise<RunningProject> {
     const { entry, worktree } = await this.prepare(key)
     const port = await freePort()
@@ -1806,8 +1786,6 @@ export class StudioProjectsService {
           ? { command: process.execPath, args: [pikkuBin, 'dev', '--port', String(p)] }
           : { command: 'npx', args: ['pikku', 'dev', '--port', String(p)] }))(port)
     await rm(join(worktree.projectDir, OLD_DEV_CONFIG), { force: true })
-    const overlay = await this.devConfigOverlay(worktree.projectDir)
-    if (overlay) args.push('--config', overlay)
     const design = await this.designCopy(key)
     const confinement = this.confinement(worktree, design)
     const logPath = this.logFile(key, 'server', true)

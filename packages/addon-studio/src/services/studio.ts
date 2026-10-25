@@ -44,7 +44,6 @@ export interface StudioServicesOptions {
   sources?: Record<string, AccountProvider>
   builder?: BuilderSession
   projectEnv?: (key: string, generated: Record<string, string>) => Promise<Record<string, string>>
-  devContributors?: string[]
   /** Where a person's own AI key is kept (the host's secret store). Without one, key choices are refused. */
   aiSecrets?: AiSecretStore
   /** Where the AI choice is kept (Studio's database). Without one it is held in memory only. */
@@ -97,7 +96,6 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
       generatedStore: options.generatedStore,
       teamSource: options.teamSource,
       owner: async () => (await studioProfile.owner()).name ?? '',
-      devContributors: options.devContributors,
       env: async (key, generated) => ({ ...(await studioAi.env()), ...((await options.projectEnv?.(key, generated)) ?? {}) }),
     })
   const studioModels = new Map<string, string>()

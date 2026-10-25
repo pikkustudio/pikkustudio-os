@@ -64,8 +64,7 @@
     "tsx": "^4.21.0",
     "zod": "^4.3.6",
     "@pikku/better-auth": "^0.12.59",
-    "kysely": "^0.29.0",
-    "@pikku/deploy": "*"
+    "kysely": "^0.29.0"
   },
   "license": "BUSL-1.1",
   "peerDependenciesMeta": {
