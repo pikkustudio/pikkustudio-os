@@ -1,4 +1,5 @@
 import type { Kysely } from 'kysely'
+import { kyselySetting, memorySetting, type SettingStore } from './setting-store.js'
 
 export interface KeyProvider {
   id: string
@@ -54,31 +55,12 @@ export interface AiSecretStore {
 }
 
 /** Where the person's AI choice is kept: Studio's database on a host that has one. */
-export interface AiChoiceStore {
-  get(): Promise<AiChoice | null>
-  set(choice: AiChoice | null): Promise<void>
-}
+export type AiChoiceStore = SettingStore<AiChoice>
 
-export const memoryAiChoiceStore = (): AiChoiceStore => {
-  let held: AiChoice | null = null
-  return { get: async () => held, set: async (choice) => void (held = choice) }
-}
+export const memoryAiChoiceStore = (): AiChoiceStore => memorySetting<AiChoice>()
 
-/** The choice as one row of `studio_setting` (key `ai`, value JSON). */
-export const kyselyAiChoiceStore = (db: Kysely<any>): AiChoiceStore => ({
-  async get() {
-    const row = await db.selectFrom('studio_setting').select('value').where('key', '=', 'ai').executeTakeFirst()
-    return row ? (JSON.parse(row.value as string) as AiChoice | null) : null
-  },
-  async set(choice) {
-    if (!choice) {
-      await db.deleteFrom('studio_setting').where('key', '=', 'ai').execute()
-      return
-    }
-    const value = JSON.stringify(choice)
-    await db.insertInto('studio_setting').values({ key: 'ai', value }).onConflict((oc) => oc.column('key').doUpdateSet({ value })).execute()
-  },
-})
+/** The choice as one row of `studio_setting` (key `ai`). */
+export const kyselyAiChoiceStore = (db: Kysely<any>): AiChoiceStore => kyselySetting<AiChoice>(db, 'ai')
 
 /** The secret a provider's key is kept under. */
 export const aiSecretName = (provider: string) => `AI_${provider.toUpperCase().replace(/[^A-Z0-9]/g, '_')}_API_KEY`

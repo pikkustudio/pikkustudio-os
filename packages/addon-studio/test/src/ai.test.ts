@@ -3,6 +3,8 @@ import { mkdtemp, readdir } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, test } from 'node:test'
+import { StudioSettingsStore, type StudioSettings } from '../../src/services/settings.js'
+import { memorySetting } from '../../src/services/setting-store.js'
 import { StudioAi, aiSecretName, memoryAiChoiceStore, type AiChoice, type AiSecretStore } from '../../src/services/ai.js'
 
 const home = () => mkdtemp(join(tmpdir(), 'pikku-studio-ai-'))
@@ -81,5 +83,16 @@ describe('StudioAi', () => {
     assert.deepEqual(await ai.env(), { PIKKU_STUDIO_AI: 'subscription', PIKKU_STUDIO_AI_PROVIDER: 'openai-codex' })
     await ai.set({ kind: 'source', source: 'host' })
     assert.deepEqual(await ai.env(), { PIKKU_STUDIO_AI: 'source', PIKKU_STUDIO_AI_SOURCE: 'host' })
+  })
+})
+
+describe('StudioSettingsStore', () => {
+  test('reads defaults, merges updates and keeps them in the setting store', async () => {
+    const held = memorySetting<Partial<StudioSettings>>()
+    const settings = new StudioSettingsStore(held)
+    assert.deepEqual(await settings.read(), { signIn: null, name: null, about: null })
+    await settings.update({ name: 'Ada' })
+    await settings.update({ signIn: 'local' })
+    assert.deepEqual(await new StudioSettingsStore(held).read(), { signIn: 'local', name: 'Ada', about: null })
   })
 })

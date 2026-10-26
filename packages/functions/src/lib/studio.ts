@@ -5,6 +5,8 @@ import {
   fileProjectStore,
   kyselyAiChoiceStore,
   kyselyLogStore,
+  kyselySetting,
+  type StudioSettings,
   kyselyProjectStore,
   studioHome,
   type AccountProvider,
@@ -17,7 +19,7 @@ import {
   type StudioAi,
   type StudioProjectsService,
   type StudioPublisher,
-  type StudioSettingsFile,
+  type StudioSettingsStore,
   vaultPersonalSource,
 } from '@pikkustudio/addon-studio/services'
 import type { Kysely } from 'kysely'
@@ -34,7 +36,7 @@ export interface Studio {
   projects: StudioProjectsService
   publisher: StudioPublisher
   builder: BuilderSession
-  settings: StudioSettingsFile
+  settings: StudioSettingsStore
   audit: StudioAudit
   models: Map<string, string>
   /** Background work the addons' project decorators run; reconciled on wake and stopped on sleep. */
@@ -83,6 +85,7 @@ export async function createStudio(home = studioHome(), db?: Kysely<any>, extens
         },
         projectId
       ),
+    settingsStore: db ? kyselySetting<Partial<StudioSettings>>(db, 'settings') : undefined,
     aiChoice: db ? kyselyAiChoiceStore(db) : undefined,
     aiSecrets: {
       has: async (name) => (await connectVault(home)).secrets.hasSecret(name),

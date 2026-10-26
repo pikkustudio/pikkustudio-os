@@ -1,5 +1,6 @@
 import { pikkuAddonServices } from '#pikku/addon/setup'
 import { createStudioServices, fileProjectStore, kyselyProjectStore } from './services/studio.js'
+import { kyselySetting } from './services/setting-store.js'
 import { kyselyAiChoiceStore } from './services/ai.js'
 import { kyselyLogStore } from './services/log-store.js'
 import { studioHome } from './services/projects.js'
@@ -18,6 +19,7 @@ export const createSingletonServices = pikkuAddonServices(async (_config, { auth
     studioLogs,
     studioModels,
   } = await createStudioServices({
+    settingsStore: kysely ? kyselySetting(kysely, 'settings') : undefined,
     aiChoice: kysely ? kyselyAiChoiceStore(kysely) : undefined,
     logStore: kysely ? kyselyLogStore(kysely) : undefined,
     projectStore: kysely ? kyselyProjectStore(kysely, fileProjectStore(studioHome())) : undefined,
