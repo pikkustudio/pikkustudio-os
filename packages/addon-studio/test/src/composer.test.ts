@@ -36,7 +36,7 @@ describe('composer functions', () => {
     try {
       const home = await mkdtemp(join(tmpdir(), 'pikku-composer-'))
       const vault = new Map<string, string>()
-      const studioAi = new StudioAi(home, { has: async (n) => vault.has(n), get: async (n) => vault.get(n)!, set: async (n, v) => void vault.set(n, v) })
+      const studioAi = new StudioAi({ has: async (n) => vault.has(n), get: async (n) => vault.get(n)!, set: async (n, v) => void vault.set(n, v) })
       await studioAi.set({ kind: 'key', provider: 'litellm', apiKey: 'sk-x', baseUrl: fake.url, model: 'deepseek-v4.1-flash' })
       const services = { studioAi, studioProjects: {}, studioModels: new Map<string, string>() }
 

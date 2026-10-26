@@ -3,6 +3,7 @@ import { devContributors } from './dev-contributors.js'
 import {
   createStudioServices,
   fileProjectStore,
+  kyselyAiChoiceStore,
   kyselyLogStore,
   kyselyProjectStore,
   studioHome,
@@ -82,6 +83,7 @@ export async function createStudio(home = studioHome(), db?: Kysely<any>, extens
         },
         projectId
       ),
+    aiChoice: db ? kyselyAiChoiceStore(db) : undefined,
     aiSecrets: {
       has: async (name) => (await connectVault(home)).secrets.hasSecret(name),
       get: async (name) => (await (await connectVault(home)).secrets.getSecret(name)).reveal(),

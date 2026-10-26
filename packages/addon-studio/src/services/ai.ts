@@ -1,6 +1,4 @@
-import { existsSync, readFileSync, writeFileSync } from 'node:fs'
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
-import { join } from 'node:path'
+import type { Kysely } from 'kysely'
 
 export interface KeyProvider {
   id: string
@@ -47,13 +45,40 @@ export type AiInput =
 
 /**
  * Where a person's own provider key lives: the host's secret store (the vault locally).
- * Studio never writes a key to a file of its own; `ai.json` holds the choice only.
+ * Studio never writes a key to a file of its own; the choice (never the key) lives in Studio's database.
  */
 export interface AiSecretStore {
   has(name: string): Promise<boolean>
   get(name: string): Promise<string>
   set(name: string, value: string): Promise<void>
 }
+
+/** Where the person's AI choice is kept: Studio's database on a host that has one. */
+export interface AiChoiceStore {
+  get(): Promise<AiChoice | null>
+  set(choice: AiChoice | null): Promise<void>
+}
+
+export const memoryAiChoiceStore = (): AiChoiceStore => {
+  let held: AiChoice | null = null
+  return { get: async () => held, set: async (choice) => void (held = choice) }
+}
+
+/** The choice as one row of `studio_setting` (key `ai`, value JSON). */
+export const kyselyAiChoiceStore = (db: Kysely<any>): AiChoiceStore => ({
+  async get() {
+    const row = await db.selectFrom('studio_setting').select('value').where('key', '=', 'ai').executeTakeFirst()
+    return row ? (JSON.parse(row.value as string) as AiChoice | null) : null
+  },
+  async set(choice) {
+    if (!choice) {
+      await db.deleteFrom('studio_setting').where('key', '=', 'ai').execute()
+      return
+    }
+    const value = JSON.stringify(choice)
+    await db.insertInto('studio_setting').values({ key: 'ai', value }).onConflict((oc) => oc.column('key').doUpdateSet({ value })).execute()
+  },
+})
 
 /** The secret a provider's key is kept under. */
 export const aiSecretName = (provider: string) => `AI_${provider.toUpperCase().replace(/[^A-Z0-9]/g, '_')}_API_KEY`
@@ -72,24 +97,19 @@ async function litellmModel(baseUrl: string, apiKey: string): Promise<string> {
 }
 
 export class StudioAi {
-  constructor(private home: string, private secrets?: AiSecretStore) {
-    const path = join(home, 'ai.json')
-    if (!existsSync(path)) return
-    const stored = JSON.parse(readFileSync(path, 'utf8'))
-    // Older homes stored a source's AI by the source's name alone (`{ kind: <name> }`).
-    const kind = stored.choice?.kind
-    if (typeof kind !== 'string' || ['key', 'subscription', 'source'].includes(kind)) return
-    stored.choice = { kind: 'source', source: kind }
-    writeFileSync(path, JSON.stringify(stored, null, 2) + '\n')
-  }
+  private current: AiChoice | null = null
+  private loaded: Promise<void> | undefined
 
-  private get choicePath() {
-    return join(this.home, 'ai.json')
+  constructor(private secrets?: AiSecretStore, private store: AiChoiceStore = memoryAiChoiceStore()) {}
+
+  /** Reads the saved choice once; `usesSource` and `chatTarget` answer from this copy. Call before serving. */
+  load(): Promise<void> {
+    return (this.loaded ??= this.store.get().then((choice) => void (this.current = choice)))
   }
 
   async choice(): Promise<AiChoice | null> {
-    if (!existsSync(this.choicePath)) return null
-    return JSON.parse(await readFile(this.choicePath, 'utf8')).choice ?? null
+    await this.load()
+    return this.current
   }
 
   /** The person's key for a provider, from the secret store; undefined when none is set. Never written to disk by Studio. */
@@ -106,15 +126,13 @@ export class StudioAi {
 
   /** The source whose account AI was chosen, or null when the AI is a key or subscription of the person's own. */
   usesSource(): string | null {
-    if (!existsSync(this.choicePath)) return null
-    const choice = JSON.parse(readFileSync(this.choicePath, 'utf8')).choice as AiChoice | null
+    const choice = this.current
     return choice?.kind === 'source' ? choice.source : null
   }
 
   /** Where chat goes for a key choice. The key is read per request by `chatKey`, so it is never held here. */
   chatTarget(): { baseUrl: string; model: string; provider: string } | null {
-    if (!existsSync(this.choicePath)) return null
-    const choice = JSON.parse(readFileSync(this.choicePath, 'utf8')).choice as AiChoice | null
+    const choice = this.current
     if (choice?.kind !== 'key') return null
     const provider = KEY_PROVIDERS.find((p) => p.id === choice.provider)
     if (!provider) return null
@@ -127,11 +145,13 @@ export class StudioAi {
   }
 
   async chatKey(): Promise<string | undefined> {
+    await this.load()
     const target = this.chatTarget()
     return target ? this.keyFor(target.provider) : undefined
   }
 
   async set(input: AiInput): Promise<AiChoice> {
+    await this.load()
     let choice: AiChoice
     if (input.kind === 'key') {
       const provider = KEY_PROVIDERS.find((p) => p.id === input.provider)
@@ -156,14 +176,18 @@ export class StudioAi {
     } else {
       choice = { kind: 'source', source: input.source }
     }
-    await mkdir(this.home, { recursive: true })
-    await writeFile(this.choicePath, JSON.stringify({ choice }, null, 2) + '\n')
+    await this.save(choice)
     return choice
   }
 
   async clear() {
-    await mkdir(this.home, { recursive: true })
-    await writeFile(this.choicePath, JSON.stringify({ choice: null }, null, 2) + '\n')
+    await this.save(null)
+  }
+
+  private async save(choice: AiChoice | null) {
+    await this.load()
+    await this.store.set(choice)
+    this.current = choice
   }
 
   async env(): Promise<Record<string, string>> {

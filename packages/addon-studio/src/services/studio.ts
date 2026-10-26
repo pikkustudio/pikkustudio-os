@@ -11,7 +11,7 @@ import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { BuilderSession } from '@pikkustudio/builder'
-import { StudioAi, type AiSecretStore } from './ai.js'
+import { StudioAi, type AiChoiceStore, type AiSecretStore } from './ai.js'
 import { StudioHooks } from './hooks.js'
 import { LogCollector, forwardFromEnv } from './log-collector.js'
 import { memoryLogStore, type LogStore } from './log-store.js'
@@ -44,6 +44,8 @@ export interface StudioServicesOptions {
   devContributors?: string[]
   /** Where a person's own AI key is kept (the host's secret store). Without one, key choices are refused. */
   aiSecrets?: AiSecretStore
+  /** Where the AI choice is kept (Studio's database). Without one it is held in memory only. */
+  aiChoice?: AiChoiceStore
   personalSource?: (projectId: string) => ScopedSource | undefined
   teamSource?: (projectId: string, projectPath: string) => ScopedSource | undefined
   projectStore?: ProjectStore
@@ -70,7 +72,8 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
   const home = options.home ?? studioHome()
   const existing = instances.get(home)
   if (existing) return existing
-  const studioAi = new StudioAi(home, options.aiSecrets)
+  const studioAi = new StudioAi(options.aiSecrets, options.aiChoice)
+  await studioAi.load()
   const studioProjects =
     options.projects ??
     new StudioProjectsService({
@@ -141,7 +144,7 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
 
 export { LOCAL_TEAM, studioHome } from './projects.js'
 export { StudioSettingsFile } from './settings.js'
-export { StudioAi } from './ai.js'
+export { StudioAi, kyselyAiChoiceStore } from './ai.js'
 export { StudioProjectsService, fileProjectStore } from './projects.js'
 export { kyselyProjectStore } from './project-store.js'
 export { kyselyLogStore } from './log-store.js'
