@@ -16,6 +16,7 @@ import { canConfine, confinedSpawn, type Confinement } from './confine.js'
 import { Supervisor, type ServiceSpec, type ServiceStatus } from '@pikkustudio/supervisor'
 import { diskUsage, type DiskUsage } from './disk.js'
 import { linkDevPikku } from './dev-link.js'
+import { injectInboxCapture } from './inbox-capture.js'
 import { previewViteConfig } from './vite-preview.js'
 
 const execFileAsync = promisify(execFile)
@@ -617,6 +618,8 @@ export interface StudioProjectsOptions {
   serveCommand?: (port: number) => { command: string; args: string[] }
   stopTimeoutMs?: number
   designEntry?: string
+  /** The directory of @pikkustudio/addon-inbox: when set, every project Studio runs hands its email to the inbox. */
+  inboxCapture?: string
   paraglideCommand?: (appDir: string) => { command: string; args: string[] } | null
   env?: (key: string, generated: Record<string, string>) => Promise<Record<string, string>>
   personalSource?: (projectId: string) => ScopedSource | undefined
@@ -1588,6 +1591,7 @@ export class StudioProjectsService {
       if (modules) readable.push(modules)
     }
     readable.push(...linkedRepos(worktree.path))
+    if (this.options.inboxCapture && existsSync(this.options.inboxCapture)) readable.push(realpathSync(this.options.inboxCapture))
     const runtime = process.env.PIKKU_STUDIO_RUNTIME_DIR
     if (runtime) readable.push(runtime, dirname(process.execPath))
     const writable = design ? [dirname(design)] : []
@@ -1794,20 +1798,29 @@ export class StudioProjectsService {
     const designPort = design ? await freePort() : 0
     const projectEnv = await this.projectEnv(key, entry.path)
     const generated = Object.fromEntries(GENERATED_SECRETS.filter((name) => projectEnv[name]).map((name) => [name, projectEnv[name]!]))
+    const env: Record<string, string | undefined> = {
+      ...process.env,
+      PORT: String(port),
+      PIKKU_LOG_FORMAT: 'json',
+      PIKKU_STUDIO_TOKEN: token,
+      PIKKU_CONSOLE_TOKEN: token,
+      ...(design ? { PIKKU_DESIGN_SERVER_URL: designUrl(designPort) } : {}),
+      ...projectEnv,
+      ...(await (this.options.env?.(key, generated) ?? {})),
+    }
+    if (this.options.inboxCapture && env.STUDIO_INBOX_URL && env.STUDIO_INBOX_TOKEN) {
+      const injected = await injectInboxCapture({
+        projectDir: worktree.projectDir,
+        runtimeDir: studioRuntimeDir(worktree.projectDir),
+        inboxPackageDir: this.options.inboxCapture,
+      })
+      if (injected) args.push('--config', injected.overlay)
+    }
     const spawnOptions = {
       cwd: worktree.projectDir,
       detached: true,
       stdio: ['ignore', log, log] as ['ignore', number, number],
-      env: {
-        ...process.env,
-        PORT: String(port),
-        PIKKU_LOG_FORMAT: 'json',
-        PIKKU_STUDIO_TOKEN: token,
-        PIKKU_CONSOLE_TOKEN: token,
-        ...(design ? { PIKKU_DESIGN_SERVER_URL: designUrl(designPort) } : {}),
-        ...projectEnv,
-        ...(await (this.options.env?.(key, generated) ?? {})),
-      },
+      env,
     }
     const child = confinement
       ? confinedSpawn(command, args, confinement, spawnOptions)

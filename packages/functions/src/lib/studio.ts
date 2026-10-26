@@ -1,4 +1,5 @@
 import { join } from 'node:path'
+import { inboxPackageDir } from './inbox-package.js'
 import {
   createStudioServices,
   fileProjectStore,
@@ -112,6 +113,7 @@ export async function createStudio(home = studioHome(), db?: Kysely<any>, extens
       get: async (name) => (await (await connectVault(home)).secrets.getSecret(name)).reveal(),
       set: async (name, value) => (await connectVault(home)).secrets.setSecret(name, value),
     },
+    inboxCapture: inboxPackageDir(),
     projectEnv: async (key, generated) => ({
       ...(await projectVaultEnv(home, key, generated)),
       ...(await inboxEnv(home, key)),

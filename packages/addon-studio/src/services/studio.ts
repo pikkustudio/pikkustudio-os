@@ -51,6 +51,7 @@ export interface StudioServicesOptions {
   /** Where the name, about and sign-in choice are kept (Studio's database). Without one they are held in memory only. */
   profileStore?: ProfileStore
   settingsStore?: SettingStore<Partial<import('./settings.js').StudioSettings>>
+  inboxCapture?: string
   personalSource?: (projectId: string) => ScopedSource | undefined
   generatedStore?: (projectId: string) => GeneratedStore
   teamSource?: (projectId: string, projectPath: string) => ScopedSource | undefined
@@ -95,6 +96,7 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
       personalSource: options.personalSource,
       generatedStore: options.generatedStore,
       teamSource: options.teamSource,
+      inboxCapture: options.inboxCapture,
       owner: async () => (await studioProfile.owner()).name ?? '',
       env: async (key, generated) => ({ ...(await studioAi.env()), ...((await options.projectEnv?.(key, generated)) ?? {}) }),
     })
