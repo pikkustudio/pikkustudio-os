@@ -2,7 +2,8 @@ import { createOpenAICompatible } from '@ai-sdk/openai-compatible'
 import { VercelAgentRunner } from '@pikku/ai-vercel'
 
 type ChatAi = {
-  chatConfig(): { baseUrl: string; apiKey: string; model: string; provider: string } | null
+  chatTarget(): { baseUrl: string; model: string; provider: string } | null
+  chatKey(): Promise<string | undefined>
   usesSource(): string | null
 }
 
@@ -27,8 +28,16 @@ export const studioAgentRunner = (ai: ChatAi, access: Access, accountModel?: str
         if (!model) throw new Error('The account AI does not name a model; set PIKKU_STUDIO_MODEL.')
         return createOpenAICompatible({ name: 'account', baseURL: 'http://account.invalid/v1', apiKey: 'account', fetch: accountFetch(access) }).chatModel(model)
       }
-      const config = ai.chatConfig()
+      const config = ai.chatTarget()
       if (!config) throw new Error('Choose an AI with a key first. A subscription only works for building.')
-      return createOpenAICompatible({ name: config.provider, baseURL: config.baseUrl, apiKey: config.apiKey }).chatModel(config.model)
+      // The key comes from the secret store on every request; it is never held or written by Studio.
+      const keyed = (async (input: Parameters<typeof fetch>[0], init?: RequestInit) => {
+        const apiKey = await ai.chatKey()
+        if (!apiKey) throw new Error('No key is set for this AI. Choose it again and paste the key.')
+        const headers = new Headers(init?.headers)
+        headers.set('authorization', `Bearer ${apiKey}`)
+        return fetch(input, { ...init, headers })
+      }) as typeof fetch
+      return createOpenAICompatible({ name: config.provider, baseURL: config.baseUrl, apiKey: 'secret-store', fetch: keyed }).chatModel(config.model)
     },
   })

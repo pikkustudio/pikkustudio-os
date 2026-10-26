@@ -82,6 +82,11 @@ export async function createStudio(home = studioHome(), db?: Kysely<any>, extens
         },
         projectId
       ),
+    aiSecrets: {
+      has: async (name) => (await connectVault(home)).secrets.hasSecret(name),
+      get: async (name) => (await (await connectVault(home)).secrets.getSecret(name)).reveal(),
+      set: async (name, value) => (await connectVault(home)).secrets.setSecret(name, value),
+    },
     devContributors: devContributors(),
     projectEnv: async (key, generated) => ({
       ...(await projectVaultEnv(home, key, generated)),

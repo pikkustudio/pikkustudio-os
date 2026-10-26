@@ -1,5 +1,5 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
-import { chmod, mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 
 export interface KeyProvider {
@@ -45,6 +45,19 @@ export type AiInput =
   | { kind: 'subscription'; provider: string }
   | { kind: 'source'; source: string }
 
+/**
+ * Where a person's own provider key lives: the host's secret store (the vault locally).
+ * Studio never writes a key to a file of its own; `ai.json` holds the choice only.
+ */
+export interface AiSecretStore {
+  has(name: string): Promise<boolean>
+  get(name: string): Promise<string>
+  set(name: string, value: string): Promise<void>
+}
+
+/** The secret a provider's key is kept under. */
+export const aiSecretName = (provider: string) => `AI_${provider.toUpperCase().replace(/[^A-Z0-9]/g, '_')}_API_KEY`
+
 async function litellmModel(baseUrl: string, apiKey: string): Promise<string> {
   const response = await fetch(`${baseUrl}/v1/models`, {
     headers: apiKey === 'none' ? {} : { authorization: `Bearer ${apiKey}` },
@@ -59,7 +72,7 @@ async function litellmModel(baseUrl: string, apiKey: string): Promise<string> {
 }
 
 export class StudioAi {
-  constructor(private home: string) {
+  constructor(private home: string, private secrets?: AiSecretStore) {
     const path = join(home, 'ai.json')
     if (!existsSync(path)) return
     const stored = JSON.parse(readFileSync(path, 'utf8'))
@@ -74,18 +87,21 @@ export class StudioAi {
     return join(this.home, 'ai.json')
   }
 
-  private get keysPath() {
-    return join(this.home, 'ai-keys.json')
-  }
-
   async choice(): Promise<AiChoice | null> {
     if (!existsSync(this.choicePath)) return null
     return JSON.parse(await readFile(this.choicePath, 'utf8')).choice ?? null
   }
 
-  private async keys(): Promise<Record<string, string>> {
-    if (!existsSync(this.keysPath)) return {}
-    return JSON.parse(await readFile(this.keysPath, 'utf8'))
+  /** The person's key for a provider, from the secret store; undefined when none is set. Never written to disk by Studio. */
+  private async keyFor(provider: string): Promise<string | undefined> {
+    const name = aiSecretName(provider)
+    if (!this.secrets || !(await this.secrets.has(name))) return undefined
+    return (await this.secrets.get(name)) || undefined
+  }
+
+  /** Whether a key is set for a provider; the key itself is never handed to the UI. */
+  async hasKey(provider: string): Promise<boolean> {
+    return (await this.keyFor(provider)) !== undefined
   }
 
   /** The source whose account AI was chosen, or null when the AI is a key or subscription of the person's own. */
@@ -95,21 +111,24 @@ export class StudioAi {
     return choice?.kind === 'source' ? choice.source : null
   }
 
-  chatConfig(): { baseUrl: string; apiKey: string; model: string; provider: string } | null {
+  /** Where chat goes for a key choice. The key is read per request by `chatKey`, so it is never held here. */
+  chatTarget(): { baseUrl: string; model: string; provider: string } | null {
     if (!existsSync(this.choicePath)) return null
     const choice = JSON.parse(readFileSync(this.choicePath, 'utf8')).choice as AiChoice | null
     if (choice?.kind !== 'key') return null
     const provider = KEY_PROVIDERS.find((p) => p.id === choice.provider)
-    const keys = existsSync(this.keysPath) ? JSON.parse(readFileSync(this.keysPath, 'utf8')) : {}
-    const apiKey = keys[choice.provider]
-    if (!provider || !apiKey) return null
+    if (!provider) return null
     const base = (choice.baseUrl ?? provider.baseUrl).replace(/\/$/, '')
     return {
       baseUrl: provider.id === 'litellm' && !base.endsWith('/v1') ? `${base}/v1` : base,
-      apiKey,
       model: choice.model,
       provider: provider.id,
     }
+  }
+
+  async chatKey(): Promise<string | undefined> {
+    const target = this.chatTarget()
+    return target ? this.keyFor(target.provider) : undefined
   }
 
   async set(input: AiInput): Promise<AiChoice> {
@@ -126,11 +145,8 @@ export class StudioAi {
         if (!model) model = await litellmModel(baseUrl!, apiKey)
       }
       if (!model) throw new Error('Say which model to use')
-      const keys = await this.keys()
-      keys[provider.id] = apiKey
-      await mkdir(this.home, { recursive: true })
-      await writeFile(this.keysPath, JSON.stringify(keys, null, 2) + '\n', { mode: 0o600 })
-      await chmod(this.keysPath, 0o600)
+      if (!this.secrets) throw new Error('This host has no secret store to keep a key in. Set the key in your environment instead.')
+      await this.secrets.set(aiSecretName(provider.id), apiKey)
       choice = { kind: 'key', provider: provider.id, model, ...(baseUrl ? { baseUrl } : {}) }
     } else if (input.kind === 'subscription') {
       if (!SUBSCRIPTION_PROVIDERS.some((p) => p.id === input.provider)) {
@@ -158,7 +174,7 @@ export class StudioAi {
       return { PIKKU_STUDIO_AI: 'subscription', PIKKU_STUDIO_AI_PROVIDER: choice.provider }
     }
     const provider = KEY_PROVIDERS.find((p) => p.id === choice.provider)!
-    const apiKey = (await this.keys())[provider.id]
+    const apiKey = await this.keyFor(provider.id)
     if (!apiKey) return {}
     return {
       PIKKU_STUDIO_AI: 'key',

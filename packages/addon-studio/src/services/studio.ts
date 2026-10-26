@@ -11,7 +11,7 @@ import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { BuilderSession } from '@pikkustudio/builder'
-import { StudioAi } from './ai.js'
+import { StudioAi, type AiSecretStore } from './ai.js'
 import { StudioHooks } from './hooks.js'
 import { LogCollector, forwardFromEnv } from './log-collector.js'
 import { memoryLogStore, type LogStore } from './log-store.js'
@@ -42,6 +42,8 @@ export interface StudioServicesOptions {
   builder?: BuilderSession
   projectEnv?: (key: string, generated: Record<string, string>) => Promise<Record<string, string>>
   devContributors?: string[]
+  /** Where a person's own AI key is kept (the host's secret store). Without one, key choices are refused. */
+  aiSecrets?: AiSecretStore
   personalSource?: (projectId: string) => ScopedSource | undefined
   teamSource?: (projectId: string, projectPath: string) => ScopedSource | undefined
   projectStore?: ProjectStore
@@ -68,7 +70,7 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
   const home = options.home ?? studioHome()
   const existing = instances.get(home)
   if (existing) return existing
-  const studioAi = new StudioAi(home)
+  const studioAi = new StudioAi(home, options.aiSecrets)
   const studioProjects =
     options.projects ??
     new StudioProjectsService({
