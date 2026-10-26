@@ -18,6 +18,7 @@ import { memoryLogStore, type LogStore } from './log-store.js'
 import { STUDIO_KEY, StudioProjectsService, studioHome, type AccountProvider, type ProjectStore } from './projects.js'
 import { StudioPublisher, type PublishTarget } from './publish.js'
 import { StudioSettingsStore } from './settings.js'
+import { memoryProfile, type ProfileStore } from './profile.js'
 import type { SettingStore } from './setting-store.js'
 
 export interface StudioServices {
@@ -27,6 +28,7 @@ export interface StudioServices {
   studioPublisher: StudioPublisher
   studioBuilder: BuilderSession
   studioSettings: StudioSettingsStore
+  studioProfile: ProfileStore
   studioHooks: StudioHooks
   studioModels: Map<string, string>
   studioLogs: LogStore
@@ -48,6 +50,7 @@ export interface StudioServicesOptions {
   /** Where the AI choice is kept (Studio's database). Without one it is held in memory only. */
   aiChoice?: AiChoiceStore
   /** Where the name, about and sign-in choice are kept (Studio's database). Without one they are held in memory only. */
+  profileStore?: ProfileStore
   settingsStore?: SettingStore<Partial<import('./settings.js').StudioSettings>>
   personalSource?: (projectId: string) => ScopedSource | undefined
   generatedStore?: (projectId: string) => GeneratedStore
@@ -79,6 +82,7 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
   const studioAi = new StudioAi(options.aiSecrets, options.aiChoice)
   await studioAi.load()
   const studioSettings = new StudioSettingsStore(options.settingsStore)
+  const studioProfile = options.profileStore ?? memoryProfile()
   const studioProjects =
     options.projects ??
     new StudioProjectsService({
@@ -92,7 +96,7 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
       personalSource: options.personalSource,
       generatedStore: options.generatedStore,
       teamSource: options.teamSource,
-      owner: async () => (await studioSettings.read()).name ?? '',
+      owner: async () => (await studioProfile.owner()).name ?? '',
       devContributors: options.devContributors,
       env: async (key, generated) => ({ ...(await studioAi.env()), ...((await options.projectEnv?.(key, generated)) ?? {}) }),
     })
@@ -140,6 +144,7 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
     studioPublisher: options.publisher ?? new StudioPublisher(studioProjects, options.publishTargets),
     studioBuilder,
     studioSettings,
+    studioProfile,
     studioHooks: new StudioHooks(),
     studioModels,
     studioLogs,
@@ -150,6 +155,8 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
 
 export { LOCAL_TEAM, studioHome } from './projects.js'
 export { StudioSettingsStore } from './settings.js'
+export { asUser, currentUserId, ownerUserId, requestUserId } from './current-user.js'
+export { kyselyProfile, memoryProfile, UNNAMED_OWNER, type Profile, type ProfileStore } from './profile.js'
 export { kyselySetting, memorySetting, type SettingStore } from './setting-store.js'
 export { StudioAi, kyselyAiChoiceStore } from './ai.js'
 export { StudioProjectsService, fileProjectStore } from './projects.js'

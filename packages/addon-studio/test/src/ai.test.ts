@@ -90,9 +90,8 @@ describe('StudioSettingsStore', () => {
   test('reads defaults, merges updates and keeps them in the setting store', async () => {
     const held = memorySetting<Partial<StudioSettings>>()
     const settings = new StudioSettingsStore(held)
-    assert.deepEqual(await settings.read(), { signIn: null, name: null, about: null })
-    await settings.update({ name: 'Ada' })
+    assert.deepEqual(await settings.read(), { signIn: null })
     await settings.update({ signIn: 'local' })
-    assert.deepEqual(await new StudioSettingsStore(held).read(), { signIn: 'local', name: 'Ada', about: null })
+    assert.deepEqual(await new StudioSettingsStore(held).read(), { signIn: 'local' })
   })
 })

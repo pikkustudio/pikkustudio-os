@@ -11,6 +11,7 @@ export const AiChoice = z
   ])
   .nullable()
 
-export const Settings = z.object({ signIn: SignInChoice, name: z.string().nullable(), about: z.string().nullable() })
+export const Settings = z.object({ signIn: SignInChoice })
+export const Profile = z.object({ name: z.string().nullable(), about: z.string().nullable() })
 
 export const KeyInput = z.object({ key: z.string() })

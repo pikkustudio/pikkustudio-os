@@ -13,6 +13,7 @@ import type { StageAnalytics, StageReleases, StageSettingsStore } from '../src/s
 import type { StudioPublisher } from '../src/services/publish.js'
 import type { AccountSource, NotificationSource, TargetSources } from '../src/services/shell-source.js'
 import type { StudioSettingsStore } from '../src/services/settings.js'
+import type { ProfileStore } from '../src/services/profile.js'
 import type { ToolResolver } from '../src/lib/tools/resolver.js'
 import type { BuilderSession } from '@pikkustudio/builder'
 import type { BetterAuthInstance } from '@pikku/better-auth'
@@ -28,6 +29,7 @@ export interface SingletonServices extends CoreSingletonServices<Config> {
   studioPublisher: StudioPublisher
   studioBuilder: BuilderSession
   studioSettings: StudioSettingsStore
+  studioProfile: ProfileStore
   studioHooks: StudioHooks
   studioLogs: LogStore
   studioModels: Map<string, string>

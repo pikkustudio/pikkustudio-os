@@ -31,10 +31,10 @@ export const account = pikkuSessionlessFunc({
   description: 'The sign-in choice, the AI choice and the signed-in account: its user, teams, current team, links and scopes. Without an account source: no user, no teams, every scope.',
   input: AccountInput,
   output: AccountOutput,
-  func: async ({ studioSettings, studioProjects, studioAi, auth, accountSource }, { team }, { session, http }) => {
-    const [current, account, viewer] = await Promise.all([studioSettings.read(), studioProjects.getAccount(), viewerOf(accountSource, { team, session })])
+  func: async ({ studioSettings, studioProfile, studioProjects, studioAi, auth, accountSource }, { team }, { session, http }) => {
+    const [current, profile, account, viewer] = await Promise.all([studioSettings.read(), session?.userId ? studioProfile.read(session.userId) : { name: null, about: null }, studioProjects.getAccount(), viewerOf(accountSource, { team, session })])
     const chosen = current.signIn && current.signIn !== 'local' && !account.signedIn ? null : current.signIn
     const signIn = chosen && !session ? await startSession(auth, http).then(() => chosen, () => null) : chosen
-    return { signIn, name: current.name, about: current.about, ai: await studioAi.choice(), ...account, ...viewer }
+    return { signIn, name: profile.name, about: profile.about, ai: await studioAi.choice(), ...account, ...viewer }
   },
 })

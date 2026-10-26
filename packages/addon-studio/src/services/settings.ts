@@ -5,13 +5,11 @@ export type SignInChoice = string
 
 export interface StudioSettings {
   signIn: SignInChoice | null
-  name: string | null
-  about: string | null
 }
 
-const EMPTY: StudioSettings = { signIn: null, name: null, about: null }
+const EMPTY: StudioSettings = { signIn: null }
 
-/** Who this Studio is and where it signed in, kept in the settings store (a row of `setting` on a host with a database). */
+/** Where this Studio signed in (who the person is lives on their user: see profile.ts), kept in the settings store (a row of `setting` on a host with a database). */
 export class StudioSettingsStore {
   constructor(private store: SettingStore<Partial<StudioSettings>> = memorySetting()) {}
 

@@ -6,6 +6,7 @@ import {
   kyselyAiChoiceStore,
   kyselyLogStore,
   kyselySetting,
+  kyselyProfile,
   type StudioSettings,
   kyselyProjectStore,
   studioHome,
@@ -93,6 +94,7 @@ export async function createStudio(home = studioHome(), db?: Kysely<any>, extens
         },
         projectId
       ),
+    profileStore: db ? kyselyProfile(db) : undefined,
     settingsStore: db ? kyselySetting<Partial<StudioSettings>>(db, 'settings') : undefined,
     generatedStore: (projectId) => {
       const keeper = vaultKeeper(home)

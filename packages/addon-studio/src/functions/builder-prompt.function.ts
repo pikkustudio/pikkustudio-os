@@ -14,11 +14,11 @@ export const builderPrompt = pikkuSessionlessFunc({
   expose: true,
   description: 'Ask the builder to do something in a project.',
   input: BuilderPromptInput,
-  func: async ({ studioBuilder, studioSettings, studioProjects }, { key, message, context, failOnError, explore, mode: asked, offer, language, agent }, { http }) => {
+  func: async ({ studioBuilder, studioProfile, studioProjects }, { key, message, context, failOnError, explore, mode: asked, offer, language, agent }, { http, session }) => {
     const mode = agent ? agentScope(agent) : asked
     const addon = mode ? addonOf(mode) : null
     if (addon) loadAddonAgent(addon.addon, addon.name)
-    const { name, about } = await studioSettings.read()
+    const { name, about } = session?.userId ? await studioProfile.read(session.userId) : { name: null, about: null }
     const profile = name
       ? `The person you are working with is called ${name}. Address them by that name.${about ? ` About them: ${about}. Tailor your answers to that.` : ''}`
       : undefined
