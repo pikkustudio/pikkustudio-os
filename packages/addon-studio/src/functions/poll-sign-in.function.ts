@@ -11,10 +11,11 @@ export const pollSignIn = pikkuSessionlessFunc({
   description: 'Check whether a sign-in to the account was confirmed.',
   input: PollSignInInput,
   output: PollSignInOutput,
-  func: async ({ studioProjects, studioSettings, studioAi, studioHooks, auth }, { code }, { http }) => {
+  func: async ({ studioProjects, studioSettings, studioAi, studioHooks, auth }, { code }, { http, session }) => {
+    // The sign-in is kept for the person it is for, so they must exist (and be signed in here) before the account hands the token over.
+    if (!session?.userId) await startSession(auth, http)
     const status = await studioProjects.pollSignIn(code)
     if (status === 'confirmed') {
-      await startSession(auth, http)
       const source = studioProjects.accountSource!
       await studioSettings.update({ signIn: source })
       studioHooks.changed()

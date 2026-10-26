@@ -1582,7 +1582,7 @@ export class StudioProjectsService {
     if (this.options.confine) return this.options.confine(worktree)
     const base = worktreeConfinement(worktree)
     // Every managed tool (impeccable's skill files, chromium, ...) installs under one root; agents and project processes read and run from it.
-    const readable = [join(homedir(), '.pikkustudio', 'auth.json'), toolsRoot(this.home)]
+    const readable = [toolsRoot(this.home)]
     if (this.options.designEntry) {
       readable.push(resolve(this.options.designEntry, '..', '..'))
       const modules = hoistedNodeModules(dirname(this.options.designEntry))
