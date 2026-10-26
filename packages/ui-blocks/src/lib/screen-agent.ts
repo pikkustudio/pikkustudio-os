@@ -6,7 +6,7 @@ import { screenAgentLabels, type ScreenAgentLabels } from './nav-labels'
 // The agent of the screen that is open: a definePlugin screen's `agent` (nav.gen.json carries it with agentTitle and
 // agentDescription). `studio:<name>` agents are Studio's own and have no title or description.
 
-export type ScreenAgent = { agent: string; title: I18nString | null; description: I18nString | null }
+export type ScreenAgent = { agent: string; addon: string | null; title: I18nString | null; description: I18nString | null }
 
 const segments = (path: string) => path.split('/').filter(Boolean)
 

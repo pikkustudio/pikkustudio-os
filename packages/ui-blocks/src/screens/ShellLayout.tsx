@@ -27,6 +27,8 @@ import { useNavEntries } from '../lib/nav-visibility'
 import { useCopy } from '../lib/copy'
 import { SCREEN_NAME, agentName } from '../lib/screen-names'
 import { modeForPath, transcriptText, useBuilderChat, useDesignSide } from '../lib/builder-chat'
+import { agentTabFor, resolveChatTab, type ChatTab } from '../lib/agent-tab'
+import { useScreenAgent } from '../lib/screen-agent'
 import { usePikkuMutation } from '@project/functions-sdk/pikku/api.gen'
 import { MockBackendStatusBar, useMockCount } from '../blocks/MockBackendStatusBar'
 import { usePageTitle } from '../lib/page-title'
@@ -54,7 +56,7 @@ import { ChecksCard, MilestoneCard, OpenScreenCard } from '../blocks/BuilderCard
 import { useCanEdit, useProjectTarget } from '../lib/project-target'
 import { useStickToBottom } from '../lib/stick-to-bottom'
 import { useComposerExtras } from '../lib/composer-extras'
-import { GitPullRequest, Archive, Copy, type LucideIcon, ArrowDown, ArrowRight, Bell, Check, CircleAlert, FolderOpen, Globe, History, Info, Search, MessageCircle, MessageCircleQuestion, Palette, PanelLeftClose, PanelLeftOpen, Menu, User, X, CheckCheck, ScrollText, KeyRound, Laptop, MousePointer2, ShieldCheck, Wrench } from 'lucide-react'
+import { GitPullRequest, Archive, Copy, type LucideIcon, ArrowDown, ArrowRight, Bell, Check, CircleAlert, FolderOpen, Globe, History, Info, Search, MessageCircle, MessageCircleQuestion, Palette, PanelLeftClose, PanelLeftOpen, Menu, User, X, CheckCheck, ScrollText, KeyRound, Laptop, MousePointer2, ShieldCheck, Wrench, Bot } from 'lucide-react'
 
 // The app shell: rail, preview drawer (right edge), Pikku button + bubble, side panels.
 // Every screen route is a child of this layout. Page content lives in the route files.
@@ -243,7 +245,15 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
   const pathMode = useLocation({ select: (l) => modeForPath(l.pathname) })
   const [designSide, setDesignSide] = useDesignSide(projectKey)
   const onDesign = pathMode === 'frontend'
-  const workMode = onDesign ? designSide : pathMode
+  // The open screen's own agent is a second tab beside Chat, with a session and history of its own.
+  const agentTab = agentTabFor(useScreenAgent())
+  const [chatTab, setChatTab] = useState<ChatTab>('chat')
+  const onAgent = resolveChatTab(chatTab, !!agentTab) === 'agent'
+  useEffect(() => {
+    if (!agentTab) setChatTab('chat')
+  }, [agentTab])
+  const workMode = onAgent ? null : onDesign ? designSide : pathMode
+  const chatOn = !!workMode || onAgent
   const makeReal = usePikkuMutation('studio:builderPrompt')
   const mockCount = useMockCount()
   const [saved, setSaved] = useState<{ open: string | null } | null>(null)
@@ -264,10 +274,10 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
     })
   const pageTitle = usePageTitle()
   const guide = usePikkuChat(projectKey, pageTitle)
-  const builder = useBuilderChat(projectKey, workMode)
+  const builder = useBuilderChat(projectKey, workMode, onAgent ? agentTab!.ref : null)
   const canEdit = useCanEdit()
   const { openWorkspace, missing: targetMissing } = useProjectTarget()
-  const chat = workMode ? builder : guide
+  const chat = chatOn ? builder : guide
   const changesQ = useProjectQuery<{ changes: { changeId: string; title: string; body: string | null; status: string; createdAt: string }[] }>(projectKey, 'console:listStudioChanges', { status: ['open', 'claimed', 'needs_answer', 'in_progress'] }, { refetchInterval: 6000, handlesErrors: true })
   const pending = (changesQ.data?.changes ?? []).map((c) => {
     const title = asI18n(c.title)
@@ -318,8 +328,8 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
   const say = (text: I18nString) => {
     setPanel('chat')
     log.toBottom()
-    if (!canEdit && (workMode || /^\/experiment\b/.test(text))) return
-    if (!workMode && /^\/experiment\s+\S/.test(text)) {
+    if (!canEdit && (chatOn || /^\/experiment\b/.test(text))) return
+    if (!chatOn && /^\/experiment\s+\S/.test(text)) {
       void builder.send(text)
       navigate({ to: '/artifacts', search: ((prev: object) => prev) as never })
       return
@@ -344,7 +354,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
   const [helperHot, setHelperHot] = useState(false)
   const unread = needsPerson && isDismissed
 
-  const panelTitle: Record<PanelId, I18nString> = { chat: workMode ? agentName(workMode) : m.parts__talk_to_pikku(), updates: m.shell_layout__updates(), changes: m.shell_layout__changes(), workspace: m.shell_layout__your_workspace(), account: m.shell_layout__your_account() }
+  const panelTitle: Record<PanelId, I18nString> = { chat: onAgent ? agentTab!.title : workMode ? agentName(workMode) : m.parts__talk_to_pikku(), updates: m.shell_layout__updates(), changes: m.shell_layout__changes(), workspace: m.shell_layout__your_workspace(), account: m.shell_layout__your_account() }
   const aboutScreen: I18nString | null = onEmails || fill ? null : onArtifacts ? SCREEN_NAME.artifacts() : onKnowledge ? SCREEN_NAME.knowledge() : onProject ? SCREEN_NAME.project() : onPublish ? m.shell_layout__publish() : (pageTitle ?? null)
   const bubbleActions: { label: I18nString; yes: boolean; run: () => void }[] = pending.length
     ? [
@@ -355,9 +365,10 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
         { label: m.shell_layout__describe_my_app(), yes: true, run: () => setPanel('chat') },
         { label: m.shell_layout__give_me_an_example(), yes: false, run: () => say(m.shell_layout__give_me_an_example_of()) },
       ]
+  const compactTabs = onDesign || !!agentTab
   const tabs = panel === 'chat' || panel === 'updates' || panel === 'changes'
   const tab =
-    `-mb-px inline-flex h-11.5 items-center ${onDesign ? 'gap-1.5 px-2.5' : 'gap-2 px-3.5'} rounded-t-[10px] border-b-3 text-[15px] font-bold transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3`
+    `-mb-px inline-flex h-11.5 shrink-0 items-center ${agentTab ? 'gap-1.5 px-2' : compactTabs ? 'gap-1.5 px-2.5' : 'gap-2 px-3.5'} rounded-t-[10px] border-b-3 text-[15px] font-bold transition-colors duration-140 hover:bg-secondary hover:text-foreground active:bg-surface-3`
 
 
   return (
@@ -472,19 +483,20 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
             </div>
 
             {tabs ? (
-              <div className={`flex border-b border-border ${onDesign ? 'gap-0 px-3' : 'gap-1 px-5'}`} role="tablist">
+              <div className={`flex border-b border-border ${agentTab ? 'gap-0 px-2' : compactTabs ? 'gap-0 px-3' : 'gap-1 px-5'}`} role="tablist">
                 {onDesign ? (
                   <>
                 <button
                   type="button"
                   role="tab"
-                  aria-selected={panel === 'chat' && designSide === 'frontend'}
+                  aria-selected={panel === 'chat' && !onAgent && designSide === 'frontend'}
                   onClick={() => {
+                    setChatTab('chat')
                     setDesignSide('frontend')
                     setPanel('chat')
                   }}
                   data-testid="chat-tab-design"
-                  className={`${tab} ${panel === 'chat' && designSide === 'frontend' ? 'border-primary text-accent-foreground' : 'border-transparent text-ink-2'}`}
+                  className={`${tab} ${panel === 'chat' && !onAgent && designSide === 'frontend' ? 'border-primary text-accent-foreground' : 'border-transparent text-ink-2'}`}
                 >
                   <Palette className="size-4.5" />
                   {m.design_build__design()}
@@ -497,13 +509,14 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
                 <button
                   type="button"
                   role="tab"
-                  aria-selected={panel === 'chat' && designSide === 'build'}
+                  aria-selected={panel === 'chat' && !onAgent && designSide === 'build'}
                   onClick={() => {
+                    setChatTab('chat')
                     setDesignSide('build')
                     setPanel('chat')
                   }}
                   data-testid="chat-tab-build"
-                  className={`${tab} ${panel === 'chat' && designSide === 'build' ? 'border-primary text-accent-foreground' : 'border-transparent text-ink-2'}`}
+                  className={`${tab} ${panel === 'chat' && !onAgent && designSide === 'build' ? 'border-primary text-accent-foreground' : 'border-transparent text-ink-2'}`}
                 >
                   <Wrench className="size-4.5" />
                   {m.design_build__build()}
@@ -513,14 +526,35 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
                 <button
                   type="button"
                   role="tab"
-                  aria-selected={panel === 'chat'}
-                  onClick={() => setPanel('chat')}
-                  className={`${tab} ${panel === 'chat' ? 'border-primary text-accent-foreground' : 'border-transparent text-ink-2'}`}
+                  aria-selected={panel === 'chat' && !onAgent}
+                  onClick={() => {
+                    setChatTab('chat')
+                    setPanel('chat')
+                  }}
+                  data-testid="chat-tab-chat"
+                  className={`${tab} ${panel === 'chat' && !onAgent ? 'border-primary text-accent-foreground' : 'border-transparent text-ink-2'}`}
                 >
                   <MessageCircle className="size-4.5" />
                   {m.shell_layout__chat()}
                 </button>
                 )}
+                {agentTab ? (
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={panel === 'chat' && onAgent}
+                    onClick={() => {
+                      setChatTab('agent')
+                      setPanel('chat')
+                    }}
+                    title={agentTab.description ?? undefined}
+                    data-testid="chat-tab-agent"
+                    className={`${tab.replace(' shrink-0', ' min-w-0')} ${panel === 'chat' && onAgent ? 'border-primary text-accent-foreground' : 'border-transparent text-ink-2'}`}
+                  >
+                    <Bot className="size-4.5 shrink-0" />
+                    <span className="truncate">{agentTab.title}</span>
+                  </button>
+                ) : null}
                 <button
                   type="button"
                   role="tab"
@@ -547,6 +581,11 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
                   {m.shell_layout__changes()}
                 </button>
               </div>
+            ) : null}
+            {panel === 'chat' && onAgent && agentTab?.description ? (
+              <p className="border-b border-border bg-secondary px-6 py-2 text-[13px] leading-snug text-ink-2" data-testid="chat-agent-description">
+                {agentTab.description}
+              </p>
             ) : null}
             {panel === 'changes' ? <ChangesPanel /> : null}
             {panel === 'updates' ? (
@@ -599,7 +638,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
                   <FolderOpen className="size-4.5 text-accent-foreground" />
                   <span className="sr-only">{m.shell_layout__about()}</span>
                   <b className="min-w-0 flex-1 truncate text-foreground">{projectName}{aboutScreen ? <>{sep(', ')}{aboutScreen}</> : null}</b>
-                  {workMode ? (
+                  {chatOn ? (
                     <>
                       <Button variant={full ? 'bordered' : 'ghost'} size="icon" type="button" aria-pressed={full} aria-label={m.builder_chat__full()} title={m.builder_chat__full_hint()} onClick={toggleFull} data-testid="chat-full-toggle">
                         <ScrollText className="size-4" />
@@ -625,14 +664,14 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
                     </>
                   ) : null}
                 </div>
-                {saved && workMode ? (
-                  <SavedChats mode={workMode} projectKey={projectKey} openId={saved.open} onOpen={(open) => setSaved({ open })} onClose={() => setSaved(null)} avatar={<Avatar mood="calm" size="sm" />} />
+                {saved && chatOn ? (
+                  <SavedChats mode={workMode} agent={onAgent ? agentTab!.ref : null} projectKey={projectKey} openId={saved.open} onOpen={(open) => setSaved({ open })} onClose={() => setSaved(null)} avatar={<Avatar mood="calm" size="sm" />} />
                 ) : (
                 <>
                 <div className="relative flex min-h-0 flex-1 flex-col">
                 <div ref={log.ref} className="flex min-h-0 flex-1 flex-col gap-4.5 overflow-auto px-6 py-5" tabIndex={0} aria-label={m.shell_layout__chat()} role="log">
-                  {full && workMode ? <FullTranscript items={builder.raw} busy={builder.busy} avatar={<Avatar mood="calm" size="sm" />} /> : null}
-                  {(full && workMode ? [] : chat.items).map((it) =>
+                  {full && chatOn ? <FullTranscript items={builder.raw} busy={builder.busy} avatar={<Avatar mood="calm" size="sm" />} /> : null}
+                  {(full && chatOn ? [] : chat.items).map((it) =>
                     it.kind === 'me' ? (
                       <div key={it.id} className="flex min-w-0 items-start justify-end gap-3">
                         <div className="flex max-w-5/6 min-w-0 flex-col gap-2 rounded-t-[18px] rounded-es-[18px] rounded-ee-[4px] bg-accent px-4 py-2.5 text-[16px] leading-[1.5] text-foreground">
@@ -727,7 +766,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
                       </div>
                     ),
                   )}
-                  {workMode && builder.activity ? (
+                  {chatOn && builder.activity ? (
                     <BuilderActivity since={builder.activity.since} doing={builder.activity.doing} canStop={builder.canStop && canEdit} stopping={builder.stopping} onStop={() => void builder.stop()} />
                   ) : chat.busy && !chat.items.some((i) => i.kind === 'pikku' && !i.text) ? <p className="flex items-center gap-2 text-[14px] text-muted-foreground">
                       <AiSpinner />
@@ -748,7 +787,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
                 )}
                 </div>
                 {projectKey ? <ChatPublishStatus projectKey={projectKey} /> : null}
-                {workMode && !canEdit ? (
+                {chatOn && !canEdit ? (
                   <div className="flex flex-wrap items-center gap-3 border-t border-border bg-card px-5 py-3.5" role="status" data-testid="chat-read-only">
                     <p className="min-w-0 flex-1 text-[14px] text-ink-2">{m.builder_chat__stage_read_only()}</p>
                     {openWorkspace ? (
@@ -759,7 +798,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
                   </div>
                 ) : (
                 <>
-                {onDesign && designSide === 'frontend' && canEdit ? (
+                {onDesign && !onAgent && designSide === 'frontend' && canEdit ? (
                   <MockBackendStatusBar
                     busy={makeReal.isPending}
                     onMakeReal={() => {

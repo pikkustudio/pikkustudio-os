@@ -173,9 +173,13 @@ const toChat = (all: BuilderItem[], prefix: string, agent?: I18nString): Timed[]
   })
 }
 
-export function useBuilderChat(key: string, mode: WorkMode | null) {
-  const guideMode = mode === 'project'
-  const state = usePikkuQuery('studio:builderState', { key, specialist: mode ?? undefined }, { enabled: !!mode && !!key, refetchInterval: 2000 } as never)
+/** What a builder call names: an agent reference (an addon's or `studio:<name>`), or else a specialist. */
+export const scopeInput = (mode: WorkMode | null, agent: string | null) => (agent ? { agent } : { specialist: mode ?? undefined })
+
+export function useBuilderChat(key: string, mode: WorkMode | null, agent: string | null = null) {
+  const on = !!mode || !!agent
+  const guideMode = !agent && mode === 'project'
+  const state = usePikkuQuery('studio:builderState', { key, ...scopeInput(mode, agent) }, { enabled: on && !!key, refetchInterval: 2000 } as never)
   const checklist = useProjectChecklist(guideMode ? key : '')
   const list: Checklist | undefined = guideMode ? checklist.data : undefined
   const design = usePikkuQuery('studio:builderState', { key, specialist: 'frontend' }, { enabled: guideMode && !!key && !!list?.handoff, refetchInterval: 2000 } as never)
@@ -191,7 +195,7 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
   const noted = useRef({ seen: new Set<string>(), last: 0 })
   const kicked = useRef('')
   const seen = useRef<{ key: string; states: Record<string, string> }>({ key: '', states: {} })
-  useEffect(() => setLocal([]), [mode])
+  useEffect(() => setLocal([]), [mode, agent])
   useEffect(() => {
     noted.current = { seen: new Set(), last: 0 }
   }, [key])
@@ -245,7 +249,7 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
   const send = useCallback(
     async (text: string) => {
       const experiment = text.match(/^\/experiment(?:\s+([\s\S]*))?$/)
-      if (!mode && !experiment) return
+      if (!on && !experiment) return
       if (experiment && !experiment[1]?.trim()) {
         setLocal((x) => [...x, { at: Date.now(), item: { id: `l${Math.random()}`, kind: 'pikku', text: m.builder_chat__experiment_empty() } }])
         return
@@ -257,7 +261,7 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
           else await guideSay.mutateAsync({ key, message: text })
           await Promise.all([state.refetch(), checklist.refetch()])
         } else {
-          const input = experiment ? { key, message: text.trim(), explore: true, mode: mode ?? undefined } : { key, message: text, mode, offer: mode === 'build' }
+          const input = experiment ? { key, message: text.trim(), explore: true, ...(agent ? { agent } : { mode: mode ?? undefined }) } : { key, message: text, ...(agent ? { agent } : { mode }), offer: !agent && mode === 'build' }
           await (prompt.mutateAsync as (input: unknown) => Promise<unknown>)(input)
           await state.refetch()
         }
@@ -267,7 +271,7 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
         setSending(false)
       }
     },
-    [mode, guideMode, designBuilding, key, prompt.mutateAsync, guideSay.mutateAsync, state.refetch, checklist.refetch, fail],
+    [mode, agent, on, guideMode, designBuilding, key, prompt.mutateAsync, guideSay.mutateAsync, state.refetch, checklist.refetch, fail],
   )
 
   const skipQuestion = useCallback(async () => {
@@ -344,27 +348,27 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
 
   const archive = useCallback(async () => {
     try {
-      await (archiveChat.mutateAsync as (input: unknown) => Promise<unknown>)({ key, specialist: mode ?? undefined })
+      await (archiveChat.mutateAsync as (input: unknown) => Promise<unknown>)({ key, ...scopeInput(mode, agent) })
       setLocal([])
       await state.refetch()
     } catch (error) {
       fail(error)
     }
-  }, [key, mode, archiveChat.mutateAsync, state.refetch, fail])
+  }, [key, mode, agent, archiveChat.mutateAsync, state.refetch, fail])
 
   const designBusy = !!designData?.busy
   const stop = useCallback(async () => {
     setStopping(true)
     try {
-      const slots = [mode ?? undefined, ...(handoff && designBusy ? ['frontend' as const] : [])]
-      await Promise.all(slots.map((specialist) => (cancel.mutateAsync as (input: unknown) => Promise<unknown>)({ key, specialist })))
+      const slots = [scopeInput(mode, agent), ...(handoff && designBusy ? [{ specialist: 'frontend' as const }] : [])]
+      await Promise.all(slots.map((slot) => (cancel.mutateAsync as (input: unknown) => Promise<unknown>)({ key, ...slot })))
       await state.refetch()
     } catch (error) {
       fail(error)
     } finally {
       setStopping(false)
     }
-  }, [key, mode, handoff, designBusy, cancel.mutateAsync, state.refetch, fail])
+  }, [key, mode, agent, handoff, designBusy, cancel.mutateAsync, state.refetch, fail])
 
   const decide = useCallback(
     async (id: string, yes: boolean) => {
@@ -390,16 +394,16 @@ export function useBuilderChat(key: string, mode: WorkMode | null) {
 
   const working = !!data?.busy || designBusy
   const activity = activityOf(designBusy && !data?.busy ? designData?.items ?? [] : data?.items ?? [], working)
-  return { items, question, raw: data?.items ?? [], busy: sending || !!data?.busy, activity, stop, stopping, canStop: !!mode && working && !stopping, send, decide, push, archive, skipQuestion, archiving: archiveChat.isPending, canArchive: !!mode && !sending && !data?.busy && !archiveChat.isPending && (data?.items ?? []).some((i) => !!i.text && (i.kind === 'user' || i.kind === 'assistant')) }
+  return { items, question, raw: data?.items ?? [], busy: sending || !!data?.busy, activity, stop, stopping, canStop: on && working && !stopping, send, decide, push, archive, skipQuestion, archiving: archiveChat.isPending, canArchive: on && !sending && !data?.busy && !archiveChat.isPending && (data?.items ?? []).some((i) => !!i.text && (i.kind === 'user' || i.kind === 'assistant')) }
 }
 
 export type SavedChat = { id: string; title: string; at: number }
 export type SavedChatFull = SavedChat & { items: BuilderItem[] }
 
-export const useSavedChats = (key: string, enabled: boolean, mode?: WorkMode | null) => {
+export const useSavedChats = (key: string, enabled: boolean, mode?: WorkMode | null, agent?: string | null) => {
   const onPath = useLocation({ select: (l) => modeForPath(l.pathname) ?? undefined })
   const specialist = mode ?? onPath
-  return usePikkuQuery('studio:builderChats', { key, specialist }, { enabled: enabled && !!key } as never) as unknown as { data?: { chats: SavedChat[] }; isPending: boolean; isError: boolean; error: unknown; isFetching: boolean; refetch: () => unknown }
+  return usePikkuQuery('studio:builderChats', { key, ...(agent ? { agent } : { specialist }) }, { enabled: enabled && !!key } as never) as unknown as { data?: { chats: SavedChat[] }; isPending: boolean; isError: boolean; error: unknown; isFetching: boolean; refetch: () => unknown }
 }
 
 export const useSavedChat = (key: string, id: string | null) =>

@@ -14,8 +14,8 @@ const when = (at: number): I18nString => asI18n(new Date(at).toLocaleString(getL
 const bar = 'flex items-center gap-3 border-b border-border bg-secondary px-6 py-3 text-[14px] text-ink-2'
 const back = 'inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-2.5 py-1 font-bold text-accent-foreground hover:bg-surface-3'
 
-export function SavedChats({ mode, projectKey, openId, onOpen, onClose, avatar }: { mode?: WorkMode | null; avatar: I18nNode; projectKey: string; openId: string | null; onOpen: (id: string | null) => void; onClose: () => void }) {
-  const list = useSavedChats(projectKey, !openId, mode)
+export function SavedChats({ mode, agent, projectKey, openId, onOpen, onClose, avatar }: { mode?: WorkMode | null; agent?: string | null; avatar: I18nNode; projectKey: string; openId: string | null; onOpen: (id: string | null) => void; onClose: () => void }) {
+  const list = useSavedChats(projectKey, !openId, mode, agent)
   const chat = useSavedChat(projectKey, openId)
 
   if (openId) {

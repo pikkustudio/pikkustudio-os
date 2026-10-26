@@ -7,7 +7,7 @@ import { randomBytes } from 'node:crypto'
 import { createInterface } from 'node:readline'
 import { offerMessage, pikkuNext, routeMessage, writePikkuShim, type CommandRunner } from './changes.js'
 import { frontendBriefing } from './briefing.js'
-import { SPECIALISTS, piArgs, piEnv, resolvePi, projectKey, slotKey, slotSlug, type BuilderAi, type BuilderMode } from './pi.js'
+import { piArgs, piEnv, resolvePi, projectKey, slotKey, slotSlug, type BuilderAi, type BuilderScope } from './pi.js'
 import { builderHome, writeSkills } from './skills.js'
 
 const routerEnv = (launch: { env?: Record<string, string>; queueHome?: string }) => (launch.queueHome ? { ...launch.env, HOME: launch.queueHome } : launch.env)
@@ -129,15 +129,15 @@ export class BuilderSession {
   private turns = new Map<string, Turn>()
   private starting = new Set<string>()
   private drives = new Map<string, Drive>()
-  private modes = new Map<string, BuilderMode>()
+  private modes = new Map<string, BuilderScope>()
   private locales = new Map<string, string>()
 
   constructor(
-    private launcher: (key: string, mode?: BuilderMode, locale?: string) => Promise<BuilderLaunch>,
+    private launcher: (key: string, mode?: BuilderScope, locale?: string) => Promise<BuilderLaunch>,
     private home = builderHome()
   ) {}
 
-  private resolve(key: string, mode?: BuilderMode) {
+  private resolve(key: string, mode?: BuilderScope) {
     const project = projectKey(key)
     return this.launcher(project, mode, this.locales.get(project))
   }
@@ -164,7 +164,7 @@ export class BuilderSession {
   }
 
   isProjectBusy(key: string): boolean {
-    return [key, ...SPECIALISTS.filter((s) => s !== 'build').map((s) => slotKey(key, s))].some((k) => this.states.get(k)?.busy)
+    return [...this.states].some(([k, state]) => state.busy && projectKey(k) === key)
   }
 
   async state(key: string): Promise<BuilderState> {
@@ -191,7 +191,7 @@ export class BuilderSession {
     return drive
   }
 
-  async prompt(project: string, message: string, context?: string, mode: BuilderMode = 'build', offer = false): Promise<BuilderState> {
+  async prompt(project: string, message: string, context?: string, mode: BuilderScope = 'build', offer = false): Promise<BuilderState> {
     const key = slotKey(project, mode)
     const text = message.trim()
     if (!text) throw new Error('Say what you want built first')

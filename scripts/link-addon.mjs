@@ -16,7 +16,7 @@
 //                                          back to a link state saved earlier (a copy of .studio-addons/addons.json),
 //                                          as scripts/build-hosted.sh does after building the web edition
 //
-// Each addon's src/wire/*.ts is copied to .studio-addons/wire/, which pikku.config.json lists as a source directory: the
+// Each addon's src/wire/*.ts (or wire/*.ts) is copied to .studio-addons/wire/, which pikku.config.json lists as a source directory: the
 // pikku inspector skips any file under a directory holding its own pikku.config.json, so the addon's own copy is
 // never read. The choice is written to .studio-addons/addons.json, which scripts/pikku-config.mjs reads.
 import { execSync } from 'node:child_process'
@@ -59,10 +59,11 @@ if (args.has('--unlink')) {
 }
 
 const copyWire = (dir) => {
-  const wire = join(dir, 'src', 'wire')
-  if (!existsSync(wire)) return
-  mkdirSync(join(linked, 'wire'), { recursive: true })
-  for (const file of readdirSync(wire).filter((f) => f.endsWith('.ts'))) copyFileSync(join(wire, file), join(linked, 'wire', file))
+  // the private addons keep src/wire/*.ts; the test addons (spindle, diffui) keep wire/*.addon.ts
+  for (const wire of [join(dir, 'src', 'wire'), join(dir, 'wire')].filter(existsSync)) {
+    mkdirSync(join(linked, 'wire'), { recursive: true })
+    for (const file of readdirSync(wire).filter((f) => f.endsWith('.ts'))) copyFileSync(join(wire, file), join(linked, 'wire', file))
+  }
 }
 
 if (args.has('--restore')) {

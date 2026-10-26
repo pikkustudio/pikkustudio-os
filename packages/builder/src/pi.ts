@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { loadAgent } from './agents.js'
+import { loadAddonAgent, loadAgent } from './agents.js'
 import { writeDirectionsSkill } from './directions-skill.js'
 
 export interface BuilderAi {
@@ -52,11 +52,47 @@ export const SPECIALISTS = ['build', 'frontend', 'artifacts', 'knowledge', 'emai
 
 export type Specialist = (typeof SPECIALISTS)[number]
 
+/** An agent an addon ships (`agents/<name>.md` in its package) has a scope of its own: `agent:<addon>:<name>`. */
+export type AddonAgentScope = `agent:${string}:${string}`
+
+export type BuilderScope = BuilderMode | AddonAgentScope
+
+const NAME = /^[a-z][a-z0-9-]*$/
+
+export const addonScope = (addon: string, name: string): AddonAgentScope => {
+  if (!NAME.test(addon) || !NAME.test(name)) throw new Error(`Not an agent: ${addon}:${name}`)
+  return `agent:${addon}:${name}`
+}
+
+export const addonOf = (scope: string): { addon: string; name: string } | null => {
+  const found = /^agent:([a-z][a-z0-9-]*):([a-z][a-z0-9-]*)$/.exec(scope)
+  return found ? { addon: found[1]!, name: found[2]! } : null
+}
+
+/**
+ * The scope an agent reference stands for. `studio:<name>` is one of Studio's own specialists, so it shares that
+ * specialist's slot; `<addon>:<name>` is an agent the addon ships. Anything else is refused.
+ */
+export const agentScope = (ref: string): BuilderScope => {
+  const at = ref.indexOf(':')
+  const owner = at < 0 ? '' : ref.slice(0, at)
+  const name = at < 0 ? '' : ref.slice(at + 1)
+  if (!NAME.test(owner) || !NAME.test(name)) throw new Error(`Not an agent: ${ref}`)
+  if (owner === 'studio') {
+    if (!(SPECIALISTS as readonly string[]).includes(name)) throw new Error(`Studio has no agent ${name}`)
+    return name as Specialist
+  }
+  return addonScope(owner, name)
+}
+
 export const specialistFor = (mode: BuilderMode): Specialist => mode
 
-export const slotKey = (key: string, specialist: Specialist = 'build'): string => (specialist === 'build' ? key : `${key}:${specialist}`)
+export const slotKey = (key: string, scope: BuilderScope = 'build'): string => (scope === 'build' ? key : `${key}:${scope}`)
 
-const SLOT_SUFFIX = new RegExp(`:(${SPECIALISTS.filter((s) => s !== 'build').join('|')})$`)
+/** The slot of what a call names: an agent reference wins over a specialist; neither is the general chat. */
+export const slotFor = (key: string, specialist?: Specialist, agent?: string): string => slotKey(key, agent ? agentScope(agent) : specialist)
+
+const SLOT_SUFFIX = new RegExp(`:(${SPECIALISTS.filter((s) => s !== 'build').join('|')}|agent:[a-z][a-z0-9-]*:[a-z][a-z0-9-]*)$`)
 
 export const projectKey = (key: string): string => key.replace(SLOT_SUFFIX, '')
 
@@ -86,6 +122,12 @@ export const MODE_PROMPTS: Record<Exclude<BuilderMode, 'build'>, string> = {
   },
 }
 
+/** The prompt of a scope that is not the general chat: a specialist's, or an addon agent's own file. */
+export const scopePrompt = (scope: Exclude<BuilderScope, 'build'>): string => {
+  const addon = addonOf(scope)
+  return addon ? loadAddonAgent(addon.addon, addon.name).instructions : MODE_PROMPTS[scope as Exclude<BuilderMode, 'build'>]
+}
+
 const PROVIDERS: Record<string, string> = { gemini: 'google' }
 
 export const EXPLORE_PROMPT = [
@@ -107,12 +149,12 @@ export const impeccableSkill = () => {
 
 export const directionsSkill = () => writeDirectionsSkill(impeccableSkill())
 
-export function piArgs(options: { ai?: BuilderAi; skills: string; mode?: 'rpc'; session?: string; role?: 'explore' | 'inspect'; scope?: BuilderMode; briefing?: string }): string[] {
+export function piArgs(options: { ai?: BuilderAi; skills: string; mode?: 'rpc'; session?: string; role?: 'explore' | 'inspect'; scope?: BuilderScope; briefing?: string }): string[] {
   const args: string[] = []
   if (options.mode) args.push('--mode', options.mode)
   if (options.role === 'inspect') args.push('--approve', '--no-skills', '--no-context-files', '--append-system-prompt', INSPECT_PROMPT)
   else if (options.role) args.push('--approve', '--no-skills', '--no-context-files', '--skill', directionsSkill(), '--append-system-prompt', EXPLORE_PROMPT)
-  else args.push('--approve', '--skill', options.skills, '--append-system-prompt', options.scope && options.scope !== 'build' ? [MODE_PROMPTS[options.scope], TALK, options.briefing].filter(Boolean).join('\n\n') : systemPrompt())
+  else args.push('--approve', '--skill', options.skills, '--append-system-prompt', options.scope && options.scope !== 'build' ? [scopePrompt(options.scope), TALK, options.briefing].filter(Boolean).join('\n\n') : systemPrompt())
   for (const path of extensionPaths(options.role)) args.push('-e', path)
   if (options.session) args.push('--session-id', options.session.replace(/[^A-Za-z0-9_.-]/g, '-'))
   if (options.ai?.proxy) args.push('--provider', 'pikku-proxy')

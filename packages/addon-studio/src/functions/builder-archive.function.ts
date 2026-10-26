@@ -1,20 +1,20 @@
 import { z } from 'zod'
 import { pikkuSessionlessFunc } from '#pikku/addon/function'
-import { SPECIALISTS, slotKey } from '@pikkustudio/builder'
+import { SPECIALISTS, agentScope, slotFor } from '@pikkustudio/builder'
 import { archiveChat } from '../services/chats.js'
 
-export const BuilderArchiveInput = z.object({ key: z.string(), specialist: z.enum(SPECIALISTS).optional() })
+export const BuilderArchiveInput = z.object({ key: z.string(), specialist: z.enum(SPECIALISTS).optional(), agent: z.string().optional() })
 
 export const builderArchive = pikkuSessionlessFunc({
   expose: true,
   description: 'Save the builder chat in the project and start a fresh one.',
   input: BuilderArchiveInput,
-  func: async ({ studioBuilder, studioProjects }, { key, specialist }) => {
-    const slot = slotKey(key, specialist)
+  func: async ({ studioBuilder, studioProjects }, { key, specialist, agent }) => {
+    const slot = slotFor(key, specialist, agent)
     const state = await studioBuilder.state(slot)
     if (state.busy) throw new Error('Pikku is still working. Stop it or wait for it to finish before saving this chat.')
     const { cwd } = await studioProjects.builderLaunch(key)
-    await archiveChat(cwd, state.session, state.items, specialist)
+    await archiveChat(cwd, state.session, state.items, agent ? agentScope(agent) : specialist)
     await studioBuilder.clear(slot)
     return studioBuilder.state(slot)
   },

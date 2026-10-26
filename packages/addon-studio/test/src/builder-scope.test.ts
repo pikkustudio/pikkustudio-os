@@ -18,3 +18,7 @@ describe('modeScope', () => {
     assert.deepEqual(modeScope('build'), {})
   })
 })
+
+test('an agent an addon ships may only write notes in knowledge/', () => {
+  assert.deepEqual(modeScope('agent:spindle:librarian'), { only: ['knowledge'] })
+})

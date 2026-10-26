@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { pikkuSessionlessFunc } from '#pikku/addon/function'
-import { slotKey } from '@pikkustudio/builder'
+import { agentScope, loadAddonAgent, addonOf, slotKey } from '@pikkustudio/builder'
 import { listArtifacts } from '../services/artifacts.js'
 import { languageRule } from '../services/language.js'
 
@@ -8,13 +8,16 @@ const DIRECTIONS = 4
 const DRAFT_TIMEOUT_MS = 15 * 60_000
 const pause = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-export const BuilderPromptInput = z.object({ key: z.string(), message: z.string(), context: z.string().optional(), failOnError: z.boolean().optional(), explore: z.boolean().optional(), mode: z.enum(['build', 'frontend', 'artifacts', 'knowledge', 'emails', 'project']).optional(), offer: z.boolean().optional(), language: z.string().optional() })
+export const BuilderPromptInput = z.object({ key: z.string(), message: z.string(), context: z.string().optional(), failOnError: z.boolean().optional(), explore: z.boolean().optional(), mode: z.enum(['build', 'frontend', 'artifacts', 'knowledge', 'emails', 'project']).optional(), offer: z.boolean().optional(), language: z.string().optional(), agent: z.string().optional() })
 
 export const builderPrompt = pikkuSessionlessFunc({
   expose: true,
   description: 'Ask the builder to do something in a project.',
   input: BuilderPromptInput,
-  func: async ({ studioBuilder, studioSettings, studioProjects }, { key, message, context, failOnError, explore, mode, offer, language }, { http }) => {
+  func: async ({ studioBuilder, studioSettings, studioProjects }, { key, message, context, failOnError, explore, mode: asked, offer, language, agent }, { http }) => {
+    const mode = agent ? agentScope(agent) : asked
+    const addon = mode ? addonOf(mode) : null
+    if (addon) loadAddonAgent(addon.addon, addon.name)
     const { name, about } = await studioSettings.read()
     const profile = name
       ? `The person you are working with is called ${name}. Address them by that name.${about ? ` About them: ${about}. Tailor your answers to that.` : ''}`

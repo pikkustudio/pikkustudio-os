@@ -4,7 +4,7 @@ import { closeSync, existsSync, lstatSync, mkdirSync, openSync, readFileSync, re
 import { cp, mkdir, readFile, readlink, rename, rm, symlink, writeFile } from 'node:fs/promises'
 import { connect, createServer } from 'node:net'
 import { homedir, userInfo } from 'node:os'
-import { builderHome, packageRoot, piPackageRoot, type BuilderMode, type Launcher } from '@pikkustudio/builder'
+import { builderHome, packageRoot, piPackageRoot, type BuilderScope, type Launcher } from '@pikkustudio/builder'
 import { modeScope } from './builder-scope.js'
 import { basename, dirname, join, relative, resolve, sep } from 'node:path'
 import { randomBytes, randomUUID } from 'node:crypto'
@@ -1509,7 +1509,7 @@ export class StudioProjectsService {
     return (await ensureWorktree(entry.path, this.home, entry.id, splitSessionKey(key).worktree)).projectDir
   }
 
-  async builderLaunch(key: string, mode: BuilderMode = 'build'): Promise<{ cwd: string; healDir: string; queueHome?: string; apiUrl?: string; apps: { slug: string; url: string }[]; env: Record<string, string>; launch?: Launcher }> {
+  async builderLaunch(key: string, mode: BuilderScope = 'build'): Promise<{ cwd: string; healDir: string; queueHome?: string; apiUrl?: string; apps: { slug: string; url: string }[]; env: Record<string, string>; launch?: Launcher }> {
     const entry = await this.entry(key)
     const worktree = await ensureWorktree(entry.path, this.home, entry.id, splitSessionKey(key).worktree)
     const port = this.running.get(key)?.port

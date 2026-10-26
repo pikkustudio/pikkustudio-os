@@ -14,3 +14,12 @@ test('saved chats are listed per specialist, and chats saved before the split be
   assert.deepStrictEqual((await listChats(dir)).map((c) => c.id), ['b'])
   assert.deepStrictEqual(await listChats(dir, 'knowledge'), [])
 })
+
+test('an addon agent keeps its saved chats apart from the specialists and the general chat', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'chats-'))
+  const said = (text: string) => [{ kind: 'user', text, at: 1 }]
+  await archiveChat(dir, 'a', said('Find the invoice'), 'agent:spindle:librarian')
+  await archiveChat(dir, 'b', said('Add checkout'))
+  assert.deepEqual((await listChats(dir, 'agent:spindle:librarian')).map((c) => c.id), ['a'])
+  assert.deepEqual((await listChats(dir)).map((c) => c.id), ['b'])
+})

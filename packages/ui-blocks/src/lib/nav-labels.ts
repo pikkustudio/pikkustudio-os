@@ -9,6 +9,6 @@ export const msg = (key: string): I18nString => messages[key]?.() ?? asI18n(key)
 export const navIcon = (name: string): LucideIcon => navIcons[name]!
 
 /** A screen's agent as the chat shows it: the name, and the title and description as text (absent for a `studio:` agent). */
-export type ScreenAgentLabels = { agent: string; title: I18nString | null; description: I18nString | null }
-export const screenAgentLabels = (screen: { agent?: string; agentTitle?: string; agentDescription?: string }): ScreenAgentLabels | null =>
-  screen.agent ? { agent: screen.agent, title: screen.agentTitle ? msg(screen.agentTitle) : null, description: screen.agentDescription ? msg(screen.agentDescription) : null } : null
+export type ScreenAgentLabels = { agent: string; addon: string | null; title: I18nString | null; description: I18nString | null }
+export const screenAgentLabels = (screen: { agent?: string; addon?: string | null; agentTitle?: string; agentDescription?: string }): ScreenAgentLabels | null =>
+  screen.agent ? { agent: screen.agent, addon: screen.addon ?? null, title: screen.agentTitle ? msg(screen.agentTitle) : null, description: screen.agentDescription ? msg(screen.agentDescription) : null } : null
