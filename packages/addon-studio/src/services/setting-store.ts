@@ -11,18 +11,18 @@ export const memorySetting = <T>(): SettingStore<T> => {
   return { get: async () => held, set: async (value) => void (held = value) }
 }
 
-/** A row of `studio_setting` (key, JSON value). */
+/** A row of `setting` (key, JSON value). */
 export const kyselySetting = <T>(db: Kysely<any>, key: string): SettingStore<T> => ({
   async get() {
-    const row = await db.selectFrom('studio_setting').select('value').where('key', '=', key).executeTakeFirst()
+    const row = await db.selectFrom('setting').select('value').where('key', '=', key).executeTakeFirst()
     return row ? (JSON.parse(row.value as string) as T) : null
   },
   async set(value) {
     if (value === null) {
-      await db.deleteFrom('studio_setting').where('key', '=', key).execute()
+      await db.deleteFrom('setting').where('key', '=', key).execute()
       return
     }
     const json = JSON.stringify(value)
-    await db.insertInto('studio_setting').values({ key, value: json }).onConflict((oc) => oc.column('key').doUpdateSet({ value: json })).execute()
+    await db.insertInto('setting').values({ key, value: json }).onConflict((oc) => oc.column('key').doUpdateSet({ value: json })).execute()
   },
 })

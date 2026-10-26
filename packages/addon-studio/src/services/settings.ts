@@ -11,7 +11,7 @@ export interface StudioSettings {
 
 const EMPTY: StudioSettings = { signIn: null, name: null, about: null }
 
-/** Who this Studio is and where it signed in, kept in the settings store (a row of `studio_setting` on a host with a database). */
+/** Who this Studio is and where it signed in, kept in the settings store (a row of `setting` on a host with a database). */
 export class StudioSettingsStore {
   constructor(private store: SettingStore<Partial<StudioSettings>> = memorySetting()) {}
 

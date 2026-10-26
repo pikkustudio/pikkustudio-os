@@ -59,7 +59,7 @@ export type AiChoiceStore = SettingStore<AiChoice>
 
 export const memoryAiChoiceStore = (): AiChoiceStore => memorySetting<AiChoice>()
 
-/** The choice as one row of `studio_setting` (key `ai`). */
+/** The choice as one row of `setting` (key `ai`). */
 export const kyselyAiChoiceStore = (db: Kysely<any>): AiChoiceStore => kyselySetting<AiChoice>(db, 'ai')
 
 /** The secret a provider's key is kept under. */
