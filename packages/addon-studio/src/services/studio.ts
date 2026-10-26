@@ -1,10 +1,10 @@
-import type { ScopedSource } from '../lib/sources/index.js'
+import type { GeneratedStore, ScopedSource } from '../lib/sources/index.js'
 export { deriveChecklist, guideContext, allowed, classifyActivity, latestActivity, STEP_IDS, DIRECTIONS, BUILD_MINUTES } from '../lib/project-checklist.js'
 export type { Checklist, ChecklistStep, StepState, StepAction, Signals, Activity, ActivityKind, RunState } from '../lib/project-checklist.js'
 export { languageRule } from './language.js'
 export { readSignals } from './project-signals.js'
 export { QUESTIONS, EMPTY_INTAKE, type ChecklistStepId, type Intake } from './projects.js'
-export { vaultPersonalSource, personalKey } from '../lib/sources/file-sources.js'
+export { vaultPersonalSource, vaultGeneratedStore, personalKey } from '../lib/sources/file-sources.js'
 export { leased } from '../lib/sources/lease.js'
 export type { ScopedSource } from '../lib/sources/cascade.js'
 import { existsSync } from 'node:fs'
@@ -50,6 +50,7 @@ export interface StudioServicesOptions {
   /** Where the name, about and sign-in choice are kept (Studio's database). Without one they are held in memory only. */
   settingsStore?: SettingStore<Partial<import('./settings.js').StudioSettings>>
   personalSource?: (projectId: string) => ScopedSource | undefined
+  generatedStore?: (projectId: string) => GeneratedStore
   teamSource?: (projectId: string, projectPath: string) => ScopedSource | undefined
   projectStore?: ProjectStore
   logStore?: LogStore
@@ -89,6 +90,7 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
       designEntry: options.designEntry ?? resolveDesignEntry(),
       store: options.projectStore,
       personalSource: options.personalSource,
+      generatedStore: options.generatedStore,
       teamSource: options.teamSource,
       owner: async () => (await studioSettings.read()).name ?? '',
       devContributors: options.devContributors,

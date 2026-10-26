@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { pikkuFunc } from '#pikku/function'
 import { UnauthorizedError } from '@pikku/core/errors'
 import { canMintAddonToken } from '../../../permissions/can-mint-addon-token.js'
-import { frameSecret, mintFrameToken, scopesFor } from '../../../lib/addon-frame-token.js'
+import { mintFrameToken, scopesFor } from '../../../lib/addon-frame-token.js'
 
 export const MintAddonTokenInput = z.object({ addon: z.string().min(1).max(128) })
 
@@ -17,6 +17,6 @@ export const mintAddonToken = pikkuFunc({
   output: MintAddonTokenOutput,
   func: async ({ studio }, { addon }, { session }) => {
     if (!session?.userId) throw new UnauthorizedError()
-    return mintFrameToken({ secret: frameSecret(studio.home), userId: session.userId, scopes: scopesFor(session), addon })
+    return mintFrameToken({ secret: await studio.frameSecret(), userId: session.userId, scopes: scopesFor(session), addon })
   },
 })

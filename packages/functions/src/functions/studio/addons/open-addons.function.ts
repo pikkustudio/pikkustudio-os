@@ -1,6 +1,5 @@
 import { z } from 'zod'
 import { pikkuFunc } from '#pikku/function'
-import { frameSecret } from '../../../lib/addon-frame-token.js'
 import { ADDONS_APP, ADDONS_KEY, ensureAddonsProject } from '../../../lib/addons-project.js'
 
 export const OpenAddonsInput = z.object({})
@@ -15,7 +14,7 @@ export const openAddons = pikkuFunc({
   output: OpenAddonsOutput,
   func: async ({ studio }) => {
     await ensureAddonsProject(studio)
-    frameSecret(studio.home)
+    await studio.frameSecret()
     await studio.projects.open(ADDONS_KEY)
     const apps = await studio.projects.waitForApps(ADDONS_KEY)
     const app = apps.find((candidate) => candidate.slug === ADDONS_APP)

@@ -4,7 +4,7 @@ import { mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { chainFor, isScope, resolveEffective, setIn, toEnv, unsetIn, type ScopedSource } from '../../src/lib/sources/index.js'
-import { generatedSource, projectSource, vaultPersonalSource, personalKey } from '../../src/lib/sources/file-sources.js'
+import { generatedSource, memoryGeneratedStore, vaultGeneratedStore, projectSource, vaultPersonalSource, personalKey } from '../../src/lib/sources/file-sources.js'
 import { LEASE_MS, leased } from '../../src/lib/sources/lease.js'
 import { LayeredSecretService, fromSecretService } from '../../src/lib/sources/layered-secret-service.js'
 import { resolve, writeTo, type Layer } from '../../src/lib/sources/layers.js'
@@ -73,11 +73,17 @@ describe('file sources', () => {
     assert.deepEqual(await personal.read('ci'), { B: 'b' })
     assert.equal(personal.write, undefined)
 
-    const generated = generatedSource(join(dir, 'home', 'g.env'))
+    const generated = generatedSource(memoryGeneratedStore())
     await generated.write!('default', { S: 'x' })
     assert.deepEqual(await generated.read('default'), { S: 'x' })
     assert.deepEqual(await generated.read('dev'), {})
     await assert.rejects(generated.write!('dev', {}), /every run/)
+
+    const vault = new Map<string, string>()
+    const stored = generatedSource(vaultGeneratedStore({ keys: async () => [...vault.keys()], get: async (k) => vault.get(k), set: async (k, v) => void vault.set(k, v) }, 'p1'))
+    await stored.write!('default', { BETTER_AUTH_SECRET: 's' })
+    assert.deepEqual([...vault.keys()], ['generated:p1:BETTER_AUTH_SECRET'])
+    assert.deepEqual(await stored.read('default'), { BETTER_AUTH_SECRET: 's' })
   })
 })
 

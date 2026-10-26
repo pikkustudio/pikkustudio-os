@@ -1,7 +1,4 @@
 import { describe, expect, test } from 'bun:test'
-import { mkdtempSync, readFileSync, statSync } from 'node:fs'
-import { tmpdir } from 'node:os'
-import { join } from 'node:path'
 import { createHmac } from 'node:crypto'
 import {
   FRAME_AUDIENCE,
@@ -133,13 +130,12 @@ describe('the frame never gets the master token', () => {
 })
 
 describe('the shared secret', () => {
-  test('is created once, private to the owner, and reused', () => {
-    const home = join(mkdtempSync(join(tmpdir(), 'studio-')), 'home')
-    const first = frameSecret(home)
+  test('is created once, kept in the vault and reused', async () => {
+    const held = new Map<string, string>()
+    const keeper = { has: async (n: string) => held.has(n), get: async (n: string) => held.get(n)!, set: async (n: string, v: string) => void held.set(n, v) }
+    const first = await frameSecret(keeper)
     expect(first.length).toBeGreaterThan(30)
-    expect(frameSecret(home)).toBe(first)
-    const file = join(home, 'env', 'addons.env')
-    expect(statSync(file).mode & 0o777).toBe(0o600)
-    expect(readFileSync(file, 'utf8')).toContain(`ADDONS_FRAME_SECRET=${first}`)
+    expect(await frameSecret(keeper)).toBe(first)
+    expect(held.get('ADDONS_FRAME_SECRET')).toBe(first)
   })
 })

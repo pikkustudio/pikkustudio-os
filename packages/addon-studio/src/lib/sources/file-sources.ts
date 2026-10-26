@@ -53,11 +53,44 @@ export const vaultPersonalSource = (store: SealedStore, projectId: string): Scop
   },
 })
 
-export const generatedSource = (path: string): ScopedSource => ({
+/** Where values Studio generates for a project (its auth secret, say) are kept. */
+export interface GeneratedStore {
+  read(): Promise<Record<string, string>>
+  write(values: Record<string, string>): Promise<void>
+}
+
+export const memoryGeneratedStore = (): GeneratedStore => {
+  let held: Record<string, string> = {}
+  return { read: async () => ({ ...held }), write: async (values) => void (held = { ...values }) }
+}
+
+export const generatedKey = (projectId: string, name: string) => `generated:${projectId}:${name}`
+
+/** A project's generated values as secrets in the host's vault, named `generated:<project>:<NAME>`. */
+export const vaultGeneratedStore = (
+  vault: { keys(): Promise<string[]>; get(key: string): Promise<string | undefined>; set(key: string, value: string): Promise<void> },
+  projectId: string
+): GeneratedStore => ({
+  async read() {
+    const prefix = generatedKey(projectId, '')
+    const out: Record<string, string> = {}
+    for (const key of await vault.keys()) {
+      if (!key.startsWith(prefix)) continue
+      const value = await vault.get(key)
+      if (value !== undefined) out[key.slice(prefix.length)] = value
+    }
+    return out
+  },
+  async write(values) {
+    for (const [name, value] of Object.entries(values)) await vault.set(generatedKey(projectId, name), value)
+  },
+})
+
+export const generatedSource = (store: GeneratedStore): ScopedSource => ({
   name: 'generated',
-  read: async (scope) => (scope === 'default' ? readDotenv(path) : {}),
+  read: async (scope) => (scope === 'default' ? store.read() : {}),
   write: async (scope, values) => {
     if (scope !== 'default') throw new Error('Generated values only apply to every run')
-    await writeDotenv(path, values)
+    await store.write(values)
   },
 })

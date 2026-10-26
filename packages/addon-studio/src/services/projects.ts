@@ -10,7 +10,7 @@ import { basename, dirname, join, relative, resolve, sep } from 'node:path'
 import { randomBytes, randomUUID } from 'node:crypto'
 import { ConflictError } from '@pikku/core/errors'
 import { toolsRoot } from '../lib/tools/install.js'
-import { generatedSource, projectSource, resolveEffective, setMany, toEnv, type ScopedSource } from '../lib/sources/index.js'
+import { generatedSource, memoryGeneratedStore, type GeneratedStore, projectSource, resolveEffective, setMany, toEnv, type ScopedSource } from '../lib/sources/index.js'
 import { DEVELOP, MAIN, addWorktree, listWorktrees, layoutRoot, sessionKey, splitSessionKey, cloneLayout, commitPaths, createLayout, ensureWorktree, saveWorktrees, keepChanges, mainEnv, keepStatus, listVersions, listThemes, type ProjectTheme, type VersionCommit, worktreeConfinement, type KeepResult, type KeepStatus, type StudioWorktree } from './worktree.js'
 import { canConfine, confinedSpawn, type Confinement } from './confine.js'
 import { Supervisor, type ServiceSpec, type ServiceStatus } from '@pikkustudio/supervisor'
@@ -621,6 +621,8 @@ export interface StudioProjectsOptions {
   env?: (key: string, generated: Record<string, string>) => Promise<Record<string, string>>
   devContributors?: string[]
   personalSource?: (projectId: string) => ScopedSource | undefined
+  /** Where values Studio generates for a project are kept (the vault locally). Without one they live in memory for the run. */
+  generatedStore?: (projectId: string) => GeneratedStore
   teamSource?: (projectId: string, projectPath: string) => ScopedSource | undefined
   waitForPort?: (port: number) => Promise<void>
   startApps?: boolean
@@ -1601,6 +1603,15 @@ export class StudioProjectsService {
     }
   }
 
+  private generated = new Map<string, GeneratedStore>()
+
+  private generatedStoreFor(id: string): GeneratedStore {
+    const made = this.options.generatedStore?.(id)
+    if (made) return made
+    if (!this.generated.has(id)) this.generated.set(id, memoryGeneratedStore())
+    return this.generated.get(id)!
+  }
+
   cascadeSources(key: string, projectPath: string): ScopedSource[] {
     const { id } = splitSessionKey(key)
     const personal = this.options.personalSource?.(id)
@@ -1609,7 +1620,7 @@ export class StudioProjectsService {
       ...(personal ? [personal] : []),
       ...(team ? [team] : []),
       projectSource(projectPath),
-      generatedSource(join(this.home, 'env', `${id}.env`)),
+      generatedSource(this.generatedStoreFor(id)),
     ]
   }
 

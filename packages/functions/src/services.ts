@@ -26,16 +26,14 @@ import { KyselyAgentRunService, KyselyAgentRunStateService, KyselyAgentStorageSe
 import { studioAgentRunner } from './lib/chat-runner.js'
 import { createStudio } from './lib/studio.js'
 import { studioInboxAccess } from './lib/studio-inbox-access.js'
-import { studioAuthSecret } from './lib/auth-secret.js'
+import { ensureSecret, vaultKeeper } from './lib/vault-secret.js'
 import { connectVault } from '@pikkustudio/vault/connect'
 import { KyselyCommentStore } from '@pikkustudio/addon-review/comment-store'
-import { frameSecret } from './lib/addon-frame-token.js'
 import { KyselyInboxStore } from '@pikkustudio/addon-inbox/store'
 import { KyselyVerdictStore } from '@pikkustudio/addon-review/store'
 import { studioMetaSource, studioUiSource } from './lib/review-sources.js'
 
 process.env.PIKKU_DATA_DIR ??= join(studioHome(), 'data')
-process.env.BETTER_AUTH_SECRET ??= studioAuthSecret(studioHome())
 
 export const createSingletonServices = pikkuServices(async (config, existingServices) => {
   const variables =
@@ -52,6 +50,8 @@ export const createSingletonServices = pikkuServices(async (config, existingServ
   }
   const kysely: Kysely<DB> = existingServices.kysely
   const vault = await connectVault(studioHome(), new LocalSecretService(variables))
+  // Sign-in sessions are signed with a secret of Studio's own, made once and kept in the vault.
+  if (!existingServices?.secrets) await ensureSecret(vaultKeeper(studioHome()), 'BETTER_AUTH_SECRET')
   const secrets = existingServices?.secrets ?? new TypedSecretService(vault.secrets)
   const schema = existingServices?.schema ?? new CFWorkerSchemaService(logger)
   const emailService =
@@ -108,7 +108,7 @@ export const createSingletonServices = pikkuServices(async (config, existingServ
     studio,
     verdictStore: existingServices?.verdictStore ?? new KyselyVerdictStore(kysely as any),
     inboxStore: existingServices?.inboxStore ?? new KyselyInboxStore(kysely as any),
-    inboxSecret: existingServices?.inboxSecret ?? frameSecret(studio.home),
+    inboxSecret: existingServices?.inboxSecret ?? (await studio.frameSecret()),
     inboxAccess: existingServices?.inboxAccess ?? studioInboxAccess(studio.projects),
     commentStore: existingServices?.commentStore ?? new KyselyCommentStore(kysely as any),
     metaSource: existingServices?.metaSource ?? studioMetaSource(studio.projects),

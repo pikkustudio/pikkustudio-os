@@ -20,12 +20,15 @@ import {
   type StudioProjectsService,
   type StudioPublisher,
   type StudioSettingsStore,
+  vaultGeneratedStore,
   vaultPersonalSource,
 } from '@pikkustudio/addon-studio/services'
 import type { Kysely } from 'kysely'
 import { connectVault, projectVaultEnv } from '@pikkustudio/vault/connect'
 import { mintInboxToken } from '@pikkustudio/addon-inbox/token'
-import { frameSecret } from './addon-frame-token.js'
+import { frameSecret, FRAME_SECRET_NAME } from './addon-frame-token.js'
+import { vaultKeeper } from './vault-secret.js'
+import { ADDONS_KEY } from './addons-project.js'
 import { installEmbeddedRuntime } from './runtime.js'
 import { holdWhileStreaming } from './sleep.js'
 import { StudioAudit, instrumentStudio } from './studio-audit.js'
@@ -41,6 +44,8 @@ export interface Studio {
   models: Map<string, string>
   /** Background work the addons' project decorators run; reconciled on wake and stopped on sleep. */
   decorators: ProjectDecorator[]
+  /** The secret that signs addon screen tokens (kept in the vault). */
+  frameSecret(): Promise<string>
 }
 
 /** What the wired addons add to Studio, read from the services their contributors provide. */
@@ -54,13 +59,16 @@ export interface StudioExtensions {
 
 export type { SignInChoice }
 
-const inboxEnv = (home: string, key: string): Record<string, string> => {
+const inboxEnv = async (home: string, key: string): Promise<Record<string, string>> => {
   const dot = key.indexOf('.')
   const projectKey = dot < 0 ? key : key.slice(0, dot)
-  const { token } = mintInboxToken({ secret: frameSecret(home), projectKey, stage: null })
+  const secret = await frameSecret(vaultKeeper(home))
+  const { token } = mintInboxToken({ secret, projectKey, stage: null })
   return {
     STUDIO_INBOX_URL: `http://127.0.0.1:${process.env.API_PORT || '4003'}/rpc/inbox:recordMessage`,
     STUDIO_INBOX_TOKEN: token,
+    // Only the Add-ons project verifies addon screen tokens, so only it is handed the secret that signs them.
+    ...(projectKey === ADDONS_KEY ? { [FRAME_SECRET_NAME]: secret } : {}),
   }
 }
 
@@ -86,6 +94,17 @@ export async function createStudio(home = studioHome(), db?: Kysely<any>, extens
         projectId
       ),
     settingsStore: db ? kyselySetting<Partial<StudioSettings>>(db, 'settings') : undefined,
+    generatedStore: (projectId) => {
+      const keeper = vaultKeeper(home)
+      return vaultGeneratedStore(
+        {
+          keys: async () => (await connectVault(home)).admin.keys(),
+          get: async (key) => ((await keeper.has(key)) ? keeper.get(key) : undefined),
+          set: (key, value) => keeper.set(key, value),
+        },
+        projectId
+      )
+    },
     aiChoice: db ? kyselyAiChoiceStore(db) : undefined,
     aiSecrets: {
       has: async (name) => (await connectVault(home)).secrets.hasSecret(name),
@@ -95,7 +114,7 @@ export async function createStudio(home = studioHome(), db?: Kysely<any>, extens
     devContributors: devContributors(),
     projectEnv: async (key, generated) => ({
       ...(await projectVaultEnv(home, key, generated)),
-      ...inboxEnv(home, key),
+      ...(await inboxEnv(home, key)),
     }),
   })
   const audit = new StudioAudit(home)
@@ -116,5 +135,6 @@ export async function createStudio(home = studioHome(), db?: Kysely<any>, extens
     audit,
     models: core.studioModels,
     decorators,
+    frameSecret: () => frameSecret(vaultKeeper(home)),
   }
 }
