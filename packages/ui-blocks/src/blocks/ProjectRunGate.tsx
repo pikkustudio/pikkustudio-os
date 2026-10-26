@@ -6,10 +6,8 @@ import { m } from '@/i18n/messages'
 import { useNavigate } from '@tanstack/react-router'
 import { isKeyOf, sourceOf, useProjectKey } from '../lib/project'
 import { DEFAULT_TARGET, formatTarget, useProjectTarget } from '../lib/project-target'
-import { useProjectQuery } from '../lib/projectRpc'
 import { AppNotRunning, LOCAL_LAUNCH, SOURCE_LAUNCH, launchSteps, phaseLabel, type LaunchPhase, type LaunchWhere, type StageWayOut } from './AppNotRunning'
 import { useTeamProjects, type ListedProject } from './TeamProjects'
-import { CardsSkeleton } from './QueryState'
 
 type LiveApp = { slug: string; state: 'starting' | 'ready' | 'failed' }
 type Workspace = { state: 'off' | 'starting' | 'ready' | 'failed'; phase: LaunchPhase | null; error: string | null }
@@ -30,19 +28,11 @@ export function ProjectRunGate({ children }: { children: I18nNode }) {
       onPublish: () => navigate({ to: '/publish' as never, search: ((prev: object) => prev) as never }),
       onWorkspace: () => target.openWorkspace?.(),
     }
-    if (target.live !== false) return <StageGate stage={wayOut}>{children}</StageGate>
+    if (target.live !== false) return <>{children}</>
     return <AppNotRunning state="off" onStart={wayOut.onWorkspace} stage={wayOut} />
   }
   if (!key || !project) return <>{children}</>
   return sourceOf(key) ? <SourceWorkspaceGate project={{ ...project, key }}>{children}</SourceWorkspaceGate> : <LocalGate project={project}>{children}</LocalGate>
-}
-
-function StageGate({ stage, children }: { stage: StageWayOut; children: I18nNode }) {
-  const meta = useProjectQuery(useProjectKey(), 'console:getAllMeta', {}, { handlesErrors: true })
-  const status = (meta.error as { status?: number } | null)?.status ?? 0
-  if (meta.isLoading) return <CardsSkeleton />
-  if (meta.isError && (status === 500 || status === 0)) return <AppNotRunning state="off" onStart={stage.onWorkspace} stage={{ ...stage, outdated: true }} />
-  return <>{children}</>
 }
 
 /**
