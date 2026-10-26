@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import { slotKey, type BuilderSession } from '@pikkustudio/builder'
 import { listArtifacts } from './artifacts.js'
 import { latestActivity, type RunState, type Signals } from '../lib/project-checklist.js'
-import { EMPTY_INTAKE, type StudioProjectsService } from './projects.js'
+import { EMPTY_INTAKE, sourceOf, type StudioProjectsService } from './projects.js'
 import type { StudioPublisher } from './publish.js'
 
 const WORKING = 6
@@ -15,9 +15,11 @@ export async function readSignals(
   now = Date.now(),
 ): Promise<Signals> {
   const intake = (await services.projects.intake(key)) ?? EMPTY_INTAKE
-  const cwd = await services.projects.projectDir(key)
-  const artifacts = (await listArtifacts(cwd)).filter((a) => a.kind === 'Design')
-  const mocks = join(cwd, '.mocks')
+  // A project a source holds has no checkout here, so nothing on disk to read: it stands at the start. A bare key
+  // still needs its registry entry, so projectDir throws for one that is missing.
+  const cwd = sourceOf(key) ? null : await services.projects.projectDir(key)
+  const artifacts = cwd ? (await listArtifacts(cwd)).filter((a) => a.kind === 'Design') : []
+  const mocks = cwd ? join(cwd, '.mocks') : ''
   const front = await services.builder.state(slotKey(key, 'frontend'))
   const build = await services.builder.state(slotKey(key))
   const doing = front.busy ? front : build.busy ? build : null
@@ -28,8 +30,8 @@ export async function readSignals(
   return {
     intake,
     directions: { total: artifacts.length, chosen: artifacts.some((a) => a.chosen), chosenId: artifacts.find((a) => a.chosen)?.id },
-    designed: existsSync(join(cwd, 'DESIGN.md')),
-    samples: existsSync(mocks) ? readdirSync(mocks).filter((n) => !n.startsWith('.')).length : 0,
+    designed: cwd ? existsSync(join(cwd, 'DESIGN.md')) : false,
+    samples: cwd && existsSync(mocks) ? readdirSync(mocks).filter((n) => !n.startsWith('.')).length : 0,
     busy: { frontend: front.busy, build: build.busy },
     publish: (() => {
       const job = services.publisher.status(key)
