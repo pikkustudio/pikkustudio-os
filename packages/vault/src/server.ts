@@ -6,6 +6,9 @@ import { join } from 'node:path'
 import {
   keyIdFor,
   parseSealedValue,
+  SEALED_BOX_ALGORITHM,
+  seal,
+  serializeSealedValue,
   unseal,
   type SealingKeypair,
 } from './sealed-box.js'
@@ -68,14 +71,20 @@ export const startVault = async (home: string): Promise<RunningVault | null> => 
   const audit = new SqliteAuditService(db)
   const admin = adminToken(paths.adminToken)
 
-  const record = (caller: string, type: string, key: string | undefined, outcome: 'success' | 'denied' | 'failed') =>
+  const record = (
+    caller: string,
+    type: string,
+    key: string | undefined,
+    outcome: 'success' | 'denied' | 'failed',
+    extra: Record<string, unknown> = {}
+  ) =>
     audit.audit({
       type,
       source: 'explicit',
       outcome,
       occurredAt: new Date().toISOString(),
       userIdentity: { userId: caller },
-      metadata: key ? { key } : undefined,
+      metadata: key || Object.keys(extra).length ? { ...(key ? { key } : {}), ...extra } : undefined,
     })
 
   const handle = async (req: IncomingMessage, res: ServerResponse) => {
@@ -95,6 +104,50 @@ export const startVault = async (home: string): Promise<RunningVault | null> => 
 
     if (resource === 'public-key' && method === 'GET') {
       return send(res, 200, { publicKey: keypair.publicKey, keyId })
+    }
+
+    if ((resource === 'getSecrets' || resource === 'getVariables' || resource === 'stageDbUrl') && method === 'POST') {
+      const body = await readBody(req)
+      const requester = typeof body.requester === 'string' ? body.requester : null
+      await record(caller, `secret.${resource}`, undefined, 'failed', { requester })
+      return send(res, 501, { error: `${resource} is not implemented by the local vault` })
+    }
+
+    if ((resource === 'openSealed' || resource === 'sealValue') && method === 'POST') {
+      const type = resource === 'openSealed' ? 'secret.open' : 'secret.seal'
+      const body = await readBody(req)
+      const requester = typeof body.requester === 'string' ? body.requester : null
+      if (!isAdmin && scoped!.keys !== '*') {
+        await record(caller, type, undefined, 'denied', { requester })
+        return send(res, 403, { error: 'forbidden' })
+      }
+      if (resource === 'sealValue') {
+        if (typeof body.plaintext !== 'string') {
+          await record(caller, type, undefined, 'failed', { requester })
+          return send(res, 400, { error: 'Refusing to seal a value that is not a string' })
+        }
+        const sealed = serializeSealedValue(seal(keypair.publicKey, keyId, body.plaintext))
+        await record(caller, type, undefined, 'success', { requester })
+        return send(res, 200, { sealed })
+      }
+      let envelope
+      try {
+        envelope = parseSealedValue(String(body.sealed))
+      } catch {
+        await record(caller, type, undefined, 'failed', { requester })
+        return send(res, 400, { error: 'Refusing to open a value that is not a sealed envelope' })
+      }
+      if (envelope.alg !== SEALED_BOX_ALGORITHM) {
+        await record(caller, type, undefined, 'failed', { requester, kid: envelope.kid })
+        return send(res, 400, { error: `Refusing to open a value sealed with "${envelope.alg}", not ${SEALED_BOX_ALGORITHM}` })
+      }
+      if (envelope.kid !== keyId) {
+        await record(caller, type, undefined, 'failed', { requester, kid: envelope.kid })
+        return send(res, 400, { error: 'sealed_to_wrong_key' })
+      }
+      const value = unseal(keypair.privateKey, envelope)
+      await record(caller, type, undefined, 'success', { requester, kid: envelope.kid })
+      return send(res, 200, { value })
     }
 
     if (resource === 'secrets' && key) {

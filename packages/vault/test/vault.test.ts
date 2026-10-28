@@ -4,12 +4,15 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { VaultAdmin } from '../src/admin.ts'
 import { VaultClientSecretService } from '../src/client.ts'
+import { StageVaultClient } from '../src/stage-vault-client.ts'
+import { generateSealingKeypair, keyIdFor, seal, serializeSealedValue } from '../src/sealed-box.ts'
 import { startVault, vaultPaths, type RunningVault } from '../src/server.ts'
 
 let home: string
 let vault: RunningVault
 let admin: VaultClientSecretService
 let control: VaultAdmin
+let stage: StageVaultClient
 
 beforeAll(async () => {
   home = mkdtempSync(join(tmpdir(), 'vault-'))
@@ -18,6 +21,7 @@ beforeAll(async () => {
   const connection = { socketPath: paths.socket, token: readFileSync(paths.adminToken, 'utf8').trim() }
   admin = new VaultClientSecretService(connection)
   control = new VaultAdmin(connection)
+  stage = new StageVaultClient(connection)
 })
 
 afterAll(async () => {
@@ -57,4 +61,35 @@ test('a scoped token reads its own namespaced key before the shared one', async 
   const other = new VaultClientSecretService({ socketPath: vaultPaths(home).socket, token: await control.mintToken('project:b', '*') })
   expect((await other.getSecret<string>('shared')).reveal()).toBe('global')
   expect(await other.hasSecret('missing')).toBe(false)
+})
+
+test('sealValue then openSealed round-trips and audits both with the requester', async () => {
+  const sealed = await stage.sealValue('unit-a', 'sk_live_123')
+  expect(await stage.openSealed('unit-a', sealed)).toBe('sk_live_123')
+  const trail = await control.activity()
+  const types = trail.events.map((e) => e.type)
+  expect(types).toContain('secret.seal')
+  expect(types).toContain('secret.open')
+})
+
+test('openSealed refuses a value sealed to another key', async () => {
+  const other = generateSealingKeypair()
+  const sealed = serializeSealedValue(seal(other.publicKey, keyIdFor(other.publicKey), 'x'))
+  await expect(stage.openSealed(null, sealed)).rejects.toThrow()
+})
+
+test('openSealed refuses a value that is not an envelope', async () => {
+  await expect(stage.openSealed(null, 'sk_live_123')).rejects.toThrow()
+})
+
+test('sealValue refuses a value that is not a string', async () => {
+  await expect((stage as any).sealValue(null, 42)).rejects.toThrow()
+})
+
+test('the stage methods the local vault does not serve answer not implemented, not 404', async () => {
+  await expect(stage.getSecrets('unit-a')).rejects.toThrow('getSecrets is not implemented by the local vault')
+  await expect(stage.getVariables('unit-a')).rejects.toThrow('getVariables is not implemented by the local vault')
+  await expect(stage.stageDbUrl('unit-a')).rejects.toThrow('stageDbUrl is not implemented by the local vault')
+  const types = (await control.activity()).events.map((e) => e.type)
+  expect(types).toContain('secret.getSecrets')
 })

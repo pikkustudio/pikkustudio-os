@@ -1,0 +1,16 @@
+{
+  "name": "@pikkustudio/addon-broker",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "license": "BUSL-1.1",
+  "exports": {
+    ".": "./src/broker.ts"
+  },
+  "scripts": {
+    "test": "bun test test"
+  },
+  "dependencies": {
+    "@pikku/core": "^0.12.147"
+  }
+}
