@@ -1,6 +1,6 @@
 {
   "name": "@pikkustudio/addon-studio",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Studio addon for Pikku — the local backend behind Studio",
   "type": "module",
   "imports": {
