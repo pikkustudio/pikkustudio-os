@@ -330,7 +330,7 @@
     },
     "packages/release": {
       "name": "@pikkustudio/release-os",
-      "version": "0.0.0",
+      "version": "0.1.0",
     },
     "packages/supervisor": {
       "name": "@pikkustudio/supervisor",

@@ -1,6 +1,6 @@
 {
   "name": "@pikkustudio/release-os",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Carries the Studio OS release version. Changesets bumps it; v<version> is the git tag."
 }
