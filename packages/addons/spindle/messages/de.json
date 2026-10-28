@@ -221,5 +221,7 @@
   "spindle_new_collection__title": "Neue Sammlung",
   "spindle_collection__title": "Sammlung",
   "spindle_suggestions__title": "Vorschläge",
-  "spindle_file__title": "Datei"
+  "spindle_file__title": "Datei",
+  "spindle_librarian__title": "Librarian",
+  "spindle_librarian__description": "Finds answers in your Spindle library and shows where they came from."
 }

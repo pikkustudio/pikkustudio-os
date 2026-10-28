@@ -20,7 +20,9 @@
   },
   "files": [
     "dist",
-    "src/screens"
+    "src/screens",
+    "agents",
+    "skills"
   ],
   "scripts": {
     "prebuild": "pikku all",

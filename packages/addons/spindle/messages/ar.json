@@ -241,5 +241,7 @@
   "spindle_new_collection__title": "مجموعة جديدة",
   "spindle_collection__title": "مجموعة",
   "spindle_suggestions__title": "الاقتراحات",
-  "spindle_file__title": "ملف"
+  "spindle_file__title": "ملف",
+  "spindle_librarian__title": "Librarian",
+  "spindle_librarian__description": "Finds answers in your Spindle library and shows where they came from."
 }
