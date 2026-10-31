@@ -94,6 +94,7 @@
   "auth__google_error": "Unable to continue with Google right now.",
   "auth__login__cta": "Sign in",
   "auth__login__description": "Welcome back to {name}.",
+  "auth__login__email_not_verified": "Verify your email before you sign in. We sent a new link to your inbox.",
   "auth__login__error": "Unable to sign in right now.",
   "auth__login__footer_action": "Sign up",
   "auth__login__footer_prompt": "Don't have an account?",
