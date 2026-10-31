@@ -94,6 +94,7 @@
   "auth__google_error": "Weiter mit Google ist gerade nicht möglich.",
   "auth__login__cta": "Anmelden",
   "auth__login__description": "Willkommen zurück bei {name}.",
+  "auth__login__email_not_verified": "Bestätige deine E-Mail, bevor du dich anmeldest. Wir haben dir einen neuen Link geschickt.",
   "auth__login__error": "Die Anmeldung ist gerade nicht möglich.",
   "auth__login__footer_action": "Registrieren",
   "auth__login__footer_prompt": "Noch kein Konto?",

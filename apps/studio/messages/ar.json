@@ -102,6 +102,7 @@
   "auth__google_error": "تعذرت المتابعة باستخدام Google الآن.",
   "auth__login__cta": "تسجيل الدخول",
   "auth__login__description": "أهلا بعودتكم إلى {name}.",
+  "auth__login__email_not_verified": "أكدوا بريدكم الإلكتروني قبل تسجيل الدخول. أرسلنا رابطا جديدا إلى بريدكم الوارد.",
   "auth__login__error": "تعذر تسجيل الدخول الآن.",
   "auth__login__footer_action": "إنشاء حساب",
   "auth__login__footer_prompt": "ليس لديكم حساب؟",
