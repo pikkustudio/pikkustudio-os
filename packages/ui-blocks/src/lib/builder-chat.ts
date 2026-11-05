@@ -1,7 +1,7 @@
 import { m } from '@/i18n/messages'
 import { useLocation } from '@tanstack/react-router'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type { UseMutationResult } from '@tanstack/react-query'
+import { useQueryClient, type UseMutationResult } from '@tanstack/react-query'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { asI18n, type I18nString } from '@pikku/react'
 import type { ChatItem } from './chat'
@@ -176,13 +176,22 @@ const toChat = (all: BuilderItem[], prefix: string, agent?: I18nString): Timed[]
 /** What a builder call names: an agent reference (an addon's or `studio:<name>`), or else a specialist. */
 export const scopeInput = (mode: WorkMode | null, agent: string | null) => (agent ? { agent } : { specialist: mode ?? undefined })
 
+const BUSY_MS = 2000
+const QUIET_MS = 30_000
+/** The chat is checked every couple of seconds while the agent works (or until the first answer), and rarely once it is quiet. */
+const chatPoll = (alsoFast: boolean) => (query: { state: { data?: unknown } }) => {
+  const data = query.state.data as { busy?: boolean } | undefined
+  return !data || data.busy || alsoFast ? BUSY_MS : QUIET_MS
+}
+
 export function useBuilderChat(key: string, mode: WorkMode | null, agent: string | null = null) {
   const on = !!mode || !!agent
   const guideMode = !agent && mode === 'project'
-  const state = usePikkuQuery('studio:builderState', { key, ...scopeInput(mode, agent) }, { enabled: on && !!key, refetchInterval: 2000 } as never)
   const checklist = useProjectChecklist(guideMode ? key : '')
   const list: Checklist | undefined = guideMode ? checklist.data : undefined
-  const design = usePikkuQuery('studio:builderState', { key, specialist: 'frontend' }, { enabled: guideMode && !!key && !!list?.handoff, refetchInterval: 2000 } as never)
+  const stepWorking = !!list?.steps.some((s) => s.state === 'working')
+  const state = usePikkuQuery('studio:builderState', { key, ...scopeInput(mode, agent) }, { enabled: on && !!key, refetchInterval: chatPoll(stepWorking) } as never)
+  const design = usePikkuQuery('studio:builderState', { key, specialist: 'frontend' }, { enabled: guideMode && !!key && !!list?.handoff, refetchInterval: chatPoll(stepWorking) } as never)
   const prompt = usePikkuMutation('studio:builderPrompt')
   const guideSay = usePikkuMutation('studio:projectGuideSay' as never) as unknown as UseMutationResult<unknown, Error, { key: string; message?: string; kickoff?: boolean; greet?: boolean; changed?: { step: string; state: string }; skip?: boolean }>
   const guideAct = useGuideAct()
@@ -393,6 +402,13 @@ export function useBuilderChat(key: string, mode: WorkMode | null, agent: string
   )
 
   const working = !!data?.busy || designBusy
+  // When an agent turn ends, what it changed (steps, saved work, running apps) is refreshed once, so those can be checked slowly the rest of the time.
+  const client = useQueryClient()
+  const was = useRef(false)
+  useEffect(() => {
+    if (was.current && !working) for (const name of ['studio:projectChecklist', 'studio:changes', 'studio:keepStatus', 'studio:projectApps', 'studio:mockStatus']) void client.invalidateQueries({ queryKey: [name] })
+    was.current = working
+  }, [working, client])
   const activity = activityOf(designBusy && !data?.busy ? designData?.items ?? [] : data?.items ?? [], working)
   return { items, question, raw: data?.items ?? [], busy: sending || !!data?.busy, activity, stop, stopping, canStop: on && working && !stopping, send, decide, push, archive, skipQuestion, archiving: archiveChat.isPending, canArchive: on && !sending && !data?.busy && !archiveChat.isPending && (data?.items ?? []).some((i) => !!i.text && (i.kind === 'user' || i.kind === 'assistant')) }
 }

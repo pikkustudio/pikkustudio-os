@@ -85,7 +85,7 @@ export function doorsFrom(apps: WebApp[], meta: Meta | undefined): Door[] {
 type FileRead = { content?: string; binary?: boolean; truncated?: boolean }
 
 export function useFrontDoors(key: string) {
-  const apps = usePikkuQuery('studio:projectApps', { key }, { enabled: !!key, refetchInterval: 4000 })
+  const apps = usePikkuQuery('studio:projectApps', { key }, { enabled: !!key, refetchInterval: (q: { state: { data?: { state: string }[] } }) => ((q.state.data ?? []).some((a) => a.state !== 'ready') ? 4000 : 30_000) } as never)
   const meta = useProjectQuery<Meta>(key, 'console:getAllMeta', {})
   const config = useProjectQuery<FileRead>(key, 'console:readProjectFile', { path: 'pikku.config.json' }, { enabled: !!meta.data?.httpMeta?.length, optional: true })
   const where = (() => {

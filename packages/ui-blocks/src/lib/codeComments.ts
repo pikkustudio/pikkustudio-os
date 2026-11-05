@@ -50,7 +50,7 @@ export function useCodeThreads(projectKey: string, path: string) {
   const query = useQuery<{ threads: CodeThread[] }>({
     queryKey: [...scope, path],
     queryFn: () => invoke('studio:codeComments', { key: projectKey, path }),
-    refetchInterval: 5000,
+    refetchInterval: 30_000,
     retry: false,
     meta: { handlesErrors: true },
   })

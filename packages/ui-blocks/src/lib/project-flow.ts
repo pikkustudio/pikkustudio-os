@@ -35,8 +35,14 @@ export type Checklist = {
 
 export const STEP_ORDER: ChecklistStepId[] = ['questions', 'explore', 'frontend', 'backend', 'tests', 'publish']
 
+/** Checked every few seconds while a step is being worked on (or until the first answer), and only now and then otherwise. */
+const checklistPoll = (query: { state: { data?: Checklist } }) => {
+  const data = query.state.data
+  return !data || data.steps.some((s) => s.state === 'working') ? 3000 : 45_000
+}
+
 export const useProjectChecklist = (key: string) =>
-  usePikkuQuery('studio:projectChecklist' as never, { key } as never, { enabled: checklistEnabled(key), refetchInterval: 3000 } as never) as unknown as UseQueryResult<Checklist>
+  usePikkuQuery('studio:projectChecklist' as never, { key } as never, { enabled: checklistEnabled(key), refetchInterval: checklistPoll } as never) as unknown as UseQueryResult<Checklist>
 
 export const useGuideAct = () =>
   usePikkuMutation('studio:projectGuideAct' as never) as unknown as UseMutationResult<Checklist, Error, { key: string; step: ChecklistStepId; action: StepAction; language?: string }>

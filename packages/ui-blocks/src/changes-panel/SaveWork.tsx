@@ -1,5 +1,6 @@
 import { asI18n, type I18nString } from '@pikku/react'
 import { useContext, useId, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { m } from '@/i18n/messages'
 import { ShellCtx } from '../lib/shell'
@@ -31,8 +32,9 @@ const reasonOf = (error: unknown) => (error instanceof Error && error.message ? 
 export function SaveWork({ projectKey }: { projectKey: string }) {
   const { say } = useContext(ShellCtx)
   const canEdit = useCanEdit()
+  const client = useQueryClient()
   const fieldId = useId()
-  const status = usePikkuQuery('studio:keepStatus', { key: projectKey }, { enabled: !!projectKey && canEdit, refetchInterval: 8000 } as never) as unknown as { data?: KeepStatus; isError: boolean; refetch: () => Promise<unknown> }
+  const status = usePikkuQuery('studio:keepStatus', { key: projectKey }, { enabled: !!projectKey && canEdit, refetchInterval: 45_000 } as never) as unknown as { data?: KeepStatus; isError: boolean; refetch: () => Promise<unknown> }
   const keep = call<{ key: string }, KeepResult>(usePikkuMutation('studio:keepChanges'))
   const send = call<{ key: string }, Sent>(usePikkuMutation('studio:pushAll'))
   const link = call<{ key: string; url: string }, Sent>(usePikkuMutation('studio:linkRemote'))
@@ -65,6 +67,7 @@ export function SaveWork({ projectKey }: { projectKey: string }) {
     } finally {
       setBusy(null)
       void status.refetch()
+      void client.invalidateQueries({ queryKey: ['studio:changes'] })
     }
   }
 

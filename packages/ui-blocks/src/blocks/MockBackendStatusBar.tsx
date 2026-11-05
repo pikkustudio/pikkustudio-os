@@ -9,7 +9,7 @@ type Status = { available: boolean; flagged: unknown[]; unflagged: unknown[]; sc
 /** How many screens run on sample data, project-wide (studio:mockStatus takes only the project key); 0 when none or unknown. */
 export const useMockCount = (): number => {
   const key = useProjectKey()
-  const status = usePikkuQuery('studio:mockStatus', { key }, { enabled: !!key, refetchInterval: 15000 } as never)
+  const status = usePikkuQuery('studio:mockStatus', { key }, { enabled: !!key, refetchInterval: 60_000 } as never)
   const data = status.data as Status | undefined
   if (!data?.available) return 0
   const stubs = data.flagged.length + data.unflagged.length
@@ -19,7 +19,7 @@ export const useMockCount = (): number => {
 /** Above the design chat's input: how many screens run on sample data, and the one button that hands them to the build agent. */
 export function MockBackendStatusBar({ onMakeReal, busy }: { onMakeReal: () => void; busy?: boolean }) {
   const key = useProjectKey()
-  const status = usePikkuQuery('studio:mockStatus', { key }, { enabled: !!key, refetchInterval: 15000 } as never)
+  const status = usePikkuQuery('studio:mockStatus', { key }, { enabled: !!key, refetchInterval: 60_000 } as never)
   if (status.isError) {
     return (
       <div className="flex flex-wrap items-center gap-3 border-t border-border bg-card px-5 py-2.5 text-px145 text-ink-2" role="status">
