@@ -152,6 +152,9 @@ function Note({
   )
 }
 
+// Pages that only mean something on a live published copy, not in a workspace (an addon cannot say so itself yet, its nav type has no `when`).
+const LIVE_ONLY = new Set(['/domains'])
+
 export function ShellLayout({ children }: { children?: ReactNode }) {
   return (
     <ProjectTargetsProvider>
@@ -212,6 +215,8 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
   const projectKey = useProjectKey()
   const releases = useReleases()
   const everDeployed = releases.releases.some((v) => v.status === 'live' || v.status === 'was-live' || v.status === 'rolled-back')
+  const target = useProjectTarget()
+  const isLive = target.kind === 'stage' && !!target.live
   const journey = useProjectChecklist(projectKey).data?.started !== false && releases.state !== 'loading' && !everDeployed
   const railNav = useNavEntries('rail')
   const teamNav = useNavEntries('team')
@@ -416,7 +421,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
             ) : (
             <div className="flex flex-col gap-0.5">
               <div className={`mb-1.5 px-3 text-[13px] font-semibold text-muted-foreground ${lbl}`}>{projectName}</div>
-              {projectNav.filter((s) => s.path !== '/explore' && (s.nav!.when !== 'journey' || journey)).map(navLink)}
+              {projectNav.filter((s) => s.path !== '/explore' && (s.nav!.when !== 'journey' || journey) && (!LIVE_ONLY.has(s.path) || isLive)).map(navLink)}
               {registry.pins.filter((pin) => pins.includes(pinId(pin))).map((pin) => {
                 const Icon = navIcon(pin.icon)
                 return (
