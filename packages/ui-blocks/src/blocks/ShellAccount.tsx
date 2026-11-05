@@ -1,7 +1,7 @@
 import { asI18n, type I18nNode, type I18nString } from '@pikku/react'
 import { Link } from './Link'
 import { Check, Cloud, FolderOpen, Laptop, LogOut, ShieldCheck, User, Users, type LucideIcon } from 'lucide-react'
-import { screenAt } from '../lib/nav-registry'
+import { HAS_CORE, screenAt } from '../lib/nav-registry'
 import { msg, navIcon } from '../lib/nav-labels'
 import { m } from '@/i18n/messages'
 import { keep } from '../lib/links'
@@ -100,6 +100,9 @@ export function ShellAccount({ expanded, onOpen, onAccount, collapsed }: ShellAc
     return (
       <ShellAccountView icon={Laptop} scope={m.shell__scope_pc()} scopeNote={m.shell__scope_pc_note()} name={name} note={m.shell__workspace()} expanded={expanded} onOpen={onOpen} onAccount={onAccount} collapsed={collapsed} />
     )
+  // No teams or projects in this build (an operator edition): the foot is only who is signed in.
+  if (!HAS_CORE)
+    return <ShellAccountView icon={User} scope={name ?? m.shell__workspace()} scopeNote={user.email ? asI18n(user.email) : m.shell__workspace()} name={name} note={user.email ? asI18n(user.email) : m.shell__workspace()} expanded={expanded} onOpen={onAccount} onAccount={onAccount} collapsed={collapsed} />
   return (
     <ShellAccountView
       icon={local ? Laptop : Users}

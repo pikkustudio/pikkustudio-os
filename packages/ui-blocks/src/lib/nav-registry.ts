@@ -34,6 +34,8 @@ export type NavRegistry = {
   explore: readonly ExploreSection[]
   /** Where `/` lands a signed-in visitor when the build has no core screens; absent otherwise. */
   home?: string
+  /** False in a build with no core screens (link-addon.mjs --no-core): no teams or projects, so the shell shows none. */
+  core?: boolean
 }
 
 const firstOf = (path: string) => path.split('/').filter(Boolean)[0] ?? ''
@@ -45,6 +47,8 @@ export const isLocalOnly = (path: string) => !STUDIO_LOCAL && LOCAL.has(firstOf(
 // The web build lists no local-only page. `screens` keeps them all: which segment is a team or project page is how a
 // URL is read, so the routes can still turn one of their URLs away.
 const raw = nav as unknown as NavRegistry
+/** Whether this build has the core's own screens, and so teams and projects to show. */
+export const HAS_CORE = raw.core !== false
 const listed = <T extends { path: string }>(rows: readonly T[]) => rows.filter((r) => !isLocalOnly(r.path))
 export const registry: NavRegistry = {
   ...raw,
