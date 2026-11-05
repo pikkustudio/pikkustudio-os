@@ -7,7 +7,7 @@ import { parseMetricLine, type NewMetricEntry } from './metric-store.js'
 const ANSI = /\x1b\[[0-9;]*m/g
 const REQUEST = /\b(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\s+(\S+)(?:\s+(\d{3}))?/
 const MILLIS = /(\d+(?:\.\d+)?)\s?ms\b/
-const TRACE = /^\[([0-9a-f]{8}-\d+)\]|\b(?:errorId|traceId|trace)[=:]\s?([\w-]+)/i
+const TRACE = /^\[([0-9a-f]{32}|[0-9a-f]{8}-\d+)\]|\b(?:errorId|traceId|trace)[=:]\s?([\w-]+)/i
 
 export const levelOf = (text: string): LogLevel => {
   if (/\b(error|fatal|uncaught|unhandled|failed|exception)\b|^\s*at\s/i.test(text) || /Error:/.test(text)) return 'error'

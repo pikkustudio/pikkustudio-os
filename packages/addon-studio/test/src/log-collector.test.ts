@@ -3,7 +3,7 @@ import { afterEach, beforeEach, test } from 'node:test'
 import { appendFileSync, existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { LogCollector } from '../../src/services/log-collector.js'
+import { LogCollector, parseLine } from '../../src/services/log-collector.js'
 import { memoryLogStore } from '../../src/services/log-store.js'
 
 let home: string
@@ -96,4 +96,11 @@ test('json lines keep the tenant they ran for, plain lines have none', async () 
   const [plain, json] = await store.list('k1')
   assert.deepStrictEqual([json.tenantOrgId, json.tenantUserId], ['o1', 'u1'])
   assert.deepStrictEqual([plain.tenantOrgId, plain.tenantUserId], [null, null])
+})
+
+test('a scoped console line keeps its trace id, old or W3C format', () => {
+  const w3c = '4bf92f3577b34da6a3ce929d0e0e4736'
+  assert.strictEqual(parseLine(`[${w3c}] INFO: hello`, 'dev', 1).trace, w3c)
+  assert.strictEqual(parseLine('[8bfac872-1] INFO: hello', 'dev', 1).trace, '8bfac872-1')
+  assert.strictEqual(parseLine('[not-a-trace] INFO: hello', 'dev', 1).trace, null)
 })
