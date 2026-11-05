@@ -18,17 +18,21 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const app = join(root, 'apps/studio')
 const state = join(root, '.studio-addons/addons.json')
-const linked = existsSync(state) ? JSON.parse(readFileSync(state, 'utf8')).addons ?? [] : []
+const linkState = existsSync(state) ? JSON.parse(readFileSync(state, 'utf8')) : {}
+const linked = linkState.addons ?? []
+// `link-addon.mjs --no-core`: the build is only what its addons bring, none of the core's own product screens.
+const noCore = linkState.core === false
 
 const write = (file, text) => {
   mkdirSync(dirname(file), { recursive: true })
   if (!existsSync(file) || readFileSync(file, 'utf8') !== text) writeFileSync(file, text)
 }
 
-const addons = linked.map(({ name, dir }) => {
+const addons = linked.map(({ name, dir, wireOnly }) => {
   const manifest = JSON.parse(readFileSync(join(root, dir, 'package.json'), 'utf8'))
   if (!manifest.studio?.addon) throw new Error(`${name} is linked but its package.json has no "studio": { "addon": ... }`)
-  return { name, dir: join(root, dir), ...manifest.studio }
+  // A wire-only addon is linked for its host wiring alone: no screens, styles or messages reach the app.
+  return { name, dir: join(root, dir), ...manifest.studio, ...(wireOnly ? { ui: undefined, messages: undefined, wireOnly: true } : {}) }
 })
 
 rmSync(join(app, 'src/addons.gen.ts'), { force: true })
@@ -87,7 +91,7 @@ async function writeNav() {
     return existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : {}
   }
 
-  const coreScreens = core.screens.map((s) => ({ ...s, addon: null }))
+  const coreScreens = noCore ? [] : core.screens.map((s) => ({ ...s, addon: null }))
   const coreMessage = (key, where) => {
     if (!coreKeys.has(key)) errors.push(`core-screens.ts: ${where} names the message "${key}", which the core's message files do not have`)
   }
@@ -103,8 +107,10 @@ async function writeNav() {
   }
 
   const addonScreens = []
+  const wireOnlyPackages = new Set(linked.filter((l) => l.wireOnly).map((l) => l.name))
   for (const addon of installed) {
     const pkg = meta[addon.name]?.package ?? addon.name
+    if (wireOnlyPackages.has(pkg)) continue
     const keys = addonKeys(pkg)
     const firstParty = FIRST_PARTY.has(pkg)
     for (const screen of addon.screens) {
@@ -177,7 +183,10 @@ async function writeNav() {
     const parts = name.filter((p, i) => !(i === 0 && p.startsWith('_')) && p !== 'index').map((p) => (p === '$' ? '*' : p.startsWith('$') ? ':' : p))
     return '/' + parts.join('/')
   }
-  const ignored = readdirSync(routes).filter((f) => f.endsWith('.tsx') && replaced.has(norm(routePath(f) ?? '')))
+  // With no core screens, every core screen file goes (the shell layout _studio.tsx, the root and the onboarding and
+  // connect pages stay): an addon's own screens are all the app has.
+  const coreScreenFile = (f) => /^_studio\..+\.tsx$/.test(f) && f !== '_studio.tsx'
+  const ignored = readdirSync(routes).filter((f) => f.endsWith('.tsx') && (replaced.has(norm(routePath(f) ?? '')) || (noCore && coreScreenFile(f))))
 
   // Where each addon screen's route goes. A screen that replaces a core route file takes that file's layout (a
   // replaced onboarding page stays in _welcome, inside the onboarding layout). Otherwise: `layout: 'bare'` at an
@@ -243,6 +252,9 @@ async function writeNav() {
         quickFind: core.quickFind.filter((q) => has.has(norm(q.path))),
         explore: core.explore.map((x) => ({ ...x, rows: x.rows.filter((r) => has.has(norm(r.path))) })),
         ignoredRoutes: ignored,
+        ...(noCore ? { core: false } : {}),
+        // Where `/` lands a signed-in visitor: the first nav entry, when the core's own pages are not there.
+        ...(noCore ? { home: (screens.filter((s) => s.nav && s.nav.area !== 'account').sort((a, b) => a.nav.order - b.nav.order)[0] ?? screens[0])?.path } : {}),
       },
       null,
       2,

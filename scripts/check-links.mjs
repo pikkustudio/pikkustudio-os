@@ -24,6 +24,11 @@ const resolves = (path) => {
   })
 }
 
+// A build with no core screens (link-addon.mjs --no-core) leaves out the route files that core's own links point at, and
+// bundles none of the code that holds them: only the nav registry is checked there.
+const navPath = join(app, 'src/nav.gen.json')
+const noCore = existsSync(navPath) && JSON.parse(readFileSync(navPath, 'utf8')).core === false
+
 const files = []
 const walk = (dir) => {
   for (const name of readdirSync(dir)) {
@@ -32,8 +37,10 @@ const walk = (dir) => {
     else if (/\.tsx?$/.test(name) && !/\.(test|gen)\.tsx?$/.test(name) && !file.includes('/paraglide/')) files.push(file)
   }
 }
-walk(join(app, 'src'))
-walk(join(root, 'packages/ui-blocks/src'))
+if (!noCore) {
+  walk(join(app, 'src'))
+  walk(join(root, 'packages/ui-blocks/src'))
+}
 
 const dead = []
 let checked = 0

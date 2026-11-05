@@ -9,6 +9,10 @@
 //                                          online build: cloud and web)
 //   node scripts/link-addon.mjs --app       the app's build: as above, without the website's own pages (addon-web)
 //   node scripts/link-addon.mjs --operator  also wire the operator addons
+//   node scripts/link-addon.mjs --only=<package>,<package>  wire just these addons, and --no-core leaves the core's own
+//                                           screens out of the build (the app is then only what the addons bring)
+//   node scripts/link-addon.mjs --wire-only=<package>,...  with --only: wired for the services other addons use (a remote
+//                                           addon they `uses`), but with none of their own screens in the app
 //   node scripts/link-addon.mjs --test      only the local test addons (packages/addons/spindle and diffui), to try the
 //                                          addon screens and nav across more than one addon; never part of the app
 //   node scripts/link-addon.mjs --unlink    back to the open build
@@ -28,6 +32,10 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const linked = join(root, '.studio-addons')
 const stateFile = join(linked, 'addons.json')
 const args = new Set(process.argv.slice(2))
+const onlyArg = process.argv.slice(2).find((a) => a.startsWith('--only='))
+const wireOnlyArg = process.argv.slice(2).find((a) => a.startsWith('--wire-only='))
+const wireOnly = new Set(wireOnlyArg ? wireOnlyArg.slice('--wire-only='.length).split(',').filter(Boolean) : [])
+const only = onlyArg ? new Set(onlyArg.slice('--only='.length).split(',').filter(Boolean)) : null
 
 // The private monorepo's addons, one per folder.
 const PRIVATE = join(root, 'packages/pikkustudio-private/packages')
@@ -108,6 +116,7 @@ const present = (existsSync(PRIVATE) ? readdirSync(PRIVATE, { withFileTypes: tru
   .filter((dir) => {
     const name = JSON.parse(readFileSync(join(dir, 'package.json'), 'utf8')).name
     if (OPERATOR_ONLY.has(name) && !args.has('--operator')) return false
+    if (only && !only.has(name) && !wireOnly.has(name)) return false
     return !(WEB_ONLY.has(name) && args.has('--app'))
   })
 
@@ -128,10 +137,10 @@ for (const dir of present) {
   rmSync(target, { recursive: true, force: true })
   symlinkSync(relative(dirname(target), dir), target)
   copyWire(dir)
-  addons.push({ name: manifest.name, dir: relative(root, dir) })
+  addons.push({ name: manifest.name, dir: relative(root, dir), ...(wireOnly.has(manifest.name) ? { wireOnly: true } : {}) })
 }
 
 const config = 'pikku.config.json'
 mkdirSync(linked, { recursive: true })
-writeFileSync(stateFile, JSON.stringify({ config, addons }, null, 2) + '\n')
+writeFileSync(stateFile, JSON.stringify({ config, addons, ...(args.has('--no-core') ? { core: false } : {}) }, null, 2) + '\n')
 console.log(`Linked ${addons.map((a) => a.name).join(', ')}; builds now use ${config}`)

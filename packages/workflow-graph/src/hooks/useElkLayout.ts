@@ -11,7 +11,10 @@ import {
   CHANNEL_ROW_HEIGHT,
 } from '../components/ChannelRow'
 
-const elk = new ELK()
+// Made on first layout, not at import: the server bundle (prerender) imports this module but never lays a graph out, and
+// elkjs needs a Worker to be constructed.
+let elkInstance: InstanceType<typeof ELK> | undefined
+const getElk = () => (elkInstance ??= new ELK())
 
 const elkOptions = {
   'elk.algorithm': 'layered',
@@ -156,7 +159,7 @@ export function useElkLayout(
       }
 
       try {
-        const layout = await elk.layout(graph)
+        const layout = await getElk().layout(graph)
         if (cancelled) return
 
         const minY = Math.min(...(layout.children?.map((n) => n.y || 0) || [0]))

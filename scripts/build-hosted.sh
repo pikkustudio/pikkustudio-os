@@ -7,7 +7,8 @@
 # they were afterwards, whatever happens; the generated files stay the web edition's until the next prebuild.
 #
 #   PIKKUSTUDIO_API_URL  the API the build calls (default https://api.pikkustudio.app)
-#   PIKKUSTUDIO_OPERATOR=1  the operators' build: also links the back office (addon-controlpanel, /admin/...). It is a
+#   PIKKUSTUDIO_OPERATOR=1  the operators' build: the back office (addon-controlpanel, /admin/...) with the web addon's sign-in
+#                        pages and none of the core's own screens (link-addon.mjs --no-core). It is a
 #                        separate build for a separate Worker (wrangler.operator.jsonc, admin.pikkustudio.app), so the
 #                        public bundle at cloud.pikkustudio.app never carries it. Both write to the same dist/client;
 #                        build and deploy one, then the other.
@@ -29,7 +30,7 @@ restore() {
 }
 trap restore EXIT
 
-if [ "${PIKKUSTUDIO_OPERATOR:-}" = "1" ]; then node scripts/link-addon.mjs --operator; else node scripts/link-addon.mjs; fi
+if [ "${PIKKUSTUDIO_OPERATOR:-}" = "1" ]; then node scripts/link-addon.mjs --operator --no-core --only=@pikkustudio/addon-controlpanel,@pikkustudio/addon-web --wire-only=@pikkustudio/addon-cloud; else node scripts/link-addon.mjs; fi
 bun run prebuild
 (cd apps/studio && VITE_STUDIO_LOCAL=false VITE_API_URL="$api" bunx --bun vite build)
 

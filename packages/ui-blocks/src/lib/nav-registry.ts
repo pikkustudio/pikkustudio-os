@@ -32,6 +32,8 @@ export type NavRegistry = {
   pins: readonly NavPin[]
   quickFind: readonly NavLink[]
   explore: readonly ExploreSection[]
+  /** Where `/` lands a signed-in visitor when the build has no core screens; absent otherwise. */
+  home?: string
 }
 
 const firstOf = (path: string) => path.split('/').filter(Boolean)[0] ?? ''
