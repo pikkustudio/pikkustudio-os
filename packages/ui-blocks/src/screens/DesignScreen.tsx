@@ -15,7 +15,6 @@ import { ImpersonatePanel } from '../blocks/ImpersonatePanel'
 import { LiveAppFrame, liveAppUrl, type PickedElement } from '../blocks/LiveAppFrame'
 import { LiveLookPanel } from '../blocks/LiveLookPanel'
 import { LiveWordingPanel } from '../blocks/LiveWordingPanel'
-import { ChatSelectPanel } from '../blocks/ChatSelectPanel'
 import { ShellCtx, type AttachRef } from '../lib/shell'
 import { DesignPartsFrame, type PartsCatalog, type PartsLens } from '../blocks/DesignPartsFrame'
 import { StatusLine } from '../blocks/StatusLine'
@@ -155,10 +154,9 @@ function DesignWorkspace() {
   const panel = {
     design: m.design_live__look_title(),
     translations: m.design_live__words_title(),
-    chat: m.design_live__chat_title(),
     impersonate: m.impersonate__title(),
   } as const
-  const title = panel[tool === 'none' ? 'design' : tool]
+  const title = panel[tool === 'none' || tool === 'chat' ? 'design' : tool]
 
   return (
     <div className="flex h-full flex-col gap-3">
@@ -185,17 +183,15 @@ function DesignWorkspace() {
           onReload={() => setReloadKey((k) => k + 1)}
           onOpenTab={parts ? (design?.url ? () => window.open(liveAppUrl(design.url), '_blank', 'noopener') : undefined) : current?.url ? () => window.open(liveAppUrl(current.url!), '_blank', 'noopener') : undefined}
         />
-        <div className={`grid min-h-0 flex-1 gap-3.5 ${tool === 'none' || parts ? 'grid-cols-1' : 'grid-cols-[minmax(0,1fr)_340px]'}`}>
+        <div className={`grid min-h-0 flex-1 gap-3.5 ${tool === 'none' || tool === 'chat' || parts ? 'grid-cols-1' : 'grid-cols-[minmax(0,1fr)_340px]'}`}>
           {stage}
-          {tool !== 'none' && !parts && (
+          {tool !== 'none' && tool !== 'chat' && !parts && (
             <DesignInspector title={title} mode="theme" showModes={false} onMode={() => undefined} onClose={tool === 'design' ? undefined : () => set({ mode: 'none' })}>
               {tool === 'impersonate' ? (
                 <>
                   <HintRow icon={UserRound}>{m.impersonate__text()}</HintRow>
                   {current?.url && current.state === 'ready' ? <ImpersonatePanel onSwitched={() => setReloadKey((k) => k + 1)} /> : null}
                 </>
-              ) : tool === 'chat' ? (
-                <ChatSelectPanel attached={attached} />
               ) : tool === 'translations' ? (
                 <LiveWordingPanel key={wordingKey ?? ''} wordingKey={wordingKey} reloadKey={reloadKey} />
               ) : (
