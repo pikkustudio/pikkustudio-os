@@ -68,12 +68,23 @@ export const routeMessage = (route: NextRoute) =>
 
 export const shimsDir = (home: string, queueHome?: string) => join(home, queueHome ? 'bin-local' : 'bin')
 
+/** A project's own CLI wins, so codegen and `pikku doc` match the @pikku/core it has installed. */
+const projectCli = `dir=$PWD
+while :; do
+  if [ -x "$dir/node_modules/.bin/pikku" ]; then exec ${JSON.stringify(process.execPath)} "$dir/node_modules/.bin/pikku" "$@"; fi
+  [ "$dir" = / ] && break
+  dir=$(dirname "$dir")
+done
+`
+
 export async function writePikkuShim(home: string, queueHome?: string): Promise<string> {
   const dir = shimsDir(home, queueHome)
   const [command, ...prefix] = pikkuBin(dir)
   await mkdir(dir, { recursive: true })
   const file = join(dir, 'pikku')
-  await writeFile(file, `#!/bin/sh\n${queueHome ? `export HOME=${JSON.stringify(queueHome)}\n` : ''}exec ${[command, ...prefix].map((part) => JSON.stringify(part)).join(' ')} "$@"\n`)
+  const homeLine = queueHome ? `export HOME=${JSON.stringify(queueHome)}\n` : ''
+  const fallback = [command, ...prefix].map((part) => JSON.stringify(part)).join(' ')
+  await writeFile(file, `#!/bin/sh\n${homeLine}${projectCli}exec ${fallback} "$@"\n`)
   await chmod(file, 0o755)
   return dir
 }
