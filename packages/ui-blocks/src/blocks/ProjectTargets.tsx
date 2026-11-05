@@ -131,19 +131,21 @@ export function TargetSwitcher({ collapsed }: { collapsed: boolean }) {
     const extra = note(o)
     return (
       <SelectItem key={formatTarget(o)} value={formatTarget(o)} data-testid={`target-option-${o.kind}-${o.name}`}>
-        <span className="flex items-center gap-2">
-          <Icon className="size-4 shrink-0 text-muted-foreground" />
-          <span className="font-semibold">{o.label}</span>
-          {extra ? <span className="text-muted-foreground">{m.project_target__dot()}{extra}</span> : null}
+        <span className="flex min-w-0 items-center gap-2.5">
+          <Icon className="size-5 shrink-0 text-muted-foreground" />
+          <span className="min-w-0 flex-1">
+            <b className="block truncate text-[14px] leading-[1.3] font-bold">{o.label}</b>
+            {extra ? <small className="block truncate text-[13px] leading-[1.3] font-normal text-muted-foreground">{extra}</small> : null}
+          </span>
         </span>
       </SelectItem>
     )
   }
   const heading = (text: I18nString) => <div className="px-3 pt-2 pb-1 text-px13 font-semibold text-muted-foreground">{text}</div>
   return (
-    <div className="mb-2 px-1" data-testid="project-target-switcher">
+    <div data-testid="project-target-switcher">
       <Select value={current} onValueChange={pick}>
-        <SelectTrigger aria-label={m.project_target__label()} className="w-full">
+        <SelectTrigger aria-label={m.project_target__label()} className="h-auto w-full gap-2.5 rounded-[14px] border border-border bg-transparent px-3 py-2.5 transition-colors duration-140 hover:bg-secondary [&>span:first-child]:min-w-0 [&>span:first-child]:flex-1 [&>span:first-child]:overflow-hidden [&>span:first-child]:text-start">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

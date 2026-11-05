@@ -20,7 +20,8 @@
     "check:independence": "node scripts/check-independence.mjs",
     "build:desktop": "bash scripts/build-desktop.sh",
     "build:hosted": "bash scripts/build-hosted.sh",
-    "dev:hosted": "bash scripts/dev-hosted.sh"
+    "dev:hosted": "bash scripts/dev-hosted.sh",
+    "dev:app": "bash scripts/dev-app.sh"
   },
   "devDependencies": {
     "@pikku/cli": "^0.12.198",

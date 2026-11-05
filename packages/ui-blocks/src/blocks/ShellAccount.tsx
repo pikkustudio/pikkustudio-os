@@ -50,11 +50,11 @@ export function ShellAccountView({
   if (collapsed)
     return (
       <>
-        <button type="button" aria-expanded={expanded} onClick={onOpen} title={scope} aria-label={scope} className={`mx-auto grid size-10 place-items-center rounded-lg transition-colors duration-140 hover:bg-secondary ${expanded ? 'bg-secondary' : ''}`}>
+        <button type="button" aria-expanded={expanded} onClick={onOpen} title={scope} aria-label={scope} className={`mx-auto grid size-10 cursor-pointer place-items-center rounded-lg transition-colors duration-140 hover:bg-secondary ${expanded ? 'bg-secondary' : ''}`}>
           {tile ? <span className="grid size-8 place-items-center rounded-lg bg-primary text-[14px] font-bold text-primary-foreground">{asI18n(initials(tile))}</span> : <Icon className="size-5.5" />}
         </button>
         {name ? (
-          <button type="button" onClick={onAccount} title={name} aria-label={name} className="mx-auto grid size-9 place-items-center rounded-full bg-indigo text-[13px] font-bold text-white">{initial}</button>
+          <button type="button" onClick={onAccount} title={name} aria-label={name} className="mx-auto grid size-9 cursor-pointer place-items-center rounded-full bg-indigo text-[13px] font-bold text-white">{initial}</button>
         ) : null}
       </>
     )
@@ -64,7 +64,7 @@ export function ShellAccountView({
         type="button"
         aria-expanded={expanded}
         onClick={onOpen}
-        className={`flex items-center gap-2.5 rounded-[14px] border border-border px-3 py-2.5 text-start transition-colors duration-140 hover:border-input hover:bg-secondary ${expanded ? 'border-input bg-secondary' : ''}`}
+        className={`flex cursor-pointer items-center gap-2.5 rounded-[14px] border border-border px-3 py-2.5 text-start transition-colors duration-140 hover:border-input hover:bg-secondary ${expanded ? 'border-input bg-secondary' : ''}`}
       >
         <Icon className="size-5 text-muted-foreground" />
         <span className="min-w-0 flex-1">
@@ -73,7 +73,7 @@ export function ShellAccountView({
         </span>
       </button>
       {name ? (
-        <button type="button" onClick={onAccount} className="flex items-center gap-2.5 rounded-[14px] bg-secondary p-2.5 text-start transition-colors duration-140 hover:bg-accent">
+        <button type="button" onClick={onAccount} className="flex cursor-pointer items-center gap-2.5 rounded-[14px] bg-secondary p-2.5 text-start transition-colors duration-140 hover:bg-accent">
           <span className="grid size-9 shrink-0 place-items-center rounded-full bg-indigo text-[14px] font-bold text-white">{initial}</span>
           <div className="min-w-0">
             <b className="block truncate text-[14px] leading-[1.3]">{name}</b>

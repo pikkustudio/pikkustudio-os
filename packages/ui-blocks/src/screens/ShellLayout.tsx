@@ -415,7 +415,6 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
             ) : (
             <div className="flex flex-col gap-0.5 px-1">
               <div className={`mb-1.5 px-3 text-[13px] font-semibold text-muted-foreground ${lbl}`}>{projectName}</div>
-              <TargetSwitcher collapsed={collapsed} />
               {projectNav.filter((s) => s.nav!.when !== 'journey' || journey).map(navLink)}
               {registry.pins.filter((pin) => pins.includes(pinId(pin))).map((pin) => {
                 const Icon = navIcon(pin.icon)
@@ -442,7 +441,8 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
                 {collapsed ? <PanelLeftOpen className="size-5 rtl:-scale-x-100" /> : <PanelLeftClose className="size-5 rtl:-scale-x-100" />}
                 <span className={lbl}>{m.shell_layout__collapse_nav()}</span>
               </button>
-              <ShellAccount collapsed={collapsed} expanded={panel === 'workspace'} onOpen={() => setPanel('workspace')} onAccount={() => navigate({ to: (accountNav[0]?.path ?? '/account') as never, search: ((prev: object) => ({ ...prev, panel: undefined })) as never })} />
+              {/\/studio-metrics$/.test(path) || !projectSlug || projectMissing ? null : <TargetSwitcher collapsed={collapsed} />}
+              <ShellAccount collapsed={collapsed} expanded={panel === 'workspace'} onOpen={() => setPanel(panel === 'workspace' ? '' : 'workspace')} onAccount={() => navigate({ to: (accountNav[0]?.path ?? '/account') as never, search: ((prev: object) => ({ ...prev, panel: undefined })) as never })} />
             </div>
           </aside>
 
