@@ -11,8 +11,9 @@ Take the first row that fits. Where it names a skill, reading that skill is your
 - Wording (label, heading, button): only run `pikku i18n key <key> en="<text>" --update && git commit -am "<what changed>"` with the key from the pick, then stop. Add `de="<text>"` only if asked. No searching, no JSON edits, no checks.
 - Small visual change to something picked: edit that file's existing props or Tailwind classes. No skill.
 - Hide something: turn it off with a flag from packages/functions/src/flags.ts or a condition. Hide never means delete.
-- AI of any kind (helper, chat, reading a photo or document, summary, memory): pikku-agent skill. Always pikkuAgent, with ref() tools over the app's real functions so it answers from real data, never a model call of your own.
-- Anything a trigger starts (schedule, event, webhook, approval, work behind a form, "when X happens, tell someone"): pikku-workflow skill. A pikkuWorkflowFunc started with rpc.startWorkflow, even with one step; AI runs as an agent inside a step.
+- AI of any kind (helper, chat, reading a photo or document, memory, or anything that summarises, extracts or writes text in sentences): pikku-agent skill. Always pikkuAgent, with ref() tools over the app's real functions so it answers from real data, never a model call of your own or fixed sentences standing in for one.
+- Someone must approve before something happens: pikku-workflow skill. A pikkuWorkflowFunc with workflow.approval, never a status column of your own.
+- Anything a trigger starts (schedule, event, webhook, work behind a form, "when X happens, tell someone"): pikku-workflow skill. A pikkuWorkflowFunc started with rpc.startWorkflow, even with one step; AI runs as an agent inside a step.
 - List that loads as you scroll: pikku-list-query skill. pikkuListFunc plus the generated usePikkuInfiniteQuery.
 - Who may see or do something, or "only their own X": pikku-permissions skill. A pikkuPermission on each function, as well as any query filter, not in the screen.
 - Emails: pikku-emails skill. Edit emails/ sources, then `pikku emails generate`. Take the name and brand from knowledge/index.md and the theme. Warm, plain wording, every language in step. Only add locale keys: existing templates, keys and footers stay as they are unless the owner asks.
@@ -25,6 +26,6 @@ If the request is clear enough, build it and state your assumptions. Ask once, o
 
 If a command is refused or lacks permission, stop and say what failed. Never work around it: no fake HOME, no importing CLI internals, no calling Pikku's servers yourself.
 
-When done run `pikku all` and `bun run tsc`, fix every failure, remove anything you left behind so `git status` shows only your work, then make one commit: `git add` only your files (never chats/), with a plain message saying what changed. Never --no-verify. If a `pikku dev` watcher blocks writing a generated file, say so and move on.
+When all edits are done run `pikku all` and `bun run tsc` once, re-run them only after a fix, fix every failure, remove anything you left behind so `git status` shows only your work, then make one commit: `git add` only your files (never chats/), with a plain message saying what changed. Never --no-verify. If a `pikku dev` watcher blocks writing a generated file, say so and move on.
 
-Signatures come from `pikku doc --ai` and `pikku meta`, never from node_modules. One-off scripts use bun, or `uv run --no-project --with <package> script.py` for Python libraries. Keep them out of the app source.
+Use as few tool calls as you can. Find functions with `pikku meta` first and open only the files you will change. Never open node_modules: signatures come only from `pikku doc --ai` and `pikku meta`. One-off scripts use bun, or `uv run --no-project --with <package> script.py` for Python libraries. Keep them out of the app source.
