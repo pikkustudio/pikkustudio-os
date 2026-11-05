@@ -1,7 +1,7 @@
 import { asI18n, type I18nString } from '@pikku/react'
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
-import { AppWindow, LayoutTemplate, Shapes, UserRound } from 'lucide-react'
+import { AppWindow, LayoutTemplate, Palette, Shapes, UserRound } from 'lucide-react'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { m } from '@/i18n/messages'
 import { PreviewBar } from '../blocks/PreviewBar'
@@ -20,6 +20,7 @@ import { ShellCtx, type AttachRef } from '../lib/shell'
 import { DesignPartsFrame, type PartsCatalog, type PartsLens } from '../blocks/DesignPartsFrame'
 import { StatusLine } from '../blocks/StatusLine'
 import { useProjectKey } from '../lib/project'
+import { useProjectTarget } from '../lib/project-target'
 import { keepSearch } from '../lib/project-url'
 import type { Device, Mode, Styles } from '../types/designTypes'
 
@@ -47,7 +48,7 @@ const pickedLabel = ({ omId, component, text: shown, i18n }: PickedElement): I18
   return asI18n(text)
 }
 
-export function DesignScreen() {
+function DesignWorkspace() {
   const q = useSearch({ strict: false }) as { mode?: Mode; screen?: 'tablet' | 'phone'; app?: string }
   const route = useParams({ strict: false }) as { lens?: string; part?: string }
   const navigate = useNavigate()
@@ -212,6 +213,23 @@ function PartsWaiting({ text }: { text: I18nString }) {
   return (
     <div className="flex min-h-[320px] items-center justify-center rounded-card bg-card">
       <StatusLine text={text} tone="wait" />
+    </div>
+  )
+}
+
+/** Design shapes the app in a workspace; a live copy is view only, so it says where to go instead. */
+export function DesignScreen() {
+  const target = useProjectTarget()
+  if (target.kind !== 'stage') return <DesignWorkspace />
+  return (
+    <div className="mx-auto max-w-[1160px] pt-6">
+      <EmptyState icon={Palette} title={m.design_screen__live_title()} text={m.design_screen__live_text()}>
+        {target.openWorkspace ? (
+          <Button size="page" type="button" onClick={target.openWorkspace}>
+            {m.design_screen__live_switch()}
+          </Button>
+        ) : null}
+      </EmptyState>
     </div>
   )
 }

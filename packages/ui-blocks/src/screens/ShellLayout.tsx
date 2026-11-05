@@ -154,6 +154,8 @@ function Note({
 
 // Pages that only mean something on a live published copy, not in a workspace (an addon cannot say so itself yet, its nav type has no `when`).
 const LIVE_ONLY = new Set(['/domains'])
+// Pages that shape the app, so they belong to a workspace; a live copy is view only.
+const WORKSPACE_ONLY = new Set(['/design'])
 
 export function ShellLayout({ children }: { children?: ReactNode }) {
   return (
@@ -421,7 +423,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
             ) : (
             <div className="flex flex-col gap-0.5">
               <div className={`mb-1.5 px-3 text-[13px] font-semibold text-muted-foreground ${lbl}`}>{projectName}</div>
-              {projectNav.filter((s) => s.path !== '/explore' && (s.nav!.when !== 'journey' || journey) && (!LIVE_ONLY.has(s.path) || isLive)).map(navLink)}
+              {projectNav.filter((s) => s.path !== '/explore' && (s.nav!.when !== 'journey' || journey) && (!LIVE_ONLY.has(s.path) || isLive) && (!WORKSPACE_ONLY.has(s.path) || target.kind !== 'stage')).map(navLink)}
               {registry.pins.filter((pin) => pins.includes(pinId(pin))).map((pin) => {
                 const Icon = navIcon(pin.icon)
                 return (
