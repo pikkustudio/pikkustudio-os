@@ -94,3 +94,14 @@ rm pikkustudio-private-deploy-key pikkustudio-private-deploy-key.pub
 ```
 
 `gh repo deploy-key add` adds a read-only key unless `--allow-write` is passed; leave it read-only. The same can be done in the web UI: pikkustudio-private, Settings, Deploy keys, Add deploy key (paste the `.pub` file, leave "Allow write access" off), then pikkustudio-os, Settings, Secrets and variables, Actions, New repository secret (paste the private key file). Pull requests from forks never receive the secret, so their Cloud jobs are skipped.
+
+### Operator web edition
+
+The back office (`/admin/...`, from `@pikkustudio/addon-controlpanel`) is a separate build on its own Worker, so the public bundle never carries it:
+
+```
+PIKKUSTUDIO_OPERATOR=1 bun run build:hosted
+cd apps/studio && bunx wrangler deploy -c wrangler.operator.jsonc
+```
+
+It serves admin.pikkustudio.app (`pikkustudio-admin` Worker). Both web builds write to `apps/studio/dist/client`, so build and deploy one before the other. The workflow's `operator` job does this on main.

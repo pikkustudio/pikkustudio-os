@@ -7,6 +7,10 @@
 # they were afterwards, whatever happens; the generated files stay the web edition's until the next prebuild.
 #
 #   PIKKUSTUDIO_API_URL  the API the build calls (default https://api.pikkustudio.app)
+#   PIKKUSTUDIO_OPERATOR=1  the operators' build: also links the back office (addon-controlpanel, /admin/...). It is a
+#                        separate build for a separate Worker (wrangler.operator.jsonc, admin.pikkustudio.app), so the
+#                        public bundle at cloud.pikkustudio.app never carries it. Both write to the same dist/client;
+#                        build and deploy one, then the other.
 set -euo pipefail
 root=$(cd "$(dirname "$0")/.." && pwd)
 cd "$root"
@@ -25,7 +29,7 @@ restore() {
 }
 trap restore EXIT
 
-node scripts/link-addon.mjs
+if [ "${PIKKUSTUDIO_OPERATOR:-}" = "1" ]; then node scripts/link-addon.mjs --operator; else node scripts/link-addon.mjs; fi
 bun run prebuild
 (cd apps/studio && VITE_STUDIO_LOCAL=false VITE_API_URL="$api" bunx --bun vite build)
 
@@ -34,4 +38,4 @@ cat > apps/studio/dist/client/_headers <<'EOF'
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 EOF
-echo "Web edition built into apps/studio/dist/client (API $api)"
+echo "Web edition${PIKKUSTUDIO_OPERATOR:+ (operator)} built into apps/studio/dist/client (API $api)"

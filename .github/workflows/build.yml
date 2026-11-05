@@ -3,6 +3,7 @@ name: Build
 # tarballs and desktop apps) are not built here until they are released; see git history for those jobs.
 #   gate     whether the private addons can be checked out (CLOUD_ADDON_DEPLOY_KEY set)
 #   cloud-*  the same builds with packages/pikkustudio-private linked in
+#   operator builds the web edition with the back office linked and deploys it to admin.pikkustudio.app; same rules as web
 #   web      builds the web edition and deploys it to cloud.pikkustudio.app; main and manual runs only, and it needs
 #            CLOUDFLARE_API_TOKEN as well
 # A tag run uploads the desktop installers and cloud tarballs to the downloads bucket.
@@ -234,3 +235,31 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
         run: bunx wrangler deploy -c wrangler.hosted.jsonc
+  operator:
+    needs: gate
+    if: needs.gate.outputs.deploy == 'true'
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: operator-deploy
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+          submodules: false
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.CLOUD_ADDON_DEPLOY_KEY }}
+      - name: Private addons
+        run: git -c submodule.pikkustudio-private.update=checkout submodule update --init packages/pikkustudio-private
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.1
+      - run: bun install --frozen-lockfile
+      - run: PIKKUSTUDIO_OPERATOR=1 bun run build:hosted
+      - name: Deploy
+        working-directory: apps/studio
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+        run: bunx wrangler deploy -c wrangler.operator.jsonc

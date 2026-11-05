@@ -1,0 +1,16 @@
+// The operators' web Studio at admin.pikkustudio.app: the same static build as cloud.pikkustudio.app, made with
+// PIKKUSTUDIO_OPERATOR=1 so the back office (/admin/...) is linked in. A separate Worker keeps that code out of the
+// public bundle; the cloud API still checks pikkustudioadmin on every admin call.
+//
+//   PIKKUSTUDIO_OPERATOR=1 bun run build:hosted
+//   cd apps/studio && bunx wrangler deploy -c wrangler.operator.jsonc
+{
+  "name": "pikkustudio-admin",
+  "routes": [{ "pattern": "admin.pikkustudio.app", "custom_domain": true }],
+  "compatibility_date": "2025-06-01",
+  "assets": {
+    "directory": "dist/client",
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "single-page-application"
+  }
+}
