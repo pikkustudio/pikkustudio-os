@@ -33,7 +33,7 @@ import { usePikkuMutation } from '@project/functions-sdk/pikku/api.gen'
 import { MockBackendStatusBar, useMockCount } from '../blocks/MockBackendStatusBar'
 import { usePageTitle } from '../lib/page-title'
 import { useProjectQuery } from '../lib/projectRpc'
-import { pinId, usePins } from '../lib/pins'
+import { PINNABLE, pinId, usePins } from '../lib/pins'
 import { AttachedChips } from '../blocks/AttachedChips'
 import { freeSelectionSlot, selectionColor } from '../lib/selection-colors'
 import { ShellCtx, type AttachRef, type Attachment, type PanelId, type PublishNote, type View } from '../lib/shell'
@@ -153,7 +153,7 @@ function Note({
 }
 
 // Pages that only mean something on a live published copy, not in a workspace (an addon cannot say so itself yet, its nav type has no `when`).
-const LIVE_ONLY = new Set(['/domains'])
+const LIVE_ONLY = new Set(['/sharing'])
 // Pages that shape the app, so they belong to a workspace; a live copy is view only.
 const WORKSPACE_ONLY = new Set(['/design'])
 
@@ -424,7 +424,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
             <div className="flex flex-col gap-0.5">
               <div className={`mb-1.5 px-3 text-[13px] font-semibold text-muted-foreground ${lbl}`}>{projectName}</div>
               {projectNav.filter((s) => s.path !== '/explore' && (s.nav!.when !== 'journey' || journey) && (!LIVE_ONLY.has(s.path) || isLive) && (!WORKSPACE_ONLY.has(s.path) || target.kind !== 'stage')).map(navLink)}
-              {registry.pins.filter((pin) => pins.includes(pinId(pin))).map((pin) => {
+              {PINNABLE.filter((pin) => pins.includes(pinId(pin))).map((pin) => {
                 const Icon = navIcon(pin.icon)
                 return (
                   <Link {...keep} {...tip(msg(pin.label))} key={pin.path} to={pin.path as never} className={navItem}>

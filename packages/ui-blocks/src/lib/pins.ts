@@ -1,14 +1,27 @@
 import { useEffect, useState } from 'react'
 import { useLocation } from '@tanstack/react-router'
 import { useProjectSlug } from './project'
-import { registry, type NavPin } from './nav-registry'
+import { registry, isLocalOnly, type NavPin } from './nav-registry'
 
-// The pages a project can pin to its rail, and which are pinned by default, come from the nav registry (core's
-// pins). A pin is stored by its page's id, the path without its slash.
+// Any registered top-level project page can be pinned to the rail (not one with a param or splat, nor one the rail
+// already lists). Core's `pins` say which are pinned by default and give a label and icon; a page without one
+// uses its own title and a generic icon. A pin is stored by its page's id, the path without its slash.
 export type Movable = string
 export const pinId = (pin: NavPin): Movable => pin.path.slice(1)
-export const MOVABLE: readonly Movable[] = registry.pins.map(pinId)
-const DEFAULT_ON: readonly Movable[] = registry.pins.filter((pin) => pin.on).map(pinId)
+const GENERIC_ICON = 'file-text'
+/** The pages a project can pin, in the rail's order: core's pins first, then the other registered pages. */
+export const PINNABLE: readonly NavPin[] = (() => {
+  const byPath = new Map<string, NavPin>()
+  for (const s of registry.screens) {
+    if (s.scope !== 'project' || s.nav || s.layout === 'bare' || s.path.includes(':') || s.path.includes('*') || isLocalOnly(s.path)) continue
+    if (s.path.split('/').filter(Boolean).length !== 1 || byPath.has(s.path)) continue
+    byPath.set(s.path, registry.pins.find((pin) => pin.path === s.path) ?? { path: s.path, label: s.title, icon: GENERIC_ICON, on: false })
+  }
+  const core = registry.pins.filter((pin) => byPath.has(pin.path))
+  return [...core, ...[...byPath.values()].filter((pin) => !core.some((c) => c.path === pin.path))]
+})()
+export const MOVABLE: readonly Movable[] = PINNABLE.map(pinId)
+const DEFAULT_ON: readonly Movable[] = PINNABLE.filter((pin) => pin.on).map(pinId)
 
 const key = (slug: string) => `studio:pins:${slug}`
 const offKey = (slug: string) => `studio:pins-off:${slug}`

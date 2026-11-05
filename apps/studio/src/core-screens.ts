@@ -98,6 +98,7 @@ export default {
     { path: '/knowledge', label: 'screen_names__knowledge', icon: 'book-open', on: true },
     { path: '/publish', label: 'shell_layout__publish', icon: 'upload', on: true },
     { path: '/workflows', label: 'shell_layout__workflows', icon: 'clock', on: true },
+    { path: '/changes', label: 'shell_layout__changes', icon: 'git-pull-request', on: true },
     { path: '/assistants', label: 'assistants_screen__title', icon: 'bot', on: true },
   ],
   quickFind: [
