@@ -39,9 +39,11 @@ const pickedRef = ({ omId, omIndex, component, text: shown }: PickedElement): At
   return { omId, omIndex, text: asI18n(text), meta: asI18n(meta), where: asI18n(where) }
 }
 
-const pickedLabel = ({ omId, component, text: shown }: PickedElement): I18nString => {
+const pickedLabel = ({ omId, component, text: shown, i18n }: PickedElement): I18nString => {
   const [file, line] = omId.split(':')
-  const text = `${shown ? `“${shown}” ` : ''}${component} · ${file}${line ? `:${line}` : ''}`
+  // The message key goes in the chat text so the agent can edit the wording straight
+  // in the messages files instead of opening the page and searching for it.
+  const text = `${shown ? `“${shown}” ` : ''}${component} · ${file}${line ? `:${line}` : ''}${i18n ? ` · key ${i18n}` : ''}`
   return asI18n(text)
 }
 
