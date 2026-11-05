@@ -1,5 +1,5 @@
 import type { I18nNode } from '@pikku/react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { usePikkuMutation, usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
 import { m } from '@/i18n/messages'
@@ -16,6 +16,38 @@ const WAKE_GRACE_MS = 60_000
 const STALL_MS = 8 * 60_000
 const label = (slug: string) => slug.charAt(0).toUpperCase() + slug.slice(1).replace(/[-_]+/g, ' ')
 const messageOf = (error: unknown) => (error instanceof Error ? error.message : '')
+
+// The last answer that said a project's app was running, kept for the session: the gate renders from it while it asks
+// again, so opening a project that is already running does not flash the launch screen. Without one, the launch screen
+// waits SHOW_AFTER_MS, so a quick answer never shows it either.
+const SHOW_AFTER_MS = 400
+const KNOWN = 'studio.run-ready.'
+const readKnown = <T,>(key: string): T | undefined => {
+  try {
+    const v = sessionStorage.getItem(KNOWN + key)
+    return v ? (JSON.parse(v) as T) : undefined
+  } catch {
+    return undefined
+  }
+}
+const writeKnown = (key: string, value: unknown) => {
+  try {
+    if (value === undefined) sessionStorage.removeItem(KNOWN + key)
+    else sessionStorage.setItem(KNOWN + key, JSON.stringify(value))
+  } catch {
+    // sessionStorage unavailable: the gate just falls back to the delayed launch screen
+  }
+}
+/** True once `on` has held for `ms`. */
+function useAfter(on: boolean, ms: number) {
+  const [done, setDone] = useState(false)
+  useEffect(() => {
+    if (!on) return setDone(false)
+    const t = setTimeout(() => setDone(true), ms)
+    return () => clearTimeout(t)
+  }, [on, ms])
+  return done
+}
 
 export function ProjectRunGate({ children }: { children: I18nNode }) {
   const key = useProjectKey()
@@ -42,10 +74,16 @@ export function ProjectRunGate({ children }: { children: I18nNode }) {
 function SourceWorkspaceGate({ project, children }: { project: ListedProject; children: I18nNode }) {
   const client = useQueryClient()
   const navigate = useNavigate()
+  const known = useMemo(() => readKnown<Workspace>(`source:${project.key}`), [project.key])
   const status = usePikkuQuery('studio:workspaceStatus' as never, { key: project.key } as never, {
     retry: false,
+    placeholderData: known,
     refetchInterval: (query: { state: { data?: Workspace } }) => (query.state.data?.state === 'starting' ? 3000 : 15000),
-  } as never) as { data?: Workspace; isPending: boolean; refetch: () => void }
+  } as never) as { data?: Workspace; isPending: boolean; isSuccess: boolean; isPlaceholderData: boolean; refetch: () => void }
+  useEffect(() => {
+    if (status.isSuccess && !status.isPlaceholderData) writeKnown(`source:${project.key}`, status.data?.state === 'ready' ? status.data : undefined)
+  }, [status.isSuccess, status.isPlaceholderData, status.data, project.key])
+  const slow = useAfter(status.isPending, SHOW_AFTER_MS)
   const link = usePikkuMutation('studio:workspaceLink', { onSettled: () => status.refetch() })
   const clone = usePikkuMutation('studio:cloneProject', { onSuccess: () => client.invalidateQueries({ queryKey: ['studio:listProjects'] }) })
 
@@ -72,21 +110,27 @@ function SourceWorkspaceGate({ project, children }: { project: ListedProject; ch
   if (stalled && stall && !link.isPending)
     return <AppNotRunning state="failed" name={project.name} reason={m.project_launch__stalled({ step: phaseLabel(stall.phase) })} logText={`Workspace start has been at the "${stall.phase}" step since ${new Date(stall.since).toISOString()}.`} onStart={() => pick('source')} />
   if (now.state === 'starting' || waking) return <AppNotRunning state="starting" steps={launchSteps(SOURCE_LAUNCH, now.state === 'starting' ? (now.phase ?? 'machine') : 'machine')} onStart={() => undefined} />
-  if (status.isPending) return <AppNotRunning state="starting" steps={launchSteps(SOURCE_LAUNCH, 'machine')} onStart={() => undefined} />
+  if (status.isPending) return slow ? <AppNotRunning state="starting" steps={launchSteps(SOURCE_LAUNCH, 'machine')} onStart={() => undefined} /> : null
   return <AppNotRunning state="off" onStart={() => pick('source')} choices={{ primary: 'source', onPick: pick, sourceOff: false }} />
 }
 
 function LocalGate({ project, children }: { project: ListedProject; children: I18nNode }) {
   const key = project.key
   const tried = useRef<string>('')
+  const known = useMemo(() => readKnown<LiveApp[]>(`local:${key}`), [key])
   const apps = usePikkuQuery('studio:projectApps', { key }, {
+    placeholderData: known,
     refetchInterval: (query: { state: { data?: LiveApp[] } }) => ((query.state.data ?? []).length > 0 && (query.state.data ?? []).every((a) => a.state === 'ready') ? 15000 : 2000),
   } as never)
   const start = usePikkuMutation('studio:openProject', { onSuccess: () => apps.refetch() })
   const restart = usePikkuMutation('studio:closeProject', { onSuccess: () => start.mutate({ key }) })
 
   const list = (apps.data as LiveApp[] | undefined) ?? []
-  const idle = apps.isSuccess && list.length === 0
+  useEffect(() => {
+    if (apps.isSuccess && !apps.isPlaceholderData) writeKnown(`local:${key}`, list.length > 0 && list.every((a) => a.state === 'ready') ? list : undefined)
+  }, [apps.isSuccess, apps.isPlaceholderData, apps.data, key])
+  const slow = useAfter(apps.isPending, SHOW_AFTER_MS)
+  const idle = apps.isSuccess && !apps.isPlaceholderData && list.length === 0
   useEffect(() => {
     if (idle && tried.current !== key && !start.isPending) {
       tried.current = key
@@ -101,7 +145,7 @@ function LocalGate({ project, children }: { project: ListedProject; children: I1
   const pick = (where: LaunchWhere) => {
     if (where === 'local') start.mutate({ key })
   }
-  if (apps.isPending) return <AppNotRunning state="starting" steps={steps} onStart={() => undefined} />
+  if (apps.isPending) return slow ? <AppNotRunning state="starting" steps={steps} onStart={() => undefined} /> : null
   if (broken || start.isError) return <AppNotRunning state="failed" name={name} error={start.error ?? restart.error} onStart={() => restart.mutate({ key })} starting={restart.isPending || start.isPending} />
   if (list.length === 0 && (start.isPending || start.isSuccess || tried.current !== key)) return <AppNotRunning state="starting" steps={steps} onStart={() => undefined} />
   if (list.length === 0) return <AppNotRunning state="off" onStart={() => pick('local')} choices={{ primary: 'local', onPick: pick, sourceOff: true }} />
