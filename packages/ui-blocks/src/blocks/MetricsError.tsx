@@ -14,7 +14,7 @@ export function MetricsError({ error, retry, retrying }: { error: unknown; retry
       <NextCard label={m.metrics_screen__how_answering()} hue="petrol" page="metrics" title={m.metrics_screen__error_title()} why={m.metrics_screen__error_text()}>
         <div className="flex flex-wrap items-center gap-3">
           <Button variant="hero" size="pageLg" type="button" onClick={() => say(m.error_state__fix_ask_what({ what: m.metrics_screen__how_answering(), details: detailsOf(faultOf(error), m.metrics_screen__how_answering()) }))}>
-            <PikkuDot />
+            <PikkuDot pose="fix" />
             {m.metrics_screen__fix_it()}
           </Button>
         </div>

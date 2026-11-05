@@ -1,6 +1,7 @@
 import { m } from '@/i18n/messages'
 import { asI18n, type I18nString } from '@pikku/react'
-import { ArrowRight, Check, CircleAlert, CircleDashed, Code2, Compass, Database, FlaskConical, HelpCircle, LoaderCircle, Rocket, Undo2 } from 'lucide-react'
+import { Blob } from '../blocks/Blob'
+import { ArrowRight, Check, CircleAlert, CircleDashed, Code2, Compass, Database, FlaskConical, HelpCircle, Rocket, Undo2 } from 'lucide-react'
 import { Navigate } from '@tanstack/react-router'
 import { useContext, useEffect, useState } from 'react'
 import { Hero } from '../blocks/Hero'
@@ -126,7 +127,7 @@ function Wait({ step, now }: { step: ChecklistStep; now: number }) {
   if (!pace && !doing) return null
   return (
     <p className="flex items-center gap-2 text-[14px] text-ink-2" data-testid={`project-wait-${step.id}`}>
-      <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
+      <Blob pose="think" className="size-6 shrink-0" aria-hidden="true" />
       {[doing, pace].filter(Boolean).map((t, i) => (
         <span key={i}>{t}</span>
       ))}
@@ -135,14 +136,14 @@ function Wait({ step, now }: { step: ChecklistStep; now: number }) {
 }
 
 function StepRow({ step, now, busy, onAct, ask }: { step: ChecklistStep; now: number; busy: boolean; onAct: (id: ChecklistStepId, a: StepAction) => void; ask: (text: I18nString) => void }) {
-  const Icon = step.state === 'done' ? Check : step.state === 'working' ? LoaderCircle : step.state === 'needs-you' ? CircleAlert : step.state === 'skipped' ? Undo2 : ICON[step.id] ?? CircleDashed
+  const Icon = step.state === 'done' ? Check : step.state === 'needs-you' ? CircleAlert : step.state === 'skipped' ? Undo2 : ICON[step.id] ?? CircleDashed
   const failed = step.state === 'needs-you' && !!step.error
   const tone = failed ? 'bad' : step.state === 'needs-you' ? 'warn' : step.state === 'done' || step.state === 'working' ? 'ok' : 'quiet'
   const primary = step.actions.find((a) => a === 'start' || a === 'retry' || a === 'fast-track' || a === 'reopen')
   return (
     <div data-testid={`project-step-${step.id}`} data-state={step.state}>
       <RowCard
-        tile={<Icon className={`size-5 ${step.state === 'working' ? 'animate-spin' : ''}`} />}
+        tile={step.state === 'working' ? <Blob pose="think" className="size-7" /> : <Icon className="size-5" />}
         on={step.state === 'done' || step.state === 'working'}
         flag={step.state === 'needs-you'}
         title={NAME[step.id]()}

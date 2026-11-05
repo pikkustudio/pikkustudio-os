@@ -1,14 +1,10 @@
-import { Sparkles } from 'lucide-react'
+import { Blob } from './Blob'
 
 export function Spinner() {
   return <span className="size-4.5 animate-spin-fast rounded-full border-spinner border-current border-e-transparent" aria-hidden="true" />
 }
 
+/** Pikku is working on it: the blob, thinking. */
 export function AiSpinner({ className = 'size-4.5' }: { className?: string }) {
-  return (
-    <span className={`relative inline-grid shrink-0 place-items-center ${className}`} aria-hidden="true">
-      <span className="absolute inset-0 animate-ping rounded-full bg-current opacity-25" />
-      <Sparkles className="relative size-[80%] animate-pulse" />
-    </span>
-  )
+  return <Blob pose="think" className={`shrink-0 ${className}`} aria-hidden="true" />
 }

@@ -1377,6 +1377,14 @@
   "metrics_screen__fix_this": "إصلاح هذا",
   "metrics_screen__fix_where_project": "في مشروعي",
   "metrics_screen__fix_where_studio": "في Studio",
+  "metrics_known__console_get_all_meta_name": "تحميل ما يتكوّن منه تطبيقك",
+  "metrics_known__console_get_all_meta_what": "ستوديو يطلب من تطبيقك قائمة وظائفه وصفحاته وإعداداته.",
+  "metrics_known__console_read_project_file_name": "فتح ملف من المشروع",
+  "metrics_known__console_read_project_file_what": "ستوديو يقرأ أحد ملفات مشروعك ليعرضه لك.",
+  "metrics_known__get_session_name": "التحقق من هوية المسجَّل دخوله",
+  "metrics_known__get_session_what": "تطبيقك يبحث عن تسجيل دخول الزائر الحالي.",
+  "metrics_known__analytics_name": "تسجيل زيارة",
+  "metrics_known__analytics_what": "مشاهدة صفحة أو حدث أُرسل إلى تحليلات تطبيقك.",
   "metrics_screen__happened": [
     {
       "declarations": [

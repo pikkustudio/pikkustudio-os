@@ -40,7 +40,7 @@ export function MetricsVerdict({ scope, totals, problems }: { scope: 'app' | 'st
           ) : (
             <>
               <Button variant="hero" size="pageLg" type="button" onClick={() => say(fixPrompt)}>
-                <PikkuDot />
+                <PikkuDot pose="fix" />
                 {m.metrics_screen__fix_it()}
               </Button>
               <span className="text-px15 text-hero-ink-2">{m.metrics_screen__assistant_note()}</span>

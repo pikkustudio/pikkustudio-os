@@ -8,6 +8,7 @@ import { useProjectKey } from '../lib/project'
 import { ShellCtx } from '../lib/shell'
 import { Button } from '../ui/button'
 import { MachineOpening, OpeningStage, openingH1, openingLead, type OpeningStep } from './MachineOpening'
+import type { BlobPoseName } from './Blob'
 import { PikkuDot } from './PikkuDot'
 import { StateScreen } from './StateScreen'
 
@@ -60,10 +61,10 @@ function useFailureLog(enabled: boolean, error: unknown) {
   return (fromLogs || fromError).split('\n').slice(-30).join('\n').trim()
 }
 
-function AppStage({ label, children }: { label: I18nString; children: I18nNode }) {
+function AppStage({ label, children, pose }: { label: I18nString; children: I18nNode; pose?: BlobPoseName }) {
   return (
     <div className="mx-auto flex max-w-[1160px] flex-col gap-10 @min-[1700px]/app:max-w-[1380px]">
-      <OpeningStage label={label}>{children}</OpeningStage>
+      <OpeningStage label={label} pose={pose}>{children}</OpeningStage>
     </div>
   )
 }
@@ -115,7 +116,7 @@ export function AppNotRunning({
 
   if (state === 'starting' && steps) {
     return (
-      <AppStage label={m.project_launch__opening_title()}>
+      <AppStage label={m.project_launch__opening_title()} pose="think">
         <MachineOpening title={m.project_launch__opening_title()} lead={m.project_launch__opening_lead()} steps={steps} />
       </AppStage>
     )
@@ -123,7 +124,7 @@ export function AppNotRunning({
 
   if (state === 'failed') {
     return (
-      <AppStage label={title}>
+      <AppStage label={title} pose="alert">
         <div>
           <h1 className={openingH1}>{title}</h1>
           <p className={openingLead}>{text}</p>

@@ -1410,6 +1410,14 @@
   "metrics_screen__fix_this": "Fix this",
   "metrics_screen__fix_where_project": "in my project",
   "metrics_screen__fix_where_studio": "in Studio",
+  "metrics_known__console_get_all_meta_name": "Loading what your app is made of",
+  "metrics_known__console_get_all_meta_what": "Studio asking your app for its list of functions, pages and settings.",
+  "metrics_known__console_read_project_file_name": "Opening a project file",
+  "metrics_known__console_read_project_file_what": "Studio reading one of your project's files to show it to you.",
+  "metrics_known__get_session_name": "Checking who is signed in",
+  "metrics_known__get_session_what": "Your app looking up the current visitor's sign-in.",
+  "metrics_known__analytics_name": "Recording a visit",
+  "metrics_known__analytics_what": "A page view or event sent to your app's analytics.",
   "metrics_screen__happened": [
     {
       "declarations": [

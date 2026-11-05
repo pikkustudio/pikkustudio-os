@@ -5,7 +5,7 @@ import { Section } from './Section'
 import { seconds, speed } from '../screens/metrics-shared'
 
 /** What took longest on average, slowest first, five at a time. */
-export function MetricsFunctions({ scope, slow }: { scope: 'app' | 'studio'; slow: Array<{ name: string; count: number; average: number }> }) {
+export function MetricsFunctions({ scope, slow }: { scope: 'app' | 'studio'; slow: Array<{ name: string; what?: string | null; count: number; average: number }> }) {
   const [showAll, setShowAll] = useState(false)
   const top = slow[0]?.average || 1
   const shown = showAll ? slow : slow.slice(0, 5)
@@ -27,6 +27,7 @@ export function MetricsFunctions({ scope, slow }: { scope: 'app' | 'studio'; slo
                       <span className="text-muted-foreground">{sep(' · ')}{seconds(s.average)}</span>
                     </span>
                   </div>
+                  {s.what ? <p className="mt-0.5 text-px13 text-ink-2">{asI18n(s.what)}</p> : null}
                   <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-secondary" data-hue="teal">
                     <div className={`h-full rounded-full ${fast.bar}`} style={{ width: `${Math.max(3, (s.average / top) * 100)}%` }} />
                   </div>

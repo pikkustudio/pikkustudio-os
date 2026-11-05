@@ -121,7 +121,7 @@ function AssistantMessage({ root, name, hue, onFix }: { root: string; name: I18n
             {m.assistant_drawer__something_got_in_the_way()}
           </span>
           <Button type="button" variant="bordered" size="compact" className="self-start" onClick={() => onFix(m.assistant_drawer__fix_stuck({ name }))}>
-            <PikkuDot />
+            <PikkuDot pose="fix" />
             {m.assistant_drawer__fix_it()}
           </Button>
         </div>

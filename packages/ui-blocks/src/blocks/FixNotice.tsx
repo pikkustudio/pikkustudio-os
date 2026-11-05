@@ -17,7 +17,7 @@ export function FixNotice({ title, body, ask, onRetry, retrying }: { title: I18n
           <p className="mt-0.5 max-w-ch56 text-px15 text-pretty text-foreground">{body}</p>
           <div className="mt-3 flex flex-wrap items-center gap-3">
             <Button variant="default" size="compact" type="button" onClick={() => say(ask)}>
-              <PikkuDot />
+              <PikkuDot pose="fix" />
               {m.metrics_screen__fix_it()}
             </Button>
             {onRetry ? (

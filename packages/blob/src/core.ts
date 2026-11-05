@@ -5,7 +5,7 @@ export const TAU = Math.PI * 2
 export type Pt = [number, number]
 export type BlobEye = { x: number; y: number; w: number; h: number; ring?: boolean }
 export type BlobMarkText = '' | 'zzz' | '?' | '!' | '…'
-export type BlobPoseId = 'dot' | 'seed' | 'bean' | 'blob' | 'tall' | 'think' | 'ask' | 'sleep' | 'alert' | 'lost'
+export type BlobPoseId = 'dot' | 'seed' | 'bean' | 'blob' | 'tall' | 'think' | 'ask' | 'sleep' | 'alert' | 'lost' | 'fix'
 export type BlobPoseAlias = 'listening' | 'thinking' | 'question' | 'sleeping'
 export type BlobPoseName = BlobPoseId | BlobPoseAlias
 export type BlobStateName = 'idle' | 'listening' | 'thinking' | 'speaking' | 'question' | 'sleeping'
@@ -48,6 +48,25 @@ const E = (x1: number, y1: number, x2: number, y2: number, w: number, h: number)
   { x: x2, y: y2, w, h },
 ]
 
+const wrap = (x: number) => {
+  while (x > Math.PI) x -= TAU
+  while (x < -Math.PI) x += TAU
+  return x
+}
+
+/** An open-end spanner as a radius per angle: a thin handle both ways, a round head toward the upper right, and its jaw cut in. */
+const spannerR = (a: number) => {
+  const d = Math.abs(wrap(a + Math.PI / 4))
+  const e = Math.min(d, Math.PI - d)
+  let r = Math.max(0.1, Math.min(0.5 / Math.max(Math.cos(e), 0.05), 0.1 / Math.max(Math.sin(e), 0.001)))
+  if (d < 1.15) {
+    const head = 0.34 * Math.cos(d) + Math.sqrt(Math.max(0, 0.31 * 0.31 - 0.34 * 0.34 * Math.sin(d) ** 2))
+    r = Math.max(r, head)
+    if (d < 0.5) r = Math.min(r, 0.4)
+  }
+  return r
+}
+
 const blobR = (a: number) => 0.56 + 0.05 * Math.sin(3 * a + 1) + 0.035 * Math.cos(2 * a + 0.4)
 
 export const defaultPoses = (): BlobPose[] => [
@@ -87,6 +106,8 @@ export const defaultPoses = (): BlobPose[] => [
     ],
     extra: '?',
   },
+  // Fixing: the blob takes the shape of an open-end spanner, jaw up and to the right, eyes on the head.
+  { id: 'fix', name: 'Fixing', pts: polar(spannerR, 1, 1, -0.046, 0.046), eyes: E(0.099, -0.205, 0.205, -0.099, 0.04, 0.055), extra: '' },
   { id: 'alert', name: 'Alert', pts: polar((a) => 0.5 + 0.07 * Math.sin(9 * a)), eyes: E(-0.14, -0.05, 0.14, -0.05, 0.045, 0.075), extra: '!' },
 ]
 

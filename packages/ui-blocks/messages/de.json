@@ -1289,6 +1289,14 @@
   "metrics_screen__fix_this": "Beheben",
   "metrics_screen__fix_where_project": "in meinem Projekt",
   "metrics_screen__fix_where_studio": "in Studio",
+  "metrics_known__console_get_all_meta_name": "Laden, woraus deine App besteht",
+  "metrics_known__console_get_all_meta_what": "Studio fragt deine App nach ihrer Liste von Funktionen, Seiten und Einstellungen.",
+  "metrics_known__console_read_project_file_name": "Eine Projektdatei öffnen",
+  "metrics_known__console_read_project_file_what": "Studio liest eine Datei deines Projekts, um sie dir zu zeigen.",
+  "metrics_known__get_session_name": "Prüfen, wer angemeldet ist",
+  "metrics_known__get_session_what": "Deine App schaut nach der Anmeldung des aktuellen Besuchers.",
+  "metrics_known__analytics_name": "Einen Besuch erfassen",
+  "metrics_known__analytics_what": "Ein Seitenaufruf oder Ereignis, das an die Statistiken deiner App geschickt wurde.",
   "metrics_screen__happened": [
     {
       "declarations": [

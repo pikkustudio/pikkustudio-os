@@ -31,14 +31,33 @@ export const words = (raw: string) => {
   return spaced.charAt(0).toUpperCase() + spaced.slice(1)
 }
 
-export const nameOf = (metric: Pick<Metric, 'wireType' | 'wireId'>) => {
+/** The calls people see here most that a raw function id explains badly: a plain name and what it is for. */
+const KNOWN: Record<string, { name: () => I18nString; what: () => I18nString }> = {
+  consolegetallmeta: { name: m.metrics_known__console_get_all_meta_name, what: m.metrics_known__console_get_all_meta_what },
+  consolereadprojectfile: { name: m.metrics_known__console_read_project_file_name, what: m.metrics_known__console_read_project_file_what },
+  getsession: { name: m.metrics_known__get_session_name, what: m.metrics_known__get_session_what },
+  analytics: { name: m.metrics_known__analytics_name, what: m.metrics_known__analytics_what },
+}
+
+const lastPart = (metric: Pick<Metric, 'wireType' | 'wireId'>) => {
   const id = metric.wireId ?? 'unknown'
   if (metric.wireType === 'http') {
     const segments = (id.split(':').slice(1).join(':') || id).split('/').filter(Boolean)
-    return words(segments[segments.length - 1] ?? m.metrics_shared__home_page())
+    return segments[segments.length - 1]
   }
-  return words(id.split(':').pop() ?? id)
+  return id.split(':').pop() ?? id
 }
+
+const known = (metric: Pick<Metric, 'wireType' | 'wireId'>) => KNOWN[(lastPart(metric) ?? '').replace(/[-_:.]+/g, '').toLowerCase()]
+
+export const nameOf = (metric: Pick<Metric, 'wireType' | 'wireId'>) => {
+  const hit = known(metric)
+  if (hit) return hit.name()
+  return words(lastPart(metric) ?? m.metrics_shared__home_page())
+}
+
+/** One line on what a call is for, when we know. */
+export const whatOf = (metric: Pick<Metric, 'wireType' | 'wireId'>): string | null => known(metric)?.what() ?? null
 
 export const reason = (raw: string | null) => {
   const first = (raw ?? '').split('\n')[0]!.trim().replace(/[:;,\s]+$/, '')
@@ -171,16 +190,16 @@ export const problemsOf = (failures: SummaryFailure[]): Problem[] => {
 
 /** Functions by the name people see, slowest on average first. */
 export const slowestOf = (functions: SummaryFunction[]) => {
-  const groups = new Map<string, { name: string; count: number; total: number }>()
+  const groups = new Map<string, { name: string; what: string | null; count: number; total: number }>()
   for (const f of functions) {
     if (f.avgMs === null || !f.requests) continue
     const name = nameOf({ wireType: f.wire, wireId: f.name })
-    const g = groups.get(name) ?? { name, count: 0, total: 0 }
+    const g = groups.get(name) ?? { name, what: whatOf({ wireType: f.wire, wireId: f.name }), count: 0, total: 0 }
     g.count += f.requests
     g.total += f.avgMs * f.requests
     groups.set(name, g)
   }
-  return [...groups.values()].map((g) => ({ name: g.name, count: g.count, average: g.total / g.count })).sort((a, b) => b.average - a.average)
+  return [...groups.values()].map((g) => ({ name: g.name, what: g.what, count: g.count, average: g.total / g.count })).sort((a, b) => b.average - a.average)
 }
 
 const HOUR = 3_600_000

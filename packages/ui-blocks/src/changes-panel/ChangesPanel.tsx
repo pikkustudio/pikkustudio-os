@@ -1,4 +1,5 @@
 import { m } from '@/i18n/messages'
+import { Blob } from '../blocks/Blob'
 import { asI18n, sep, type I18nString } from '@pikku/react'
 import { useNavigate } from '@tanstack/react-router'
 import { usePikkuQuery } from '@project/functions-sdk/pikku/api.gen'
@@ -51,7 +52,7 @@ function Dock({ working, waiting }: { working?: PanelChange; waiting: number }) 
     <div className="flex flex-col gap-2 border-b border-border bg-secondary px-5 py-4">
       {working ? (
         <div className="flex items-center gap-2">
-          <span className="size-2.5 shrink-0 animate-pulse rounded-full bg-info" />
+          <Blob pose="think" className="size-6 shrink-0" aria-hidden="true" />
           <span className="min-w-0 flex-1 text-[15px]">
             <b>{m.changes_b__working_on()}</b>
             {sep(' ')}

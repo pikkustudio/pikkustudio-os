@@ -89,7 +89,7 @@ function Body({ view, extraRows }: { view: ReleasesView; extraRows: VersionsExtr
         <NextCard label={m.versions_screen__what_matters()} hue="petrol" page="versions" title={m.versions_screen__hero_error()} why={m.versions_screen__hero_error_text()}>
           <div className="flex flex-wrap gap-3">
             <Button variant="hero" size="page" type="button" onClick={() => say(m.error_state__fix_ask_what({ what: m.versions_screen__title(), details: detailsOf(faultOf(view.error), m.versions_screen__title()) }))}>
-              <PikkuDot />
+              <PikkuDot pose="fix" />
               {m.metrics_screen__fix_it()}
             </Button>
           </div>

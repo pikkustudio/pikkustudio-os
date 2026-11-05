@@ -79,7 +79,7 @@ function Gate({ live, head, label, children }: { live: Live; head: I18nNode; lab
       <NextCard label={label} hue="petrol" page="metrics" title={m.metrics_live__error_title()} why={m.metrics_live__error_text()}>
         <div className="flex flex-wrap gap-3">
           <Button variant="hero" size="pageLg" type="button" onClick={() => say(m.error_state__fix_ask_what({ what: m.metrics_live__what(), details: detailsOf(faultOf(live.error), m.metrics_live__what()) }))}>
-            <PikkuDot />
+            <PikkuDot pose="fix" />
             {m.metrics_screen__fix_it()}
           </Button>
         </div>

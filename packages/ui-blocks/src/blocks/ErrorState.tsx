@@ -76,7 +76,7 @@ export function ErrorState({ error, what, onRetry, retrying }: { error: unknown;
       <div className="flex flex-wrap items-center justify-center gap-3">
         {!ours ? (
           <Button variant="default" size="page" type="button" disabled={retrying} onClick={() => say(what ? m.error_state__fix_ask_what({ what, details }) : m.error_state__fix_ask({ details }))}>
-            <PikkuDot />
+            <PikkuDot pose="fix" />
             {m.metrics_screen__fix_it()}
           </Button>
         ) : null}

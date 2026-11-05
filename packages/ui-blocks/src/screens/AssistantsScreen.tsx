@@ -59,7 +59,7 @@ export function AssistantsScreen() {
         <NextCard label={m.assistants_screen__your_assistants()} hue="petrol" page="assistants" title={m.assistants_screen__hero_error()} why={m.assistants_screen__hero_error_text()}>
           <div className="flex flex-wrap gap-3">
             <Button variant="hero" size="page" onClick={() => say(m.error_state__fix_ask_what({ what: m.assistants_screen__title(), details: detailsOf(faultOf(query.error), m.assistants_screen__title()) }))}>
-              <PikkuDot />
+              <PikkuDot pose="fix" />
               {m.assistants_screen__fix_it()}
             </Button>
           </div>
