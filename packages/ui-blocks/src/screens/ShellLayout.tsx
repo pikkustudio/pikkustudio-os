@@ -217,6 +217,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
   const teamNav = useNavEntries('team')
   const projectNav = useNavEntries('project')
   const accountNav = useNavEntries('account')
+  const exploreNav = projectNav.find((s) => s.path === '/explore')
   const navLink = (screen: NavScreen) => {
     const Icon = navIcon(screen.nav!.icon)
     return (
@@ -398,8 +399,8 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
               {railNav.map((s) => {
                 const Icon = navIcon(s.nav!.icon)
                 return (
-                  <Link {...keep} {...tip(msg(s.title))} key={s.path} to={s.path as never} className={`${item} h-11.5 text-[15px] text-ink-2 aria-[current=page]:bg-accent aria-[current=page]:text-accent-foreground`}>
-                    <Icon className="size-5.5" />
+                  <Link {...keep} {...tip(msg(s.title))} key={s.path} to={s.path as never} className={navItem}>
+                    <Icon className="size-5" />
                     <span className={lbl}>{msg(s.title)}</span>
                     <NavBadge path={s.path} className={lbl} />
                   </Link>
@@ -408,14 +409,14 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
             </nav>
             {/\/studio-metrics$/.test(path) || !projectSlug || projectMissing ? (
               teamNav.length ? (
-                <div className="flex flex-col gap-0.5 px-1">
+                <div className="flex flex-col gap-0.5">
                   {teamNav.map(navLink)}
                 </div>
               ) : null
             ) : (
-            <div className="flex flex-col gap-0.5 px-1">
+            <div className="flex flex-col gap-0.5">
               <div className={`mb-1.5 px-3 text-[13px] font-semibold text-muted-foreground ${lbl}`}>{projectName}</div>
-              {projectNav.filter((s) => s.nav!.when !== 'journey' || journey).map(navLink)}
+              {projectNav.filter((s) => s.path !== '/explore' && (s.nav!.when !== 'journey' || journey)).map(navLink)}
               {registry.pins.filter((pin) => pins.includes(pinId(pin))).map((pin) => {
                 const Icon = navIcon(pin.icon)
                 return (
@@ -430,6 +431,7 @@ function ShellLayoutInner({ children }: { children?: ReactNode }) {
             )}
             <div className="mt-auto flex flex-col gap-2.5">
               <NotificationBell collapsed={collapsed} />
+              {exploreNav && !/\/studio-metrics$/.test(path) && projectSlug && !projectMissing ? navLink(exploreNav) : null}
               <button
                 type="button"
                 onClick={toggleRail}
