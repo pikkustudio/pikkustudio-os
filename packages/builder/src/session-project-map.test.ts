@@ -1,6 +1,6 @@
 import assert from 'node:assert'
 import { spawn } from 'node:child_process'
-import { mkdtemp } from 'node:fs/promises'
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, test } from 'node:test'
@@ -34,6 +34,17 @@ const until = async (check: () => Promise<boolean>) => {
 const asked = (output: string, code = 0): CommandRunner => async (_cwd, args) => (args[0] === 'meta' ? { code, output } : { code: 0, output: ROUTE })
 
 describe('projectMap', () => {
+  test('runs the CLI the project installed, not the one Studio shipped with', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'project-map-'))
+    const bin = join(root, 'node_modules', '.bin')
+    await mkdir(bin, { recursive: true })
+    await writeFile(join(bin, 'pikku'), `#!/usr/bin/env node\nconsole.log(${JSON.stringify(MAP)})\n`, { mode: 0o755 })
+    const nested = join(root, 'apps', 'app')
+    await mkdir(nested, { recursive: true })
+    assert.equal(await projectMap(nested), MAP)
+    await rm(root, { recursive: true, force: true })
+  })
+
   test('asks without the banner and drops what the CLI logged first', async () => {
     let env: Record<string, string> | undefined
     const run: CommandRunner = async (_cwd, _args, sent) => {

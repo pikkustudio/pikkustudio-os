@@ -34,9 +34,17 @@ export const pikkuBin = (cwd: string): string[] => {
   }
 }
 
-export const runPikku: CommandRunner = (cwd, args, env = {}) =>
-  new Promise((resolve) => {
-    const [command, ...prefix] = pikkuBin(cwd)
+/** The CLI the project installed, which is what the agent's own `pikku` runs. */
+const projectBin = (cwd: string): string[] => {
+  for (let dir = cwd; ; dir = dirname(dir)) {
+    const bin = join(dir, 'node_modules', '.bin', 'pikku')
+    if (existsSync(bin)) return [process.execPath, bin]
+    if (dirname(dir) === dir) return pikkuBin(cwd)
+  }
+}
+
+const runBin = ([command, ...prefix]: string[], cwd: string, args: string[], env: Record<string, string>) =>
+  new Promise<{ code: number; output: string }>((resolve) => {
     const child = spawn(command!, [...prefix, ...args], { cwd, env: { ...process.env, ...env, FORCE_COLOR: '0' } })
     let output = ''
     child.stdout.on('data', (chunk) => (output = (output + chunk).slice(-200000)))
@@ -44,6 +52,10 @@ export const runPikku: CommandRunner = (cwd, args, env = {}) =>
     child.once('error', (error) => resolve({ code: 1, output: error.message }))
     child.once('close', (code) => resolve({ code: code ?? 1, output }))
   })
+
+export const runPikku: CommandRunner = (cwd, args, env = {}) => runBin(pikkuBin(cwd), cwd, args, env)
+
+export const runProjectPikku: CommandRunner = (cwd, args, env = {}) => runBin(projectBin(cwd), cwd, args, env)
 
 async function json<T>(cwd: string, args: string[], run: CommandRunner, env?: Record<string, string>): Promise<T> {
   const { code, output } = await run(cwd, [...args, '--json'], env)
@@ -70,7 +82,7 @@ const MAP_START = 'Search: pikku meta grep'
 const MAP_LIMIT = 12000
 
 /** The project map from `pikku meta context`, or '' when this CLI has none to give. */
-export const projectMap = async (cwd: string, run: CommandRunner = runPikku, env?: Record<string, string>): Promise<string> => {
+export const projectMap = async (cwd: string, run: CommandRunner = runProjectPikku, env?: Record<string, string>): Promise<string> => {
   const { code, output } = await run(cwd, ['meta', 'context'], { ...env, PIKKU_NO_LOGO: '1' }).catch(() => ({ code: 1, output: '' }))
   const start = output.indexOf(MAP_START)
   const map = output.slice(start).trim()
