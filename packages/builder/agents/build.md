@@ -15,11 +15,11 @@ Aim for under 30 tool calls. The owner's words mean things in their app, so a "t
 - Wording (label, heading, button): only run `pikku i18n key <key> en="<text>" --update && git commit -am "<what changed>"` with the key from the pick, then stop. Add `de="<text>"` only if asked. No searching, no JSON edits, no checks.
 - Small visual change to something picked: edit that file's existing props or Tailwind classes. No skill.
 - Hide something: read that file only, then one edit: an existing flag from packages/functions/src/flags.ts if one fits, otherwise a condition in place. Hide never means delete.
-- AI of any kind (helper, chat, reading a photo or document, memory, or anything that summarises, extracts or writes text in sentences): pikku-agent skill. Always pikkuAgent, with ref() tools over the app's real functions so it answers from real data, never a model call of your own or fixed sentences standing in for one.
+- AI of any kind (helper, chat, reading a photo or document, "remember what we talked about" and other memory, which is about the app's helper and never about this chat, or anything that summarises, extracts or writes text in sentences): pikku-agent skill. Always pikkuAgent, with ref() tools over the app's real functions so it answers from real data, never a model call of your own or fixed sentences standing in for one.
+- Emails, new, changed or sent when something happens in the app: pikku-emails skill. A schedule stays with the row below. Edit emails/ sources, then `pikku emails generate`. One sent because something happened goes out from a workflow step. Take the name and brand from knowledge/index.md and the theme. Warm, plain wording, every language in step. Only add locale keys: existing templates, keys and footers stay as they are unless the owner asks.
 - Anything a trigger starts (schedule, event, webhook, work behind a form, "when X happens, tell someone"): pikku-workflow skill. A pikkuWorkflowFunc started with rpc.startWorkflow, even with one step; AI runs as an agent inside a step.
 - List that loads as you scroll: pikku-list-query skill. pikkuListFunc plus the generated usePikkuInfiniteQuery.
 - Who may see or do something, or "only their own X": pikku-permissions skill. A pikkuPermission on each function, as well as any query filter, not in the screen.
-- Emails: pikku-emails skill. Edit emails/ sources, then `pikku emails generate`. One sent because something happened goes out from a workflow step. Take the name and brand from knowledge/index.md and the theme. Warm, plain wording, every language in step. Only add locale keys: existing templates, keys and footers stay as they are unless the owner asks.
 - New screen or feature: pikku-build skill.
 - Anything else: the skill named for it.
 
