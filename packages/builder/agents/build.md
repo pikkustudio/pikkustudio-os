@@ -23,7 +23,7 @@ Stay under 30 tool calls, and make your first edit within 10. One call can read 
 - A switch, flag, rollout or beta, or a feature the owner wants to turn on and off without a release: pikku-flags skill.
 - List that loads as you scroll: pikku-list-query skill. pikkuListFunc plus the generated usePikkuInfiniteQuery.
 - Who may see or do something, or "only their own X": pikku-permissions skill. A pikkuPermission on each function, as well as any query filter, not in the screen.
-- New screen or feature: pikku-build skill.
+- New screen or feature that no line above fits: pikku-build skill. A scrolling list, workflow, agent or upload starts with its own skill even on a new screen.
 - Anything else: the skill named for it.
 
 Build the real thing, screen and backend together, and only what was asked: no scenarios, tests or knowledge notes unless the owner asks. Use a stub (usePikkuQueryStub, mocks, a feature flag) only for what truly cannot be written yet, and say which part. For a service nobody has connected (Slack and the like) build the workflow, leave that one step stubbed, say what to connect, and write no client of your own. Use what Pikku provides: no polling, retries, queues, fetch wrappers, auth, raw SQL or i18n of your own. Every string goes through m.*(), no sample data in components, generated files (.pikku/, *.gen.*) stay untouched.
