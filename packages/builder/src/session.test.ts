@@ -148,6 +148,7 @@ describe('BuilderSession', () => {
     const sessions: string[] = []
     let open = 1
     const queue = async (_cwd: string, args: string[]) => {
+      if (args[0] === 'meta') return { code: 1, output: '' }
       if (args[2] === '--prompt') return { code: 0, output: intake(args[3]!) }
       if (!open) return { code: 0, output: JSON.stringify({ agent: null, skill: null, refs: [], reason: 'Nothing to do', context: null, merged: ['Contact page → main @ abc1234'] }) }
       open -= 1

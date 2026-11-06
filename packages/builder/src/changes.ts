@@ -66,6 +66,20 @@ export const routeMessage = (route: NextRoute) =>
     route.context ?? '',
   ].join('\n')
 
+const MAP_START = 'Search: pikku meta grep'
+const MAP_LIMIT = 12000
+
+/** The project map from `pikku meta context`, or '' when this CLI has none to give. */
+export const projectMap = async (cwd: string, run: CommandRunner = runPikku, env?: Record<string, string>): Promise<string> => {
+  const { code, output } = await run(cwd, ['meta', 'context'], { ...env, PIKKU_NO_LOGO: '1' }).catch(() => ({ code: 1, output: '' }))
+  const start = output.indexOf(MAP_START)
+  const map = output.slice(start).trim()
+  return code === 0 && start >= 0 && map.length <= MAP_LIMIT ? map : ''
+}
+
+export const withProjectMap = (message: string, map: string) =>
+  map ? `${message}\n\n<project-map>\n${map}\n</project-map>` : message
+
 export const shimsDir = (home: string, queueHome?: string) => join(home, queueHome ? 'bin-local' : 'bin')
 
 /** A project's own CLI wins, so codegen and `pikku doc` match the @pikku/core it has installed. */
