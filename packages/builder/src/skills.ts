@@ -9,6 +9,8 @@ import { createHash } from 'node:crypto'
 import { listSkillFiles, listSkillNames, readSkillFile, SKILL_FILES } from '@pikku/skills'
 
 const CLOUD_ONLY = /cloud/
+/** The build agent stops at Pikku's boundaries, so it never reads what sits behind them. */
+const BEHIND_PIKKU = new Set(['pikku-deploy', 'pikku-service-backends'])
 
 export const builderHome = () => process.env.PIKKU_BUILDER_HOME ?? join(homedir(), '.pikku', 'builder')
 
@@ -87,7 +89,7 @@ export async function writeSkills(home = builderHome(), linked: LinkedAddon[] = 
   const staging = `${dir}.${process.pid}`
   await rm(staging, { recursive: true, force: true })
   for (const name of await listSkillNames()) {
-    if (CLOUD_ONLY.test(name)) continue
+    if (CLOUD_ONLY.test(name) || BEHIND_PIKKU.has(name)) continue
     for (const path of await listSkillFiles(name)) {
       const text = await readSkillFile(path)
       if (text === null) continue
