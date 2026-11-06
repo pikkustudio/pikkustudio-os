@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { randomBytes } from 'node:crypto'
 import { createInterface } from 'node:readline'
-import { offerMessage, pikkuNext, routeMessage, writePikkuShim, type CommandRunner } from './changes.js'
+import { offerMessage, pikkuNext, projectMap, routeMessage, withProjectMap, writePikkuShim, type CommandRunner } from './changes.js'
 import { frontendBriefing } from './briefing.js'
 import { piArgs, piEnv, resolvePi, projectKey, slotKey, slotSlug, type BuilderAi, type BuilderScope } from './pi.js'
 import { builderHome, writeSkills } from './skills.js'
@@ -201,6 +201,7 @@ export class BuilderSession {
       await mkdir(logDir, { recursive: true })
       await writeFile(join(logDir, `${key}-prompt-${mode}-${Date.now()}.log`), `label=prompt-${mode} key=${key} start=${Date.now()}\n`).catch(() => undefined)
     }
+    const first = state.items.length === 0
     state.items.push({ kind: 'user', text, at: Date.now() })
     const request = context ? `${text}\n\n<context>${context}</context>` : text
     if (this.turns.has(key)) {
@@ -218,18 +219,25 @@ export class BuilderSession {
     state.busy = true
     try {
       if (mode !== 'build' || offer) {
-        await this.send(key, mode === 'build' ? offerMessage(request) : request)
+        await this.send(key, mode === 'build' ? await this.mapped(key, offerMessage(request), first) : request)
         return state
       }
       const { cwd, env, run } = await this.resolve(key, mode)
       const route = await pikkuNext(cwd, request, run, env)
-      await this.send(key, routeMessage(route))
+      await this.send(key, await this.mapped(key, routeMessage(route), first))
     } catch (error) {
       state.busy = false
       this.push(key, `Pikku could not take the request: ${error instanceof Error ? error.message : String(error)}`)
       await this.save(key)
     }
     return state
+  }
+
+  /** The build agent's first message carries the project map, so it need not go looking. */
+  private async mapped(key: string, message: string, first: boolean): Promise<string> {
+    if (!first) return message
+    const { cwd, env, run } = await this.resolve(key, 'build')
+    return withProjectMap(message, await projectMap(cwd, run, env))
   }
 
   private async send(key: string, sent: string, session?: string, role?: 'explore') {
