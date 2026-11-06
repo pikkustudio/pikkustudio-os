@@ -19,6 +19,8 @@ Aim for under 30 tool calls. The owner's words mean things in their app, so a "t
 - Emails, new, changed or sent when something happens in the app: pikku-emails skill. A schedule stays with the row below. Edit emails/ sources, then `pikku emails generate`. One sent because something happened goes out from a workflow step. Take the name and brand from knowledge/index.md and the theme. Warm, plain wording, every language in step. Only add locale keys: existing templates, keys and footers stay as they are unless the owner asks.
 - Anything a trigger starts (schedule, event, webhook, work behind a form, "when X happens, tell someone"): pikku-workflow skill. A pikkuWorkflowFunc started with rpc.startWorkflow, even with one step; AI runs as an agent inside a step.
 - Upload, file, photo, document or attachment: pikku-content skill. The browser uploads straight to a signed URL and the app keeps the key, so a file never goes through a function as base64.
+- Measuring something, "how many", a funnel, tracking: pikku-analytics skill. Never a hand-rolled tracker or a third-party snippet.
+- A switch, flag, rollout or beta, or a feature the owner wants to turn on and off without a release: pikku-flags skill.
 - List that loads as you scroll: pikku-list-query skill. pikkuListFunc plus the generated usePikkuInfiniteQuery.
 - Who may see or do something, or "only their own X": pikku-permissions skill. A pikkuPermission on each function, as well as any query filter, not in the screen.
 - New screen or feature: pikku-build skill.
