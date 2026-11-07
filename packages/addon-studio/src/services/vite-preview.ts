@@ -343,18 +343,15 @@ if (window.self !== window.top) {
     const reply = body => window.parent.postMessage(Object.assign({ source: 'cloud-preview', type: 'persona-result', id: d.id }, body), '*')
     try {
       if (d.type === 'persona-list') {
-        let r = await fetch(api + '/sign-in/virtual-users', { credentials: 'include' })
-        let legacy = false
-        if (r.status === 404) { r = await fetch(api + '/sign-in/personas', { credentials: 'include' }); legacy = true }
+        const r = await fetch(api + '/sign-in/virtual-users', { credentials: 'include' })
         const body = r.ok ? await r.json() : {}
-        reply({ ok: r.ok, actors: (legacy ? body.actors : body.virtualUsers) || [] })
+        reply({ ok: r.ok, actors: body.virtualUsers || [] })
       } else if (d.type === 'persona-who') {
         const r = await fetch(api + '/get-session', { credentials: 'include' })
         const body = r.ok ? await r.json() : null
         reply({ ok: r.ok, name: body && body.user ? (body.user.name || '') : null })
       } else if (d.type === 'persona-switch') {
-        let r = await fetch(api + '/sign-in/switch-virtual-user', { method: 'POST', credentials: 'include', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: d.persona }) })
-        if (r.status === 404) r = await fetch(api + '/sign-in/persona', { method: 'POST', credentials: 'include', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: d.persona }) })
+        const r = await fetch(api + '/sign-in/switch-virtual-user', { method: 'POST', credentials: 'include', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: d.persona }) })
         reply({ ok: r.ok })
       } else if (d.type === 'persona-signout') {
         const r = await fetch(api + '/sign-out', { method: 'POST', credentials: 'include', headers: { 'content-type': 'application/json' }, body: '{}' })

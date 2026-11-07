@@ -36,11 +36,8 @@ export const frameTransport: PersonaTransport = {
   signOut: () => askFrame('persona-signout'),
 }
 
-type Dialect = 'virtual-users' | 'personas'
-
 export const directTransport = (origin = ''): PersonaTransport => {
   const api = `${origin}/api/auth`
-  let dialect: Dialect | null = null
   const json = (body: unknown) => ({ method: 'POST', credentials: 'include' as const, headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) })
   const safe = async (run: () => Promise<PersonaReply>): Promise<PersonaReply> => {
     try {
@@ -50,15 +47,10 @@ export const directTransport = (origin = ''): PersonaTransport => {
     }
   }
   const list = async (): Promise<PersonaReply> => {
-    for (const next of dialect ? [dialect] : (['virtual-users', 'personas'] as const)) {
-      const r = await fetch(`${api}/sign-in/${next}`, { credentials: 'include' })
-      if (r.status === 404) continue
-      dialect = next
-      if (!r.ok) return { ok: false }
-      const body = await r.json()
-      return { ok: true, actors: (next === 'virtual-users' ? body.virtualUsers : body.actors) ?? [] }
-    }
-    return { ok: false }
+    const r = await fetch(`${api}/sign-in/virtual-users`, { credentials: 'include' })
+    if (!r.ok) return { ok: false }
+    const body = await r.json()
+    return { ok: true, actors: body.virtualUsers ?? [] }
   }
   return {
     list: () => safe(list),
@@ -70,8 +62,7 @@ export const directTransport = (origin = ''): PersonaTransport => {
       }),
     switchTo: (id) =>
       safe(async () => {
-        if (!dialect) await list()
-        const r = await fetch(`${api}/sign-in/${dialect === 'personas' ? 'persona' : 'switch-virtual-user'}`, json({ id }))
+        const r = await fetch(`${api}/sign-in/switch-virtual-user`, json({ id }))
         return { ok: r.ok }
       }),
     signOut: () =>

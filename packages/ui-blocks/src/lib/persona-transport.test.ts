@@ -29,17 +29,6 @@ describe('directTransport', () => {
     expect(calls).toEqual(['GET /api/auth/sign-in/virtual-users', 'POST /api/auth/sign-in/switch-virtual-user'])
   })
 
-  test('falls back to the persona routes of an older app', async () => {
-    const calls = stub({
-      'GET /api/auth/sign-in/personas': { status: 200, body: { actors: [{ id: 'v', name: 'Visitor', jobTitle: null }] } },
-      'POST /api/auth/sign-in/persona': { status: 200 },
-    })
-    const t = directTransport()
-    expect((await t.list()).actors?.[0].name).toBe('Visitor')
-    expect((await t.switchTo('v')).ok).toBe(true)
-    expect(calls[calls.length - 1]).toBe('POST /api/auth/sign-in/persona')
-  })
-
   test('reports failure instead of throwing when the app is unreachable', async () => {
     globalThis.fetch = (async () => {
       throw new Error('down')
