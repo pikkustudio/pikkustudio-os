@@ -19,6 +19,7 @@ import { diskUsage, type DiskUsage } from './disk.js'
 import { linkDevPikku } from './dev-link.js'
 import { injectInboxCapture } from './inbox-capture.js'
 import { previewViteConfig } from './vite-preview.js'
+import { reachableApps, reachableDesign } from '../lib/workspace-origin.js'
 
 const execFileAsync = promisify(execFile)
 
@@ -139,14 +140,6 @@ const latestShot = (dir: string, slug: string): { shot: string; shotAt: number }
   }
 }
 
-const isLoopback = (url: string) => {
-  try {
-    return ['127.0.0.1', 'localhost', '[::1]'].includes(new URL(url).hostname)
-  } catch {
-    return true
-  }
-}
-
 const UI_SKIP = new Set(['node_modules', 'dist', 'build', '.pikku', '.git', 'paraglide', '__generated__'])
 const UI_MAX_FILES = 2000
 const UI_MAX_BYTES = 256 * 1024
@@ -244,6 +237,8 @@ export interface WorkspaceLink {
   url: string
   state: 'starting' | 'ready'
   token?: string
+  /** The workspace's public address, which serves its apps and design preview where its own loopback addresses cannot be opened. */
+  origin?: string
 }
 
 export type WorkspacePhase = 'machine' | 'studio' | 'sync' | 'project' | 'connect'
@@ -258,6 +253,7 @@ export interface WorkspaceTarget {
   url: string
   headers: Record<string, string>
   remoteKey: string
+  origin?: string
 }
 
 const WORKSPACE_TARGET_TTL = 30_000
@@ -1775,7 +1771,8 @@ export class StudioProjectsService {
     if (!res.ok) throw new Error(`The workspace answered ${res.status}`)
     const remoteKey = ((await res.json()) as { projects?: { key: string }[] }).projects?.[0]?.key
     if (!remoteKey) throw new Error('The workspace has no project yet')
-    const target: WorkspaceTarget = { state: 'ready', url: link.url, headers, remoteKey }
+    const origin = (link.origin ?? (await from.workspaceLink?.(id, workspace).then((opened) => opened.origin).catch(() => undefined)))?.replace(/\/+$/, '')
+    const target: WorkspaceTarget = { state: 'ready', url: link.url, headers, remoteKey, ...(origin ? { origin } : {}) }
     this.workspaceTargets.set(key, { at: Date.now(), target })
     return target
   }
@@ -1948,7 +1945,20 @@ export class StudioProjectsService {
   async appsOf(key: string): Promise<ProjectApp[]> {
     const remote = await this.inWorkspace<ProjectApp[]>(key, 'projectApps', {}, [])
     if (!remote) return this.projectApps(key)
-    return remote.answer.map((app) => ({ ...app, url: app.url && !isLoopback(app.url) ? app.url : null, shot: null, shotAt: null }))
+    const origin = await this.workspaceOrigin(key)
+    return reachableApps(remote.answer, origin).map((app) => ({ ...app, shot: null, shotAt: null }))
+  }
+
+  /** The design preview of a project wherever it runs, its loopback address in a workspace swapped for the one that is public. */
+  async designOf(key: string): Promise<ProjectDesign | null> {
+    const remote = await this.inWorkspace<ProjectDesign | null>(key, 'getDesignPreview', {}, null)
+    if (!remote) return this.designStatus(key)
+    return reachableDesign(remote.answer, await this.workspaceOrigin(key))
+  }
+
+  private async workspaceOrigin(key: string): Promise<string | undefined> {
+    const target = await this.workspaceTarget(key).catch(() => null)
+    return target?.state === 'ready' ? target.origin : undefined
   }
 
   /** The project's generated function meta (what Review ranks), from wherever the project is; null before a build. */

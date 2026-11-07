@@ -18,5 +18,5 @@ export const getDesignPreview = pikkuSessionlessFunc({
   description: "Where a project's design preview is served and whether it is running.",
   input: GetDesignPreviewInput,
   output: GetDesignPreviewOutput,
-  func: async ({ studioProjects }, { key }) => studioProjects.designStatus(key),
+  func: async ({ studioProjects }, { key }) => studioProjects.designOf(key),
 })

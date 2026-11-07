@@ -40,7 +40,7 @@ const workspace = createServer((req: IncomingMessage, res: ServerResponse) => {
 })
 let url = ''
 
-const source = (state: 'ready' | 'off' = 'ready'): AccountProvider => ({
+const source = (state: 'ready' | 'off' = 'ready', origin?: string): AccountProvider => ({
   account: async () => ({ signedIn: true, apiUrl: 'http://host', consoleUrl: 'http://host/console' }),
   projects: async () => [held],
   startSignIn: async () => ({ code: 'ABCD', url: 'http://host/cli-auth', expiresAt: new Date().toISOString() }),
@@ -50,12 +50,12 @@ const source = (state: 'ready' | 'off' = 'ready'): AccountProvider => ({
   signOut: async () => {},
   modelAccess: async () => ({ proxyUrl: '', apiKey: '' }),
   link: async () => null,
-  workspaceLink: async () => (state === 'ready' ? { state, url, token: 'tok' } : { state: 'off', url: '' }) as never,
+  workspaceLink: async () => (state === 'ready' ? { state, url, token: 'tok', ...(origin ? { origin } : {}) } : { state: 'off', url: '' }) as never,
 })
 
-const service = async (state: 'ready' | 'off' = 'ready') => {
+const service = async (state: 'ready' | 'off' = 'ready', origin?: string) => {
   const base = await mkdtemp(join(tmpdir(), 'pikku-studio-deleg-'))
-  return new StudioProjectsService({ sources: { host: source(state) }, home: join(base, 'studio'), startApps: false })
+  return new StudioProjectsService({ sources: { host: source(state, origin) }, home: join(base, 'studio'), startApps: false })
 }
 
 const KEY = 'host:p1@ws'
@@ -179,6 +179,31 @@ describe('a source project is answered by its workspace', () => {
       { slug: 'app', url: null, state: 'ready', shot: null, shotAt: null },
       { slug: 'site', url: 'https://site.example.test', state: 'starting', shot: null, shotAt: null },
     ])
+  })
+
+  test("a workspace's loopback apps and design preview are opened at the public origin its source names", async () => {
+    reset()
+    answers.projectApps = [
+      { slug: 'app', url: 'http://127.0.0.1:5173', state: 'ready', shot: 'app/desktop/index.png', shotAt: 1 },
+      { slug: 'admin', url: 'http://localhost:5174', state: 'ready', shot: null, shotAt: null },
+      { slug: 'site', url: 'https://site.example.test', state: 'starting', shot: null, shotAt: null },
+    ]
+    answers.getDesignPreview = { state: 'ready', url: 'http://127.0.0.1:7110/_frontend/design/', restarts: 0, lastExit: null, logTail: '' }
+    const studio = await service('ready', 'https://ws-p1.sandbox.example.test/')
+    assert.deepStrictEqual(await studio.appsOf(KEY), [
+      { slug: 'app', url: 'https://ws-p1.sandbox.example.test/', state: 'ready', shot: null, shotAt: null },
+      { slug: 'admin', url: 'https://ws-p1.sandbox.example.test/_frontend/admin/', state: 'ready', shot: null, shotAt: null },
+      { slug: 'site', url: 'https://site.example.test', state: 'starting', shot: null, shotAt: null },
+    ])
+    assert.deepStrictEqual(await studio.designOf(KEY), { ...(answers.getDesignPreview as object), url: 'https://ws-p1.sandbox.example.test/_frontend/design/' })
+  })
+
+  test("without an origin a workspace's design preview is passed on and a project on this computer has none", async () => {
+    reset()
+    answers.getDesignPreview = { state: 'ready', url: 'http://127.0.0.1:7110/_frontend/design/', restarts: 0, lastExit: null, logTail: '' }
+    const studio = await service()
+    assert.deepStrictEqual(await studio.designOf(KEY), answers.getDesignPreview)
+    assert.strictEqual(await studio.designOf('local-one'), null)
   })
 
   test('a workspace that is off answers empty without being asked', async () => {
