@@ -68,22 +68,22 @@
     "@types/node": "*",
     "@types/react": "*",
     "kysely": "*",
-    "typescript": "^5.9",
+    "typescript": "^7.0.2",
     "@standard-schema/spec": "^1.1.0",
     "@pikku/kysely-bun-sqlite": "*"
   },
   "peerDependencies": {
     "@pikku/core": "*",
     "kysely": "*",
-    "typescript": "^5.9",
+    "typescript": "^7.0.2",
     "react": "*",
     "@pikku/react": "*",
     "@pikkustudio/blocks": "*",
     "lucide-react": "*"
   },
   "dependencies": {
-    "@pikku/kysely": "^0.13.40",
-    "typescript": "^5.9",
+    "@pikku/kysely": "^0.13.41",
+    "typescript": "^7.0.2",
     "zod": "^4.3.6"
   }
 }

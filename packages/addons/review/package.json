@@ -102,8 +102,8 @@
     "kysely": "*"
   },
   "dependencies": {
-    "@pikku/kysely": "^0.13.40",
-    "typescript": "^5.9",
+    "@babel/parser": "^7.29.9",
+    "@pikku/kysely": "^0.13.41",
     "zod": "^4.3.6"
   }
 }

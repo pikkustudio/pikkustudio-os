@@ -45,11 +45,11 @@
     "@pikku/inspector": "*",
     "@types/node": "*",
     "@types/react": "*",
-    "typescript": "^5.7.2",
+    "typescript": "^7.0.2",
     "zod": "^4"
   },
   "dependencies": {
-    "@pikku/kysely": "^0.13.40"
+    "@pikku/kysely": "^0.13.41"
   },
   "studio": {
     "addon": "spindle",

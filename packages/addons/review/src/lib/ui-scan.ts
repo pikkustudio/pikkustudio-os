@@ -1,4 +1,4 @@
-import ts from 'typescript'
+import { parse } from '@babel/parser'
 import { createHash } from 'node:crypto'
 import type { UiEntry, UiMeta, UiUnitKind } from './ui-types.js'
 
@@ -7,6 +7,14 @@ export interface UiSourceFile {
   content: string
 }
 
+/**
+ * A Babel AST node. TypeScript 7 ships no JavaScript compiler API, and this
+ * scan reads source text in-process, so it parses with Babel. The shapes used
+ * here are narrow enough that a loose type reads better than the full union.
+ */
+// oxlint-disable-next-line typescript/no-explicit-any
+type Node = { type: string; start: number; end: number; [key: string]: any }
+
 const SKIP_FILE = /\.(gen|stories|test|spec|d)\.tsx?$/
 const SKIP_DIR = /(^|\/)(paraglide|__generated__|node_modules|dist|build)(\/|$)/
 const RPC_HOOKS = new Set(['usePikkuQuery', 'usePikkuMutation', 'usePikkuSubscription'])
@@ -14,20 +22,78 @@ const QUERY_HOOKS = new Set(['usePikkuQuery', 'useQuery', 'useSuspenseQuery', 'u
 const MUTATION_HOOKS = new Set(['usePikkuMutation', 'useMutation'])
 const EFFECT_HOOKS = new Set(['useEffect', 'useLayoutEffect', 'useInsertionEffect'])
 const TEXT_ATTRS = new Set(['label', 'placeholder', 'title', 'aria-label', 'description', 'alt'])
-const SHORT_CIRCUIT = new Set([
-  ts.SyntaxKind.AmpersandAmpersandToken,
-  ts.SyntaxKind.BarBarToken,
-  ts.SyntaxKind.QuestionQuestionToken,
-])
+const SHORT_CIRCUIT = new Set(['&&', '||', '??'])
 const BRANCHING = new Set([
-  ts.SyntaxKind.SwitchStatement,
-  ts.SyntaxKind.ForStatement,
-  ts.SyntaxKind.ForOfStatement,
-  ts.SyntaxKind.ForInStatement,
-  ts.SyntaxKind.WhileStatement,
-  ts.SyntaxKind.DoStatement,
-  ts.SyntaxKind.CatchClause,
+  'SwitchStatement',
+  'ForStatement',
+  'ForOfStatement',
+  'ForInStatement',
+  'WhileStatement',
+  'DoWhileStatement',
+  'CatchClause',
 ])
+const SKIPPED_KEYS = new Set([
+  'loc',
+  'extra',
+  'leadingComments',
+  'trailingComments',
+  'innerComments',
+])
+
+const isNode = (value: unknown): value is Node =>
+  typeof value === 'object' &&
+  value !== null &&
+  typeof (value as Node).type === 'string' &&
+  typeof (value as Node).start === 'number'
+
+/** Children in source order, so first-seen lists come out the way the file reads. */
+const childrenOf = (node: Node): Node[] => {
+  const children: Node[] = []
+  for (const [key, value] of Object.entries(node)) {
+    if (SKIPPED_KEYS.has(key)) continue
+    if (Array.isArray(value)) {
+      for (const item of value) if (isNode(item)) children.push(item)
+    } else if (isNode(value)) {
+      children.push(value)
+    }
+  }
+  return children.sort((a, b) => a.start - b.start)
+}
+
+const forEachChild = (node: Node, callback: (child: Node) => void) => {
+  for (const child of childrenOf(node)) callback(child)
+}
+
+const isCall = (node: Node | null | undefined): node is Node =>
+  node?.type === 'CallExpression' || node?.type === 'OptionalCallExpression'
+
+const isMember = (node: Node | null | undefined): node is Node =>
+  (node?.type === 'MemberExpression' || node?.type === 'OptionalMemberExpression') &&
+  !node.computed &&
+  node.property?.type === 'Identifier'
+
+const isJsx = (node: Node): boolean => node.type === 'JSXElement' || node.type === 'JSXFragment'
+
+const isStringLiteral = (node: Node | null | undefined): node is Node =>
+  node?.type === 'StringLiteral'
+
+/** The pattern a parameter binds, past a default value (`a = 1`). */
+const bindingTarget = (param: Node): Node => {
+  if (param.type === 'AssignmentPattern') return param.left
+  if (param.type === 'TSParameterProperty') return bindingTarget(param.parameter)
+  return param
+}
+
+/** The annotation on a node, as the type itself rather than the `: T` wrapper. */
+const annotationOf = (node: Node | null | undefined): Node | undefined =>
+  node?.typeAnnotation?.typeAnnotation
+
+interface Source {
+  text: string
+  lineOf: (offset: number) => number
+}
+
+const textOf = (source: Source, node: Node): string => source.text.slice(node.start, node.end)
 
 export const isScannableUiFile = (path: string): boolean =>
   /\.tsx?$/.test(path) && !SKIP_FILE.test(path) && !SKIP_DIR.test(path)
@@ -37,71 +103,74 @@ const hash = (value: string): string =>
 
 const isHookName = (name: string): boolean => /^use[A-Z]/.test(name)
 
-const calleeName = (node: ts.CallExpression): string | null => {
-  if (ts.isIdentifier(node.expression)) return node.expression.text
-  if (ts.isPropertyAccessExpression(node.expression)) return node.expression.name.text
+const calleeName = (node: Node): string | null => {
+  if (node.callee.type === 'Identifier') return node.callee.name
+  if (isMember(node.callee)) return node.callee.property.name
   return null
 }
 
-const containsJsx = (node: ts.Node): boolean => {
+const containsJsx = (node: Node): boolean => {
   let found = false
-  const visit = (child: ts.Node) => {
+  const visit = (child: Node) => {
     if (found) return
-    if (ts.isJsxElement(child) || ts.isJsxSelfClosingElement(child) || ts.isJsxFragment(child)) {
+    if (isJsx(child)) {
       found = true
       return
     }
-    ts.forEachChild(child, visit)
+    forEachChild(child, visit)
   }
   visit(node)
   return found
 }
 
-const jsxDepthOf = (node: ts.Node): number => {
+const jsxDepthOf = (node: Node): number => {
   let deepest = 0
-  const walk = (child: ts.Node, depth: number) => {
-    const next =
-      ts.isJsxElement(child) || ts.isJsxSelfClosingElement(child) || ts.isJsxFragment(child)
-        ? depth + 1
-        : depth
+  const walk = (child: Node, depth: number) => {
+    const next = isJsx(child) ? depth + 1 : depth
     if (next > deepest) deepest = next
-    ts.forEachChild(child, (grandchild) => walk(grandchild, next))
+    forEachChild(child, (grandchild) => walk(grandchild, next))
   }
   walk(node, 0)
   return deepest
 }
 
-const unitOf = (name: string, fn: ts.Node): UiUnitKind | null => {
+const unitOf = (name: string, fn: Node): UiUnitKind | null => {
   if (name.endsWith('Provider')) return 'context'
   if (isHookName(name)) return 'hook'
   if (/^[A-Z]/.test(name) && containsJsx(fn)) return 'component'
   return null
 }
 
-const firstParameter = (fn: ts.SignatureDeclarationBase): ts.ParameterDeclaration | undefined =>
-  fn.parameters[0]
+const firstParameter = (fn: Node): Node | undefined => fn.params[0]
 
-const membersOf = (type: ts.TypeNode | undefined): string[] => {
+const keyText = (source: Source, member: Node): string => {
+  if (!member.key) return ''
+  const text = textOf(source, member.key)
+  return member.computed ? `[${text}]` : text
+}
+
+const membersOf = (source: Source, type: Node | undefined): string[] => {
   if (!type) return []
-  if (ts.isTypeLiteralNode(type)) {
-    return type.members.map((member) => member.name?.getText() ?? '').filter(Boolean)
+  if (type.type === 'TSTypeLiteral') {
+    return type.members.map((member: Node) => keyText(source, member)).filter(Boolean)
   }
-  if (ts.isTypeReferenceNode(type) && type.typeArguments) {
-    return type.typeArguments.flatMap((argument) => membersOf(argument))
+  if (type.type === 'TSTypeReference' && type.typeParameters) {
+    return type.typeParameters.params.flatMap((argument: Node) => membersOf(source, argument))
   }
   return []
 }
 
-const propNamesOf = (
-  fn: ts.SignatureDeclarationBase,
-  declared: ts.TypeNode | undefined,
-): string[] => {
+const propNamesOf = (source: Source, fn: Node, declared: Node | undefined): string[] => {
   const param = firstParameter(fn)
-  if (param && ts.isObjectBindingPattern(param.name)) {
-    return param.name.elements.map((element) => element.name.getText())
+  const target = param && bindingTarget(param)
+  if (target?.type === 'ObjectPattern') {
+    return target.properties.map((element: Node) => {
+      if (element.type === 'RestElement') return textOf(source, element.argument)
+      return textOf(source, bindingTarget(element.value))
+    })
   }
-  const fromParam = membersOf(param?.type)
-  return fromParam.length > 0 ? fromParam : membersOf(declared)
+  const fromParam = membersOf(source, annotationOf(target))
+  return fromParam.length > 0 ? fromParam : membersOf(source, declared)
 }
 
 /**
@@ -109,16 +178,13 @@ const propNamesOf = (
  * parameter, so a parameter with no annotation is only untyped when the
  * declaration carries none either.
  */
-const hasUntypedProps = (
-  fn: ts.SignatureDeclarationBase,
-  declared: ts.TypeNode | undefined,
-  unit: UiUnitKind,
-): boolean => {
+const hasUntypedProps = (fn: Node, declared: Node | undefined, unit: UiUnitKind): boolean => {
   if (unit === 'hook') return false
   const param = firstParameter(fn)
   if (!param) return false
-  if (param.type) return param.type.kind === ts.SyntaxKind.AnyKeyword
-  if (declared) return declared.kind === ts.SyntaxKind.AnyKeyword
+  const type = annotationOf(bindingTarget(param))
+  if (type) return type.type === 'TSAnyKeyword'
+  if (declared) return declared.type === 'TSAnyKeyword'
   return true
 }
 
@@ -129,30 +195,33 @@ const isMeaningfulText = (raw: string): boolean => {
   return /\s|[A-Za-z]{4,}/.test(text)
 }
 
-const optionsObjectOf = (call: ts.CallExpression): ts.ObjectLiteralExpression | null => {
-  for (const argument of call.arguments) {
-    if (ts.isObjectLiteralExpression(argument)) return argument
-  }
-  return null
-}
+const optionsObjectOf = (call: Node): Node | null =>
+  call.arguments.find((argument: Node) => argument.type === 'ObjectExpression') ?? null
 
-const hasProperty = (object: ts.ObjectLiteralExpression | null, name: string): boolean =>
-  !!object?.properties.some((property) => property.name?.getText() === name)
+const hasProperty = (object: Node | null, name: string): boolean =>
+  !!object?.properties.some(
+    (property: Node) =>
+      (property.type === 'ObjectProperty' || property.type === 'ObjectMethod') &&
+      !property.computed &&
+      property.key.type === 'Identifier' &&
+      property.key.name === name,
+  )
 
 interface Binding {
   name: string | null
   fields: string[]
 }
 
-const bindingOf = (call: ts.CallExpression): Binding => {
-  const parent = call.parent
-  if (!parent || !ts.isVariableDeclaration(parent)) return { name: null, fields: [] }
-  if (ts.isIdentifier(parent.name)) return { name: parent.name.text, fields: [] }
-  if (ts.isObjectBindingPattern(parent.name)) {
+const bindingOf = (source: Source, call: Node, parent: Node | null): Binding => {
+  if (!parent || parent.type !== 'VariableDeclarator' || parent.init !== call) {
+    return { name: null, fields: [] }
+  }
+  if (parent.id.type === 'Identifier') return { name: parent.id.name, fields: [] }
+  if (parent.id.type === 'ObjectPattern') {
     return {
       name: null,
-      fields: parent.name.elements.map((element) =>
-        (element.propertyName ?? element.name).getText(),
+      fields: parent.id.properties.map((element: Node) =>
+        textOf(source, element.type === 'RestElement' ? element.argument : element.key),
       ),
     }
   }
@@ -177,12 +246,15 @@ interface Signals {
   jsxDepth: number
 }
 
+const attributeName = (name: Node): string =>
+  name.type === 'JSXNamespacedName' ? `${name.namespace.name}:${name.name.name}` : name.name
+
 /**
  * Read once, count everything. Every signal needs the same ancestor bookkeeping
  * — whether we are inside a branch, inside an effect — and the counts have to
  * agree with each other for the score to mean anything.
  */
-const collect = (fn: ts.Node, props: Set<string>, bodyText: string): Signals => {
+const collect = (source: Source, fn: Node, props: Set<string>, bodyText: string): Signals => {
   const hooks: string[] = []
   const rpcs: string[] = []
   const queries: Array<{ binding: Binding; suspense: boolean }> = []
@@ -198,37 +270,37 @@ const collect = (fn: ts.Node, props: Set<string>, bodyText: string): Signals => 
   let rawNavigations = 0
   let anyCasts = 0
 
-  const visit = (node: ts.Node, branched: boolean, inEffect: boolean) => {
+  const visit = (node: Node, parent: Node, branched: boolean, inEffect: boolean) => {
     let nowBranched = branched
     let nowInEffect = inEffect
 
-    if (node.kind === ts.SyntaxKind.AnyKeyword) anyCasts += 1
+    if (node.type === 'TSAnyKeyword') anyCasts += 1
 
-    if (BRANCHING.has(node.kind)) nowBranched = true
+    if (BRANCHING.has(node.type)) nowBranched = true
 
-    if (ts.isJsxText(node) && isMeaningfulText(node.text)) hardcodedText += 1
+    if (node.type === 'JSXText' && isMeaningfulText(node.value)) hardcodedText += 1
 
-    if (ts.isJsxAttribute(node) && node.initializer) {
-      const attribute = node.name.getText()
-      if (TEXT_ATTRS.has(attribute) && ts.isStringLiteral(node.initializer)) {
-        if (isMeaningfulText(node.initializer.text)) hardcodedText += 1
+    if (node.type === 'JSXAttribute' && node.value) {
+      const attribute = attributeName(node.name)
+      if (TEXT_ATTRS.has(attribute) && isStringLiteral(node.value)) {
+        if (isMeaningfulText(node.value.value)) hardcodedText += 1
       }
-      if (attribute === 'href' && ts.isStringLiteral(node.initializer)) {
-        if (node.initializer.text.startsWith('/')) rawNavigations += 1
+      if (attribute === 'href' && isStringLiteral(node.value)) {
+        if (node.value.value.startsWith('/')) rawNavigations += 1
       }
     }
 
     if (
-      ts.isPropertyAccessExpression(node) &&
-      ts.isIdentifier(node.expression) &&
-      node.expression.text === 'window' &&
-      node.name.text === 'location' &&
-      !(ts.isPropertyAccessExpression(node.parent) && node.parent.name.text === 'reload')
+      isMember(node) &&
+      node.object.type === 'Identifier' &&
+      node.object.name === 'window' &&
+      node.property.name === 'location' &&
+      !(isMember(parent) && parent.property.name === 'reload')
     ) {
       rawNavigations += 1
     }
 
-    if (ts.isCallExpression(node)) {
+    if (isCall(node)) {
       const name = calleeName(node)
 
       if (name && isHookName(name)) {
@@ -238,8 +310,8 @@ const collect = (fn: ts.Node, props: Set<string>, bodyText: string): Signals => 
 
       if (name && RPC_HOOKS.has(name)) {
         const [first] = node.arguments
-        if (first && ts.isStringLiteral(first) && !rpcs.includes(first.text)) {
-          rpcs.push(first.text)
+        if (first && isStringLiteral(first) && !rpcs.includes(first.value)) {
+          rpcs.push(first.value)
         }
       }
 
@@ -250,20 +322,23 @@ const collect = (fn: ts.Node, props: Set<string>, bodyText: string): Signals => 
       }
 
       if (name && QUERY_HOOKS.has(name)) {
-        queries.push({ binding: bindingOf(node), suspense: name === 'useSuspenseQuery' })
+        queries.push({
+          binding: bindingOf(source, node, parent),
+          suspense: name === 'useSuspenseQuery',
+        })
       }
 
       if (name && MUTATION_HOOKS.has(name)) {
         mutations.push({
-          binding: bindingOf(node),
+          binding: bindingOf(source, node, parent),
           handled: hasProperty(optionsObjectOf(node), 'onError'),
         })
       }
 
       if (name === 'useState' && node.arguments.length > 0) {
         const [seed] = node.arguments
-        const root = seed && ts.isPropertyAccessExpression(seed) ? seed.expression : seed
-        const identifier = root && ts.isIdentifier(root) ? root.text : null
+        const root = seed && isMember(seed) ? seed.object : seed
+        const identifier = root && root.type === 'Identifier' ? root.name : null
         if (identifier && props.has(identifier)) stateFromProps += 1
       }
 
@@ -279,32 +354,32 @@ const collect = (fn: ts.Node, props: Set<string>, bodyText: string): Signals => 
       }
     }
 
-    if (nowInEffect && node.kind === ts.SyntaxKind.AwaitExpression) fetchInEffect += 1
+    if (nowInEffect && node.type === 'AwaitExpression') fetchInEffect += 1
 
-    if (ts.isBinaryExpression(node) && SHORT_CIRCUIT.has(node.operatorToken.kind)) {
-      visit(node.left, nowBranched, nowInEffect)
-      visit(node.right, true, nowInEffect)
+    if (node.type === 'LogicalExpression' && SHORT_CIRCUIT.has(node.operator)) {
+      visit(node.left, node, nowBranched, nowInEffect)
+      visit(node.right, node, true, nowInEffect)
       return
     }
 
-    if (ts.isConditionalExpression(node)) {
-      visit(node.condition, nowBranched, nowInEffect)
-      visit(node.whenTrue, true, nowInEffect)
-      visit(node.whenFalse, true, nowInEffect)
+    if (node.type === 'ConditionalExpression') {
+      visit(node.test, node, nowBranched, nowInEffect)
+      visit(node.consequent, node, true, nowInEffect)
+      visit(node.alternate, node, true, nowInEffect)
       return
     }
 
-    if (ts.isIfStatement(node)) {
-      visit(node.expression, branched, nowInEffect)
-      visit(node.thenStatement, true, nowInEffect)
-      if (node.elseStatement) visit(node.elseStatement, true, nowInEffect)
+    if (node.type === 'IfStatement') {
+      visit(node.test, node, branched, nowInEffect)
+      visit(node.consequent, node, true, nowInEffect)
+      if (node.alternate) visit(node.alternate, node, true, nowInEffect)
       return
     }
 
-    ts.forEachChild(node, (child) => visit(child, nowBranched, nowInEffect))
+    forEachChild(node, (child) => visit(child, node, nowBranched, nowInEffect))
   }
 
-  ts.forEachChild(fn, (child) => visit(child, false, false))
+  forEachChild(fn, (child) => visit(child, fn, false, false))
 
   const reads = (binding: Binding, fields: string[]): boolean =>
     binding.fields.some((field) => fields.includes(field)) ||
@@ -339,26 +414,36 @@ const collect = (fn: ts.Node, props: Set<string>, bodyText: string): Signals => 
   }
 }
 
+/**
+ * `declaration` is the whole statement, `export` and all; `fn` is the function
+ * node; `text` is what the body hash and size read, which for a declaration is
+ * the statement and for a variable is just the function.
+ */
 const entryFor = (
+  source: Source,
   path: string,
-  sourceFile: ts.SourceFile,
   name: string,
-  declaration: ts.Node,
-  fn: ts.SignatureDeclarationBase & ts.Node,
-  declaredType?: ts.TypeNode,
+  declaration: Node,
+  fn: Node,
+  text: Node,
+  declaredType?: Node,
 ): UiEntry | null => {
   const unit = unitOf(name, fn)
   if (!unit) return null
 
-  const start = declaration.getStart(sourceFile)
-  const bodyStart = sourceFile.getLineAndCharacterOfPosition(start).line + 1
-  const bodyEnd = sourceFile.getLineAndCharacterOfPosition(declaration.getEnd()).line + 1
-  const bodyText = fn.getText(sourceFile)
-  const props = propNamesOf(fn, declaredType)
+  const bodyStart = source.lineOf(declaration.start)
+  const bodyEnd = source.lineOf(declaration.end)
+  const bodyText = textOf(source, text)
+  const props = propNamesOf(source, fn, declaredType)
 
-  const signals = collect(fn, new Set(props), bodyText)
+  const signals = collect(source, fn, new Set(props), bodyText)
   const parameter = firstParameter(fn)
-  const contract = [name, parameter?.getText(sourceFile) ?? '', fn.type?.getText(sourceFile) ?? '']
+  const returnType: Node | undefined = fn.returnType?.typeAnnotation
+  const contract = [
+    name,
+    parameter ? textOf(source, parameter) : '',
+    returnType ? textOf(source, returnType) : '',
+  ]
 
   return {
     uiId: `${path}#${name}`,
@@ -390,37 +475,75 @@ const entryFor = (
   }
 }
 
-export const scanUiFile = (file: UiSourceFile): UiEntry[] => {
-  const sourceFile = ts.createSourceFile(
-    file.path,
-    file.content,
-    ts.ScriptTarget.Latest,
-    true,
-    file.path.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
-  )
+const sourceOf = (content: string): Source => {
+  const lineStarts = [0]
+  for (let index = 0; index < content.length; index += 1) {
+    if (content[index] === '\n') lineStarts.push(index + 1)
+  }
+  return {
+    text: content,
+    lineOf: (offset) => {
+      let low = 0
+      let high = lineStarts.length - 1
+      while (low < high) {
+        const mid = (low + high + 1) >> 1
+        if (lineStarts[mid]! <= offset) low = mid
+        else high = mid - 1
+      }
+      return low + 1
+    },
+  }
+}
 
+export const scanUiFile = (file: UiSourceFile): UiEntry[] => {
+  let program: Node
+  try {
+    program = parse(file.content, {
+      sourceType: 'module',
+      errorRecovery: true,
+      createParenthesizedExpressions: true,
+      plugins: file.path.endsWith('.tsx') ? ['typescript', 'jsx'] : ['typescript'],
+    }).program as unknown as Node
+  } catch {
+    return []
+  }
+
+  const source = sourceOf(file.content)
   const entries: UiEntry[] = []
 
-  for (const statement of sourceFile.statements) {
-    if (ts.isFunctionDeclaration(statement) && statement.name && statement.body) {
-      const entry = entryFor(file.path, sourceFile, statement.name.text, statement, statement)
+  for (const statement of program.body as Node[]) {
+    const inner: Node =
+      (statement.type === 'ExportNamedDeclaration' ||
+        statement.type === 'ExportDefaultDeclaration') &&
+      statement.declaration
+        ? statement.declaration
+        : statement
+
+    if (inner.type === 'FunctionDeclaration' && inner.id && inner.body) {
+      const entry = entryFor(source, file.path, inner.id.name, statement, inner, statement)
       if (entry) entries.push(entry)
       continue
     }
 
-    if (!ts.isVariableStatement(statement)) continue
+    if (inner.type !== 'VariableDeclaration') continue
 
-    for (const declaration of statement.declarationList.declarations) {
-      if (!ts.isIdentifier(declaration.name) || !declaration.initializer) continue
-      const initializer = declaration.initializer
-      if (!ts.isArrowFunction(initializer) && !ts.isFunctionExpression(initializer)) continue
+    for (const declaration of inner.declarations as Node[]) {
+      if (declaration.id.type !== 'Identifier' || !declaration.init) continue
+      const initializer = declaration.init
+      if (
+        initializer.type !== 'ArrowFunctionExpression' &&
+        initializer.type !== 'FunctionExpression'
+      ) {
+        continue
+      }
       const entry = entryFor(
+        source,
         file.path,
-        sourceFile,
-        declaration.name.text,
+        declaration.id.name,
         statement,
         initializer,
-        declaration.type,
+        initializer,
+        annotationOf(declaration.id),
       )
       if (entry) entries.push(entry)
     }

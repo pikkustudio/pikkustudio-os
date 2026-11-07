@@ -24,34 +24,34 @@
     "dev:app": "bash scripts/dev-app.sh"
   },
   "devDependencies": {
-    "@pikku/cli": "^0.12.198",
+    "@pikku/cli": "0.12.198",
     "@pikku/deploy-standalone": "^0.12.29",
     "@types/bun": "^1.4.3",
     "@types/node": "^24",
     "oxfmt": "^0.53.0",
     "oxlint": "^1.78.0",
     "puppeteer-core": "^24.0.0",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "packageManager": "bun@1.4.1",
   "overrides": {
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "dependencies": {
     "@ai-sdk/openai": "^4.0.81",
     "@ai-sdk/openai-compatible": "^3.0.59",
     "@better-auth/oauth-provider": "^1.7.11",
-    "@pikku/addon-console": "^0.12.65",
+    "@pikku/addon-console": "^0.12.66",
     "@pikku/ai-vercel": "^0.12.16",
-    "@pikku/better-auth": "^0.12.59",
+    "@pikku/better-auth": "^0.12.61",
     "@pikku/bun-server": "^0.12.15",
-    "@pikku/core": "^0.12.148",
+    "@pikku/core": "^0.12.151",
     "@pikku/fetch": "^0.12.13",
-    "@pikku/kysely": "^0.13.40",
+    "@pikku/kysely": "^0.13.41",
     "@pikku/kysely-bun-sqlite": "^0.12.11",
     "@pikku/modelcontextprotocol": "^0.12.19",
-    "@pikku/react": "^0.12.17",
-    "@pikku/schedule": "^0.12.11",
+    "@pikku/react": "^0.12.18",
+    "@pikku/schedule": "^0.12.12",
     "@pikku/schema-cfworker": "^0.12.9",
     "ai": "^7.0.122",
     "better-auth": "^1.7.11",

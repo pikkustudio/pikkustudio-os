@@ -39,7 +39,7 @@
     "@pikku/core": "*",
     "@pikku/inspector": "*",
     "@types/react": "*",
-    "typescript": "^5.7.2",
+    "typescript": "^7.0.2",
     "zod": "^4",
     "@types/node": "*"
   },

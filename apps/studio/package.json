@@ -21,7 +21,7 @@
     "@pikkustudio/addon-review": "workspace:*",
     "@pikkustudio/addon-spindle": "workspace:*",
     "@pikku/assistant-ui": "^0.12.14",
-    "@pikku/react": "^0.12.17",
+    "@pikku/react": "^0.12.18",
     "@pikkustudio/blocks": "workspace:*",
     "@project/functions-sdk": "workspace:*",
     "@project/theme": "workspace:*",
@@ -65,7 +65,7 @@
     "oxlint": "^1.80.0",
     "tailwindcss": "^4.1.0",
     "tw-animate-css": "^1.3.0",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "vite": "^8.3.4"
   }
 }
