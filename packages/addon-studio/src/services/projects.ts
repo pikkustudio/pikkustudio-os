@@ -102,9 +102,9 @@ export interface ProjectDesign {
   logTail: string
 }
 
-type RunningApp = ProjectApp & { child: ChildProcess | null; dir: string }
+type RunningApp = ProjectApp & { child: ChildProcess | null; dir: string; port?: number }
 
-type AppsManifest = { sandboxHostname?: string | null; frontends?: Array<{ slug: string; primary?: boolean; system?: boolean }> }
+type AppsManifest = { sandboxHostname?: string | null; frontends?: Array<{ slug: string; primary?: boolean; system?: boolean; port?: number }> }
 
 const readManifest = (manifestPath: string): { origin: string; manifest: AppsManifest } | null => {
   try {
@@ -124,7 +124,7 @@ const manifestApps = (manifestPath: string, dir: string): RunningApp[] => {
   const { origin, manifest } = read
   return (manifest.frontends ?? [])
     .filter((app) => !app.system)
-    .map((app) => ({ slug: app.slug, url: app.primary ? `${origin}/` : `${origin}/_frontend/${app.slug}/`, state: 'ready', child: null, dir }))
+    .map((app) => ({ slug: app.slug, url: app.primary ? `${origin}/` : `${origin}/_frontend/${app.slug}/`, state: app.port ? 'starting' : 'ready', child: null, dir, port: app.port }))
 }
 
 const manifestDesignOrigin = (manifestPath: string | undefined): string | null => (manifestPath ? (readManifest(manifestPath)?.origin ?? null) : null)
@@ -396,6 +396,11 @@ export const localAccount: AccountProvider = {
   async link() {
     return null
   },
+}
+
+const envPort = (name: string): number | null => {
+  const port = Number(process.env[name])
+  return Number.isInteger(port) && port > 0 && port < 65536 ? port : null
 }
 
 const freePort = () =>
@@ -1818,7 +1823,7 @@ export class StudioProjectsService {
 
   private async start(key: string): Promise<RunningProject> {
     const { entry, worktree } = await this.prepare(key)
-    const port = await freePort()
+    const port = envPort('PIKKU_STUDIO_API_PORT') ?? (await freePort())
     const token = randomBytes(32).toString('hex')
     const pikkuBin = join(worktree.projectDir, 'node_modules', '.bin', 'pikku')
     const { command, args } = (this.options.devCommand ??
@@ -1832,7 +1837,7 @@ export class StudioProjectsService {
     const logPath = this.logFile(key, 'server', true)
     const log = openSync(logPath, 'a')
     await this.reapStrays()
-    const designPort = design ? await freePort() : 0
+    const designPort = design ? (envPort('PIKKU_STUDIO_DESIGN_PORT') ?? (await freePort())) : 0
     const projectEnv = await this.projectEnv(key, entry.path)
     const generated = Object.fromEntries(GENERATED_SECRETS.filter((name) => projectEnv[name]).map((name) => [name, projectEnv[name]!]))
     const env: Record<string, string | undefined> = {
@@ -1892,8 +1897,11 @@ export class StudioProjectsService {
         spawn: confinement ? (command, commandArgs, options) => confinedSpawn(command, commandArgs, confinement, options) : undefined,
       }, () => this.compileMessages(worktree.projectDir, confinement))
     }
-    if (this.options.appsManifest) this.apps.set(key, manifestApps(this.options.appsManifest, worktree.projectDir))
-    else if (this.options.startApps !== false) this.startApps(key, worktree.projectDir, port, confinement, spawnOptions.env)
+    if (this.options.appsManifest) {
+      const hosted = manifestApps(this.options.appsManifest, worktree.projectDir)
+      if (hosted.some((app) => app.port)) this.startApps(key, worktree.projectDir, port, confinement, spawnOptions.env, hosted.filter((app) => app.port))
+      else this.apps.set(key, hosted)
+    } else if (this.options.startApps !== false) this.startApps(key, worktree.projectDir, port, confinement, spawnOptions.env)
     try {
       await Promise.race([(this.options.waitForPort ?? waitForPort)(port), exited])
     } catch (error) {
@@ -1987,8 +1995,8 @@ export class StudioProjectsService {
     }
   }
 
-  private startApps(key: string, projectDir: string, apiPort: number, confinement: Confinement | null, env: NodeJS.ProcessEnv) {
-    const found = entries(join(projectDir, 'apps'))
+  private startApps(key: string, projectDir: string, apiPort: number, confinement: Confinement | null, env: NodeJS.ProcessEnv, hosted: RunningApp[] = []) {
+    const found = (hosted.length > 0 ? hosted.map((app) => app.slug) : entries(join(projectDir, 'apps')))
       .filter((dir) => {
         const pkg = join(projectDir, 'apps', dir, 'package.json')
         if (!existsSync(pkg)) return false
@@ -1999,11 +2007,13 @@ export class StudioProjectsService {
         }
       })
       .map((dir) => ({ slug: dir, cwd: join(projectDir, 'apps', dir) }))
-    const apps: RunningApp[] = found.map(({ slug }) => ({ slug, url: null, state: 'starting', child: null, dir: projectDir }))
+    const apps: RunningApp[] = hosted.length > 0
+      ? hosted.filter((app) => found.some((entry) => entry.slug === app.slug))
+      : found.map(({ slug }) => ({ slug, url: null, state: 'starting', child: null, dir: projectDir }))
     this.apps.set(key, apps)
     for (const app of apps) {
       void (async () => {
-        const port = await freePort()
+        const port = app.port ?? (await freePort())
         const cwd = found.find((entry) => entry.slug === app.slug)!.cwd
         const logPath = this.logFile(key, app.slug)
         const log = openSync(logPath, 'a')
@@ -2034,7 +2044,7 @@ export class StudioProjectsService {
         })
         try {
           await (this.options.waitForPort ?? waitForPort)(port)
-          app.url = `http://127.0.0.1:${port}`
+          if (!app.port) app.url = `http://127.0.0.1:${port}`
           app.state = 'ready'
         } catch {
           app.state = 'failed'

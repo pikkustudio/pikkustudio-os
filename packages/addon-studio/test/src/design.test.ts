@@ -37,7 +37,7 @@ const alive = (pid: number) => {
   }
 }
 
-const setup = async (entrySource: string, env?: () => Record<string, string>, paraglideCommand?: (appDir: string) => { command: string; args: string[] } | null, withMessages = false, appsManifest?: (base: string) => Promise<string>) => {
+const setup = async (entrySource: string, env?: () => Record<string, string>, paraglideCommand?: (appDir: string) => { command: string; args: string[] } | null, withMessages = false, appsManifest?: (base: string) => Promise<string>, prepare?: (path: string) => Promise<void>) => {
   const base = await mkdtemp(join(tmpdir(), 'pikku-studio-design-'))
   const source = join(base, 'design-src')
   await mkdir(source, { recursive: true })
@@ -51,6 +51,7 @@ const setup = async (entrySource: string, env?: () => Record<string, string>, pa
     await writeFile(join(path, 'apps', 'app', 'messages', 'en.json'), '{"hello":"Hello"}')
     await writeFile(join(path, 'apps', 'app', 'project.inlang', 'settings.json'), '{}')
   }
+  await prepare?.(path)
   git(path, 'init', '-q', '-b', 'main')
   git(path, 'add', '-A')
   git(path, 'commit', '-qm', 'init')
@@ -137,6 +138,35 @@ describe('design server', () => {
       }
     })
   }
+
+  test('runs the apps a manifest gives a port on that port and keeps the manifest address', async () => {
+    const manifest = async (base: string) => {
+      const file = join(base, 'apps.json')
+      await writeFile(file, JSON.stringify({ sandboxHostname: 'abc.sandbox.example', frontends: [{ slug: 'app', primary: true, port: 5199 }] }))
+      return file
+    }
+    const prepare = async (path: string) => {
+      await mkdir(join(path, 'apps', 'app', 'node_modules', '.bin'), { recursive: true })
+      await writeFile(join(path, 'apps', 'app', 'package.json'), JSON.stringify({ name: 'app', scripts: { dev: 'vite' } }))
+      await writeFile(join(path, 'apps', 'app', 'node_modules', '.bin', 'vite'), '#!/bin/sh\necho "$@" > ../../vite-args.txt\nsleep 30\n', { mode: 0o755 })
+    }
+    const saved = { ...process.env }
+    process.env.PIKKU_STUDIO_API_PORT = '5198'
+    const { service, key } = await setup(listening, undefined, undefined, false, manifest, prepare)
+    try {
+      const opened = await service.open(key)
+      assert.equal(opened.port, 5198)
+      await until(() => existsSync(join(opened.worktree, 'vite-args.txt')))
+      assert.match(readFileSync(join(opened.worktree, 'vite-args.txt'), 'utf8'), /--port 5199 --strictPort/)
+      await until(() => service.projectApps(key)[0]?.state === 'ready')
+      const [app] = service.projectApps(key)
+      assert.equal(app!.url, 'https://abc.sandbox.example/')
+    } finally {
+      service.killAll()
+      for (const k of Object.keys(process.env)) if (!(k in saved)) delete process.env[k]
+      Object.assign(process.env, saved)
+    }
+  })
 
   test('starts beside the dev server and the dev server is told where it is', async () => {
     const { service, key } = await setup(listening)
