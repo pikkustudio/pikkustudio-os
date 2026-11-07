@@ -14,6 +14,7 @@ import { generatedSource, memoryGeneratedStore, type GeneratedStore, projectSour
 import { DEVELOP, MAIN, addWorktree, listWorktrees, layoutRoot, sessionKey, splitSessionKey, cloneLayout, commitPaths, createLayout, ensureWorktree, saveWorktrees, keepChanges, mainEnv, keepStatus, listVersions, listThemes, type ProjectTheme, type VersionCommit, worktreeConfinement, type KeepResult, type KeepStatus, type StudioWorktree } from './worktree.js'
 import { canConfine, confinedSpawn, type Confinement } from './confine.js'
 import { Supervisor, type ServiceSpec, type ServiceStatus } from '@pikkustudio/supervisor'
+import { DEFAULT_IDLE_MS, cleanupSessionFiles, sweepSessions, type SweepReport } from './worktree-sweep.js'
 import { diskUsage, type DiskUsage } from './disk.js'
 import { linkDevPikku } from './dev-link.js'
 import { injectInboxCapture } from './inbox-capture.js'
@@ -607,6 +608,8 @@ async function projectName(path: string): Promise<string> {
 }
 
 export interface StudioProjectsOptions {
+  /** Clearing away the builder's finished session worktrees: report only unless `remove` is set. */
+  sweep?: { remove?: boolean; idleMs?: number; wt?: string }
   currentRoot?: string | null
   // A sandbox serves one project (PIKKU_STUDIO_PROJECT): only currentRoot is listed or openable.
   pinned?: boolean
@@ -1664,6 +1667,45 @@ export class StudioProjectsService {
   runningProject(key: string): RunningProject | null {
     const running = this.running.get(key)
     return running ? { port: running.port, token: running.token, worktree: running.worktree } : null
+  }
+
+  /** What a session worktree leaves in Studio's home and memory once it is gone: its design copy, design log and install mark. */
+  async forgetSession(key: string): Promise<void> {
+    await cleanupSessionFiles(this.home, key)
+    this.prepared.delete(key)
+    this.lastUsed.delete(key)
+  }
+
+  private liveSession(key: string): boolean {
+    return (
+      this.running.has(key) ||
+      this.starting.has(key) ||
+      (this.apps.get(key)?.length ?? 0) > 0 ||
+      this.designSpecs.has(key) ||
+      this.supervisor.list(key).some((s) => s.state !== 'stopped' && s.state !== 'failed')
+    )
+  }
+
+  /** Report on, and when `remove` is true clear away, every project's finished session worktrees. Never touches main, develop or a named workspace. */
+  async sweepSessions(options: { remove?: boolean; idleMs?: number } = {}): Promise<SweepReport[]> {
+    const reports: SweepReport[] = []
+    for (const entry of await this.registry()) {
+      const root = existsSync(entry.path) ? layoutRoot(entry.path) : null
+      if (!root) continue
+      reports.push(
+        await sweepSessions({
+          root,
+          home: this.home,
+          remove: options.remove ?? this.options.sweep?.remove ?? false,
+          idleMs: options.idleMs ?? this.options.sweep?.idleMs ?? DEFAULT_IDLE_MS,
+          wt: this.options.sweep?.wt,
+          keyOf: (name) => sessionKey(entry.id, name),
+          isLive: (key) => this.liveSession(key),
+          onRemoved: (key) => this.forgetSession(key),
+        })
+      )
+    }
+    return reports
   }
 
   private prepared = new Set<string>()

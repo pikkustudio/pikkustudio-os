@@ -70,6 +70,34 @@ const resolveDesignEntry = () => {
 
 const instances = new Map<string, StudioServices>()
 
+/** Clearing away finished session worktrees is report-only until PIKKU_STUDIO_SWEEP_REMOVE=1. */
+const sweepFromEnv = () => {
+  const days = Number(process.env.PIKKU_STUDIO_SWEEP_IDLE_DAYS)
+  return {
+    remove: process.env.PIKKU_STUDIO_SWEEP_REMOVE === '1',
+    idleMs: Number.isFinite(days) && days > 0 ? days * 24 * 60 * 60 * 1000 : undefined,
+    wt: process.env.PIKKU_STUDIO_WT || undefined,
+  }
+}
+
+const SWEEP_EVERY_MS = 60 * 60 * 1000
+
+/** Look over the session worktrees at startup and then every hour. A failed look is logged and tried again next time. */
+function startSessionReaper(projects: StudioProjectsService) {
+  const look = async () => {
+    try {
+      for (const report of await projects.sweepSessions()) {
+        if (report.error && report.error !== 'no layout here') console.warn(`[studio] session sweep: ${report.error}`)
+        for (const e of report.entries.filter((x) => x.action !== 'kept')) console.log(`[studio] session ${e.key}: ${e.action}`)
+      }
+    } catch (error) {
+      console.warn(`[studio] session sweep failed: ${error instanceof Error ? error.message : String(error)}`)
+    }
+  }
+  void look()
+  setInterval(() => void look(), SWEEP_EVERY_MS).unref()
+}
+
 export const resetStudioServices = (home?: string) => {
   if (home) instances.delete(home)
   else instances.clear()
@@ -92,6 +120,7 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
       pinned: Boolean(process.env.PIKKU_STUDIO_PROJECT),
       appsManifest: process.env.FRONTENDS_MANIFEST_FILE,
       designEntry: options.designEntry ?? resolveDesignEntry(),
+      sweep: sweepFromEnv(),
       store: options.projectStore,
       personalSource: options.personalSource,
       generatedStore: options.generatedStore,
@@ -137,6 +166,7 @@ export async function createStudioServices(options: StudioServicesOptions = {}):
     }, join(home, 'builder'))
   const studioLogs = options.logStore ?? memoryLogStore()
   new LogCollector(home, studioLogs, async () => [...(await studioProjects.list()).map((p) => p.key), STUDIO_KEY], forwardFromEnv(), () => studioProjects.runDirs()).start()
+  if (!options.projects) startSessionReaper(studioProjects)
   const services: StudioServices = {
     home,
     studioAi,
