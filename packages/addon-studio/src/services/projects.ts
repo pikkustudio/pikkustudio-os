@@ -1,7 +1,7 @@
 import { execFile, execFileSync, spawn, type ChildProcess } from 'node:child_process'
 import { promisify } from 'node:util'
 import { closeSync, existsSync, lstatSync, mkdirSync, openSync, readFileSync, readdirSync, realpathSync, statSync, unlinkSync, writeFileSync } from 'node:fs'
-import { cp, mkdir, readFile, readlink, rename, rm, symlink, writeFile } from 'node:fs/promises'
+import { cp, mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises'
 import { connect, createServer } from 'node:net'
 import { homedir, userInfo } from 'node:os'
 import { builderHome, packageRoot, piPackageRoot, type BuilderScope, type Launcher } from '@pikkustudio/builder'
@@ -656,6 +656,17 @@ const hoistedNodeModules = (packageDir: string) => {
   }
 }
 
+const LOCKFILES = ['bun.lock', 'bun.lockb', 'package-lock.json', 'npm-shrinkwrap.json', 'yarn.lock', 'pnpm-lock.yaml']
+
+// Vite hashes the nearest lockfile above the server (to invalidate its dep cache) and crashes if it cannot read it.
+const lockfileAbove = (packageDir: string) => {
+  for (let dir = packageDir; ; dir = dirname(dir)) {
+    const found = LOCKFILES.map((name) => join(dir, name)).filter((file) => existsSync(file))
+    if (found.length) return found
+    if (dirname(dir) === dir) return []
+  }
+}
+
 export const STUDIO_KEY = 'studio'
 
 export class StudioProjectsService {
@@ -813,6 +824,8 @@ export class StudioProjectsService {
 
   private reapStrays(): Promise<void> {
     return (this.reaped ??= (async () => {
+      // Older Studios copied the design server to <home>/design/<key> (plus a node_modules link); it now runs in place, so the copies are stale. rm does not follow the link.
+      await rm(join(this.home, 'design'), { recursive: true, force: true }).catch(() => {})
       if (!existsSync(this.pidDir)) return
       for (const file of readdirSync(this.pidDir)) {
         const pid = Number(readFileSync(join(this.pidDir, file), 'utf8'))
@@ -1560,29 +1573,12 @@ export class StudioProjectsService {
     }
   }
 
-  private async designCopy(key: string): Promise<string | undefined> {
-    const entry = this.options.designEntry
-    if (!entry) return undefined
-    const source = dirname(entry)
-    const copy = join(this.home, 'design', key)
-    await rm(copy, { recursive: true, force: true })
-    await cp(source, copy, {
-      recursive: true,
-      filter: (path) => path !== join(source, 'workspace'),
-    })
-    const modules = hoistedNodeModules(source)
-    if (modules) {
-      const link = join(dirname(copy), 'node_modules')
-      const current = await readlink(link).catch(() => null)
-      if (current !== modules) {
-        await rm(link, { force: true })
-        await symlink(modules, link, 'dir').catch(() => {})
-      }
-    }
-    return join(copy, basename(entry))
+  // The design server runs in place from the shared source: it writes nothing itself (Vite's cache goes to tmpdir) and keeps no per-project state, so there is nothing to copy.
+  private designEntryFor(): string | undefined {
+    return this.options.designEntry
   }
 
-  private confinement(worktree: StudioWorktree, design?: string): Confinement | null {
+  private confinement(worktree: StudioWorktree): Confinement | null {
     if (this.options.confine === false || !canConfine()) return null
     if (this.options.confine) return this.options.confine(worktree)
     const base = worktreeConfinement(worktree)
@@ -1592,12 +1588,13 @@ export class StudioProjectsService {
       readable.push(resolve(this.options.designEntry, '..', '..'))
       const modules = hoistedNodeModules(dirname(this.options.designEntry))
       if (modules) readable.push(modules)
+      readable.push(...lockfileAbove(dirname(this.options.designEntry)))
     }
     readable.push(...linkedRepos(worktree.path))
     if (this.options.inboxCapture && existsSync(this.options.inboxCapture)) readable.push(realpathSync(this.options.inboxCapture))
     const runtime = process.env.PIKKU_STUDIO_RUNTIME_DIR
     if (runtime) readable.push(runtime, dirname(process.execPath))
-    const writable = design ? [dirname(design)] : []
+    const writable: string[] = []
     for (const dir of [process.env.UV_CACHE_DIR, process.env.UV_PYTHON_INSTALL_DIR, process.env.UV_TOOL_DIR, process.env.UV_TOOL_BIN_DIR]) {
       if (dir && existsSync(dir)) writable.push(dir)
     }
@@ -1832,8 +1829,8 @@ export class StudioProjectsService {
           ? { command: process.execPath, args: [pikkuBin, 'dev', '--port', String(p)] }
           : { command: 'npx', args: ['pikku', 'dev', '--port', String(p)] }))(port)
     await rm(join(worktree.projectDir, OLD_DEV_CONFIG), { force: true })
-    const design = await this.designCopy(key)
-    const confinement = this.confinement(worktree, design)
+    const design = this.designEntryFor()
+    const confinement = this.confinement(worktree)
     const logPath = this.logFile(key, 'server', true)
     const log = openSync(logPath, 'a')
     await this.reapStrays()
