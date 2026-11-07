@@ -6,6 +6,7 @@ import { basename, dirname, isAbsolute, join, resolve } from 'node:path'
 import { promisify } from 'node:util'
 import type { Confinement } from './confine.js'
 import { trackLargeFiles } from './lfs.js'
+import { resolveWt, worktrunkConfigFile } from './worktree-sweep.js'
 
 const exec = promisify(execFile)
 
@@ -115,10 +116,35 @@ export const splitSessionKey = (key: string): { id: string; worktree: string } =
 
 const NAME = /^[a-z0-9][a-z0-9-]{0,39}$/
 
-export async function addWorktree(root: string, name: string): Promise<void> {
+const SEED_TIMEOUT_MS = 120_000
+
+/**
+ * Fills a new session worktree with the ignored files `develop` lists in its tracked `.worktreeinclude`
+ * (installed deps, build output) as copy-on-write clones, via worktrunk. Never throws: without `wt`, or when it
+ * fails or times out, the plain worktree stays. A project without `.worktreeinclude` copies nothing.
+ * Uses the same empty worktrunk config as the sweep, so the person's own hooks and settings never run.
+ */
+export async function seedWorktree(root: string, name: string, home: string): Promise<void> {
+  const wt = resolveWt(process.env.PIKKU_STUDIO_WT || undefined)
+  if (!wt) return console.warn(`[studio] wt not available: "${name}" starts without installed dependencies`)
+  try {
+    await mkdir(home, { recursive: true })
+    const config = worktrunkConfigFile(home)
+    await writeFile(config, '')
+    await exec(wt, ['-C', join(root, name), '--config', config, 'step', 'copy-ignored', '--from', DEVELOP, '--require-include', '-y'], {
+      timeout: SEED_TIMEOUT_MS,
+      maxBuffer: 16 * 1024 * 1024,
+    })
+  } catch (error) {
+    console.warn(`[studio] could not seed worktree "${name}": ${(error as Error).message.split('\n')[0]}`)
+  }
+}
+
+export async function addWorktree(root: string, name: string, seedHome?: string): Promise<void> {
   if (!NAME.test(name) || name === MAIN || name === DEVELOP) throw new Error(`"${name}" cannot be used as a worktree name`)
   if (existsSync(join(root, name))) throw new Error(`A worktree called "${name}" already exists`)
   await git(join(root, DEVELOP), 'worktree', 'add', '-q', '-b', name, join(root, name))
+  if (seedHome) await seedWorktree(root, name, seedHome)
 }
 
 /** A fresh `s-xxxx` name: no folder and no branch (a removed session leaves its branch) by that name. */

@@ -369,6 +369,8 @@ const designEnv = (origin: string | null): Record<string, string> => {
   return env
 }
 
+const WORKTREE_INCLUDE = 'node_modules/\ndist/\n.vite/\n'
+
 export const studioHome = () =>
   process.env.PIKKU_STUDIO_HOME ?? join(homedir(), '.pikkustudio')
 
@@ -1054,6 +1056,8 @@ export class StudioProjectsService {
       }
       const scaffold = join(staging, slugify(name))
       await mkdir(join(scaffold, '.studio'), { recursive: true })
+      // New session worktrees clone these ignored paths from develop (see seedWorktree). Not .env, caches, logs or the database.
+      if (!existsSync(join(scaffold, '.worktreeinclude'))) await writeFile(join(scaffold, '.worktreeinclude'), WORKTREE_INCLUDE)
       await writeFile(
         join(scaffold, '.studio', 'project.json'),
         JSON.stringify({ name, idea: idea ?? null, ...(surfaces ? { surfaces } : {}), ...(devices ? { devices } : {}) }, null, 2) + '\n'
@@ -1490,7 +1494,7 @@ export class StudioProjectsService {
     const root = layoutRoot(entry.path)
     if (!root) throw new Error('This project has no worktrees')
     name ??= await freshSessionName(root, () => `s-${randomBytes(2).toString('hex')}`)
-    await addWorktree(root, name)
+    await addWorktree(root, name, this.home)
     return sessionKey(entry.id, name)
   }
 
