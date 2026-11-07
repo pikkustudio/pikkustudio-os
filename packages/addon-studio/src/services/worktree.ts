@@ -1,11 +1,13 @@
 import { execFile } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
-import { chmod, copyFile, mkdir, readdir, readFile, rename, rm, writeFile } from 'node:fs/promises'
+import { chmod, copyFile, cp, mkdir, readdir, readFile, rename, rm, stat, writeFile } from 'node:fs/promises'
 import { randomBytes } from 'node:crypto'
 import { basename, dirname, isAbsolute, join, resolve } from 'node:path'
 import { promisify } from 'node:util'
 import type { Confinement } from './confine.js'
 import { trackLargeFiles } from './lfs.js'
+import { runBounded, firstLines, type BoundedResult } from './bounded-run.js'
+import { resolveWt, worktrunkConfigFile } from './worktree-sweep.js'
 
 const exec = promisify(execFile)
 
@@ -115,10 +117,164 @@ export const splitSessionKey = (key: string): { id: string; worktree: string } =
 
 const NAME = /^[a-z0-9][a-z0-9-]{0,39}$/
 
-export async function addWorktree(root: string, name: string): Promise<void> {
+const seedTimeoutMs = () => Number(process.env.PIKKU_STUDIO_SEED_TIMEOUT_MS) || 120_000
+
+/** worktrunk 0.81 refuses to run on older git. */
+const MIN_GIT: [number, number] = [2, 43]
+
+let gitVersion: Promise<string | null> | undefined
+
+const readGitVersion = () => {
+  gitVersion ??= exec('git', ['--version']).then((r) => r.stdout.trim().replace(/^git version\s+/, ''), () => null)
+  return gitVersion
+}
+
+/** True unless git is known to be older than worktrunk needs. An unreadable version does not block. */
+export async function gitSupportsWorktrunk(): Promise<{ ok: boolean; version: string | null }> {
+  const version = await readGitVersion()
+  const match = version?.match(/^(\d+)\.(\d+)/)
+  if (!match) return { ok: true, version }
+  const [major, minor] = [Number(match[1]), Number(match[2])]
+  return { ok: major > MIN_GIT[0] || (major === MIN_GIT[0] && minor >= MIN_GIT[1]), version }
+}
+
+const reflinkByVolume = new Map<number, Promise<boolean>>()
+
+/** Forgets what was learned about git and the volumes. For tests. */
+export function resetSeedCaches(): void {
+  gitVersion = undefined
+  reflinkByVolume.clear()
+}
+
+/**
+ * Whether the volume holding `dir` clones files copy-on-write: a probe copy of a small file with
+ * `cp --reflink=always` (`cp -c` on macOS). Asked once per volume. A probe that cannot run says no, which is
+ * the safe answer (the install fallback is used instead of a full copy).
+ */
+export async function canReflink(dir: string): Promise<boolean> {
+  try {
+    const volume = (await stat(dir)).dev
+    let known = reflinkByVolume.get(volume)
+    if (!known) {
+      known = probeReflink(dir)
+      reflinkByVolume.set(volume, known)
+    }
+    return await known
+  } catch {
+    return false
+  }
+}
+
+async function probeReflink(dir: string): Promise<boolean> {
+  const from = join(dir, `.reflink-probe-${randomBytes(4).toString('hex')}`)
+  const to = `${from}.copy`
+  try {
+    await writeFile(from, randomBytes(64 * 1024))
+    const flags = process.platform === 'darwin' ? ['-c'] : ['--reflink=always']
+    return (await runBounded('cp', [...flags, from, to], { timeoutMs: 10_000 })).code === 0
+  } catch {
+    return false
+  } finally {
+    await rm(from, { force: true }).catch(() => undefined)
+    await rm(to, { force: true }).catch(() => undefined)
+  }
+}
+
+/** Package managers whose install links from a shared store instead of copying. */
+const LOCKFILES = [
+  { files: ['bun.lock', 'bun.lockb'], command: 'bun', args: ['install', '--frozen-lockfile'] },
+  { files: ['pnpm-lock.yaml'], command: 'pnpm', args: ['install', '--frozen-lockfile'] },
+]
+
+const lockfileOf = (dir: string) => {
+  for (const manager of LOCKFILES) {
+    const file = manager.files.find((f) => existsSync(join(dir, f)))
+    if (file) return { ...manager, file }
+  }
+  return null
+}
+
+// Hard links make the new worktree's packages share disk with the package manager's cache.
+const installArgs = (manager: { command: string; args: string[] }, linked: boolean) =>
+  linked && manager.command === 'bun' ? [...manager.args, '--backend=hardlink'] : manager.args
+
+const safeEntry = (entry: string) => !isAbsolute(entry) && !entry.split('/').includes('..')
+
+const isDeps = (entry: string) => entry.split('/').includes('node_modules')
+
+const sameFile = async (a: string, b: string) => {
+  try {
+    return (await readFile(a)).equals(await readFile(b))
+  } catch {
+    return true
+  }
+}
+
+const describeFailure = (what: string, result: BoundedResult) =>
+  result.error
+    ? `${what} could not start: ${result.error}`
+    : result.timedOut
+      ? `${what} timed out and was stopped`
+      : `${what} exited ${result.code}${firstLines(result.stderr) ? `: ${firstLines(result.stderr)}` : ''}`
+
+/**
+ * Fills a new session worktree with the ignored files `develop` lists in its tracked `.worktreeinclude`
+ * (installed deps, build output), via worktrunk. Never throws: without `wt`, on git older than worktrunk
+ * needs, or when it fails or times out, the plain worktree stays. A project without `.worktreeinclude`
+ * copies nothing and installs nothing. Uses the same empty worktrunk config as the sweep, so the person's own hooks and settings never run.
+ *
+ * Where the volume can clone copy-on-write (APFS, btrfs, xfs) everything is cloned, and the dependencies are
+ * reinstalled only when the lockfile differs from develop's. Where it cannot (ext4), a full copy of
+ * node_modules would cost hundreds of MB, so build output is copied and the dependencies come from a frozen
+ * install, which hard-links from the package manager's cache. Every command runs in its own process group,
+ * killed whole on timeout.
+ */
+export async function seedWorktree(root: string, name: string, home: string): Promise<void> {
+  const wt = resolveWt(process.env.PIKKU_STUDIO_WT || undefined)
+  if (!wt) return console.warn(`[studio] wt not available: "${name}" starts without installed dependencies`)
+  const path = join(root, name)
+  const develop = join(root, DEVELOP)
+  const timeoutMs = seedTimeoutMs()
+  try {
+    const gitCheck = await gitSupportsWorktrunk()
+    if (!gitCheck.ok) {
+      return console.warn(`[studio] worktrunk needs git ${MIN_GIT.join('.')}+ (found ${gitCheck.version}): "${name}" starts without installed dependencies`)
+    }
+    await mkdir(home, { recursive: true })
+    const config = worktrunkConfigFile(home)
+    await writeFile(config, '')
+    const base = ['-C', path, '--config', config, 'step', 'copy-ignored', '--from', DEVELOP, '--require-include', '-y']
+    const reflink = await canReflink(root)
+    let install = false
+    if (reflink) {
+      const copied = await runBounded(wt, base, { timeoutMs })
+      if (copied.code !== 0) return console.warn(`[studio] could not seed worktree "${name}": ${describeFailure('wt', copied)}`)
+      const lock = lockfileOf(develop)
+      install = !!lock && !(await sameFile(join(develop, lock.file), join(path, lock.file)))
+    } else {
+      const planned = await runBounded(wt, [...base, '--dry-run', '--format', 'json'], { timeoutMs })
+      if (planned.code !== 0) return console.warn(`[studio] could not seed worktree "${name}": ${describeFailure('wt', planned)}`)
+      const entries = ((JSON.parse(planned.stdout) as { entries?: { path: string }[] }).entries ?? []).map((e) => e.path).filter(safeEntry)
+      for (const entry of entries.filter((e) => !isDeps(e))) {
+        await cp(join(develop, entry), join(path, entry), { recursive: true, force: false, errorOnExist: false, verbatimSymlinks: true })
+      }
+      install = entries.some(isDeps)
+    }
+    const manager = install ? lockfileOf(path) : null
+    if (manager) {
+      const result = await runBounded(manager.command, installArgs(manager, !reflink), { cwd: path, timeoutMs: timeoutMs * 2 })
+      if (result.code !== 0) console.warn(`[studio] could not install dependencies in worktree "${name}": ${describeFailure(manager.command, result)}`)
+    }
+  } catch (error) {
+    console.warn(`[studio] could not seed worktree "${name}": ${firstLines((error as Error).message, 1)}`)
+  }
+}
+
+export async function addWorktree(root: string, name: string, seedHome?: string): Promise<void> {
   if (!NAME.test(name) || name === MAIN || name === DEVELOP) throw new Error(`"${name}" cannot be used as a worktree name`)
   if (existsSync(join(root, name))) throw new Error(`A worktree called "${name}" already exists`)
   await git(join(root, DEVELOP), 'worktree', 'add', '-q', '-b', name, join(root, name))
+  if (seedHome) await seedWorktree(root, name, seedHome)
 }
 
 export async function listWorktrees(root: string): Promise<string[]> {
