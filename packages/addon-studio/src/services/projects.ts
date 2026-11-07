@@ -1899,7 +1899,7 @@ export class StudioProjectsService {
     }
     if (this.options.appsManifest) {
       const hosted = manifestApps(this.options.appsManifest, worktree.projectDir)
-      if (hosted.some((app) => app.port)) this.startApps(key, worktree.projectDir, port, confinement, spawnOptions.env, hosted.filter((app) => app.port))
+      if (hosted.some((app) => app.port)) this.startApps(key, worktree.projectDir, port, confinement, spawnOptions.env, hosted)
       else this.apps.set(key, hosted)
     } else if (this.options.startApps !== false) this.startApps(key, worktree.projectDir, port, confinement, spawnOptions.env)
     try {
@@ -1996,7 +1996,7 @@ export class StudioProjectsService {
   }
 
   private startApps(key: string, projectDir: string, apiPort: number, confinement: Confinement | null, env: NodeJS.ProcessEnv, hosted: RunningApp[] = []) {
-    const found = (hosted.length > 0 ? hosted.map((app) => app.slug) : entries(join(projectDir, 'apps')))
+    const found = (hosted.length > 0 ? hosted.filter((app) => app.port).map((app) => app.slug) : entries(join(projectDir, 'apps')))
       .filter((dir) => {
         const pkg = join(projectDir, 'apps', dir, 'package.json')
         if (!existsSync(pkg)) return false
@@ -2007,10 +2007,12 @@ export class StudioProjectsService {
         }
       })
       .map((dir) => ({ slug: dir, cwd: join(projectDir, 'apps', dir) }))
+    // Manifest apps the edge already serves (no port), or that have nothing to run here, stay listed as ready.
+    for (const app of hosted) if (!found.some((entry) => entry.slug === app.slug)) app.state = 'ready'
     const apps: RunningApp[] = hosted.length > 0
       ? hosted.filter((app) => found.some((entry) => entry.slug === app.slug))
       : found.map(({ slug }) => ({ slug, url: null, state: 'starting', child: null, dir: projectDir }))
-    this.apps.set(key, apps)
+    this.apps.set(key, hosted.length > 0 ? hosted : apps)
     for (const app of apps) {
       void (async () => {
         const port = app.port ?? (await freePort())

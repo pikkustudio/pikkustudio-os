@@ -20,7 +20,8 @@ export const reachableApps = <T extends { slug: string; url: string | null }>(ap
     return { ...app, url: i === 0 ? `${origin}/` : `${origin}/_frontend/${app.slug}/` }
   })
 
+/** Without an origin the loopback address is this machine's, not the workspace's: an empty url shows the Design screen's waiting state. */
 export const reachableDesign = <T extends { url: string }>(design: T | null, origin: string | null | undefined): T | null => {
   if (!design || !LOOPBACK.test(design.url)) return design
-  return origin ? { ...design, url: `${origin}/_frontend/design/` } : design
+  return { ...design, url: origin ? `${origin}/_frontend/design/` : '' }
 }

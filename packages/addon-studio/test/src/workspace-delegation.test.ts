@@ -198,10 +198,12 @@ describe('a source project is answered by its workspace', () => {
     assert.deepStrictEqual(await studio.designOf(KEY), { ...(answers.getDesignPreview as object), url: 'https://ws-p1.sandbox.example.test/_frontend/design/' })
   })
 
-  test("without an origin a workspace's design preview is passed on and a project on this computer has none", async () => {
+  test("without an origin a workspace's loopback design preview has no address and a project on this computer has none", async () => {
     reset()
     answers.getDesignPreview = { state: 'ready', url: 'http://127.0.0.1:7110/_frontend/design/', restarts: 0, lastExit: null, logTail: '' }
     const studio = await service()
+    assert.deepStrictEqual(await studio.designOf(KEY), { ...(answers.getDesignPreview as object), url: '' })
+    answers.getDesignPreview = { state: 'ready', url: 'https://design.example.test/', restarts: 0, lastExit: null, logTail: '' }
     assert.deepStrictEqual(await studio.designOf(KEY), answers.getDesignPreview)
     assert.strictEqual(await studio.designOf('local-one'), null)
   })

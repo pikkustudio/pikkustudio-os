@@ -168,6 +168,35 @@ describe('design server', () => {
     }
   })
 
+  test('keeps the manifest apps without a port listed beside the ones it runs', async () => {
+    const manifest = async (base: string) => {
+      const file = join(base, 'apps.json')
+      await writeFile(file, JSON.stringify({ sandboxHostname: 'abc.sandbox.example', frontends: [{ slug: 'app', primary: true, port: 5199 }, { slug: 'admin' }] }))
+      return file
+    }
+    const prepare = async (path: string) => {
+      await mkdir(join(path, 'apps', 'app', 'node_modules', '.bin'), { recursive: true })
+      await writeFile(join(path, 'apps', 'app', 'package.json'), JSON.stringify({ name: 'app', scripts: { dev: 'vite' } }))
+      await writeFile(join(path, 'apps', 'app', 'node_modules', '.bin', 'vite'), '#!/bin/sh\nsleep 30\n', { mode: 0o755 })
+    }
+    const saved = { ...process.env }
+    process.env.PIKKU_STUDIO_API_PORT = '5197'
+    const { service, key } = await setup(listening, undefined, undefined, false, manifest, prepare)
+    try {
+      await service.open(key)
+      await until(() => service.projectApps(key)[0]?.state === 'ready')
+      const apps = service.projectApps(key)
+      assert.deepStrictEqual(apps.map((app) => [app.slug, app.url, app.state]), [
+        ['app', 'https://abc.sandbox.example/', 'ready'],
+        ['admin', 'https://abc.sandbox.example/_frontend/admin/', 'ready'],
+      ])
+    } finally {
+      service.killAll()
+      for (const k of Object.keys(process.env)) if (!(k in saved)) delete process.env[k]
+      Object.assign(process.env, saved)
+    }
+  })
+
   test('starts beside the dev server and the dev server is told where it is', async () => {
     const { service, key } = await setup(listening)
     try {
