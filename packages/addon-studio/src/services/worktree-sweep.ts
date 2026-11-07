@@ -47,10 +47,18 @@ export type SweepEntry = {
   reasons: string[]
 }
 
+export type BranchEntry = {
+  name: string
+  action: 'deleted' | 'would-delete' | 'kept'
+  reasons: string[]
+}
+
 export interface SweepReport {
   root: string
   dryRun: boolean
   entries: SweepEntry[]
+  /** Leftover `s-xxxx` branches with no worktree (what a removal leaves behind). */
+  branches: BranchEntry[]
   /** Set when the sweep could not run at all (no `wt`, no layout); nothing was touched. */
   error?: string
 }
@@ -65,7 +73,12 @@ const run = (command: string, args: string[], cwd: string, env?: NodeJS.ProcessE
     })
   })
 
-const git = (cwd: string, ...args: string[]) => run('git', args, cwd)
+/**
+ * Every git call of the sweep is read-only: `--no-optional-locks` stops `git status` from rewriting the worktree's
+ * index, whose mtime `lastActivity` counts as use. Without it the sweep would bump the very clock it reads.
+ */
+const git = (cwd: string, ...args: string[]) =>
+  run('git', ['--no-optional-locks', ...args], cwd, { ...process.env, GIT_OPTIONAL_LOCKS: '0' })
 
 export function resolveWt(configured?: string): string | null {
   const usable = (file: string) => {
@@ -184,13 +197,32 @@ async function removeWith(wt: string, bare: string, name: string, path: string, 
   return existsSync(path) ? 'wt remove finished but the folder is still there' : null
 }
 
+/** Why a session branch must stay, or null when it is merged into develop, on no worktree and nowhere unpushed. */
+async function branchKeepReason(bare: string, name: string, live: string): Promise<string | null> {
+  if (!SESSION.test(name) || name === 'main' || name === 'develop' || name === live) return 'not a session branch'
+  const merged = await git(bare, 'merge-base', '--is-ancestor', `refs/heads/${name}`, 'refs/heads/develop')
+  if (merged.code === 1) return 'not merged into develop'
+  if (merged.code !== 0) return 'could not check whether it is merged into develop'
+  const unpushed = await git(bare, 'rev-list', '--count', `refs/heads/${name}`, '--not', 'refs/heads/develop', '--remotes')
+  if (unpushed.code !== 0) return 'could not check for unpushed commits'
+  if (Number(unpushed.stdout.trim()) > 0) return `has ${unpushed.stdout.trim()} commit(s) not on develop or a remote`
+  return null
+}
+
+/** `git branch -d` (never -D) from the develop worktree, so git itself re-checks that it is merged into develop. */
+async function deleteBranch(root: string, bare: string, name: string): Promise<string | null> {
+  const develop = join(root, 'develop')
+  const out = await git(existsSync(develop) ? develop : bare, 'branch', '-d', name)
+  return out.code === 0 ? null : `git branch -d failed: ${(out.stderr || out.stdout).trim().split('\n').slice(-1)[0]}`
+}
+
 export async function sweepSessions(options: SweepOptions): Promise<SweepReport> {
   const { root, home } = options
   const bare = join(root, 'repo.git')
   const dryRun = options.remove !== true
   const idleMs = options.idleMs ?? DEFAULT_IDLE_MS
   const now = options.now ?? Date.now()
-  const report: SweepReport = { root, dryRun, entries: [] }
+  const report: SweepReport = { root, dryRun, entries: [], branches: [] }
   const wt = resolveWt(options.wt)
   if (!wt) return { ...report, error: 'wt not available' }
   if (!existsSync(bare)) return { ...report, error: 'no layout here' }
@@ -207,7 +239,28 @@ export async function sweepSessions(options: SweepOptions): Promise<SweepReport>
       w.branch !== live &&
       real(w.path) === join(rootDir, w.branch)
   )
-  if (!candidates.length) return report
+  const checkedOut = new Set(parseWorktrees(listed.stdout).map((w) => w.branch))
+  const heads = await git(bare, 'for-each-ref', '--format=%(refname:short)', 'refs/heads')
+  const orphans = heads.code === 0 ? heads.stdout.split('\n').map((l) => l.trim()).filter((n) => SESSION.test(n) && !checkedOut.has(n)) : []
+  const sweepBranches = async () => {
+    for (const name of orphans) {
+      const why = await branchKeepReason(bare, name, live)
+      if (why) {
+        report.branches.push({ name, action: 'kept', reasons: [why] })
+        continue
+      }
+      if (dryRun) {
+        report.branches.push({ name, action: 'would-delete', reasons: [] })
+        continue
+      }
+      const failure = await deleteBranch(root, bare, name)
+      report.branches.push(failure ? { name, action: 'kept', reasons: [failure] } : { name, action: 'deleted', reasons: [] })
+    }
+  }
+  if (!candidates.length) {
+    await sweepBranches()
+    return report
+  }
   const dirs = await processDirs()
 
   for (const w of candidates) {
@@ -252,9 +305,12 @@ export async function sweepSessions(options: SweepOptions): Promise<SweepReport>
       report.entries.push({ name, key, path, action: 'kept', reasons: [failure] })
       continue
     }
+    // wt leaves the branch behind. Delete it only when it is still fully merged into develop.
+    if (!(await branchKeepReason(bare, name, live))) await deleteBranch(root, bare, name)
     await cleanupSessionFiles(home, key)
     await options.onRemoved?.(key)
     report.entries.push({ name, key, path, action: 'removed', reasons: [] })
   }
+  await sweepBranches()
   return report
 }

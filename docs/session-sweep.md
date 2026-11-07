@@ -25,6 +25,20 @@ The default is a dry run. Removal is on with `PIKKU_STUDIO_SWEEP_REMOVE=1` (the 
 `PIKKU_STUDIO_WT`; without it the sweep says "wt not available" and does nothing. After a removal Studio deletes
 `<home>/design/<key>` and `<home>/logs/<key>-design.log` and forgets the install mark (`forgetSession`).
 
+## Read-only git, and leftover branches
+
+Every git call in the sweep runs with `--no-optional-locks` (and `GIT_OPTIONAL_LOCKS=0`), so `git status` never rewrites
+a worktree's index. The index mtime counts as activity, so a sweep that refreshed it would make the next run say "used
+0h ago". The sweep never changes any clock it reads.
+
+`wt remove` leaves the `s-xxxx` branch behind. After a successful removal Studio deletes it with `git branch -d`
+(never `-D`, run from the `develop` worktree so git re-checks it is merged into develop) when it is still merged into
+`develop` with no commit missing from develop or a remote. The sweep also clears already-orphaned branches: names
+matching `SESSION` that no worktree has checked out, not `main`, `develop` or the live branch, merged into `develop`,
+nothing unpushed. Unmerged branches are never deleted. The report lists them under `branches` (`would-delete` in a
+dry run, `deleted`, or `kept` with the reason); nothing changes without `remove: true`.
+`createSession` picks a name with no folder and no branch of that name, so a leftover cannot collide.
+
 ## Why Studio picks the candidates and not `wt step prune`
 
 A spike showed `wt step prune` deletes `main` when its target is `develop`, counts `--min-age` from creation rather than

@@ -14,7 +14,9 @@ const SweepEntry = z.object({
   reasons: z.array(z.string()),
 })
 
-export const ReapSessionsOutput = z.array(z.object({ root: z.string(), dryRun: z.boolean(), entries: z.array(SweepEntry), error: z.string().optional() }))
+const SweepBranch = z.object({ name: z.string(), action: z.enum(['deleted', 'would-delete', 'kept']), reasons: z.array(z.string()) })
+
+export const ReapSessionsOutput = z.array(z.object({ root: z.string(), dryRun: z.boolean(), entries: z.array(SweepEntry), branches: z.array(SweepBranch), error: z.string().optional() }))
 
 export const reapSessions = pikkuSessionlessFunc({
   expose: true,
