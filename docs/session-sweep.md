@@ -29,3 +29,12 @@ The default is a dry run. Removal is on with `PIKKU_STUDIO_SWEEP_REMOVE=1` (the 
 
 A spike showed `wt step prune` deletes `main` when its target is `develop`, counts `--min-age` from creation rather than
 from activity, and takes a fresh empty session for merged. So Studio selects, and worktrunk only does the removal.
+
+## Starting a session with installed deps
+
+`createSession` runs `wt -C <new worktree> --config <home>/worktrunk-empty.toml step copy-ignored --from develop --require-include -y`
+after `git worktree add` (`seedWorktree` in `services/worktree.ts`; same `wt` lookup and empty config as the sweep). On
+APFS and other reflink filesystems the copies are copy-on-write, so they cost almost no disk. `--require-include` means
+only paths listed in the project's tracked `.worktreeinclude` are copied. New projects get one from Studio
+(`node_modules/`, `dist/`, `.vite/`); never `.env`, caches, logs or the database. Existing projects without the file copy
+nothing, as before. A missing `wt`, a non-zero exit or a timeout (2 minutes) logs a warning and leaves the plain worktree.
