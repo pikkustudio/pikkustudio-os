@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict'
 import { execFileSync, spawn } from 'node:child_process'
-import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, utimesSync, writeFileSync } from 'node:fs'
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, utimesSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, test } from 'node:test'
-import { addWorktree, commitPaths, createLayout } from '../../src/services/worktree.js'
+import { addWorktree, commitPaths, createLayout, freshSessionName } from '../../src/services/worktree.js'
 import { SESSION, cleanupSessionFiles, resolveWt, sweepSessions, worktrunkConfigFile, type SweepOptions } from '../../src/services/worktree-sweep.js'
 
 const DAY = 24 * 60 * 60 * 1000
@@ -211,5 +211,69 @@ describe('session sweep', () => {
     assert.equal(only(report, 's-6666')?.action, 'removed', JSON.stringify(report))
     assert.equal(existsSync(path), false)
     assert.ok(existsSync(join(root, 'main')) && existsSync(join(root, 'develop')))
+  })
+
+  test('the sweep does not touch the index: two runs agree and its mtime is unchanged', async () => {
+    const { base, home, root } = await layout()
+    const { file } = fakeWt(base)
+    const path = await session(root, 's-7777', { merge: true })
+    const index = sh(path, 'rev-parse', '--absolute-git-dir') + '/index'
+    const idleMs = 2000
+    await new Promise((r) => setTimeout(r, 2500))
+    const before = statSync(index).mtimeMs
+    const first = await sweepSessions({ root, home, wt: file, keyOf: (n) => `p1.${n}`, idleMs })
+    await new Promise((r) => setTimeout(r, 1200))
+    const second = await sweepSessions({ root, home, wt: file, keyOf: (n) => `p1.${n}`, idleMs })
+    assert.equal(only(first, 's-7777')?.action, 'would-remove', JSON.stringify(first))
+    assert.equal(only(second, 's-7777')?.action, 'would-remove', JSON.stringify(second))
+    assert.equal(statSync(index).mtimeMs, before)
+  })
+
+  test('removing a merged session also deletes its branch, an unmerged one survives', async () => {
+    const { base, home, root } = await layout()
+    const { file } = fakeWt(base)
+    await session(root, 's-8888', { merge: true })
+    await session(root, 's-9999', { commit: true })
+    const report = await sweep({ root, home, wt: file, remove: true })
+    assert.equal(only(report, 's-8888')?.action, 'removed')
+    const heads = sh(join(root, 'develop'), 'branch', '--format=%(refname:short)').split('\n')
+    assert.ok(!heads.includes('s-8888'))
+    assert.ok(heads.includes('s-9999'))
+    assert.ok(existsSync(join(root, 's-9999')))
+  })
+
+  test('orphaned merged session branches are cleared; unmerged, odd names and dry runs are left alone', async () => {
+    const { base, home, root } = await layout()
+    const { file } = fakeWt(base)
+    const develop = join(root, 'develop')
+    sh(develop, 'branch', 's-abcd')
+    sh(develop, 'branch', 's-abc')
+    sh(develop, 'branch', 'feature')
+    sh(develop, 'switch', '-q', '-c', 'tmp')
+    writeFileSync(join(develop, 'x.txt'), 'x\n')
+    sh(develop, 'add', '-A')
+    sh(develop, 'commit', '-q', '-m', 'x')
+    sh(develop, 'branch', 's-beef')
+    sh(develop, 'switch', '-q', 'develop')
+    sh(develop, 'branch', '-q', '-D', 'tmp')
+    const names = () => sh(develop, 'branch', '--format=%(refname:short)').split('\n')
+    const dry = await sweep({ root, home, wt: file })
+    assert.equal(dry.branches.find((b) => b.name === 's-beef')?.action, 'kept')
+    assert.deepEqual(dry.branches.find((b) => b.name === 's-beef')?.reasons, ['not merged into develop'])
+    assert.equal(dry.branches.find((b) => b.name === 's-abcd')?.action, 'would-delete')
+    assert.ok(names().includes('s-abcd'))
+    const real = await sweep({ root, home, wt: file, remove: true })
+    assert.equal(real.branches.find((b) => b.name === 's-abcd')?.action, 'deleted')
+    const after = names()
+    assert.ok(!after.includes('s-abcd'))
+    for (const keep of ['s-beef', 's-abc', 'feature', 'main', 'develop']) assert.ok(after.includes(keep), keep)
+  })
+
+  test('createSession names skip existing branches and folders', async () => {
+    const { root } = await layout()
+    sh(join(root, 'develop'), 'branch', 's-0001')
+    const names = ['s-0001', 's-0001', 's-0002']
+    const got = await freshSessionName(root, () => names.shift()!)
+    assert.equal(got, 's-0002')
   })
 })

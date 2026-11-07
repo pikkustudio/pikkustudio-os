@@ -11,7 +11,7 @@ import { randomBytes, randomUUID } from 'node:crypto'
 import { ConflictError } from '@pikku/core/errors'
 import { toolsRoot } from '../lib/tools/install.js'
 import { generatedSource, memoryGeneratedStore, type GeneratedStore, projectSource, resolveEffective, setMany, toEnv, type ScopedSource } from '../lib/sources/index.js'
-import { DEVELOP, MAIN, addWorktree, listWorktrees, layoutRoot, sessionKey, splitSessionKey, cloneLayout, commitPaths, createLayout, ensureWorktree, saveWorktrees, keepChanges, mainEnv, keepStatus, listVersions, listThemes, type ProjectTheme, type VersionCommit, worktreeConfinement, type KeepResult, type KeepStatus, type StudioWorktree } from './worktree.js'
+import { DEVELOP, MAIN, addWorktree, freshSessionName, listWorktrees, layoutRoot, sessionKey, splitSessionKey, cloneLayout, commitPaths, createLayout, ensureWorktree, saveWorktrees, keepChanges, mainEnv, keepStatus, listVersions, listThemes, type ProjectTheme, type VersionCommit, worktreeConfinement, type KeepResult, type KeepStatus, type StudioWorktree } from './worktree.js'
 import { canConfine, confinedSpawn, type Confinement } from './confine.js'
 import { Supervisor, type ServiceSpec, type ServiceStatus } from '@pikkustudio/supervisor'
 import { DEFAULT_IDLE_MS, cleanupSessionFiles, sweepSessions, type SweepReport } from './worktree-sweep.js'
@@ -1484,10 +1484,11 @@ export class StudioProjectsService {
     return listWorktrees(root)
   }
 
-  async createSession(key: string, name = `s-${randomBytes(2).toString('hex')}`): Promise<string> {
+  async createSession(key: string, name?: string): Promise<string> {
     const entry = await this.entry(key)
     const root = layoutRoot(entry.path)
     if (!root) throw new Error('This project has no worktrees')
+    name ??= await freshSessionName(root, () => `s-${randomBytes(2).toString('hex')}`)
     await addWorktree(root, name)
     return sessionKey(entry.id, name)
   }

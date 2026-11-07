@@ -121,6 +121,18 @@ export async function addWorktree(root: string, name: string): Promise<void> {
   await git(join(root, DEVELOP), 'worktree', 'add', '-q', '-b', name, join(root, name))
 }
 
+/** A fresh `s-xxxx` name: no folder and no branch (a removed session leaves its branch) by that name. */
+export async function freshSessionName(root: string, make: () => string): Promise<string> {
+  const bare = join(root, 'repo.git')
+  for (let i = 0; i < 50; i++) {
+    const name = make()
+    if (existsSync(join(root, name))) continue
+    if (await git(bare, 'show-ref', '--verify', '--quiet', `refs/heads/${name}`).then(() => true, () => false)) continue
+    return name
+  }
+  throw new Error('Could not find a free session name')
+}
+
 export async function listWorktrees(root: string): Promise<string[]> {
   const bare = join(root, 'repo.git')
   const out = await git(bare, 'worktree', 'list', '--porcelain')
